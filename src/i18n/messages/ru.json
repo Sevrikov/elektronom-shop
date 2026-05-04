@@ -1,0 +1,173 @@
+{
+  "meta": {
+    "title": "ЭЛЕКТРОНОМ — Интернет-магазин электрооборудования и инструментов",
+    "description": "Интернет-магазин «ЭЛЕКТРОНОМ» — продажа электрооборудования, инструментов и техники в Киеве. Большой выбор товаров, выгодные цены, быстрая доставка по Украине."
+  },
+  "header": {
+    "search": "Поиск по названию, артикулу или MPN",
+    "searchByName": "Название",
+    "searchBySku": "Артикул",
+    "searchByMpn": "MPN",
+    "cart": "Корзина",
+    "catalog": "Каталог",
+    "menu": "Меню",
+    "language": "Язык",
+    "callUs": "Позвоните нам",
+    "workingHours": "Пн-Пт: 9:00-18:00",
+    "login": "Вход / Регистрация",
+    "currency": "UAH",
+    "nav": {
+      "electric": "Электрика",
+      "tools": "Инструмент",
+      "lighting": "Освещение",
+      "cable": "Кабель и провод",
+      "sockets": "Розетки и выключатели",
+      "automation": "Автоматика",
+      "smartHome": "Умный дом",
+      "specials": "Спецпредложения"
+    }
+  },
+  "home": {
+    "drawer": {
+      "promoTitle": "Промо-зона",
+      "promoSubtitle": "будет заполнено акциями и сезонными предложениями",
+      "guidedTag": "GUIDED",
+      "guidedTitle": "Подобрать оборудование",
+      "guidedBody": "Мастер в 3 шага",
+      "guidedLink": "Начать →",
+      "b2bTag": "B2B",
+      "b2bTitle": "Запрос прайса",
+      "b2bBody": "Список SKU → КП за 1 рабочий день",
+      "b2bLink": "Отправить →",
+      "themeLabel": "ТЕМА:",
+      "themeDay": "День"
+    },
+    "valueProps": {
+      "stock": "В наличии на складе",
+      "stockSub": "10 000+ SKU",
+      "wholesale": "Оптовые цены от 10 шт",
+      "wholesaleSub": "до −18%",
+      "legal": "Оплата для юр. лиц",
+      "legalSub": "с НДС",
+      "delivery": "Доставка Новой почтой",
+      "deliverySub": "от 1 дня"
+    },
+    "categories": {
+      "title": "Категории",
+      "viewAll": "Все 34"
+    },
+    "topSales": {
+      "title": "Топ-продажи",
+      "viewAll": "Все популярные"
+    },
+    "newArrivals": {
+      "title": "Новые поступления",
+      "viewAll": "Все новые"
+    },
+    "trust": {
+      "title": "Официальный дистрибьютор 40+ брендов"
+    },
+    "prefooter": {
+      "title": "Нужен прайс для объекта?",
+      "subtitle": "Отправьте список артикулов — вернёмся с коммерческим предложением с НДС за 1 рабочий день.",
+      "cta": "Отправить запрос",
+      "emailPlaceholder": "Email",
+      "phonePlaceholder": "+380 __ ___ __ __",
+      "skuPlaceholder": "Список SKU или MPN, по одному в строку:\nABB SH202-C16 — 24 шт\nSchneider LC1D09M7 — 12 шт\nLegrand 752820 — 80 шт",
+      "send": "Отправить"
+    }
+  },
+  "sidebar": {
+    "title": "ВСЕ КАТЕГОРИИ",
+    "viewAll": "Все 34 категории"
+  },
+  "footer": {
+    "info": "Информация",
+    "aboutUs": "О компании",
+    "warranty": "Гарантия",
+    "certificates": "Сертификаты",
+    "news": "Новости и статьи",
+    "careers": "Вакансии",
+    "help": "Помощь",
+    "howToOrder": "Как заказать",
+    "deliveryAndPayment": "Оплата и доставка",
+    "returns": "Возврат товара",
+    "faq": "Вопросы-ответы",
+    "feedback": "Обратная связь",
+    "services": "Сервисы",
+    "priceRequest": "Запрос прайса для объекта",
+    "electricianProgram": "Программа для электриков",
+    "dealers": "Дилерам и оптовикам",
+    "downloadPrice": "Скачать прайс-лист",
+    "sitemap": "Карта сайта",
+    "contacts": "Контакты",
+    "copyright": "© 2026 ЭЛЕКТРОНОМ. Все права защищены.",
+    "company": "Компания",
+    "forBuyers": "Покупателям",
+    "delivery": "Доставка и оплата",
+    "promotions": "Акции",
+    "categories": "Категории",
+    "reviews": "Отзывы",
+    "allRightsReserved": "Все права защищены"
+  },
+  "common": {
+    "addToCart": "Добавить",
+    "buyNow": "Купить сейчас",
+    "inStock": "В наличии",
+    "outOfStock": "Нет в наличии",
+    "price": "Цена",
+    "quantity": "Количество",
+    "total": "Итого",
+    "currency": "₴",
+    "reviews": "отзывов",
+    "showMore": "Показать больше",
+    "loading": "Загрузка...",
+    "products": "товаров"
+  },
+  "mobile": {
+    "catalog": "Каталог",
+    "search": "Поиск",
+    "cart": "Корзина",
+    "account": "Аккаунт"
+  },
+  "catalog": {
+    "title": "Каталог",
+    "allCategories": "Все категории",
+    "found": "Найдено {count} товаров",
+    "noResults": "По вашему запросу ничего не найдено",
+    "noResultsSub": "Попробуйте изменить фильтры или очистить поиск",
+    "clearFilters": "Очистить фильтры",
+    "clearAll": "Очистить все",
+    "showMore": "Показать ещё",
+    "showLess": "Свернуть",
+    "search": "Поиск",
+    "inStock": "В наличии",
+    "sort": {
+      "label": "Сортировка",
+      "popular": "По популярности",
+      "priceAsc": "От дешёвых",
+      "priceDesc": "От дорогих",
+      "new": "Новинки",
+      "rating": "По рейтингу"
+    },
+    "filters": {
+      "brand": "Бренд",
+      "price": "Цена, ₴",
+      "inStock": "В наличии"
+    },
+    "view": {
+      "grid": "Сетка",
+      "list": "Список"
+    },
+    "pagination": {
+      "prev": "Предыдущая",
+      "next": "Следующая"
+    },
+    "breadcrumbs": {
+      "home": "Главная",
+      "catalog": "Каталог"
+    },
+    "metaTitle": "{category} — купить в Киеве | ЭЛЕКТРОНОМ",
+    "metaDescription": "Купить {category} в интернет-магазине ЭЛЕКТРОНОМ. Большой выбор, выгодные цены, быстрая доставка по Украине."
+  }
+}

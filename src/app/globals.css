@@ -1,0 +1,148 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+/* ═══════════════════════════════════════════════════════════════════
+   ЕЛЕКТРОНОМ — Design System Tokens (Concept 6 v2)
+   Tailwind CSS v4: all config via @theme, no tailwind.config.ts
+   ═══════════════════════════════════════════════════════════════════ */
+
+@theme inline {
+  /* ─── Brand Palette (Concept 6 v2) ─── */
+  --color-accent: #3B7BD9;
+  --color-accent-hover: #2C67BE;
+  --color-accent-press: #23528F;
+  --color-accent-subtle: #E8EEF7;
+
+  /* ─── Surfaces ─── */
+  --color-surface-white: #FFFFFF;
+  --color-surface-alt: #F5F7FA;
+  --color-surface-raised: #EEF2F7;
+  --color-surface-accent: #E8EEF7;
+
+  /* ─── Borders ─── */
+  --color-border: #E6EAF0;
+  --color-border-strong: #D5DCE5;
+  --color-border-dashed: #C9D1DC;
+
+  /* ─── Text ─── */
+  --color-text-primary: #1A1F2B;
+  --color-text-muted: #6A7280;
+
+  /* ─── Semantic ─── */
+  --color-success: #2A9D4A;
+  --color-success-subtle: #E7F5EC;
+  --color-destructive: #DC2626;
+
+  /* ─── Shadows ─── */
+  --shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.04);
+  --shadow-md: 0 4px 12px rgba(16, 24, 40, 0.06);
+  --shadow-lg: 0 12px 32px rgba(16, 24, 40, 0.08);
+
+  /* ─── Typography ─── */
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-heading: 'Inter', system-ui, -apple-system, sans-serif;
+
+  /* ─── Layout ─── */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+
+  /* ─── Footer dark ─── */
+  --color-footer-bg: #1A1F2B;
+  --color-footer-text: #C9D1DC;
+  --color-footer-border: #2D333F;
+  --color-footer-muted: #8A93A1;
+}
+
+/* ─── Base Styles ─── */
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    color: var(--color-text-primary);
+    background: var(--color-surface-white);
+    font-size: 14px;
+    line-height: 20px;
+  }
+
+  /* Tabular nums for prices and counts */
+  .num, .price {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1, "lnum" 1;
+  }
+}
+
+/* ─── Custom Scrollbar ─── */
+.sidebar-scroll::-webkit-scrollbar {
+  width: 3px;
+}
+.sidebar-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.sidebar-scroll::-webkit-scrollbar-thumb {
+  background: var(--color-border-strong);
+  border-radius: 10px;
+}
+.sidebar-scroll::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-muted);
+}
+
+/* Hide scrollbar for carousels */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  scrollbar-width: none;
+}
+
+/* ─── Dual Range Slider ─── */
+.range-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  position: absolute;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 20px;
+  background: transparent;
+  pointer-events: none;
+  outline: none;
+}
+.range-thumb::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  border: 2px solid #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+  cursor: pointer;
+  pointer-events: all;
+  transition: transform 150ms;
+}
+.range-thumb::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+}
+.range-thumb::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  border: 2px solid #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+  cursor: pointer;
+  pointer-events: all;
+}
+.range-thumb::-moz-range-track {
+  background: transparent;
+}

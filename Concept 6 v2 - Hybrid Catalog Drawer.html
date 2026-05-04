@@ -1,0 +1,1054 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8" />
+<title>ELEKTRONOM — Concept 6 v2 (Hybrid)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@600;700&display=swap" rel="stylesheet" />
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+  :root{
+    --surface-white:#FFFFFF;
+    --surface-alt:#F5F7FA;
+    --surface-raised:#EEF2F7;
+    --surface-accent:#E8EEF7;
+    --border:#E6EAF0;
+    --border-strong:#D5DCE5;
+    --border-dashed:#C9D1DC;
+    --text-primary:#1A1F2B;
+    --text-muted:#6A7280;
+    --accent:#3B7BD9;
+    --accent-hover:#2C67BE;
+    --accent-press:#23528F;
+    --accent-subtle:#E8EEF7;
+    --success:#2A9D4A;
+    --success-subtle:#E7F5EC;
+    --shadow-sm:0 1px 2px rgba(16,24,40,0.04);
+    --shadow-md:0 4px 12px rgba(16,24,40,0.06);
+    --shadow-lg:0 12px 32px rgba(16,24,40,0.08);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;font-family:'Inter',system-ui,sans-serif;font-size:14px;line-height:20px;color:var(--text-primary);background:#E9EDF2;-webkit-font-smoothing:antialiased;font-feature-settings:"tnum" 0;}
+  .num,.price{font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1,"lnum" 1;}
+  .muted{color:var(--text-muted)}
+  .accent{color:var(--accent)}
+  a{color:inherit;text-decoration:none}
+
+  /* Page = side-by-side mockup canvas */
+  .canvas{display:flex;gap:48px;padding:48px;align-items:flex-start;justify-content:flex-start;min-width:max-content}
+  .frame-label{font-size:12px;font-weight:600;color:#4a5160;letter-spacing:0.04em;text-transform:uppercase;margin-bottom:12px}
+
+  /* ===== Desktop frame 1440 ===== */
+  .desktop{width:1440px;background:#fff;box-shadow:var(--shadow-lg);position:relative}
+  .topbar{height:36px;background:var(--surface-alt);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 80px;font-size:12px;color:var(--text-muted)}
+  .topbar .left{display:flex;gap:16px;align-items:center}
+  .topbar .right{display:flex;gap:12px;align-items:center}
+  .topbar a:hover{color:var(--text-primary)}
+  .topbar .sep{color:var(--border-strong)}
+
+  .header1{height:72px;background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 80px;gap:24px}
+  .logo{display:flex;align-items:center;gap:8px;font-family:'Inter Tight','Inter',sans-serif;font-weight:700;font-size:22px;letter-spacing:-0.01em;color:var(--text-primary);white-space:nowrap}
+  .logo .bolt{width:24px;height:24px;background:var(--accent);border-radius:4px;display:flex;align-items:center;justify-content:center;color:#fff}
+  .logo .dot{color:var(--accent)}
+  .search{flex:1;height:48px;border:1px solid var(--border-strong);border-radius:6px;display:flex;align-items:center;padding:0 8px 0 16px;background:#fff;gap:12px}
+  .search input{flex:1;border:0;outline:0;font:400 14px/20px Inter,sans-serif;background:transparent;color:var(--text-primary)}
+  .search input::placeholder{color:var(--text-muted)}
+  .search .pills{display:flex;background:var(--surface-alt);border-radius:6px;padding:3px;gap:2px}
+  .search .pill{padding:6px 10px;font-size:12px;font-weight:500;color:var(--text-muted);border-radius:4px;cursor:pointer}
+  .search .pill.active{background:var(--accent-subtle);color:var(--accent);font-weight:600}
+  .header1 .right{display:flex;align-items:center;gap:8px}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:6px;font-weight:600;cursor:pointer;border:0;font-family:inherit;transition:background var(--dur-fast,120ms)}
+  .btn-primary{background:var(--accent);color:#fff}
+  .btn-primary:hover{background:var(--accent-hover)}
+  .btn-ghost{background:transparent;color:var(--text-primary)}
+  .btn-outline{background:#fff;border:1px solid var(--border-strong);color:var(--text-primary)}
+  .btn-sm{height:36px;padding:0 14px;font-size:13px}
+  .btn-md{height:44px;padding:0 18px;font-size:14px}
+  .btn-lg{height:48px;padding:0 22px;font-size:15px}
+  .icon-btn{width:40px;height:40px;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;color:var(--text-primary);background:transparent;cursor:pointer;position:relative}
+  .icon-btn:hover{background:var(--surface-alt)}
+  .cart-badge{position:absolute;top:4px;right:4px;background:var(--accent);color:#fff;font-size:10px;font-weight:700;width:16px;height:16px;border-radius:8px;display:flex;align-items:center;justify-content:center;line-height:1}
+
+  .header2{height:48px;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 80px;gap:24px;background:#fff}
+  .catalog-btn{display:inline-flex;align-items:center;gap:8px;height:32px;padding:0 14px;background:var(--accent);color:#fff;border-radius:6px;font-weight:600;font-size:13px}
+  .nav{display:flex;gap:20px;flex:1}
+  .nav a{font-size:14px;font-weight:500;color:var(--text-primary);padding:8px 0}
+  .nav a:hover{color:var(--accent)}
+  .nav .promo{margin-left:auto;color:var(--accent);font-weight:600;display:inline-flex;align-items:center;gap:6px}
+
+  /* Container */
+  .container{width:1280px;margin:0 auto;padding:24px 0;display:grid;grid-template-columns:280px 976px;gap:24px;align-items:start;position:relative}
+
+  /* Left sticky sidebar */
+  .sidebar{position:sticky;top:24px;width:280px;background:var(--surface-alt);border-radius:8px;padding:16px}
+  .sidebar h4{margin:0 0 12px 4px;font-size:11px;font-weight:700;color:var(--text-muted);letter-spacing:0.5px;text-transform:uppercase}
+  .cat-row{display:flex;align-items:center;gap:10px;height:32px;padding:0 8px;border-radius:4px;color:var(--text-primary);font-size:14px;font-weight:500;cursor:pointer;position:relative}
+  .cat-row:hover{background:#EEF2F7}
+  .cat-row .nm{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .cat-row .ct{font-size:11px;font-weight:400;color:var(--text-muted);font-variant-numeric:tabular-nums}
+  .cat-row svg{width:16px;height:16px;color:var(--accent);stroke-width:1.5;flex-shrink:0}
+  .cat-row.active{background:var(--accent-subtle);box-shadow:inset 2px 0 0 0 var(--accent)}
+  .cat-row.active .nm{color:var(--accent);font-weight:600}
+  .all-link{display:inline-flex;align-items:center;gap:6px;margin:12px 0 4px 8px;font-size:13px;font-weight:600;color:var(--accent)}
+
+  /* Right column */
+  .right-col{width:976px;display:flex;flex-direction:column;gap:24px}
+  .drawer-stack{display:flex;flex-direction:column;gap:16px;position:relative}
+
+  /* Drawer collapsed */
+  .drawer-collapsed{height:36px;background:#fff;border:1px solid var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;gap:12px;cursor:pointer}
+  .drawer-collapsed:hover{background:var(--surface-alt)}
+  .drawer-collapsed svg{width:18px;height:18px;color:var(--accent);stroke-width:2}
+  .drawer-dot{width:6px;height:6px;border-radius:3px;background:var(--accent)}
+
+  /* Drawer expanded */
+  .drawer-expanded{height:auto;min-height:320px;background:#fff;border:1px solid var(--border);border-radius:6px;padding:24px;position:relative;display:flex;flex-direction:column}
+  .drawer-close{position:absolute;top:12px;right:12px;width:28px;height:28px;border-radius:4px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--accent)}
+  .drawer-close:hover{background:var(--surface-alt)}
+  .drawer-close svg{width:18px;height:18px;stroke-width:2}
+  .drawer-body{display:grid;grid-template-columns:600px 328px;gap:24px;flex:1}
+  .promo-banner{position:relative;width:600px;height:236px;background:var(--surface-alt);border:2px dashed var(--border-dashed);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--text-muted)}
+  .promo-inner{display:flex;flex-direction:column;align-items:center;gap:8px;margin-bottom:24px}
+  .promo-banner svg{width:32px;height:32px;stroke-width:1.5;color:var(--text-muted)}
+  .promo-banner .ttl{font-size:14px;font-weight:500}
+  .promo-banner .sub{font-size:12px;font-weight:400;max-width:280px;text-align:center;line-height:18px}
+  .carousel-arrow{position:absolute;top:50%;transform:translateY(-50%);width:32px;height:32px;border-radius:16px;background:#fff;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0}
+  .carousel-arrow svg{width:14px;height:14px;color:var(--text-muted);stroke-width:2}
+  .carousel-arrow.left{left:12px}
+  .carousel-arrow.right{right:12px}
+  .carousel-dots{position:absolute;left:0;right:0;bottom:16px;display:flex;justify-content:center;gap:8px}
+  .carousel-dots .dot{width:8px;height:8px;border-radius:4px;background:#C9D1DC}
+  .carousel-dots .dot.active{background:var(--accent)}
+  .cta-stack{display:flex;flex-direction:column;gap:8px}
+  .cta-card{width:328px;height:114px;background:#fff;border:1px solid var(--border);border-radius:6px;padding:16px;display:flex;flex-direction:column;justify-content:space-between;cursor:pointer}
+  .cta-card:hover{box-shadow:var(--shadow-md)}
+  .cta-top{display:flex;align-items:center;gap:8px}
+  .cta-top svg{width:20px;height:20px;color:var(--accent);stroke-width:1.5}
+  .cta-tag{font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:0.5px}
+  .cta-card h3{margin:0;font-size:14px;font-weight:600;color:var(--text-primary)}
+  .cta-card .body{font-size:12px;font-weight:400;color:var(--text-muted);line-height:16px;margin:0}
+  .cta-link{align-self:flex-end;font-size:12px;font-weight:600;color:var(--accent)}
+  .cta-row{display:flex;align-items:center;justify-content:space-between}
+
+  /* Drawer bottom row with breaker */
+  .drawer-bottom{height:56px;border-top:1px solid var(--border);padding-top:12px;margin-top:16px;display:flex;align-items:center;gap:16px}
+  .breaker-wrap{display:flex;align-items:center;gap:16px}
+  .breaker-svg{flex-shrink:0}
+  .theme-label{display:flex;flex-direction:column;gap:2px}
+  .theme-label .top{font-size:12px;font-weight:600;color:var(--text-muted)}
+  .theme-label .top b{color:var(--accent);font-weight:600}
+  .theme-label .hint{font-size:11px;font-weight:400;color:var(--text-muted)}
+
+  /* state captions in left margin */
+  .state-cap{position:absolute;font-size:11px;font-weight:500;color:var(--text-muted);letter-spacing:0.04em;text-transform:uppercase;white-space:nowrap}
+
+  /* Value props */
+  .vps{height:72px;background:var(--surface-alt);border-radius:8px;display:grid;grid-template-columns:repeat(4,1fr);align-items:center}
+  .vp{display:flex;align-items:center;gap:12px;padding:0 20px;border-right:1px solid var(--border);height:48px}
+  .vp:last-child{border-right:0}
+  .vp svg{width:32px;height:32px;color:var(--accent);stroke-width:1.5;flex-shrink:0}
+  .vp .txt{display:flex;flex-direction:column;gap:2px;line-height:1.25}
+  .vp .l1{font-size:13px;font-weight:600;color:var(--text-primary)}
+  .vp .l2{font-size:12px;color:var(--text-muted)}
+
+  /* Section heading */
+  .sec-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:16px}
+  .sec-head h2{margin:0;font-size:24px;line-height:32px;font-weight:600;color:var(--text-primary)}
+  .sec-head a{font-size:13px;font-weight:600;color:var(--accent);display:inline-flex;align-items:center;gap:4px}
+
+  /* Category grid */
+  .cat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+  .cat-card{background:#fff;border:1px solid var(--border);border-radius:8px;padding:20px;height:140px;display:flex;flex-direction:column;justify-content:space-between;cursor:pointer}
+  .cat-card:hover{box-shadow:var(--shadow-md)}
+  .cat-card svg{width:48px;height:48px;color:var(--accent);stroke-width:1.5}
+  .cat-card .nm{font-size:15px;font-weight:600;color:var(--text-primary);line-height:20px}
+  .cat-card .ct{font-size:13px;font-weight:400;color:var(--text-muted);font-variant-numeric:tabular-nums;margin-top:4px}
+
+  /* Product carousel */
+  .carousel{display:flex;gap:16px;overflow:hidden}
+  .pcard{width:228px;flex-shrink:0;background:#fff;border:1px solid var(--border);border-radius:8px;padding:12px;display:flex;flex-direction:column;gap:8px;position:relative}
+  .pcard:hover{box-shadow:var(--shadow-md)}
+  .pimg{position:relative;width:204px;height:160px;background:var(--surface-alt);border-radius:6px;display:flex;align-items:center;justify-content:center}
+  .pimg svg{width:48px;height:48px;color:#C9D1DC;stroke-width:1.5}
+  .stock-pill{position:absolute;top:8px;left:8px;background:var(--success-subtle);color:var(--success);font-size:11px;font-weight:600;padding:3px 8px;border-radius:4px;display:inline-flex;align-items:center;gap:4px}
+  .stock-pill::before{content:"";width:6px;height:6px;border-radius:3px;background:var(--success)}
+  .brand-chip{font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:0.04em}
+  .pcard .ttl{font-size:14px;font-weight:600;color:var(--text-primary);line-height:18px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:36px}
+  .pcard .sku{font-size:12px;font-weight:400;color:var(--text-muted);font-variant-numeric:tabular-nums}
+  .pcard .price{font-size:18px;font-weight:700;color:var(--text-primary);font-variant-numeric:tabular-nums;line-height:22px}
+  .pcard .qbreak{font-size:11px;font-weight:500;color:var(--accent);margin-top:-2px}
+  .pcard .actions{display:flex;gap:6px;align-items:center;margin-top:4px}
+  .add-btn{flex:1;height:36px;background:var(--accent);color:#fff;border-radius:6px;font-size:13px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+  .add-btn:hover{background:var(--accent-hover)}
+  .add-btn svg{width:14px;height:14px;stroke-width:2}
+  .qty{display:flex;align-items:center;border:1px solid var(--border-strong);border-radius:6px;height:36px;overflow:hidden}
+  .qty button{width:28px;height:34px;background:#fff;border:0;font-size:14px;color:var(--text-muted);cursor:pointer}
+  .qty button:hover{background:var(--surface-alt)}
+  .qty .v{width:28px;text-align:center;font-size:13px;font-weight:600;font-variant-numeric:tabular-nums}
+
+  /* Trust row */
+  .trust{padding:32px 0;text-align:center}
+  .trust h3{margin:0 0 20px;font-size:18px;line-height:26px;font-weight:600;color:var(--text-primary)}
+  .brands{display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:nowrap}
+  .brand-mark{font-family:'Inter Tight',Inter,sans-serif;font-weight:700;font-size:14px;color:var(--text-muted);opacity:0.6;letter-spacing:0.02em;white-space:nowrap}
+  .brand-mark:hover{opacity:1}
+
+  /* Pre-footer */
+  .prefooter{background:var(--surface-raised);padding:48px 80px;display:grid;grid-template-columns:1fr 480px;gap:48px;align-items:center}
+  .prefooter h2{margin:0 0 12px;font-size:28px;line-height:36px;font-weight:700;color:var(--text-primary)}
+  .prefooter .sub{font-size:15px;line-height:22px;color:var(--text-muted);max-width:520px;margin:0 0 20px}
+  .form{background:#fff;border:1px solid var(--border);border-radius:8px;padding:20px;display:flex;flex-direction:column;gap:10px}
+  .form .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .form input,.form textarea{font:400 13px/20px Inter,sans-serif;border:1px solid var(--border-strong);border-radius:6px;padding:10px 12px;color:var(--text-primary);background:#fff;outline:none;width:100%;font-family:inherit}
+  .form textarea{height:84px;resize:none;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12px}
+  .form input::placeholder,.form textarea::placeholder{color:var(--text-muted)}
+
+  /* Footer */
+  .footer{background:#1A1F2B;color:#C9D1DC;padding:48px 80px 24px}
+  .footer-cols{display:grid;grid-template-columns:repeat(4,1fr);gap:32px}
+  .footer h4{margin:0 0 16px;font-size:13px;font-weight:600;color:#fff;text-transform:uppercase;letter-spacing:0.04em}
+  .footer ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px}
+  .footer ul a{font-size:13px;color:#C9D1DC}
+  .footer ul a:hover{color:#fff}
+  .footer-bot{margin-top:32px;padding-top:20px;border-top:1px solid #2D333F;display:flex;align-items:center;justify-content:space-between;font-size:12px;color:#8A93A1}
+  .pay-icons{display:flex;gap:8px}
+  .pay-icons span{padding:4px 10px;border:1px solid #2D333F;border-radius:4px;font-size:11px;font-weight:600;color:#C9D1DC}
+
+  /* ===== Mobile frame 375 ===== */
+  .mobile{width:375px;background:#fff;box-shadow:var(--shadow-lg);position:relative}
+  .m-topbar{height:32px;background:var(--surface-alt);display:flex;align-items:center;justify-content:space-between;padding:0 16px;font-size:11px;color:var(--text-muted);border-bottom:1px solid var(--border)}
+  .m-header{height:56px;display:flex;align-items:center;padding:0 16px;gap:12px;border-bottom:1px solid var(--border);background:#fff}
+  .m-header .icon-btn{width:36px;height:36px}
+  .m-header .logo{font-size:17px;flex:1}
+  .m-content{padding:16px;display:flex;flex-direction:column;gap:20px;background:#fff;position:relative}
+  .m-drawer-block{display:flex;flex-direction:column;gap:8px;position:relative}
+  .m-drawer-collapsed{height:36px;background:#fff;border:1px solid var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;gap:12px}
+  .m-drawer-collapsed svg{width:18px;height:18px;color:var(--accent);stroke-width:2}
+  .m-drawer-expanded{background:#fff;border:1px solid var(--border);border-radius:6px;padding:16px;position:relative;display:flex;flex-direction:column;gap:12px}
+  .m-promo{position:relative;width:100%;height:140px;background:var(--surface-alt);border:2px dashed var(--border-dashed);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--text-muted)}
+  .m-promo-inner{display:flex;flex-direction:column;align-items:center;gap:4px;margin-bottom:16px}
+  .m-promo svg{width:28px;height:28px;stroke-width:1.5}
+  .m-promo .ttl{font-size:13px;font-weight:500}
+  .m-promo .sub{font-size:11px;font-weight:400;text-align:center;padding:0 32px}
+  .m-cta{width:100%;height:88px;background:#fff;border:1px solid var(--border);border-radius:6px;padding:14px;display:flex;flex-direction:column;justify-content:space-between}
+  .m-cta-top{display:flex;align-items:center;gap:6px}
+  .m-cta-top svg{width:18px;height:18px;color:var(--accent);stroke-width:1.5}
+  .m-cta h3{margin:0;font-size:13px;font-weight:600}
+  .m-cta .body{margin:0;font-size:11px;color:var(--text-muted)}
+  .m-drawer-bottom{border-top:1px solid var(--border);padding-top:12px;display:flex;align-items:center;gap:12px}
+  .m-drawer-close{position:absolute;top:10px;right:10px;width:24px;height:24px;border-radius:4px;display:flex;align-items:center;justify-content:center;color:var(--accent)}
+  .m-drawer-close svg{width:16px;height:16px;stroke-width:2}
+  .m-state-cap{font-size:11px;font-weight:500;color:var(--text-muted);letter-spacing:0.04em;text-transform:uppercase;padding-left:4px}
+
+  .m-chips{display:flex;gap:8px;overflow-x:auto;padding:0 16px;margin:0 -16px;scrollbar-width:none}
+  .m-chips::-webkit-scrollbar{display:none}
+  .m-chip{flex-shrink:0;height:32px;padding:0 12px;background:var(--surface-alt);border-radius:16px;display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:500;color:var(--text-primary);white-space:nowrap}
+  .m-chip svg{width:14px;height:14px;color:var(--accent);stroke-width:1.5}
+  .m-chip.active{background:var(--accent-subtle);color:var(--accent)}
+
+  .m-vps{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .m-vp{background:var(--surface-alt);border-radius:6px;padding:12px;display:flex;align-items:flex-start;gap:8px}
+  .m-vp svg{width:24px;height:24px;color:var(--accent);stroke-width:1.5;flex-shrink:0}
+  .m-vp .l1{font-size:12px;font-weight:600;line-height:16px}
+  .m-vp .l2{font-size:11px;color:var(--text-muted);line-height:14px}
+
+  .m-cat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .m-cat-card{background:#fff;border:1px solid var(--border);border-radius:8px;padding:14px;height:108px;display:flex;flex-direction:column;justify-content:space-between}
+  .m-cat-card svg{width:32px;height:32px;color:var(--accent);stroke-width:1.5}
+  .m-cat-card .nm{font-size:13px;font-weight:600;line-height:16px}
+  .m-cat-card .ct{font-size:11px;color:var(--text-muted);font-variant-numeric:tabular-nums}
+
+  .m-carousel{display:flex;gap:12px;overflow-x:auto;padding:0 16px 4px;margin:0 -16px;scrollbar-width:none}
+  .m-carousel::-webkit-scrollbar{display:none}
+  .m-pcard{flex-shrink:0;width:248px;background:#fff;border:1px solid var(--border);border-radius:8px;padding:10px;display:flex;flex-direction:column;gap:6px}
+  .m-pcard .pimg{width:228px;height:140px;background:var(--surface-alt);border-radius:6px;position:relative;display:flex;align-items:center;justify-content:center}
+  .m-pcard .pimg svg{width:36px;height:36px;color:#C9D1DC;stroke-width:1.5}
+  .m-pcard .ttl{font-size:13px;font-weight:600;line-height:16px;min-height:32px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .m-pcard .price{font-size:16px;font-weight:700;font-variant-numeric:tabular-nums}
+
+  .m-brand-strip{display:flex;gap:16px;overflow-x:auto;padding:16px;margin:0 -16px;background:var(--surface-alt);scrollbar-width:none}
+  .m-brand-strip::-webkit-scrollbar{display:none}
+  .m-brand-strip .brand-mark{font-size:13px;flex-shrink:0}
+
+  .m-prefooter{background:var(--surface-raised);padding:24px 16px;display:flex;flex-direction:column;gap:12px}
+  .m-prefooter h2{margin:0;font-size:22px;line-height:28px;font-weight:700}
+  .m-prefooter .sub{margin:0;font-size:13px;color:var(--text-muted)}
+
+  .m-footer{background:#1A1F2B;color:#C9D1DC;padding:24px 16px}
+  .m-acc-row{padding:14px 0;border-bottom:1px solid #2D333F;display:flex;align-items:center;justify-content:space-between;font-size:13px;font-weight:600;color:#fff}
+  .m-acc-row svg{width:16px;height:16px;color:#8A93A1;stroke-width:1.5}
+  .m-footer-bot{padding-top:16px;font-size:11px;color:#8A93A1;text-align:center}
+
+  .m-tabbar{height:64px;background:#fff;border-top:1px solid var(--border);display:grid;grid-template-columns:repeat(4,1fr);align-items:center;box-shadow:0 -2px 8px rgba(16,24,40,0.04)}
+  .m-tab{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:11px;font-weight:500;color:var(--text-muted);position:relative;height:100%}
+  .m-tab.active{color:var(--accent)}
+  .m-tab svg{width:22px;height:22px;stroke-width:1.5}
+  .m-tab .tb-badge{position:absolute;top:6px;right:30%;background:var(--accent);color:#fff;font-size:10px;font-weight:700;width:16px;height:16px;border-radius:8px;display:flex;align-items:center;justify-content:center;line-height:1}
+
+</style>
+</head>
+<body>
+
+<div class="canvas">
+
+  <!-- ===================== DESKTOP 1440 ===================== -->
+  <div>
+    <div class="frame-label">Desktop 1440</div>
+    <div class="desktop" data-screen-label="01 Desktop 1440">
+
+      <!-- Topbar -->
+      <div class="topbar">
+        <div class="left">
+          <span style="display:inline-flex;align-items:center;gap:6px;color:var(--text-primary);font-weight:500"><i data-lucide="phone" style="width:14px;height:14px"></i>+380 50 123-45-67</span>
+          <span class="sep">|</span>
+          <span>+380 67 123-45-67</span>
+          <span class="sep">|</span>
+          <span>info@elektronom.com.ua</span>
+        </div>
+        <div class="right">
+          <span><b style="color:var(--text-primary)">UA</b> | RU</span>
+          <span class="sep">•</span>
+          <span>UAH</span>
+          <span class="sep">•</span>
+          <span style="display:inline-flex;align-items:center;gap:6px;color:var(--text-primary)"><i data-lucide="user" style="width:14px;height:14px"></i>Вхід / Реєстрація</span>
+        </div>
+      </div>
+
+      <!-- Header row 1 -->
+      <div class="header1">
+        <a class="logo" href="#">
+          <span class="bolt"><i data-lucide="zap" style="width:14px;height:14px;stroke-width:2.5"></i></span>
+          ЕЛЕКТРОНОМ<span class="dot">.</span>
+        </a>
+        <div class="search">
+          <i data-lucide="search" style="width:18px;height:18px;color:#6A7280;stroke-width:1.5"></i>
+          <input placeholder="Пошук за назвою, артикулом чи MPN" />
+          <div class="pills">
+            <span class="pill active">Назва</span>
+            <span class="pill">Артикул</span>
+            <span class="pill">MPN</span>
+          </div>
+        </div>
+        <div class="right">
+          <button class="icon-btn"><i data-lucide="heart" style="width:20px;height:20px;stroke-width:1.5"></i></button>
+          <button class="icon-btn"><i data-lucide="user" style="width:20px;height:20px;stroke-width:1.5"></i></button>
+          <button class="icon-btn"><i data-lucide="shopping-cart" style="width:20px;height:20px;stroke-width:1.5"></i><span class="cart-badge">3</span></button>
+        </div>
+      </div>
+
+      <!-- Header row 2 -->
+      <div class="header2">
+        <a class="catalog-btn"><i data-lucide="layout-grid" style="width:14px;height:14px;stroke-width:2"></i>Каталог<i data-lucide="chevron-down" style="width:14px;height:14px;stroke-width:2"></i></a>
+        <div class="nav">
+          <a>Електрика</a>
+          <a>Інструмент</a>
+          <a>Освітлення</a>
+          <a>Кабель та провід</a>
+          <a>Розетки та вимикачі</a>
+          <a>Автоматика</a>
+          <a>Розумний дім</a>
+          <a class="promo"><i data-lucide="tag" style="width:14px;height:14px;stroke-width:1.5"></i>Спецпропозиції</a>
+        </div>
+      </div>
+
+      <!-- Container with sticky sidebar -->
+      <div class="container">
+
+        <!-- Left sticky sidebar -->
+        <aside class="sidebar">
+          <h4>УСІ КАТЕГОРІЇ</h4>
+          <div class="cat-row active"><i data-lucide="zap"></i><span class="nm">Автоматичні вимикачі</span><span class="ct">1 240</span></div>
+          <div class="cat-row"><i data-lucide="plug"></i><span class="nm">Розетки та вимикачі</span><span class="ct">890</span></div>
+          <div class="cat-row"><i data-lucide="cable"></i><span class="nm">Кабель та провід</span><span class="ct">1 850</span></div>
+          <div class="cat-row"><i data-lucide="lightbulb"></i><span class="nm">Освітлення LED</span><span class="ct">3 200</span></div>
+          <div class="cat-row"><i data-lucide="power"></i><span class="nm">Пускова апаратура</span><span class="ct">560</span></div>
+          <div class="cat-row"><i data-lucide="server"></i><span class="nm">Щити електричні</span><span class="ct">380</span></div>
+          <div class="cat-row"><i data-lucide="wrench"></i><span class="nm">Інструмент ручний</span><span class="ct">720</span></div>
+          <div class="cat-row"><i data-lucide="drill"></i><span class="nm">Інструмент електричний</span><span class="ct">640</span></div>
+          <div class="cat-row"><i data-lucide="gauge"></i><span class="nm">Вимірювальні прилади</span><span class="ct">310</span></div>
+          <div class="cat-row"><i data-lucide="activity"></i><span class="nm">Лічильники</span><span class="ct">180</span></div>
+          <div class="cat-row"><i data-lucide="shield"></i><span class="nm">ПЗВ та диф-автомати</span><span class="ct">290</span></div>
+          <div class="cat-row"><i data-lucide="link-2"></i><span class="nm">Заземлення</span><span class="ct">160</span></div>
+          <div class="cat-row"><i data-lucide="square"></i><span class="nm">Кабель-канал</span><span class="ct">220</span></div>
+          <div class="cat-row"><i data-lucide="circle"></i><span class="nm">Запобіжники</span><span class="ct">340</span></div>
+          <div class="cat-row"><i data-lucide="toggle-right"></i><span class="nm">Контактори</span><span class="ct">270</span></div>
+          <div class="cat-row"><i data-lucide="repeat"></i><span class="nm">Реле</span><span class="ct">480</span></div>
+          <div class="cat-row"><i data-lucide="box"></i><span class="nm">Трансформатори</span><span class="ct">190</span></div>
+          <div class="cat-row"><i data-lucide="cable"></i><span class="nm">Подовжувачі</span><span class="ct">210</span></div>
+          <div class="cat-row"><i data-lucide="house"></i><span class="nm">Розумний дім</span><span class="ct">380</span></div>
+          <div class="cat-row"><i data-lucide="cpu"></i><span class="nm">Автоматика</span><span class="ct">240</span></div>
+          <div class="cat-row"><i data-lucide="bell"></i><span class="nm">Сигналізація</span><span class="ct">170</span></div>
+          <div class="cat-row"><i data-lucide="video"></i><span class="nm">Відеоспостереження</span><span class="ct">290</span></div>
+          <div class="cat-row"><i data-lucide="flame"></i><span class="nm">Зварювальне обладнання</span><span class="ct">140</span></div>
+          <div class="cat-row"><i data-lucide="cog"></i><span class="nm">Електродвигуни</span><span class="ct">110</span></div>
+          <div class="cat-row"><i data-lucide="droplet"></i><span class="nm">Насоси</span><span class="ct">160</span></div>
+          <div class="cat-row"><i data-lucide="wind"></i><span class="nm">Вентиляція</span><span class="ct">220</span></div>
+          <div class="cat-row"><i data-lucide="thermometer"></i><span class="nm">Обігрівачі</span><span class="ct">180</span></div>
+          <div class="cat-row"><i data-lucide="trending-up"></i><span class="nm">Стабілізатори</span><span class="ct">90</span></div>
+          <div class="cat-row"><i data-lucide="battery-charging"></i><span class="nm">ДБЖ</span><span class="ct">140</span></div>
+          <div class="cat-row"><i data-lucide="battery"></i><span class="nm">Акумулятори</span><span class="ct">220</span></div>
+          <a class="all-link">Усі 34 категорії <i data-lucide="arrow-right" style="width:14px;height:14px;stroke-width:1.5"></i></a>
+        </aside>
+
+        <!-- Right column -->
+        <div class="right-col">
+
+          <!-- Expanded drawer (only state shown) -->
+          <div class="drawer-stack">
+
+            <div class="drawer-expanded">
+              <div class="drawer-close"><i data-lucide="chevron-up"></i></div>
+
+              <div class="drawer-body">
+                <!-- LEFT: promo banner placeholder w/ carousel indicators -->
+                <div class="promo-banner">
+                  <button class="carousel-arrow left"><i data-lucide="chevron-left"></i></button>
+                  <div class="promo-inner">
+                    <i data-lucide="image"></i>
+                    <div class="ttl">Промо-зона</div>
+                    <div class="sub">буде заповнено акціями та сезонними пропозиціями</div>
+                  </div>
+                  <button class="carousel-arrow right"><i data-lucide="chevron-right"></i></button>
+                  <div class="carousel-dots">
+                    <span class="dot active"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                  </div>
+                </div>
+
+                <!-- RIGHT: 2 CTA cards stacked -->
+                <div class="cta-stack">
+                  <div class="cta-card">
+                    <div class="cta-top">
+                      <i data-lucide="sliders-horizontal"></i>
+                      <span class="cta-tag">GUIDED</span>
+                    </div>
+                    <div>
+                      <h3>Підібрати обладнання</h3>
+                      <p class="body">Майстер у 3 кроки</p>
+                    </div>
+                    <div class="cta-row"><span></span><a class="cta-link">Почати →</a></div>
+                  </div>
+                  <div class="cta-card">
+                    <div class="cta-top">
+                      <i data-lucide="file-check"></i>
+                      <span class="cta-tag">B2B</span>
+                    </div>
+                    <div>
+                      <h3>Запит прайсу</h3>
+                      <p class="body">Список SKU → КП за 1 робочий день</p>
+                    </div>
+                    <div class="cta-row"><span></span><a class="cta-link">Надіслати →</a></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Bottom row with realistic DIN-rail breaker -->
+              <div class="drawer-bottom">
+                <div class="breaker-wrap">
+                  <!-- Realistic DIN-rail circuit breaker SVG, 72x112, blue lever UP, no instructional text -->
+                  <svg class="breaker-svg" width="72" height="112" viewBox="0 0 72 112" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Outer body -->
+                    <rect x="0.5" y="0.5" width="71" height="111" rx="6" fill="#F8F9FA" stroke="#C9D1DC" stroke-width="1"/>
+                    <!-- Top label area: product marking C16 -->
+                    <text x="36" y="13" text-anchor="middle" font-family="Inter" font-size="9" font-weight="700" fill="#6A7280" letter-spacing="0.5">C16</text>
+                    <line x1="6" y1="18" x2="66" y2="18" stroke="#C9D1DC" stroke-width="1"/>
+
+                    <!-- Side ventilation slots, left -->
+                    <rect x="3" y="36" width="4" height="1" fill="#E6EAF0"/>
+                    <rect x="3" y="48" width="4" height="1" fill="#E6EAF0"/>
+                    <rect x="3" y="60" width="4" height="1" fill="#E6EAF0"/>
+                    <!-- Side ventilation slots, right -->
+                    <rect x="65" y="36" width="4" height="1" fill="#E6EAF0"/>
+                    <rect x="65" y="48" width="4" height="1" fill="#E6EAF0"/>
+                    <rect x="65" y="60" width="4" height="1" fill="#E6EAF0"/>
+
+                    <!-- Recessed dark slot (32x56, centered) -->
+                    <rect x="20" y="22" width="32" height="56" rx="2" fill="#1A1F2B"/>
+                    <!-- Inset shadow on top edge of slot -->
+                    <line x1="20" y1="22" x2="52" y2="22" stroke="#0A0F18" stroke-width="1"/>
+
+                    <!-- Blue plastic toggle lever in UP position (24x28, rounded, at top of slot) -->
+                    <rect x="24" y="24" width="24" height="28" rx="4" fill="#3B7BD9"/>
+                    <!-- Glossy highlight on top edge -->
+                    <line x1="27" y1="26" x2="45" y2="26" stroke="#5A95E8" stroke-width="1" stroke-linecap="round"/>
+                    <!-- White position-indicator dot, centered on lever face -->
+                    <circle cx="36" cy="38" r="3" fill="#FFFFFF"/>
+
+                    <!-- Bottom section: terminal screws -->
+                    <line x1="6" y1="82" x2="66" y2="82" stroke="#C9D1DC" stroke-width="1"/>
+                    <!-- Left screw -->
+                    <circle cx="18" cy="97" r="5" fill="#6A7280"/>
+                    <line x1="14.5" y1="97" x2="21.5" y2="97" stroke="#C9D1DC" stroke-width="1"/>
+                    <line x1="18" y1="93.5" x2="18" y2="100.5" stroke="#C9D1DC" stroke-width="1"/>
+                    <!-- Right screw -->
+                    <circle cx="54" cy="97" r="5" fill="#6A7280"/>
+                    <line x1="50.5" y1="97" x2="57.5" y2="97" stroke="#C9D1DC" stroke-width="1"/>
+                    <line x1="54" y1="93.5" x2="54" y2="100.5" stroke="#C9D1DC" stroke-width="1"/>
+                  </svg>
+                  <div class="theme-label">
+                    <div class="top" style="font-size:13px">ТЕМА: <b>День</b></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Value props strip -->
+          <div class="vps">
+            <div class="vp"><i data-lucide="package"></i><div class="txt"><div class="l1">В наявності на складі</div><div class="l2">10 000+ SKU</div></div></div>
+            <div class="vp"><i data-lucide="layers"></i><div class="txt"><div class="l1">Оптові ціни від 10 шт</div><div class="l2">до −18%</div></div></div>
+            <div class="vp"><i data-lucide="file-text"></i><div class="txt"><div class="l1">Оплата для юр. осіб</div><div class="l2">з ПДВ</div></div></div>
+            <div class="vp"><i data-lucide="truck"></i><div class="txt"><div class="l1">Доставка Новою поштою</div><div class="l2">від 1 дня</div></div></div>
+          </div>
+
+          <!-- Categories grid -->
+          <section>
+            <div class="sec-head">
+              <h2>Категорії</h2>
+              <a>Усі 34 <i data-lucide="arrow-right" style="width:14px;height:14px;stroke-width:1.5"></i></a>
+            </div>
+            <div class="cat-grid">
+              <div class="cat-card"><i data-lucide="zap"></i><div><div class="nm">Автоматичні вимикачі</div><div class="ct">1 240 товарів</div></div></div>
+              <div class="cat-card"><i data-lucide="cable"></i><div><div class="nm">Кабель та провід</div><div class="ct">1 850 товарів</div></div></div>
+              <div class="cat-card"><i data-lucide="plug"></i><div><div class="nm">Розетки та вимикачі</div><div class="ct">890 товарів</div></div></div>
+              <div class="cat-card"><i data-lucide="lightbulb"></i><div><div class="nm">Освітлення LED</div><div class="ct">3 200 товарів</div></div></div>
+              <div class="cat-card"><i data-lucide="server"></i><div><div class="nm">Щити електричні</div><div class="ct">380 товарів</div></div></div>
+              <div class="cat-card"><i data-lucide="power"></i><div><div class="nm">Пускова апаратура</div><div class="ct">560 товарів</div></div></div>
+              <div class="cat-card"><i data-lucide="drill"></i><div><div class="nm">Інструмент електричний</div><div class="ct">640 товарів</div></div></div>
+              <div class="cat-card"><i data-lucide="activity"></i><div><div class="nm">Лічильники</div><div class="ct">180 товарів</div></div></div>
+            </div>
+          </section>
+
+          <!-- Top sales -->
+          <section>
+            <div class="sec-head">
+              <h2>Топ-продажі</h2>
+              <a>Усі популярні <i data-lucide="arrow-right" style="width:14px;height:14px;stroke-width:1.5"></i></a>
+            </div>
+            <div class="carousel">
+              <!-- 6 product cards -->
+              <div class="pcard">
+                <div class="pimg"><span class="stock-pill">В наявності</span><i data-lucide="zap"></i></div>
+                <div class="brand-chip">ABB</div>
+                <div class="ttl">Автоматичний вимикач ABB SH202-C16 2P 16A</div>
+                <div class="sku num">SKU 2CDS212001R0164</div>
+                <div class="price">412 ₴</div>
+                <div class="qbreak">від 10 шт −6%</div>
+                <div class="actions">
+                  <button class="add-btn"><i data-lucide="shopping-cart"></i>Додати</button>
+                  <div class="qty"><button>−</button><span class="v">1</span><button>+</button></div>
+                </div>
+              </div>
+              <div class="pcard">
+                <div class="pimg"><span class="stock-pill">В наявності</span><i data-lucide="cable"></i></div>
+                <div class="brand-chip">SCHNEIDER</div>
+                <div class="ttl">Кабель ВВГнг-LS 3×2.5 мм² 100м</div>
+                <div class="sku num">SKU ODS-VVG-325-100</div>
+                <div class="price">3 240 ₴</div>
+                <div class="qbreak">від 5 шт −8%</div>
+                <div class="actions">
+                  <button class="add-btn"><i data-lucide="shopping-cart"></i>Додати</button>
+                  <div class="qty"><button>−</button><span class="v">1</span><button>+</button></div>
+                </div>
+              </div>
+              <div class="pcard">
+                <div class="pimg"><span class="stock-pill">В наявності</span><i data-lucide="plug"></i></div>
+                <div class="brand-chip">LEGRAND</div>
+                <div class="ttl">Розетка Legrand Valena Life біла</div>
+                <div class="sku num">SKU 752820</div>
+                <div class="price">186 ₴</div>
+                <div class="qbreak">від 20 шт −12%</div>
+                <div class="actions">
+                  <button class="add-btn"><i data-lucide="shopping-cart"></i>Додати</button>
+                  <div class="qty"><button>−</button><span class="v">1</span><button>+</button></div>
+                </div>
+              </div>
+              <div class="pcard">
+                <div class="pimg"><span class="stock-pill">В наявності</span><i data-lucide="lightbulb"></i></div>
+                <div class="brand-chip">PHILIPS</div>
+                <div class="ttl">LED-панель Philips 40W 6500K</div>
+                <div class="sku num">SKU PHL-LP40-65K</div>
+                <div class="price">1 280 ₴</div>
+                <div class="qbreak">від 10 шт −10%</div>
+                <div class="actions">
+                  <button class="add-btn"><i data-lucide="shopping-cart"></i>Додати</button>
+                  <div class="qty"><button>−</button><span class="v">1</span><button>+</button></div>
+                </div>
+              </div>
+              <div class="pcard">
+                <div class="pimg"><span class="stock-pill">В наявності</span><i data-lucide="drill"></i></div>
+                <div class="brand-chip">BOSCH</div>
+                <div class="ttl">Дриль-шуруповерт Bosch GSB 120</div>
+                <div class="sku num">SKU 06019G8120</div>
+                <div class="price">3 980 ₴</div>
+                <div class="qbreak">від 5 шт −5%</div>
+                <div class="actions">
+                  <button class="add-btn"><i data-lucide="shopping-cart"></i>Додати</button>
+                  <div class="qty"><button>−</button><span class="v">1</span><button>+</button></div>
+                </div>
+              </div>
+              <div class="pcard">
+                <div class="pimg"><span class="stock-pill">В наявності</span><i data-lucide="server"></i></div>
+                <div class="brand-chip">HAGER</div>
+                <div class="ttl">Щит Hager Volta VA18CN 18 модулів</div>
+                <div class="sku num">SKU VA18CN</div>
+                <div class="price">2 140 ₴</div>
+                <div class="qbreak">від 5 шт −7%</div>
+                <div class="actions">
+                  <button class="add-btn"><i data-lucide="shopping-cart"></i>Додати</button>
+                  <div class="qty"><button>−</button><span class="v">1</span><button>+</button></div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- New arrivals -->
+          <section>
+            <div class="sec-head">
+              <h2>Нові надходження</h2>
+              <a>Усі нові <i data-lucide="arrow-right" style="width:14px;height:14px;stroke-width:1.5"></i></a>
+            </div>
+            <div class="carousel">
+              <div class="pcard">
+                <div class="pimg"><span class="stock-pill">В наявності</span><i data-lucide="shield"></i></div>
+                <div class="brand-chip">EATON</div>
+                <div class="ttl">ПЗВ Eaton PF6-25/2/003 25A 30мА</div>
+                <div class="sku num">SKU 286499</div>
+                <div class="price">1 480 ₴</div>
+                <div class="qbreak">від 5 шт −7%</div>
+                <div class="actions">
+                  <button class="add-btn"><i data-lucide="shopping-cart"></i>Додати</button>
+                  <div class="qty"><button>−</button><span class="v">1</span><button>+</button></div>
+                </div>
+              </div>
+              <div class="pcard">
+                <div class="pimg"><span class="stock-pill">В наявності</span><i data-lucide="house"></i></div>
+                <div class="brand-chip">WERKEL</div>
+                <div class="ttl">Розумний вимикач Werkel WL01-SW-2G Wi-Fi</div>
+                <div class="sku num">SKU WL01-SW-2G</div>
+                <div class="price">2 380 ₴</div>
+                <div class="qbreak">від 10 шт −8%</div>
+                <div class="actions">
+                  <button class="add-btn"><i data-lucide="shopping-cart"></i>Додати</button>
+                  <div class="qty"><button>−</button><span class="v">1</span><button>+</button></div>
+                </div>
+              </div>
+              <div class="pcard">
+                <div class="pimg"><span class="stock-pill">В наявності</span><i data-lucide="wrench"></i></div>
+                <div class="brand-chip">DEWALT</div>
+                <div class="ttl">Набір ключів DeWALT DWMT81534 24 шт</div>
+                <div class="sku num">SKU DWMT81534</div>
+                <div class="price">4 620 ₴</div>
+                <div class="qbreak">від 3 шт −5%</div>
+                <div class="actions">
+                  <button class="add-btn"><i data-lucide="shopping-cart"></i>Додати</button>
+                  <div class="qty"><button>−</button><span class="v">1</span><button>+</button></div>
+                </div>
+              </div>
+              <div class="pcard">
+                <div class="pimg"><span class="stock-pill">В наявності</span><i data-lucide="lightbulb"></i></div>
+                <div class="brand-chip">IEK</div>
+                <div class="ttl">LED-світильник IEK ДПО 2001 18W IP54</div>
+                <div class="sku num">SKU LDPO0-2001-18-65-K01</div>
+                <div class="price">412 ₴</div>
+                <div class="qbreak">від 20 шт −14%</div>
+                <div class="actions">
+                  <button class="add-btn"><i data-lucide="shopping-cart"></i>Додати</button>
+                  <div class="qty"><button>−</button><span class="v">1</span><button>+</button></div>
+                </div>
+              </div>
+              <div class="pcard">
+                <div class="pimg"><span class="stock-pill">В наявності</span><i data-lucide="drill"></i></div>
+                <div class="brand-chip">MAKITA</div>
+                <div class="ttl">Перфоратор Makita HR2470 780W SDS-Plus</div>
+                <div class="sku num">SKU HR2470</div>
+                <div class="price">5 240 ₴</div>
+                <div class="qbreak">від 3 шт −6%</div>
+                <div class="actions">
+                  <button class="add-btn"><i data-lucide="shopping-cart"></i>Додати</button>
+                  <div class="qty"><button>−</button><span class="v">1</span><button>+</button></div>
+                </div>
+              </div>
+              <div class="pcard">
+                <div class="pimg"><span class="stock-pill">В наявності</span><i data-lucide="cpu"></i></div>
+                <div class="brand-chip">SCHNEIDER</div>
+                <div class="ttl">Контактор Schneider LC1D09M7 9A 220V</div>
+                <div class="sku num">SKU LC1D09M7</div>
+                <div class="price">980 ₴</div>
+                <div class="qbreak">від 10 шт −9%</div>
+                <div class="actions">
+                  <button class="add-btn"><i data-lucide="shopping-cart"></i>Додати</button>
+                  <div class="qty"><button>−</button><span class="v">1</span><button>+</button></div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Trust row -->
+          <section class="trust">
+            <h3>Офіційний дистриб'ютор 40+ брендів</h3>
+            <div class="brands">
+              <span class="brand-mark">SCHNEIDER ELECTRIC</span>
+              <span class="brand-mark">ABB</span>
+              <span class="brand-mark">LEGRAND</span>
+              <span class="brand-mark">BOSCH</span>
+              <span class="brand-mark">MAKITA</span>
+              <span class="brand-mark">DeWALT</span>
+              <span class="brand-mark">HAGER</span>
+              <span class="brand-mark">IEK</span>
+              <span class="brand-mark">EATON</span>
+              <span class="brand-mark">WERKEL</span>
+            </div>
+          </section>
+
+        </div>
+      </div>
+
+      <!-- Pre-footer B2B CTA -->
+      <div class="prefooter">
+        <div>
+          <h2>Потрібен прайс для об'єкту?</h2>
+          <p class="sub">Надішліть список артикулів — повернемось з комерційною пропозицією з ПДВ за 1 робочий день.</p>
+          <button class="btn btn-primary btn-lg">Надіслати запит <i data-lucide="arrow-right" style="width:16px;height:16px;stroke-width:1.5"></i></button>
+        </div>
+        <form class="form" onsubmit="return false">
+          <div class="row2">
+            <input placeholder="Email" />
+            <input placeholder="+380 __ ___ __ __" />
+          </div>
+          <textarea placeholder="Список SKU або MPN, по одному в рядок:&#10;ABB SH202-C16 — 24 шт&#10;Schneider LC1D09M7 — 12 шт&#10;Legrand 752820 — 80 шт"></textarea>
+          <button class="btn btn-primary btn-md" style="align-self:flex-end">Надіслати <i data-lucide="send" style="width:14px;height:14px;stroke-width:1.5"></i></button>
+        </form>
+      </div>
+
+      <!-- Footer -->
+      <footer class="footer">
+        <div class="footer-cols">
+          <div>
+            <h4>Інформація</h4>
+            <ul>
+              <li><a>Про компанію</a></li>
+              <li><a>Гарантія</a></li>
+              <li><a>Сертифікати</a></li>
+              <li><a>Новини та статті</a></li>
+              <li><a>Вакансії</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4>Допомога</h4>
+            <ul>
+              <li><a>Як замовити</a></li>
+              <li><a>Оплата та доставка</a></li>
+              <li><a>Повернення товару</a></li>
+              <li><a>Питання-відповіді</a></li>
+              <li><a>Зворотній зв'язок</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4>Сервіси</h4>
+            <ul>
+              <li><a>Запит прайсу для об'єкту</a></li>
+              <li><a>Програма для електриків</a></li>
+              <li><a>Дилерам та оптовикам</a></li>
+              <li><a>Скачати прайс-лист</a></li>
+              <li><a>Карта сайту</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4>Контакти</h4>
+            <ul>
+              <li><a>+380 50 123-45-67</a></li>
+              <li><a>+380 67 123-45-67</a></li>
+              <li><a>info@elektronom.com.ua</a></li>
+              <li><a>м. Київ, вул. Промислова 12</a></li>
+              <li><a>Пн–Пт 9:00–18:00</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="footer-bot">
+          <span>© 2026 ЕЛЕКТРОНОМ. Усі права захищені.</span>
+          <div class="pay-icons">
+            <span>VISA</span>
+            <span>MASTERCARD</span>
+            <span>ПРИВАТ24</span>
+            <span>МОНО</span>
+            <span>НОВА ПОШТА</span>
+            <span>УКРПОШТА</span>
+          </div>
+        </div>
+      </footer>
+
+    </div>
+  </div>
+
+  <!-- ===================== MOBILE 375 ===================== -->
+  <div>
+    <div class="frame-label">Mobile 375</div>
+    <div class="mobile" data-screen-label="02 Mobile 375">
+
+      <!-- Topbar -->
+      <div class="m-topbar">
+        <span><b style="color:var(--text-primary)">UA</b> | RU • UAH</span>
+        <span style="display:inline-flex;align-items:center;gap:4px"><i data-lucide="user" style="width:12px;height:12px"></i>Вхід</span>
+      </div>
+
+      <!-- Header -->
+      <div class="m-header">
+        <button class="icon-btn"><i data-lucide="menu" style="width:22px;height:22px;stroke-width:1.5"></i></button>
+        <a class="logo" href="#">
+          <span class="bolt" style="width:20px;height:20px"><i data-lucide="zap" style="width:12px;height:12px;stroke-width:2.5"></i></span>
+          ЕЛЕКТРОНОМ<span class="dot">.</span>
+        </a>
+        <button class="icon-btn"><i data-lucide="search" style="width:20px;height:20px;stroke-width:1.5"></i></button>
+        <button class="icon-btn"><i data-lucide="shopping-cart" style="width:20px;height:20px;stroke-width:1.5"></i><span class="cart-badge">3</span></button>
+      </div>
+
+      <div class="m-content">
+
+        <!-- Drawer block (expanded only) -->
+        <div class="m-drawer-block">
+
+          <div class="m-drawer-expanded">
+            <div class="m-drawer-close"><i data-lucide="chevron-up"></i></div>
+
+            <!-- Promo banner with carousel indicators -->
+            <div class="m-promo">
+              <button class="carousel-arrow left" style="left:8px;width:28px;height:28px"><i data-lucide="chevron-left"></i></button>
+              <div class="m-promo-inner">
+                <i data-lucide="image"></i>
+                <div class="ttl">Промо-зона</div>
+                <div class="sub">буде заповнено акціями</div>
+              </div>
+              <button class="carousel-arrow right" style="right:8px;width:28px;height:28px"><i data-lucide="chevron-right"></i></button>
+              <div class="carousel-dots" style="bottom:10px">
+                <span class="dot active"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+              </div>
+            </div>
+
+            <!-- CTA cards -->
+            <div class="m-cta">
+              <div class="m-cta-top">
+                <i data-lucide="sliders-horizontal"></i>
+                <span class="cta-tag">GUIDED</span>
+              </div>
+              <div>
+                <h3>Підібрати обладнання</h3>
+                <p class="body">Майстер у 3 кроки</p>
+              </div>
+              <div style="display:flex;justify-content:flex-end"><a class="cta-link">Почати →</a></div>
+            </div>
+            <div class="m-cta">
+              <div class="m-cta-top">
+                <i data-lucide="file-check"></i>
+                <span class="cta-tag">B2B</span>
+              </div>
+              <div>
+                <h3>Запит прайсу</h3>
+                <p class="body">Список SKU → КП за 1 робочий день</p>
+              </div>
+              <div style="display:flex;justify-content:flex-end"><a class="cta-link">Надіслати →</a></div>
+            </div>
+
+            <!-- Bottom row -->
+            <div class="m-drawer-bottom">
+              <svg class="breaker-svg" width="72" height="112" viewBox="0 0 72 112" xmlns="http://www.w3.org/2000/svg">
+                <rect x="0.5" y="0.5" width="71" height="111" rx="6" fill="#F8F9FA" stroke="#C9D1DC" stroke-width="1"/>
+                <text x="36" y="13" text-anchor="middle" font-family="Inter" font-size="9" font-weight="700" fill="#6A7280" letter-spacing="0.5">C16</text>
+                <line x1="6" y1="18" x2="66" y2="18" stroke="#C9D1DC" stroke-width="1"/>
+                <rect x="3" y="36" width="4" height="1" fill="#E6EAF0"/>
+                <rect x="3" y="48" width="4" height="1" fill="#E6EAF0"/>
+                <rect x="3" y="60" width="4" height="1" fill="#E6EAF0"/>
+                <rect x="65" y="36" width="4" height="1" fill="#E6EAF0"/>
+                <rect x="65" y="48" width="4" height="1" fill="#E6EAF0"/>
+                <rect x="65" y="60" width="4" height="1" fill="#E6EAF0"/>
+                <rect x="20" y="22" width="32" height="56" rx="2" fill="#1A1F2B"/>
+                <line x1="20" y1="22" x2="52" y2="22" stroke="#0A0F18" stroke-width="1"/>
+                <rect x="24" y="24" width="24" height="28" rx="4" fill="#3B7BD9"/>
+                <line x1="27" y1="26" x2="45" y2="26" stroke="#5A95E8" stroke-width="1" stroke-linecap="round"/>
+                <circle cx="36" cy="38" r="3" fill="#FFFFFF"/>
+                <line x1="6" y1="82" x2="66" y2="82" stroke="#C9D1DC" stroke-width="1"/>
+                <circle cx="18" cy="97" r="5" fill="#6A7280"/>
+                <line x1="14.5" y1="97" x2="21.5" y2="97" stroke="#C9D1DC" stroke-width="1"/>
+                <line x1="18" y1="93.5" x2="18" y2="100.5" stroke="#C9D1DC" stroke-width="1"/>
+                <circle cx="54" cy="97" r="5" fill="#6A7280"/>
+                <line x1="50.5" y1="97" x2="57.5" y2="97" stroke="#C9D1DC" stroke-width="1"/>
+                <line x1="54" y1="93.5" x2="54" y2="100.5" stroke="#C9D1DC" stroke-width="1"/>
+              </svg>
+              <div class="theme-label">
+                <div class="top" style="font-size:13px">ТЕМА: <b>День</b></div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Category chips horizontal -->
+        <div class="m-chips">
+          <div class="m-chip active"><i data-lucide="zap"></i>Автоматичні вимикачі</div>
+          <div class="m-chip"><i data-lucide="plug"></i>Розетки</div>
+          <div class="m-chip"><i data-lucide="cable"></i>Кабель</div>
+          <div class="m-chip"><i data-lucide="lightbulb"></i>LED</div>
+          <div class="m-chip"><i data-lucide="server"></i>Щити</div>
+          <div class="m-chip"><i data-lucide="wrench"></i>Інструмент</div>
+          <div class="m-chip"><i data-lucide="drill"></i>Електроінструмент</div>
+          <div class="m-chip"><i data-lucide="gauge"></i>Вимірювальні</div>
+          <div class="m-chip"><i data-lucide="activity"></i>Лічильники</div>
+          <div class="m-chip"><i data-lucide="shield"></i>ПЗВ</div>
+          <div class="m-chip"><i data-lucide="house"></i>Розумний дім</div>
+          <div class="m-chip"><i data-lucide="cpu"></i>Автоматика</div>
+          <div class="m-chip"><i data-lucide="bell"></i>Сигналізація</div>
+          <div class="m-chip"><i data-lucide="video"></i>Відеоспостереження</div>
+        </div>
+
+        <!-- Value props 2x2 -->
+        <div class="m-vps">
+          <div class="m-vp"><i data-lucide="package"></i><div><div class="l1">10 000+ SKU</div><div class="l2">в наявності</div></div></div>
+          <div class="m-vp"><i data-lucide="layers"></i><div><div class="l1">від 10 шт</div><div class="l2">до −18%</div></div></div>
+          <div class="m-vp"><i data-lucide="file-text"></i><div><div class="l1">Юр. особам</div><div class="l2">з ПДВ</div></div></div>
+          <div class="m-vp"><i data-lucide="truck"></i><div><div class="l1">Нова Пошта</div><div class="l2">від 1 дня</div></div></div>
+        </div>
+
+        <!-- Categories grid -->
+        <section>
+          <div class="sec-head"><h2 style="font-size:20px;line-height:26px">Категорії</h2><a>Усі 34 →</a></div>
+          <div class="m-cat-grid">
+            <div class="m-cat-card"><i data-lucide="zap"></i><div><div class="nm">Автоматичні вимикачі</div><div class="ct">1 240 товарів</div></div></div>
+            <div class="m-cat-card"><i data-lucide="cable"></i><div><div class="nm">Кабель та провід</div><div class="ct">1 850 товарів</div></div></div>
+            <div class="m-cat-card"><i data-lucide="plug"></i><div><div class="nm">Розетки та вимикачі</div><div class="ct">890 товарів</div></div></div>
+            <div class="m-cat-card"><i data-lucide="lightbulb"></i><div><div class="nm">Освітлення LED</div><div class="ct">3 200 товарів</div></div></div>
+            <div class="m-cat-card"><i data-lucide="server"></i><div><div class="nm">Щити електричні</div><div class="ct">380 товарів</div></div></div>
+            <div class="m-cat-card"><i data-lucide="power"></i><div><div class="nm">Пускова апаратура</div><div class="ct">560 товарів</div></div></div>
+            <div class="m-cat-card"><i data-lucide="drill"></i><div><div class="nm">Електроінструмент</div><div class="ct">640 товарів</div></div></div>
+            <div class="m-cat-card"><i data-lucide="activity"></i><div><div class="nm">Лічильники</div><div class="ct">180 товарів</div></div></div>
+          </div>
+        </section>
+
+        <!-- Top sales -->
+        <section>
+          <div class="sec-head"><h2 style="font-size:20px;line-height:26px">Топ-продажі</h2><a>Усі →</a></div>
+        </section>
+        <div class="m-carousel">
+          <div class="m-pcard">
+            <div class="pimg"><span class="stock-pill">В наявності</span><i data-lucide="zap"></i></div>
+            <div class="brand-chip">ABB</div>
+            <div class="ttl">Автоматичний вимикач ABB SH202-C16 2P 16A</div>
+            <div class="price">412 ₴</div>
+            <div class="qbreak" style="font-size:11px;color:var(--accent);font-weight:500">від 10 шт −6%</div>
+          </div>
+          <div class="m-pcard">
+            <div class="pimg"><span class="stock-pill">В наявності</span><i data-lucide="cable"></i></div>
+            <div class="brand-chip">SCHNEIDER</div>
+            <div class="ttl">Кабель ВВГнг-LS 3×2.5 мм² 100м</div>
+            <div class="price">3 240 ₴</div>
+            <div class="qbreak" style="font-size:11px;color:var(--accent);font-weight:500">від 5 шт −8%</div>
+          </div>
+          <div class="m-pcard">
+            <div class="pimg"><span class="stock-pill">В наявності</span><i data-lucide="plug"></i></div>
+            <div class="brand-chip">LEGRAND</div>
+            <div class="ttl">Розетка Legrand Valena Life біла</div>
+            <div class="price">186 ₴</div>
+            <div class="qbreak" style="font-size:11px;color:var(--accent);font-weight:500">від 20 шт −12%</div>
+          </div>
+          <div class="m-pcard">
+            <div class="pimg"><span class="stock-pill">В наявності</span><i data-lucide="lightbulb"></i></div>
+            <div class="brand-chip">PHILIPS</div>
+            <div class="ttl">LED-панель Philips 40W 6500K</div>
+            <div class="price">1 280 ₴</div>
+            <div class="qbreak" style="font-size:11px;color:var(--accent);font-weight:500">від 10 шт −10%</div>
+          </div>
+        </div>
+
+        <!-- New arrivals -->
+        <section>
+          <div class="sec-head"><h2 style="font-size:20px;line-height:26px">Нові надходження</h2><a>Усі →</a></div>
+        </section>
+        <div class="m-carousel">
+          <div class="m-pcard">
+            <div class="pimg"><span class="stock-pill">В наявності</span><i data-lucide="shield"></i></div>
+            <div class="brand-chip">EATON</div>
+            <div class="ttl">ПЗВ Eaton PF6-25/2/003 25A 30мА</div>
+            <div class="price">1 480 ₴</div>
+            <div class="qbreak" style="font-size:11px;color:var(--accent);font-weight:500">від 5 шт −7%</div>
+          </div>
+          <div class="m-pcard">
+            <div class="pimg"><span class="stock-pill">В наявності</span><i data-lucide="house"></i></div>
+            <div class="brand-chip">WERKEL</div>
+            <div class="ttl">Розумний вимикач Werkel WL01-SW-2G Wi-Fi</div>
+            <div class="price">2 380 ₴</div>
+            <div class="qbreak" style="font-size:11px;color:var(--accent);font-weight:500">від 10 шт −8%</div>
+          </div>
+          <div class="m-pcard">
+            <div class="pimg"><span class="stock-pill">В наявності</span><i data-lucide="drill"></i></div>
+            <div class="brand-chip">MAKITA</div>
+            <div class="ttl">Перфоратор Makita HR2470 780W SDS-Plus</div>
+            <div class="price">5 240 ₴</div>
+            <div class="qbreak" style="font-size:11px;color:var(--accent);font-weight:500">від 3 шт −6%</div>
+          </div>
+          <div class="m-pcard">
+            <div class="pimg"><span class="stock-pill">В наявності</span><i data-lucide="cpu"></i></div>
+            <div class="brand-chip">SCHNEIDER</div>
+            <div class="ttl">Контактор Schneider LC1D09M7 9A 220V</div>
+            <div class="price">980 ₴</div>
+            <div class="qbreak" style="font-size:11px;color:var(--accent);font-weight:500">від 10 шт −9%</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Brand strip -->
+      <div class="m-brand-strip">
+        <span class="brand-mark">SCHNEIDER ELECTRIC</span>
+        <span class="brand-mark">ABB</span>
+        <span class="brand-mark">LEGRAND</span>
+        <span class="brand-mark">BOSCH</span>
+        <span class="brand-mark">MAKITA</span>
+        <span class="brand-mark">DeWALT</span>
+        <span class="brand-mark">HAGER</span>
+        <span class="brand-mark">IEK</span>
+        <span class="brand-mark">EATON</span>
+        <span class="brand-mark">WERKEL</span>
+      </div>
+
+      <!-- Pre-footer -->
+      <div class="m-prefooter">
+        <h2>Потрібен прайс для об'єкту?</h2>
+        <p class="sub">Надішліть список SKU — КП з ПДВ за 1 робочий день.</p>
+        <button class="btn btn-primary btn-md" style="width:100%">Надіслати запит <i data-lucide="arrow-right" style="width:14px;height:14px;stroke-width:1.5"></i></button>
+      </div>
+
+      <!-- Footer accordion -->
+      <div class="m-footer">
+        <div class="m-acc-row">Інформація <i data-lucide="chevron-down"></i></div>
+        <div class="m-acc-row">Допомога <i data-lucide="chevron-down"></i></div>
+        <div class="m-acc-row">Сервіси <i data-lucide="chevron-down"></i></div>
+        <div class="m-acc-row">Контакти <i data-lucide="chevron-down"></i></div>
+        <div class="m-footer-bot">© 2026 ЕЛЕКТРОНОМ</div>
+      </div>
+
+      <!-- Sticky bottom tabbar -->
+      <div class="m-tabbar">
+        <a class="m-tab active"><i data-lucide="layout-grid"></i>Каталог</a>
+        <a class="m-tab"><i data-lucide="search"></i>Пошук</a>
+        <a class="m-tab"><i data-lucide="shopping-cart"></i><span class="tb-badge">3</span>Кошик</a>
+        <a class="m-tab"><i data-lucide="user"></i>Акаунт</a>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+  if (window.lucide) lucide.createIcons();
+</script>
+</body>
+</html>
