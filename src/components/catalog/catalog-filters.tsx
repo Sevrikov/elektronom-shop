@@ -52,7 +52,7 @@ export default function CatalogFilters({
     params.delete('page')
     const qs = params.toString()
     startTransition(() => {
-      router.replace(`${pathname}${qs ? `?${qs}` : ''}`, { scroll: false })
+      router.replace(`${pathname}${qs ? `?${qs}` : ''}` as never, { scroll: false })
     })
   }, [searchParams, pathname, router, startTransition])
 
@@ -127,7 +127,7 @@ export default function CatalogFilters({
                   params.delete('page')
                   const qs = params.toString()
                   startTransition(() => {
-                    router.replace(`${pathname}${qs ? `?${qs}` : ''}`, { scroll: false })
+                    router.replace(`${pathname}${qs ? `?${qs}` : ''}` as never, { scroll: false })
                   })
                 }}
               />

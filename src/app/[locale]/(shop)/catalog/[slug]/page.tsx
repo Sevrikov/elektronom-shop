@@ -1,8 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { getTranslations } from 'next-intl/server'
+import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { isValidLocale } from '@/i18n/request'
-import { sidebarCategories } from '@/lib/constants'
 import { categoryFilters, defaultCategoryFilters, getBrandsForCategory, getPriceRange, getAttributeCounts } from '@/lib/catalog-data'
 import { getFilteredProducts, parseSearchParams } from '@/queries/products'
 import { getCategoryBySlug } from '@/queries/categories'
@@ -14,10 +13,10 @@ import ProductGrid from '@/components/catalog/product-grid'
 
 const PAGE_SIZE = 12
 
-// Generate static params from sidebar categories
-export function generateStaticParams() {
-  return sidebarCategories.map((cat) => ({ slug: cat.slug }))
-}
+
+// generateStaticParams на основе реальных DB данных добавим в задаче 1.16
+// Сейчас страница рендерится динамически (per-request)
+
 
 export async function generateMetadata({
   params,
@@ -26,16 +25,17 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale, slug } = await params
   if (!isValidLocale(locale)) return {}
-  const category = getCategoryBySlug(slug)
+  const category = await getCategoryBySlug(slug, locale)
   if (!category) return {}
   const t = await getTranslations({ locale, namespace: 'catalog' })
-  const loc = locale as Locale
 
   return {
-    title: t('metaTitle', { category: category.name[loc] }),
-    description: t('metaDescription', { category: category.name[loc] }),
+    title: t('metaTitle', { category: category.translations[0]?.name ?? slug }),
+    description: t('metaDescription', { category: category.translations[0]?.name ?? slug }),
   }
 }
+
+import { connection } from 'next/server'
 
 export default async function CategoryPage({
   params,
@@ -44,22 +44,33 @@ export default async function CategoryPage({
   params: Promise<{ locale: string; slug: string }>
   searchParams: Promise<Record<string, string | string[] | undefined>>
 }) {
+  await connection() // Opt out of prerendering
   const { locale, slug } = await params
+  setRequestLocale(locale)
   const sp = await searchParams
-  const category = getCategoryBySlug(slug)
+  const category = await getCategoryBySlug(slug, locale)
 
   if (!category) {
     notFound()
   }
 
   const t = await getTranslations({ locale, namespace: 'catalog' })
-  const loc = locale as Locale
+  const categoryName = category.translations[0]?.name ?? slug
 
   // Parse filters from URL
   const activeFilters = parseSearchParams(sp)
 
   // Get data
-  const { products, total } = getFilteredProducts(slug, activeFilters)
+  const { products, total } = await getFilteredProducts({
+    categorySlug: slug,
+    ...(activeFilters.brand?.[0] !== undefined && { brandSlug: activeFilters.brand[0] }),
+    ...(activeFilters.priceMin !== undefined && { priceMin: activeFilters.priceMin }),
+    ...(activeFilters.priceMax !== undefined && { priceMax: activeFilters.priceMax }),
+    ...(activeFilters.inStock !== undefined && { inStock: activeFilters.inStock }),
+    ...(activeFilters.sort !== undefined && { sort: activeFilters.sort }),
+    ...(activeFilters.page !== undefined && { page: activeFilters.page }),
+    locale,
+  })
   const filters = categoryFilters[slug] ?? defaultCategoryFilters
   const brandCounts = getBrandsForCategory(slug)
   const priceRange = getPriceRange(slug)
@@ -100,7 +111,7 @@ export default async function CategoryPage({
     const values = activeFilters[f.key]
     if (Array.isArray(values)) {
       for (const v of values) {
-        pills.push({ key: f.key, label: f.label[loc], value: v, displayValue: `${f.label[loc]}: ${v}` })
+        pills.push({ key: f.key, label: f.label[locale as Locale], value: v, displayValue: `${f.label[locale as Locale]}: ${v}` })
       }
     }
   }
@@ -108,7 +119,7 @@ export default async function CategoryPage({
   const breadcrumbs = [
     { name: t('breadcrumbs.home'), url: '/' },
     { name: t('breadcrumbs.catalog'), url: '/catalog' },
-    { name: category.name[loc] },
+    { name: categoryName },
   ]
 
   return (
@@ -116,11 +127,10 @@ export default async function CategoryPage({
       <Breadcrumbs items={breadcrumbs} locale={locale} />
 
       <h1 className="text-2xl font-bold mb-4" style={{ color: 'var(--color-text-primary)' }}>
-        {category.name[loc]}
+        {categoryName}
       </h1>
 
-      {/* Active filter pills */}
-      <ActiveFilters pills={pills} total={total} />
+      <ActiveFilters pills={pills} />
 
       {/* Main layout: sidebar filters + product grid */}
       <div className="flex gap-6 items-start mt-2">

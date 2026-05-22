@@ -29,7 +29,7 @@ const iconMap: Record<string, LucideIcon> = {
 export default function CategorySidebar() {
   const locale = useLocale() as Locale
   const t = useTranslations('sidebar')
-  const lp = (path: string) => `/${locale}${path}`
+  const lp = (path: string) => `/${locale}${path}` as never
 
   return (
     <aside className="hidden lg:block w-[280px] shrink-0 sticky top-[140px] self-start">

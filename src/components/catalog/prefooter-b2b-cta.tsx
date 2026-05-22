@@ -1,7 +1,7 @@
 'use client'
 
 import { useLocale } from 'next-intl'
-import { ArrowRight } from 'lucide-react'
+
 import type { Locale } from '@/types'
 
 export default function PrefooterB2bCta() {

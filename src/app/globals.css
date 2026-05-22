@@ -32,6 +32,10 @@
   --color-success: #2A9D4A;
   --color-success-subtle: #E7F5EC;
   --color-destructive: #DC2626;
+  --color-error: #DC2626;
+  --color-error-subtle: #FDF2F2;
+  --color-warning: #D97706;
+  --color-warning-subtle: #FEF3C7;
 
   /* ─── Shadows ─── */
   --shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.04);

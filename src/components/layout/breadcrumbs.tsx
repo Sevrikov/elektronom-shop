@@ -33,23 +33,20 @@ export default function Breadcrumbs({ items, locale }: BreadcrumbsProps) {
               <li key={i} className="flex items-center gap-1.5">
                 {i > 0 && (
                   <ChevronRight
-                    className="size-3 shrink-0"
+                    className="size-3 shrink-0 text-border-strong"
                     strokeWidth={1.5}
-                    style={{ color: 'var(--color-border-strong)' }}
                   />
                 )}
                 {isLast || !item.url ? (
                   <span
-                    className="font-medium"
-                    style={{ color: isLast ? 'var(--color-text-primary)' : 'var(--color-text-muted)' }}
+                    className={isLast ? 'font-medium text-text-primary' : 'font-medium text-text-muted'}
                   >
                     {item.name}
                   </span>
                 ) : (
                   <Link
                     href={`/${locale}${item.url}`}
-                    className="transition-colors hover:underline"
-                    style={{ color: 'var(--color-text-muted)' }}
+                    className="transition-colors hover:underline text-text-muted"
                   >
                     {item.name}
                   </Link>

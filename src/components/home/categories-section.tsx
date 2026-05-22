@@ -30,7 +30,7 @@ const categories: CategoryCard[] = [
 export default function CategoriesSection() {
   const locale = useLocale() as Locale
   const t = useTranslations('home.categories')
-  const lp = (path: string) => `/${locale}${path}`
+  const lp = (path: string) => `/${locale}${path}` as never
 
   return (
     <section>

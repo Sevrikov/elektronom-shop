@@ -28,7 +28,7 @@ export default function Pagination({ currentPage, totalPages }: PaginationProps)
     }
     const qs = params.toString()
     startTransition(() => {
-      router.replace(`${pathname}${qs ? `?${qs}` : ''}`, { scroll: false })
+      router.replace(`${pathname}${qs ? `?${qs}` : ''}` as never, { scroll: false })
     })
   }
 

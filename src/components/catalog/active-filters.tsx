@@ -14,10 +14,9 @@ interface ActiveFilterPill {
 
 interface ActiveFiltersProps {
   pills: ActiveFilterPill[]
-  total: number
 }
 
-export default function ActiveFilters({ pills, total }: ActiveFiltersProps) {
+export default function ActiveFilters({ pills }: ActiveFiltersProps) {
   const t = useTranslations('catalog')
   const router = useRouter()
   const pathname = usePathname()
@@ -51,7 +50,7 @@ export default function ActiveFilters({ pills, total }: ActiveFiltersProps) {
     params.delete('page')
     const qs = params.toString()
     startTransition(() => {
-      router.replace(`${pathname}${qs ? `?${qs}` : ''}`, { scroll: false })
+      router.replace(`${pathname}${qs ? `?${qs}` : ''}` as never, { scroll: false })
     })
   }
 
@@ -62,7 +61,7 @@ export default function ActiveFilters({ pills, total }: ActiveFiltersProps) {
     if (sort) params.set('sort', sort)
     const qs = params.toString()
     startTransition(() => {
-      router.replace(`${pathname}${qs ? `?${qs}` : ''}`, { scroll: false })
+      router.replace(`${pathname}${qs ? `?${qs}` : ''}` as never, { scroll: false })
     })
   }
 

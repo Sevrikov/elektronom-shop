@@ -1,6 +1,6 @@
 # MASTER_CONTEXT.md
 # Глобальный контекст для агентной разработки интернет-магазина (каталога)
-# Версия: 1.2 | Стек: Next.js 16 + TypeScript + PostgreSQL + Prisma + Tailwind CSS
+# Версия: 1.3 | Стек: Next.js 16 + TypeScript + PostgreSQL + Prisma 7 + Tailwind CSS
 # ⚠️ ОБЯЗАТЕЛЕН К ПРОЧТЕНИЮ ПЕРЕД ЛЮБЫМ ДЕЙСТВИЕМ. ОТКЛОНЕНИЯ ЗАПРЕЩЕНЫ.
 
 ---
@@ -61,9 +61,9 @@
 | Фреймворк | Next.js | 16.x | Remix, Nuxt, Vite SPA |
 | Язык | TypeScript | 5.x | JavaScript (*.js файлы запрещены) |
 | БД | PostgreSQL | 16.x | MySQL, MongoDB, SQLite |
-| ORM | Prisma | 5.x | TypeORM, Drizzle, raw SQL |
+| ORM | Prisma | 7.x | TypeORM, Drizzle, raw SQL |
 | Стили | Tailwind CSS | 4.x | Bootstrap, MUI, Ant Design, CSS Modules |
-| Состояние (клиент) | Zustand | 4.x | Redux, MobX, Jotai, Context для глобального стейта |
+| Состояние (клиент) | Zustand | 5.x | Redux, MobX, Jotai, Context для глобального стейта |
 | Формы | React Hook Form + Zod | latest | Formik, yup |
 | Изображения | next/image | встроен | <img> без next/image |
 | Шрифты | next/font | встроен | Google Fonts через <link> в <head> |
@@ -72,6 +72,43 @@
 | Поиск (опционально) | Algolia | latest | Elasticsearch (только если > 50k SKU) |
 | i18n | next-intl | latest | next-i18next, react-i18next |
 | Тесты | Vitest + Playwright | latest | Jest, Cypress |
+
+### Prisma 7 — обязательные правила проекта
+
+Этот проект использует **Prisma 7.x**. Не откатывать на Prisma 5.x без отдельного решения и обновления этого документа.
+
+```prisma
+// prisma/schema.prisma
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+```
+
+```typescript
+// prisma.config.ts — обязателен для Prisma 7 CLI
+import "dotenv/config"
+import { defineConfig, env } from "prisma/config"
+
+export default defineConfig({
+  schema: "prisma/schema.prisma",
+  datasource: {
+    url: env("DATABASE_URL"),
+  },
+})
+```
+
+Правила:
+- Prisma Client импортируется из сгенерированного клиента: `@/generated/prisma/client`.
+- Для PostgreSQL используется driver adapter `@prisma/adapter-pg`.
+- Единственный runtime singleton находится в `src/lib/prisma.ts`.
+- `new PrismaClient()` разрешён только в `src/lib/prisma.ts` и технических скриптах вроде `prisma/seed.ts`.
+- Сгенерированный каталог `src/generated/prisma` не редактировать руками и не коммитить, если он игнорируется `.gitignore`.
+- ID по умолчанию — `cuid2()`, не `cuid()`.
 
 ### Конфигурация TypeScript (tsconfig.json) — не изменять
 
@@ -110,6 +147,11 @@ const nextConfig: NextConfig = {
     formats: ['image/avif', 'image/webp'],
     remotePatterns: [
       // Добавлять только реальные домены изображений
+      {
+        protocol: 'https',
+        hostname: 'images.prom.ua',
+        pathname: '**',
+      },
     ],
   },
 
@@ -234,8 +276,8 @@ const product = await prisma.product.findUnique({
   }
 })
 
-// ⛔ ЗАПРЕЩЕНО — создание нового экземпляра Prisma в каждом файле
-const prisma = new PrismaClient() // ⛔ только в lib/prisma.ts
+// ⛔ ЗАПРЕЩЕНО — создание нового экземпляра Prisma в runtime-коде приложения
+const prisma = new PrismaClient() // ⛔ только в src/lib/prisma.ts; исключение — технические scripts/seed
 
 // ⛔ ЗАПРЕЩЕНО — мутации БД в GET-обработчиках
 ```
@@ -275,7 +317,7 @@ const id = params.id // может быть undefined или невалидно�
 await prisma.product.findUnique({ where: { id } }) // ⛔
 
 // ✅ ПРАВИЛЬНО
-const id = z.string().cuid().parse(params.id)
+const id = z.string().min(1).parse(params.id)
 ```
 
 ### 3.5 Запреты стилизации
@@ -821,17 +863,29 @@ model OrderItem {
 ```typescript
 // ✅ ОБЯЗАТЕЛЬНО — singleton Prisma client
 // src/lib/prisma.ts
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient } from '@/generated/prisma/client'
+import { PrismaPg } from '@prisma/adapter-pg'
 
-const globalForPrisma = globalThis as unknown as { prisma: PrismaClient }
+function createPrismaClient() {
+  const adapter = new PrismaPg({
+    connectionString: process.env.DATABASE_URL,
+  })
 
-export const prisma =
-  globalForPrisma.prisma ??
-  new PrismaClient({
+  return new PrismaClient({
+    adapter,
     log: process.env.NODE_ENV === 'development'
       ? ['query', 'error', 'warn']
       : ['error'],
   })
+}
+
+const globalForPrisma = globalThis as unknown as {
+  prisma: PrismaClient | undefined
+}
+
+export const prisma =
+  globalForPrisma.prisma ??
+  createPrismaClient()
 
 if (process.env.NODE_ENV !== 'production') {
   globalForPrisma.prisma = prisma
@@ -847,12 +901,15 @@ const order = await prisma.$transaction(async (tx) => {
   const newOrder = await tx.order.create({ data: orderData })
   // 2. Создать позиции
   await tx.orderItem.createMany({ data: itemsData })
-  // 3. Уменьшить остатки
+  // 3. Уменьшить остатки (защищённо от race conditions)
   for (const item of items) {
-    await tx.product.update({
-      where: { id: item.productId },
+    const updated = await tx.product.updateMany({
+      where: { id: item.productId, stock: { gte: item.quantity } },
       data: { stock: { decrement: item.quantity } }
     })
+    if (updated.count === 0) {
+      throw new Error(`Товар ${item.productId} закінчився`)
+    }
   }
   return newOrder
 })
@@ -1224,7 +1281,9 @@ import { z } from 'zod'
 
 // ✅ Схема валидации — всегда перед действием
 const AddToCartSchema = z.object({
-  productId: z.string().cuid(),
+  // ⛔ z.string().cuid() — НЕ ИСПОЛЬЗОВАТЬ: валидирует старый cuid-формат (c...), а БД использует cuid2
+  // ✅ z.string().min(1) — правильно для cuid2
+  productId: z.string().min(1),
   quantity: z.number().int().min(1).max(99),
 })
 
@@ -1889,9 +1948,14 @@ Zustand store — только для UI-состояния корзины (от
 
 ### Zustand — правила использования
 
+> ⚠️ **Разделение сторов (важно):**
+> - `store/cart-store.ts` — **только** `isDrawerOpen / openDrawer / closeDrawer`
+> - `store/ui-store.ts` — **только** `isMobileMenuOpen / isSearchOpen`
+> - Реальные данные корзины (товары) — в БД (CartItem) или cookie, **не в Zustand**
+
 ```typescript
 // src/store/cart-store.ts
-// ✅ Zustand только для UI-состояния
+// ✅ Zustand только для UI-состояния корзины (drawer)
 
 import { create } from 'zustand'
 
@@ -1905,6 +1969,28 @@ export const useCartUIStore = create<CartUIStore>((set) => ({
   isDrawerOpen: false,
   openDrawer: () => set({ isDrawerOpen: true }),
   closeDrawer: () => set({ isDrawerOpen: false }),
+}))
+
+// src/store/ui-store.ts
+// ✅ Zustand для прочего UI-состояния
+import { create } from 'zustand'
+
+interface UIStore {
+  isMobileMenuOpen: boolean
+  isSearchOpen: boolean
+  openMobileMenu: () => void
+  closeMobileMenu: () => void
+  openSearch: () => void
+  closeSearch: () => void
+}
+
+export const useUIStore = create<UIStore>((set) => ({
+  isMobileMenuOpen: false,
+  isSearchOpen: false,
+  openMobileMenu: () => set({ isMobileMenuOpen: true }),
+  closeMobileMenu: () => set({ isMobileMenuOpen: false }),
+  openSearch: () => set({ isSearchOpen: true }),
+  closeSearch: () => set({ isSearchOpen: false }),
 }))
 
 // ⛔ ЗАПРЕЩЕНО — хранить товары корзины в Zustand (потеряются при перезагрузке)
@@ -1925,7 +2011,9 @@ import { sendOrderConfirmation } from '@/lib/email'
 
 const CheckoutSchema = z.object({
   items: z.array(z.object({
-    productId: z.string().cuid(),
+    // ⛔ z.string().cuid() — НЕ ИСПОЛЬЗОВАТЬ: валидирует старый cuid, а БД использует cuid2
+    // ✅ z.string().min(1) — правильно для cuid2
+    productId: z.string().min(1),
     quantity: z.number().int().min(1).max(99),
   })).min(1),
   customer: z.object({
@@ -2011,15 +2099,26 @@ export async function createOrder(
         select: { id: true, number: true },
       })
 
-      // 5. Уменьшение остатков
-      await Promise.all(
+      // 5. Уменьшение остатков (защищённо от concurrent заказов)
+      const decrements = await Promise.all(
         parsed.data.items.map(item =>
-          tx.product.update({
-            where: { id: item.productId },
+          tx.product.updateMany({
+            // ✅ where: stock >= quantity — защита от race condition:
+            // если два заказа одновременно купили последний товар — updateMany вернёт count=0
+            // … и тогда мы бросаем ошибку вместо того чтобы stock ушёл в минус
+            where: { id: item.productId, stock: { gte: item.quantity } },
             data: { stock: { decrement: item.quantity } },
           })
         )
       )
+      // ✅ Проверка: если хоть один updateMany обновил 0 строк — товар уже купили до нас
+      for (let i = 0; i < decrements.length; i++) {
+        if (decrements[i].count === 0) {
+          const item = parsed.data.items[i]!
+          const product = products.find(p => p.id === item.productId)
+          throw new Error(`Товар "${product?.translations[0]?.name}" вже розпродан`)
+        }
+      }
 
       return newOrder
     })
@@ -2158,6 +2257,33 @@ NEXT_PUBLIC_ALGOLIA_SEARCH_KEY=""     # ✅ Search-Only ключ — тольк�
 ```
 
 ### Правила ENV переменных
+
+> ⚠️ **Vercel / Serverless деплой — connection pooling обязателен**
+>
+> В serverless окружении каждый вызов функции открывает **новое** соединение с PostgreSQL.
+> При нагрузке PostgreSQL исчерпает пул соединений (`too many connections`) и сайт упадёт.
+>
+> **Решение (выбрать одно):**
+> - [Prisma Accelerate](https://www.prisma.io/data-platform/accelerate) — встроенный пулинг, рекомендован для Vercel
+> - PgBouncer — внешний пулер (Supabase, Railway включают по умолчанию)
+> - Параметр строки подключения: `?connection_limit=1&pool_timeout=20`
+>
+> ```bash
+> # .env — для Vercel + Prisma Accelerate:
+> DATABASE_URL="prisma://accelerate.prisma-data.net/?api_key=..."
+> DIRECT_URL="postgresql://USER:PASSWORD@HOST:5432/DB_NAME"  # для миграций
+> ```
+>
+> ```prisma
+> // prisma/schema.prisma — при использовании Accelerate/PgBouncer
+> datasource db {
+>   provider  = "postgresql"
+>   url       = env("DATABASE_URL")
+>   directUrl = env("DIRECT_URL")  // ✅ для prisma migrate
+> }
+> ```
+>
+> 🛑 **СТОП-СИГНАЛ:** Если деплой на Vercel/serverless — CONNECTION POOLING НЕ ОПЦИОНАЛЕН.
 
 ```typescript
 // ✅ NEXT_PUBLIC_ — только для клиентского кода (видны в браузере)
@@ -2328,7 +2454,7 @@ describe('getDiscountPercent', () => {
 □ Server Action возвращает { success, error? } — не бросает исключения в UI
 □ Входные данные Server Action — валидируются через Zod перед обработкой
 □ Проверка авторизации — в начале каждого Server Action
-□ prisma импортируется ТОЛЬКО из @/lib/prisma — не создаётся новый экземпляр
+□ prisma в runtime-коде импортируется ТОЛЬКО из @/lib/prisma — новый экземпляр разрешён только в src/lib/prisma.ts и технических scripts/seed
 ```
 
 ### При написании TypeScript
@@ -2346,7 +2472,7 @@ describe('getDiscountPercent', () => {
 ```
 🛑 Пишу fetch() в useEffect Client Component → нужен Server Component
 🛑 Импортирую prisma в файл с 'use client' → разделить на server/client
-🛑 Создаю новый PrismaClient() → использовать @/lib/prisma
+🛑 Создаю новый PrismaClient() в app/components/actions/queries/lib → использовать @/lib/prisma
 🛑 Использую any → найти или описать правильный тип
 🛑 Пишу style={{}} → использовать Tailwind классы
 🛑 Хардкожу текст кнопки/лейбла → использовать t()
@@ -2359,6 +2485,7 @@ describe('getDiscountPercent', () => {
 
 🛑 Next.js 16 специфичные:
 🛑 Пишу export const revalidate = N → заменить на 'use cache' + cacheLife()
+   ✅ НЕ путать с revalidateTag(...) — revalidateTag разрешён и используется в actions/
 🛑 Пишу export const dynamic = 'force-dynamic' → просто не используй 'use cache'
 🛑 Использую experimental.ppr в next.config → удалить, использовать cacheComponents
 🛑 Создаю/редактирую middleware.ts → файл называется proxy.ts в Next.js 16
@@ -2384,6 +2511,7 @@ describe('getDiscountPercent', () => {
 | 1.0 | 2025-04 | Первоначальная версия |
 | 1.1 | 2026-04 | Патч Algolia: §20, двухключевая архитектура, ALGOLIA_ADMIN_KEY, мультиязычные индексы |
 | 1.2 | 2026-04 | Миграция на Next.js 16: cacheComponents/'use cache' вместо PPR/revalidate, proxy.ts вместо middleware.ts, Turbopack stable, React Compiler stable, cuid→cuid2, CartItem в схеме, hooks/ папка, instrumentation.ts, AGENTS.md, обновлён §7/§12/§13/§14/§16/§19 |
+| 1.3 | 2026-05 | Актуализация обязательного стека: Prisma 7.x и Zustand 5.x; добавлены правила Prisma 7 (`prisma.config.ts`, `prisma-client`, `@prisma/adapter-pg`, generated client `src/generated/prisma`); уточнено исключение для `new PrismaClient()` в технических scripts/seed |
 
 ---
 *MASTER_CONTEXT.md — единственный источник истины для агентной разработки.*
@@ -2602,6 +2730,7 @@ export async function toggleProductActive(id: string, isActive: boolean) {
 // Поиск идёт браузер → Algolia напрямую, минуя Next.js сервер (~5ms).
 'use client'
 
+import Image from 'next/image'
 import { InstantSearch, SearchBox, Hits, Configure } from 'react-instantsearch'
 import algoliasearch from 'algoliasearch/lite'
 import { useLocale } from 'next-intl'
@@ -2635,7 +2764,14 @@ function ProductSearchHit({ hit }: { hit: AlgoliaProductRecord }) {
   return (
     <article className="flex items-center gap-3 p-2 hover:bg-gray-50">
       {hit.image && (
-        <img src={hit.image} alt={hit.name} className="h-12 w-12 rounded object-cover" />
+        // ✅ next/image обязателен даже в Client Components
+        <Image
+          src={hit.image}
+          alt={hit.name}
+          width={48}
+          height={48}
+          className="h-12 w-12 rounded object-cover"
+        />
       )}
       <div>
         <p className="text-sm font-medium text-gray-900">{hit.name}</p>

@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useLocale, useTranslations } from 'next-intl'
+import { useLocale } from 'next-intl'
 import { ChevronRight, ShoppingCart, Check } from 'lucide-react'
 import type { DemoProduct } from '@/lib/constants'
 import type { Locale } from '@/types'
@@ -76,7 +76,7 @@ interface ProductCarouselProps {
 
 export default function ProductCarousel({ title, viewAllText, viewAllHref, products }: ProductCarouselProps) {
   const locale = useLocale() as Locale
-  const lp = (path: string) => `/${locale}${path}`
+  const lp = (path: string) => `/${locale}${path}` as never
 
   return (
     <section>

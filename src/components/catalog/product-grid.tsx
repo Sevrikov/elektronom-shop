@@ -4,12 +4,12 @@ import { useState, useTransition } from 'react'
 import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 import { useTranslations, useLocale } from 'next-intl'
 import { LayoutGrid, List, ChevronDown, Package } from 'lucide-react'
-import type { CatalogProduct, Locale } from '@/types'
-import ProductCard from '@/components/product/product-card'
+import type { Locale } from '@/types'
+import ProductCard, { type PrismaProductCard } from '@/components/product/product-card'
 import Pagination from '@/components/shared/pagination'
 
 interface ProductGridProps {
-  products: CatalogProduct[]
+  products: PrismaProductCard[]
   total: number
   currentPage: number
   pageSize: number
@@ -37,7 +37,7 @@ export default function ProductGrid({ products, total, currentPage, pageSize }: 
     params.delete('page')
     const qs = params.toString()
     startTransition(() => {
-      router.replace(`${pathname}${qs ? `?${qs}` : ''}`, { scroll: false })
+      router.replace(`${pathname}${qs ? `?${qs}` : ''}` as never, { scroll: false })
     })
   }
 

@@ -8,7 +8,7 @@ import type { Locale } from '@/types'
 export default function MobileNav() {
   const locale = useLocale() as Locale
   const t = useTranslations('mobile')
-  const lp = (path: string) => `/${locale}${path}`
+  const lp = (path: string) => `/${locale}${path}` as never
 
   const tabs = [
     { label: t('catalog'), icon: LayoutGrid, href: '/catalog' },

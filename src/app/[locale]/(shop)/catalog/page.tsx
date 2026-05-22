@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { getTranslations } from 'next-intl/server'
+import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { isValidLocale } from '@/i18n/request'
 import { sidebarCategories } from '@/lib/constants'
 import { warehouseChips } from '@/lib/catalog-hub-data'
@@ -12,6 +12,7 @@ import ProjectLists from '@/components/catalog/project-lists'
 import { FeaturedCategories, AllCategoriesGrid, BrandsStrip } from '@/components/catalog/catalog-hub-blocks'
 import PrefooterB2bCta from '@/components/catalog/prefooter-b2b-cta'
 import { Package, Layers, FileText, Truck } from 'lucide-react'
+
 
 export async function generateMetadata({
   params,
@@ -28,12 +29,16 @@ export async function generateMetadata({
   }
 }
 
+import { connection } from 'next/server'
+
 export default async function CatalogPage({
   params,
 }: {
   params: Promise<{ locale: string }>
 }) {
+  await connection() // Opt out of prerendering to avoid Suspense errors with next-intl
   const { locale } = await params
+  setRequestLocale(locale)
   const t = await getTranslations({ locale, namespace: 'catalog' })
   const loc = locale as Locale
 
@@ -90,7 +95,7 @@ export default async function CatalogPage({
                   </div>
                 ))}
                 <Link
-                  href={`/${locale}/warehouses`}
+                  href={`/${locale}/catalog` as `/${string}/catalog`}
                   className="text-[12px] font-semibold ml-3 hover:underline"
                   style={{ color: '#3B7BD9' }}
                 >

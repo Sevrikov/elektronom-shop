@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useCallback } from 'react'
 
 interface PriceRangeFilterProps {
   min: number
@@ -14,11 +14,18 @@ export default function PriceRangeFilter({ min, max, currentMin, currentMax, onC
   const [localMin, setLocalMin] = useState(currentMin ?? min)
   const [localMax, setLocalMax] = useState(currentMax ?? max)
 
-  // Sync with external props
-  useEffect(() => {
+  const [prevProps, setPrevProps] = useState({ currentMin, currentMax, min, max })
+
+  if (
+    prevProps.currentMin !== currentMin ||
+    prevProps.currentMax !== currentMax ||
+    prevProps.min !== min ||
+    prevProps.max !== max
+  ) {
+    setPrevProps({ currentMin, currentMax, min, max })
     setLocalMin(currentMin ?? min)
     setLocalMax(currentMax ?? max)
-  }, [currentMin, currentMax, min, max])
+  }
 
   const handleApply = useCallback(() => {
     const validMin = Math.max(min, Math.min(localMin, localMax))

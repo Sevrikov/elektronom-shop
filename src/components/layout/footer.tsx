@@ -8,7 +8,7 @@ import type { Locale } from '@/types'
 export default function Footer() {
   const locale = useLocale() as Locale
   const t = useTranslations('footer')
-  const lp = (path: string) => `/${locale}${path}`
+  const lp = (path: string) => `/${locale}${path}` as never
 
   const columns = [
     {

@@ -1,6 +1,6 @@
 'use client'
 
-import { Folder, Plus, ArrowRight } from 'lucide-react'
+import { Folder, Plus } from 'lucide-react'
 import { projectLists } from '@/lib/catalog-hub-data'
 import type { Locale } from '@/types'
 
