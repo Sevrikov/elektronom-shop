@@ -1,0 +1,176 @@
+{
+  "generated_at": "2026-05-23T00:00:00+03:00",
+  "project_root": "C:\\Users\\sevri\\Сайт\\elektronom",
+  "languages": [
+    {
+      "name": "TypeScript",
+      "extensions": [".ts", ".tsx"],
+      "file_count": 111
+    },
+    {
+      "name": "Markdown",
+      "extensions": [".md"],
+      "file_count": 43
+    },
+    {
+      "name": "JSON",
+      "extensions": [".json"],
+      "file_count": 8
+    },
+    {
+      "name": "JavaScript/ESM config",
+      "extensions": [".mjs"],
+      "file_count": 4
+    },
+    {
+      "name": "SQL",
+      "extensions": [".sql"],
+      "file_count": 3
+    },
+    {
+      "name": "HTML/MHTML reference",
+      "extensions": [".html", ".mhtml"],
+      "file_count": 5
+    },
+    {
+      "name": "Prisma schema",
+      "extensions": [".prisma"],
+      "file_count": 1
+    },
+    {
+      "name": "CSS",
+      "extensions": [".css"],
+      "file_count": 1
+    }
+  ],
+  "primary_language": "TypeScript",
+  "frameworks": [
+    { "name": "Next.js", "version": "16.2.3", "source": "package.json" },
+    { "name": "React", "version": "19.2.4", "source": "package.json" },
+    { "name": "Prisma", "version": "7.8.0", "source": "package.json" },
+    { "name": "Tailwind CSS", "version": "4", "source": "package.json" },
+    { "name": "NextAuth", "version": "5.0.0-beta.31", "source": "package.json" },
+    { "name": "next-intl", "version": "4.9.1", "source": "package.json" },
+    { "name": "Zustand", "version": "5.0.13", "source": "package.json" },
+    { "name": "Algolia Search", "version": "5.52.1", "source": "package.json" }
+  ],
+  "package_manager": "npm",
+  "entry_points": [
+    { "path": "src/app/layout.tsx", "type": "root_layout" },
+    { "path": "src/app/[locale]/layout.tsx", "type": "locale_layout" },
+    { "path": "src/app/[locale]/page.tsx", "type": "home_page" },
+    { "path": "src/app/api/auth/[...nextauth]/route.ts", "type": "route_handler" },
+    { "path": "src/proxy.ts", "type": "locale_proxy" },
+    { "path": "src/app/robots.ts", "type": "seo_route" },
+    { "path": "src/app/sitemap.ts", "type": "seo_route" },
+    { "path": "instrumentation.ts", "type": "instrumentation" },
+    { "path": "next.config.ts", "type": "next_config" },
+    { "path": "prisma.config.ts", "type": "prisma_config" },
+    { "path": "prisma/seed.ts", "type": "seed_script" }
+  ],
+  "config_files": [
+    "AGENTS.md",
+    "CLAUDE.md",
+    "components.json",
+    "eslint.config.mjs",
+    "next.config.ts",
+    "package.json",
+    "postcss.config.mjs",
+    "prisma.config.ts",
+    "tsconfig.json",
+    ".env.example"
+  ],
+  "ci_cd": [],
+  "docker": {},
+  "database_hints": [
+    { "path": "prisma/schema.prisma", "type": "prisma_schema" },
+    { "path": "prisma/migrations/20260510111405_init", "type": "migration" },
+    { "path": "prisma/migrations/20260521130000_add_product_attributes_gin_index", "type": "migration" },
+    { "path": "prisma/migrations/20260522062352_add_order_counter", "type": "migration" },
+    { "path": "prisma/seed.ts", "type": "seed_script" }
+  ],
+  "test_framework": null,
+  "test_file_count": 0,
+  "modules": [
+    "app-router",
+    "i18n-routing",
+    "auth",
+    "catalog",
+    "product-page",
+    "cart",
+    "checkout-orders",
+    "account",
+    "search",
+    "admin",
+    "design-system",
+    "documentation-tz"
+  ],
+  "total_files": 201,
+  "external_integrations": [
+    "PostgreSQL",
+    "NextAuth",
+    "Google OAuth",
+    "Facebook OAuth",
+    "Algolia",
+    "Resend",
+    "payment provider placeholder",
+    "Vercel",
+    "images.prom.ua",
+    "placehold.co"
+  ],
+  "quality_gates": {
+    "npm run lint": {
+      "status": "fail",
+      "summary": "src/components/product/product-reviews.tsx:70:2 Parsing error"
+    },
+    "npx tsc --noEmit": {
+      "status": "fail",
+      "summary": "syntax errors in src/components/product/product-reviews.tsx lines 70-80"
+    },
+    "npx prisma validate": {
+      "status": "pass",
+      "summary": "Prisma schema is valid"
+    },
+    "npm run build": {
+      "status": "fail",
+      "summary": "Turbopack parse error at src/components/product/product-reviews.tsx:70:3"
+    }
+  },
+  "organization_suggestion": {
+    "granularity": "hybrid",
+    "rationale": "Проект сочетает route-driven App Router, доменные Server Actions, query modules and feature components; документацию лучше вести гибридно: верхний уровень feature/module, внутри use-cases/routes/contracts.",
+    "signals": [
+      {
+        "type": "endpoint",
+        "evidence": [
+          "src/app/[locale]/(shop)/catalog/page.tsx",
+          "src/app/[locale]/(shop)/product/[slug]/page.tsx",
+          "src/app/[locale]/(shop)/checkout/page.tsx",
+          "src/app/api/auth/[...nextauth]/route.ts"
+        ]
+      },
+      {
+        "type": "module",
+        "evidence": [
+          "src/actions",
+          "src/queries",
+          "src/components/cart",
+          "src/components/product",
+          "src/components/catalog",
+          "src/lib"
+        ]
+      },
+      {
+        "type": "use-case",
+        "evidence": [
+          "src/actions/cart.ts",
+          "src/actions/order.ts",
+          "src/actions/auth.ts",
+          "src/actions/search.ts",
+          "src/actions/user.ts"
+        ]
+      }
+    ],
+    "features": []
+  }
+}

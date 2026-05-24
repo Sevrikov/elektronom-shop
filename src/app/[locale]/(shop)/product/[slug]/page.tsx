@@ -12,8 +12,9 @@ import { Check, X, Package, Truck, RotateCcw, ShieldCheck } from 'lucide-react'
 import { isValidLocale } from '@/i18n/request'
 import { getProductBySlug } from '@/queries/products'
 import { prisma } from '@/lib/prisma'
-import { formatPrice, getDiscountPercent } from '@/lib/utils'
+import { formatPrice, getDiscountPercent, getSiteUrl } from '@/lib/utils'
 import type { Locale } from '@/types'
+import { auth } from '@/lib/auth'
 
 import { ProductGallery } from '@/components/product/product-gallery'
 import { ProductAttributes } from '@/components/product/product-attributes'
@@ -59,7 +60,7 @@ export async function generateMetadata({
     translation?.description?.slice(0, 160) ??
     undefined
 
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://elektronom.com.ua'
+  const baseUrl = getSiteUrl()
 
   return {
     title: `${name} — купити | ЕЛЕКТРОНОМ`,
@@ -154,6 +155,9 @@ export default async function ProductPage({
   const product = await getProductBySlug(slug, locale)
   if (!product) notFound()
 
+  const session = await auth()
+  const currentUser = session?.user ? { name: session.user.name ?? '', email: session.user.email ?? '' } : null
+
   const loc = locale as Locale
   const translation = product.translations[0]
   const name = translation?.name ?? product.sku
@@ -179,10 +183,10 @@ export default async function ProductPage({
   )
 
   const breadcrumbs = [
-    { name: loc === 'ru' ? 'Главная' : 'Головна', url: `/${locale}` },
-    { name: loc === 'ru' ? 'Каталог' : 'Каталог', url: `/${locale}/catalog` },
+    { name: loc === 'ru' ? 'Главная' : 'Головна', url: '/' },
+    { name: loc === 'ru' ? 'Каталог' : 'Каталог', url: '/catalog' },
     ...(categoryName
-      ? [{ name: categoryName, url: `/${locale}/catalog/${categorySlug}` }]
+      ? [{ name: categoryName, url: `/catalog/${categorySlug}` }]
       : []),
     { name },
   ]
@@ -389,9 +393,11 @@ export default async function ProductPage({
             )}
 
             <ProductReviews
+              productId={product.id}
               initialReviews={product.reviews}
               locale={locale}
               productName={name}
+              currentUser={currentUser}
             />
           </div>
 

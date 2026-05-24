@@ -52,6 +52,7 @@ export function CartDrawer({ locale }: CartDrawerProps) {
     startTransition(async () => {
       await clearCart()
       setItems([])
+      useCartUIStore.getState().triggerCartUpdate()
     })
   }
 

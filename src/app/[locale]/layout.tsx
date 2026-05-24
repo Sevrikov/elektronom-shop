@@ -8,6 +8,7 @@ import Header from '@/components/layout/header'
 import Footer from '@/components/layout/footer'
 import MobileNav from '@/components/layout/mobile-nav'
 import { CartDrawer } from '@/components/cart/cart-drawer'
+import { getSiteUrl } from '@/lib/utils'
 
 const inter = Inter({
   variable: '--font-sans',
@@ -29,6 +30,7 @@ export async function generateMetadata({
   const t = await getTranslations({ locale, namespace: 'meta' })
 
   return {
+    metadataBase: new URL(getSiteUrl()),
     title: t('title'),
     description: t('description'),
     openGraph: {

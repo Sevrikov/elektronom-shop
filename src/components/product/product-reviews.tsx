@@ -1,7 +1,9 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { Star, X, Check } from 'lucide-react'
+import { useState, useTransition } from 'react'
+import { Star, X, Check, Loader2 } from 'lucide-react'
+import Link from 'next/link'
+import { submitProductReview } from '@/actions/user'
 
 interface ReviewUser {
   name: string | null
@@ -14,78 +16,45 @@ interface Review {
   comment: string | null
   createdAt: Date | string
   user: ReviewUser
-  advantages?: string
-  disadvantages?: string
+  advantages?: string | null
+  disadvantages?: string | null
+  verifiedPurchase?: boolean
+}
+
+interface CurrentUser {
+  name: string
+  email: string
 }
 
 interface ProductReviewsProps {
+  productId: string
   initialReviews: Review[]
   locale: string
   productName: string
+  currentUser: CurrentUser | null
 }
 
-const SEED_REVIEWS: Review[] = [
-  {
-    id: 'seed-1',
-    rating: 5,
-    createdAt: '2026-05-10T12:00:00.000Z',
-    user: { name: 'Олександр К.', avatar: null },
-    comment: 'Швидко відправили, товар відповідає опису. Брав для планового обслуговування.',
-    advantages: 'Оригінальна упаковка, нормальна ціна',
-    disadvantages: 'Не помітив',
-  },
-  {
-    id: 'seed-2',
-    rating: 5,
-    createdAt: '2026-04-15T10:30:00.000Z',
-    user: { name: 'Андрій К.', avatar: null },
-    comment: 'Брав для системи освітлення складу. Працює тихо, без характерного гудіння. Котушка 24В DC – зручно живити від ДБЖ. Якість на висоті.',
-    advantages: 'Тиха робота, 24V DC',
-    disadvantages: 'Немає',
-  },
-  {
-    id: 'seed-3',
-    rating: 4,
-    createdAt: '2026-03-24T15:45:00.000Z',
-    user: { name: 'Сергій П.', avatar: null },
-    comment: 'Замовляв 8 штук для проекту автоматизації. Дійшло швидко, упаковка цілісна. Усі працюють вже два тижні. Маркування чітке, монтаж на DIN-рейку простий.',
-    advantages: 'Ціна/якість, простий монтаж',
-    disadvantages: 'Клеми трохи дрібні',
-  },
-  {
-    id: 'seed-4',
-    rating: 4,
-    createdAt: '2026-02-18T09:20:00.000Z',
-    user: { name: 'Олена М.', avatar: null },
-    comment: "Хороший контактор, не шумить. Зняла одну зірочку за те, що клеми трохи тугі – викрутка з м'яким жалом не підійшла. В цілому — якісний оригінальний товар.",
-    advantages: 'Якість, відсутність шуму',
-    disadvantages: 'Тугі гвинтові затискачі',
-  },
-]
-
-export function ProductReviews({ initialReviews, locale, productName }: ProductReviewsProps) {
+export function ProductReviews({
+  productId,
+  initialReviews,
+  locale,
+  productName,
+  currentUser,
+}: ProductReviewsProps) {
   const loc = locale === 'ru' ? 'ru' : 'uk'
-  const [mounted, setMounted] = useState(false)
-
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setMounted(true)
-  }, [])
-
-  const isDevOrStaging = typeof window !== 'undefined' && 
-    (window.location.hostname.includes('localhost') || 
-     window.location.hostname.includes('vercel.app'))
-
-  const reviews = (initialReviews.length === 0 && mounted && isDevOrStaging) ? SEED_REVIEWS : initialReviews
+  const reviews = initialReviews
+  const showWriteButton = true
 
   const [activeFilter, setActiveFilter] = useState<'all' | 'positive' | 'negative'>('all')
   const [modalOpen, setModalOpen] = useState(false)
   const [formSubmitted, setFormSubmitted] = useState(false)
   const [newRating, setNewRating] = useState(5)
-  const [newName, setNewName] = useState('')
+  const [newName, setNewName] = useState(currentUser?.name ?? '')
   const [newComment, setNewComment] = useState('')
   const [newAdv, setNewAdv] = useState('')
   const [newDisadv, setNewDisadv] = useState('')
+  const [submitError, setSubmitError] = useState<string | null>(null)
+  const [isPending, startTransition] = useTransition()
 
   // Translation helpers
   const t = {
@@ -105,7 +74,15 @@ export function ProductReviews({ initialReviews, locale, productName }: ProductR
     ratingLabel: loc === 'ru' ? 'Ваша оценка' : 'Ваша оцінка',
     commentLabel: loc === 'ru' ? 'Отзыв' : 'Відгук',
     submitBtn: loc === 'ru' ? 'Отправить' : 'Надіслати',
-    successMsg: loc === 'ru' ? 'Спасибо! Ваш отзыв отправлен на модерацию.' : 'Дякуємо! Ваш відгук надіслано на модерацію.',
+    successMsg:
+      loc === 'ru'
+        ? 'Спасибо! Ваш отзыв отправлен на модерацию.'
+        : 'Дякуємо! Ваш відгук надіслано на модерацію.',
+    loginPrompt:
+      loc === 'ru'
+        ? 'Чтобы оставить отзыв, пожалуйста, войдите в аккаунт.'
+        : 'Щоб залишити відгук, будь ласка, увійдіть в акаунт.',
+    loginBtn: loc === 'ru' ? 'Войти' : 'Увійти',
   }
 
   // Filter logic
@@ -117,9 +94,10 @@ export function ProductReviews({ initialReviews, locale, productName }: ProductR
 
   // Calculate summary metrics
   const totalCount = reviews.length
-  const averageRating = totalCount > 0
-    ? Number((reviews.reduce((acc, r) => acc + r.rating, 0) / totalCount).toFixed(1))
-    : 0
+  const averageRating =
+    totalCount > 0
+      ? Number((reviews.reduce((acc, r) => acc + r.rating, 0) / totalCount).toFixed(1))
+      : 0
 
   const starsBreakdown = [5, 4, 3, 2, 1].map((stars) => {
     const count = reviews.filter((r) => r.rating === stars).length
@@ -130,43 +108,70 @@ export function ProductReviews({ initialReviews, locale, productName }: ProductR
   const handleResetAndClose = () => {
     setModalOpen(false)
     setFormSubmitted(false)
-    setNewName('')
+    setNewName(currentUser?.name ?? '')
     setNewComment('')
     setNewAdv('')
     setNewDisadv('')
     setNewRating(5)
+    setSubmitError(null)
   }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    setFormSubmitted(true)
+    setSubmitError(null)
+
+    startTransition(async () => {
+      const res = await submitProductReview({
+        productId,
+        rating: newRating,
+        comment: newComment,
+        advantages: newAdv || null,
+        disadvantages: newDisadv || null,
+      })
+
+      if (res.success) {
+        setFormSubmitted(true)
+      } else {
+        setSubmitError(
+          res.error ||
+            (loc === 'ru' ? 'Ошибка при отправке отзыва' : 'Помилка при відправці відгуку')
+        )
+      }
+    })
   }
+
+  const currentPath = typeof window !== 'undefined' ? window.location.pathname : ''
 
   return (
     <section className="bg-surface-white border border-border rounded-2xl p-5 shadow-sm">
       {/* Header */}
       <div className="flex items-center justify-between mb-6 pb-3 border-b border-border">
         <h2 className="text-[20px] font-extrabold text-text-primary tracking-tight">
-          {t.title} {totalCount > 0 && <span className="text-sm font-normal text-text-muted">({totalCount})</span>}
+          {t.title}{' '}
+          {totalCount > 0 && <span className="text-sm font-normal text-text-muted">({totalCount})</span>}
         </h2>
-        <button
-          onClick={() => setModalOpen(true)}
-          className="h-9 px-4 rounded-lg bg-surface-alt hover:bg-surface-raised border border-border text-xs font-bold text-text-primary transition-colors cursor-pointer"
-        >
-          {t.writeBtn}
-        </button>
+        {showWriteButton && (
+          <button
+            onClick={() => setModalOpen(true)}
+            className="h-9 px-4 rounded-lg bg-surface-alt hover:bg-surface-raised border border-border text-xs font-bold text-text-primary transition-colors cursor-pointer"
+          >
+            {t.writeBtn}
+          </button>
+        )}
       </div>
 
       {totalCount === 0 ? (
         <div className="flex flex-col items-center justify-center py-10 text-center">
           <p className="text-sm font-semibold text-text-primary mb-1">{t.emptyState}</p>
           <p className="text-xs text-text-muted mb-4">{t.beFirst}</p>
-          <button
-            onClick={() => setModalOpen(true)}
-            className="h-9 px-4 rounded-lg bg-accent text-white hover:bg-accent/90 text-xs font-bold transition-colors cursor-pointer"
-          >
-            {t.writeBtn}
-          </button>
+          {showWriteButton && (
+            <button
+              onClick={() => setModalOpen(true)}
+              className="h-9 px-4 rounded-lg bg-accent text-white hover:bg-accent/90 text-xs font-bold transition-colors cursor-pointer"
+            >
+              {t.writeBtn}
+            </button>
+          )}
         </div>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-[260px_1fr] gap-8 items-start">
@@ -180,7 +185,11 @@ export function ProductReviews({ initialReviews, locale, productName }: ProductR
                 {Array.from({ length: 5 }).map((_, i) => (
                   <Star
                     key={i}
-                    className={`size-4 ${i < Math.round(averageRating) ? 'text-amber-500 fill-amber-500' : 'text-border-strong'}`}
+                    className={`size-4 ${
+                      i < Math.round(averageRating)
+                        ? 'text-amber-500 fill-amber-500'
+                        : 'text-border-strong'
+                    }`}
                   />
                 ))}
               </div>
@@ -195,10 +204,7 @@ export function ProductReviews({ initialReviews, locale, productName }: ProductR
                 <div key={row.stars} className="flex items-center gap-2 text-xs">
                   <span className="w-6 text-text-muted shrink-0 text-right">{row.stars} ★</span>
                   <div className="flex-1 h-2 rounded bg-surface-raised overflow-hidden">
-                    <div
-                      className="h-full bg-amber-500 rounded"
-                      style={{ width: `${row.percentage}%` }}
-                    />
+                    <div className="h-full bg-amber-500 rounded" style={{ width: `${row.percentage}%` }} />
                   </div>
                   <span className="w-4 text-text-muted shrink-0 text-right">{row.count}</span>
                 </div>
@@ -210,7 +216,9 @@ export function ProductReviews({ initialReviews, locale, productName }: ProductR
               <button
                 onClick={() => setActiveFilter('all')}
                 className={`w-full text-left h-8 px-3 rounded-lg text-xs font-bold transition-colors cursor-pointer ${
-                  activeFilter === 'all' ? 'bg-accent text-white' : 'bg-surface-white hover:bg-surface-raised border border-border text-text-primary'
+                  activeFilter === 'all'
+                    ? 'bg-accent text-white'
+                    : 'bg-surface-white hover:bg-surface-raised border border-border text-text-primary'
                 }`}
               >
                 {t.all}
@@ -218,7 +226,9 @@ export function ProductReviews({ initialReviews, locale, productName }: ProductR
               <button
                 onClick={() => setActiveFilter('positive')}
                 className={`w-full text-left h-8 px-3 rounded-lg text-xs font-bold transition-colors cursor-pointer ${
-                  activeFilter === 'positive' ? 'bg-accent text-white' : 'bg-surface-white hover:bg-surface-raised border border-border text-text-primary'
+                  activeFilter === 'positive'
+                    ? 'bg-accent text-white'
+                    : 'bg-surface-white hover:bg-surface-raised border border-border text-text-primary'
                 }`}
               >
                 {t.positive}
@@ -226,7 +236,9 @@ export function ProductReviews({ initialReviews, locale, productName }: ProductR
               <button
                 onClick={() => setActiveFilter('negative')}
                 className={`w-full text-left h-8 px-3 rounded-lg text-xs font-bold transition-colors cursor-pointer ${
-                  activeFilter === 'negative' ? 'bg-accent text-white' : 'bg-surface-white hover:bg-surface-raised border border-border text-text-primary'
+                  activeFilter === 'negative'
+                    ? 'bg-accent text-white'
+                    : 'bg-surface-white hover:bg-surface-raised border border-border text-text-primary'
                 }`}
               >
                 {t.critical}
@@ -237,7 +249,9 @@ export function ProductReviews({ initialReviews, locale, productName }: ProductR
           {/* Right Reviews List */}
           <div className="flex flex-col gap-5">
             {filteredReviews.length === 0 ? (
-              <p className="text-xs text-text-muted py-4 text-center">Немає відгуків для обраного фільтра.</p>
+              <p className="text-xs text-text-muted py-4 text-center">
+                {loc === 'ru' ? 'Нет отзывов для выбранного фильтра.' : 'Немає відгуків для обраного фільтра.'}
+              </p>
             ) : (
               filteredReviews.map((r) => (
                 <div key={r.id} className="pb-5 border-b border-border last:border-b-0 last:pb-0">
@@ -251,22 +265,28 @@ export function ProductReviews({ initialReviews, locale, productName }: ProductR
                           <span className="text-[13px] font-extrabold text-text-primary">
                             {r.user.name}
                           </span>
-                          <span className="inline-flex items-center gap-0.5 text-[10px] font-bold text-success bg-success-subtle px-1.5 py-0.5 rounded-full select-none">
-                            <Check className="size-2.5" strokeWidth={3} />
-                            {t.verified}
-                          </span>
+                          {r.verifiedPurchase && (
+                            <span className="inline-flex items-center gap-0.5 text-[10px] font-bold text-success bg-success-subtle px-1.5 py-0.5 rounded-full select-none">
+                              <Check className="size-2.5" strokeWidth={3} />
+                              {t.verified}
+                            </span>
+                          )}
                         </div>
                         <div className="flex items-center gap-1.5 mt-0.5">
                           <div className="flex gap-0.5">
                             {Array.from({ length: 5 }).map((_, i) => (
                               <Star
                                 key={i}
-                                className={`size-3 ${i < r.rating ? 'text-amber-500 fill-amber-500' : 'text-border-strong'}`}
+                                className={`size-3 ${
+                                  i < r.rating ? 'text-amber-500 fill-amber-500' : 'text-border-strong'
+                                }`}
                               />
                             ))}
                           </div>
                           <span className="text-[11px] text-text-muted font-medium">
-                            {new Intl.DateTimeFormat(locale === 'ru' ? 'ru-UA' : 'uk-UA').format(new Date(r.createdAt))}
+                            {new Intl.DateTimeFormat(loc === 'ru' ? 'ru-UA' : 'uk-UA').format(
+                              new Date(r.createdAt)
+                            )}
                           </span>
                         </div>
                       </div>
@@ -281,14 +301,18 @@ export function ProductReviews({ initialReviews, locale, productName }: ProductR
 
                   {r.advantages && (
                     <div className="mt-2 text-[12px] leading-relaxed">
-                      <span className="font-extrabold text-text-primary block sm:inline mr-1">{t.advantages}</span>
+                      <span className="font-extrabold text-text-primary block sm:inline mr-1">
+                        {t.advantages}
+                      </span>
                       <span className="text-text-muted">{r.advantages}</span>
                     </div>
                   )}
 
                   {r.disadvantages && (
                     <div className="mt-1 text-[12px] leading-relaxed">
-                      <span className="font-extrabold text-text-primary block sm:inline mr-1">{t.disadvantages}</span>
+                      <span className="font-extrabold text-text-primary block sm:inline mr-1">
+                        {t.disadvantages}
+                      </span>
                       <span className="text-text-muted">{r.disadvantages}</span>
                     </div>
                   )}
@@ -304,7 +328,9 @@ export function ProductReviews({ initialReviews, locale, productName }: ProductR
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 animate-fade-in">
           <div className="bg-surface-white rounded-2xl w-full max-w-lg shadow-xl overflow-hidden border border-border">
             <div className="flex items-center justify-between px-5 py-4 border-b border-border bg-surface-alt">
-              <h3 className="text-sm font-extrabold text-text-primary uppercase tracking-wider">{t.modalTitle}</h3>
+              <h3 className="text-sm font-extrabold text-text-primary uppercase tracking-wider">
+                {t.modalTitle}
+              </h3>
               <button
                 onClick={handleResetAndClose}
                 className="text-text-muted hover:text-text-primary transition-colors cursor-pointer"
@@ -313,7 +339,17 @@ export function ProductReviews({ initialReviews, locale, productName }: ProductR
               </button>
             </div>
 
-            {formSubmitted ? (
+            {!currentUser ? (
+              <div className="p-8 text-center flex flex-col items-center">
+                <p className="text-sm font-semibold text-text-primary mb-5">{t.loginPrompt}</p>
+                <Link
+                  href={`/${locale}/login?callbackUrl=${encodeURIComponent(currentPath)}`}
+                  className="h-10 px-5 rounded-lg bg-accent text-white text-xs font-bold hover:bg-accent/95 flex items-center justify-center cursor-pointer transition-colors"
+                >
+                  {t.loginBtn}
+                </Link>
+              </div>
+            ) : formSubmitted ? (
               <div className="p-8 text-center flex flex-col items-center">
                 <div className="size-12 rounded-full bg-success-subtle text-success flex items-center justify-center mb-3">
                   <Check className="size-6" strokeWidth={2.5} />
@@ -329,11 +365,19 @@ export function ProductReviews({ initialReviews, locale, productName }: ProductR
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="p-5 flex flex-col gap-4">
+                {submitError && (
+                  <div className="p-3 bg-destructive/10 border border-destructive/20 text-destructive rounded-lg text-xs font-semibold">
+                    {submitError}
+                  </div>
+                )}
+
                 <p className="text-xs font-semibold text-text-muted">{productName}</p>
 
                 {/* Rating selection */}
                 <div>
-                  <label className="block text-xs font-extrabold text-text-primary mb-1.5 uppercase tracking-wider">{t.ratingLabel}</label>
+                  <label className="block text-xs font-extrabold text-text-primary mb-1.5 uppercase tracking-wider">
+                    {t.ratingLabel}
+                  </label>
                   <div className="flex gap-1.5">
                     {[1, 2, 3, 4, 5].map((stars) => (
                       <button
@@ -343,7 +387,9 @@ export function ProductReviews({ initialReviews, locale, productName }: ProductR
                         className="p-1 hover:scale-110 transition-transform cursor-pointer"
                       >
                         <Star
-                          className={`size-6 ${stars <= newRating ? 'text-amber-500 fill-amber-500' : 'text-border-strong'}`}
+                          className={`size-6 ${
+                            stars <= newRating ? 'text-amber-500 fill-amber-500' : 'text-border-strong'
+                          }`}
                         />
                       </button>
                     ))}
@@ -352,19 +398,23 @@ export function ProductReviews({ initialReviews, locale, productName }: ProductR
 
                 {/* Name */}
                 <div>
-                  <label className="block text-xs font-extrabold text-text-primary mb-1 uppercase tracking-wider">{t.nameLabel}</label>
+                  <label className="block text-xs font-extrabold text-text-primary mb-1 uppercase tracking-wider">
+                    {t.nameLabel}
+                  </label>
                   <input
                     type="text"
                     required
+                    disabled={true}
                     value={newName}
-                    onChange={(e) => setNewName(e.target.value)}
-                    className="w-full h-10 px-3 rounded-lg border border-border bg-surface-white focus:outline-none focus:border-accent text-sm"
+                    className="w-full h-10 px-3 rounded-lg border border-border bg-surface-alt text-text-muted text-sm cursor-not-allowed"
                   />
                 </div>
 
                 {/* Comment */}
                 <div>
-                  <label className="block text-xs font-extrabold text-text-primary mb-1 uppercase tracking-wider">{t.commentLabel}</label>
+                  <label className="block text-xs font-extrabold text-text-primary mb-1 uppercase tracking-wider">
+                    {t.commentLabel}
+                  </label>
                   <textarea
                     required
                     rows={4}
@@ -377,7 +427,9 @@ export function ProductReviews({ initialReviews, locale, productName }: ProductR
                 {/* Adv & Disadv */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-xs font-extrabold text-text-primary mb-1 uppercase tracking-wider">{t.advantages}</label>
+                    <label className="block text-xs font-extrabold text-text-primary mb-1 uppercase tracking-wider">
+                      {t.advantages}
+                    </label>
                     <input
                       type="text"
                       value={newAdv}
@@ -386,7 +438,9 @@ export function ProductReviews({ initialReviews, locale, productName }: ProductR
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-extrabold text-text-primary mb-1 uppercase tracking-wider">{t.disadvantages}</label>
+                    <label className="block text-xs font-extrabold text-text-primary mb-1 uppercase tracking-wider">
+                      {t.disadvantages}
+                    </label>
                     <input
                       type="text"
                       value={newDisadv}
@@ -398,9 +452,14 @@ export function ProductReviews({ initialReviews, locale, productName }: ProductR
 
                 <button
                   type="submit"
-                  className="h-10 mt-2 w-full rounded-lg bg-accent text-white hover:bg-accent/90 text-xs font-bold transition-colors cursor-pointer"
+                  disabled={isPending}
+                  className="h-10 mt-2 w-full rounded-lg bg-accent text-white hover:bg-accent/90 text-xs font-bold transition-colors cursor-pointer flex items-center justify-center gap-1.5"
                 >
-                  {t.submitBtn}
+                  {isPending ? (
+                    <Loader2 className="size-4 animate-spin" />
+                  ) : (
+                    t.submitBtn
+                  )}
                 </button>
               </form>
             )}

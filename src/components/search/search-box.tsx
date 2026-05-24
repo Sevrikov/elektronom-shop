@@ -2,12 +2,14 @@
 
 import { useState, useEffect, useRef, useTransition } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { Search, Loader2 } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import { searchProducts, type SearchResultProduct } from '@/actions/search'
 import { useDebounce } from '@/hooks/use-debounce'
 
 export function SearchBox() {
+  const router = useRouter()
   const locale = useLocale()
   const t = useTranslations('header')
   const [query, setQuery] = useState('')
@@ -47,15 +49,26 @@ export function SearchBox() {
     })
   }, [debouncedQuery, locale])
 
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (query.trim()) {
+      setIsOpen(false)
+      router.push(`/${locale}/search?q=${encodeURIComponent(query.trim())}`)
+    }
+  }
+
   return (
     <div ref={containerRef} className="relative flex-1 max-w-xl">
-      <div
+      <form
+        onSubmit={handleSubmit}
         className="flex h-12 items-center gap-3 rounded-md px-4 border border-border-strong bg-white focus-within:border-accent transition-colors"
       >
         {isPending ? (
-          <Loader2 className="size-[18px] text-text-muted animate-spin" />
+          <Loader2 className="size-[18px] text-text-muted animate-spin shrink-0" />
         ) : (
-          <Search className="size-[18px] text-text-muted shrink-0" strokeWidth={1.5} />
+          <button type="submit" className="shrink-0 cursor-pointer flex items-center justify-center p-0 border-0 bg-transparent">
+            <Search className="size-[18px] text-text-muted hover:text-accent transition-colors" strokeWidth={1.5} />
+          </button>
         )}
         <input
           type="search"
@@ -67,9 +80,10 @@ export function SearchBox() {
           }}
           onFocus={() => setIsOpen(true)}
           placeholder={t('search')}
-          className="flex-1 border-0 outline-none bg-transparent text-sm text-text-primary placeholder:text-text-muted"
+          className="flex-1 border-0 outline-none bg-transparent text-sm text-text-primary placeholder:text-text-muted h-full"
         />
-      </div>
+      </form>
+
 
       {/* Results Dropdown */}
       {isOpen && query.trim() !== '' && (

@@ -25,7 +25,7 @@ export default async function DeliveryPage({ params }: PageProps) {
   const uk = locale !== 'ru'
 
   const breadcrumbs = [
-    { name: uk ? 'Головна' : 'Главная', url: `/${locale}` },
+    { name: uk ? 'Головна' : 'Главная', url: '/' },
     { name: uk ? 'Доставка та оплата' : 'Доставка и оплата' },
   ]
 

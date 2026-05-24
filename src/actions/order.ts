@@ -18,6 +18,7 @@ const CreateOrderSchema = z.object({
   apartment: z.string().optional(),
   paymentMethod: z.enum(['CARD_ONLINE', 'CASH_ON_DELIVERY', 'MONOBANK_PARTS', 'PRIVAT_PARTS']),
   notes: z.string().optional(),
+  idempotencyKey: z.string().min(1).optional(),
 })
 
 interface CartCookieItem {
@@ -56,6 +57,20 @@ export async function createOrder(data: z.infer<typeof CreateOrderSchema>, local
     const parsed = CreateOrderSchema.safeParse(data)
     if (!parsed.success) {
       return { success: false, error: 'Некоректні дані' }
+    }
+
+    if (parsed.data.idempotencyKey) {
+      const existingOrder = await prisma.order.findUnique({
+        where: { idempotencyKey: parsed.data.idempotencyKey },
+        select: { number: true },
+      })
+      if (existingOrder) {
+        logger.warn('[createOrder] Order already exists for idempotency key', {
+          idempotencyKey: parsed.data.idempotencyKey,
+          number: existingOrder.number,
+        })
+        return { success: true, orderNumber: existingOrder.number }
+      }
     }
 
     const session = await auth()
@@ -169,6 +184,7 @@ export async function createOrder(data: z.infer<typeof CreateOrderSchema>, local
           discount,
           shipping,
           total,
+          idempotencyKey: parsed.data.idempotencyKey ?? null,
           customerData: {
             firstName: parsed.data.firstName,
             lastName: parsed.data.lastName,
@@ -211,6 +227,15 @@ export async function createOrder(data: z.infer<typeof CreateOrderSchema>, local
       orderId: newOrder.id,
       number: newOrder.number,
       userId: session?.user?.id,
+    })
+
+    const cookieStore = await cookies()
+    cookieStore.set('last_created_order', newOrder.number, {
+      maxAge: 300, // 5 minutes
+      path: '/',
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
     })
 
     return { success: true, orderNumber: newOrder.number }

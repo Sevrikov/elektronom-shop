@@ -90,11 +90,11 @@ export function ProductGallery({ images, productName, locale }: ProductGalleryPr
     <>
       <div className="flex flex-col gap-3">
         {/* Main image */}
-        <div className="relative overflow-hidden rounded-lg bg-surface-alt border border-border aspect-square">
+        <div className="relative overflow-hidden rounded-lg bg-surface-alt border border-border aspect-square group">
           {activeImage ? (
             <>
               <div
-                className="relative w-full h-full group cursor-zoom-in"
+                className="relative w-full h-full cursor-zoom-in"
                 onClick={() => setLightboxOpen(true)}
               >
                 <Image

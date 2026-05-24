@@ -117,18 +117,20 @@ export default function Header() {
 
           {/* Right icons */}
           <div className="flex items-center gap-2">
-            <button
+            <Link
+              href={lp('/wishlist')}
               className="size-10 rounded-md inline-flex items-center justify-center cursor-pointer transition-colors hover:bg-[var(--color-surface-alt)]"
               aria-label="Wishlist"
             >
               <Heart className="size-5" strokeWidth={1.5} style={{ color: 'var(--color-text-primary)' }} />
-            </button>
-            <button
+            </Link>
+            <Link
+              href={lp('/profile')}
               className="size-10 rounded-md inline-flex items-center justify-center cursor-pointer transition-colors hover:bg-[var(--color-surface-alt)]"
               aria-label="Account"
             >
               <User className="size-5" strokeWidth={1.5} style={{ color: 'var(--color-text-primary)' }} />
-            </button>
+            </Link>
             <CartButton label={t('cart')} />
             {/* Mobile menu toggle */}
             <button

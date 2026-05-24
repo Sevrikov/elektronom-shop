@@ -1,0 +1,28 @@
+installation:
+  version: 1.2.24
+  installDate: 2026-05-22T15:03:52.114Z
+  lastUpdated: 2026-05-22T15:03:52.114Z
+
+engines:
+  - codex
+
+agents:
+  - reversa
+  - reversa-scout
+  - reversa-archaeologist
+  - reversa-detective
+  - reversa-architect
+  - reversa-writer
+  - reversa-reviewer
+  - reversa-visor
+  - reversa-data-master
+  - reversa-design-system
+  - reversa-agents-help
+  - reversa-reconstructor
+  - reversa-migrate
+  - reversa-paradigm-advisor
+  - reversa-curator
+  - reversa-strategist
+  - reversa-designer
+  - reversa-inspector
+  - reversa-n8n

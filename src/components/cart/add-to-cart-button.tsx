@@ -47,6 +47,7 @@ export function AddToCartButton({
         setErrorMsg(result.error ?? 'Помилка')
         setTimeout(() => setErrorMsg(null), 3000)
       } else {
+        useCartUIStore.getState().triggerCartUpdate()
         setTimeout(() => {
           setAdded(false)
           setQuantity(1)

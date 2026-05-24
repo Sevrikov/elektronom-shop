@@ -1,9 +1,11 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { cookies } from 'next/headers'
 import { CheckCircle2, Package, ArrowRight, ShoppingBag } from 'lucide-react'
 import { isValidLocale } from '@/i18n/request'
 import { prisma } from '@/lib/prisma'
+import { auth } from '@/lib/auth'
 
 interface PageProps {
   params: Promise<{ locale: string }>
@@ -28,17 +30,28 @@ export default async function OrderSuccessPage({ params, searchParams }: PagePro
   const { order: orderNumber } = await searchParams
 
   if (!isValidLocale(locale)) notFound()
+  if (!orderNumber) notFound()
+
+  const order = await prisma.order.findUnique({
+    where: { number: orderNumber },
+    select: { number: true, total: true, status: true, createdAt: true, userId: true },
+  })
+
+  if (!order) notFound()
+
+  // Access validation: must be order owner or have the last_created_order cookie
+  const session = await auth()
+  const cookieStore = await cookies()
+  const lastCreatedOrder = cookieStore.get('last_created_order')?.value
+
+  const isOwner = !!(order.userId && session?.user?.id === order.userId)
+  const isRecentCreator = lastCreatedOrder === order.number
+
+  if (!isOwner && !isRecentCreator) {
+    notFound()
+  }
 
   const uk = locale !== 'ru'
-
-  // Optionally load the order for display
-  let order: { number: string; total: unknown; status: string; createdAt: Date } | null = null
-  if (orderNumber) {
-    order = await prisma.order.findUnique({
-      where: { number: orderNumber },
-      select: { number: true, total: true, status: true, createdAt: true },
-    })
-  }
 
   const formatDate = (d: Date) =>
     new Date(d).toLocaleDateString(locale === 'uk' ? 'uk-UA' : 'ru-RU', {

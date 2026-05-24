@@ -1,0 +1,385 @@
+{
+  "version": "1.2.24",
+  "project": "Elektronom",
+  "user_name": "Sevri",
+  "chat_language": "ru",
+  "doc_language": "ru",
+  "answer_mode": "chat",
+  "doc_level": "detalhado",
+  "output_folder": "_reversa_sdd",
+  "phase": "revisao",
+  "completed": [
+    "reconhecimento",
+    "escavacao",
+    "interpretacao",
+    "geracao",
+    "revisao"
+  ],
+  "pending": [],
+  "checkpoints": {
+    "scout": {
+      "completed_at": "2026-05-23T00:00:00+03:00",
+      "files": [
+        "_reversa_sdd/inventory.md",
+        "_reversa_sdd/dependencies.md",
+        ".reversa/context/surface.json"
+      ],
+      "summary": {
+        "modules_identified": [
+          "app-router",
+          "i18n-routing",
+          "auth",
+          "catalog",
+          "product-page",
+          "cart",
+          "checkout-orders",
+          "account",
+          "search",
+          "admin",
+          "design-system",
+          "documentation-tz"
+        ],
+        "primary_language": "TypeScript",
+        "external_integrations": [
+          "PostgreSQL",
+          "NextAuth",
+          "Google OAuth",
+          "Facebook OAuth",
+          "Algolia",
+          "Resend",
+          "payment provider placeholder",
+          "Vercel",
+          "images.prom.ua",
+          "placehold.co"
+        ],
+        "database": "present: PostgreSQL via Prisma 7",
+        "quality_gates": {
+          "lint": "fail",
+          "typescript": "fail",
+          "prisma_validate": "pass",
+          "build": "fail"
+        },
+        "organization_suggestion": "hybrid"
+      }
+    },
+    "archaeologist": {
+      "started_at": "2026-05-23T00:00:00+03:00",
+      "modules_analyzed": [
+        "app-router",
+        "i18n-routing",
+        "auth",
+        "catalog",
+        "product-page",
+        "cart",
+        "checkout-orders",
+        "account",
+        "search"
+      ],
+      "modules_pending": [
+        "admin",
+        "design-system",
+        "documentation-tz"
+      ],
+      "last_checkpoint_at": "2026-05-23T00:00:00+03:00",
+      "files": [
+        "_reversa_sdd/code-analysis.md",
+        "_reversa_sdd/data-dictionary.md",
+        "_reversa_sdd/flowcharts/app-router.md",
+        "_reversa_sdd/flowcharts/app-router-sitemap.md",
+        "_reversa_sdd/flowcharts/app-router-locale-layout.md",
+        "_reversa_sdd/flowcharts/i18n-routing.md",
+        "_reversa_sdd/flowcharts/i18n-routing-request-config.md",
+        "_reversa_sdd/flowcharts/i18n-routing-breadcrumbs.md",
+        "_reversa_sdd/flowcharts/i18n-routing-locale-switch.md",
+        "_reversa_sdd/flowcharts/auth.md",
+        "_reversa_sdd/flowcharts/auth-credentials-login.md",
+        "_reversa_sdd/flowcharts/auth-registration.md",
+        "_reversa_sdd/flowcharts/auth-rbac.md",
+        "_reversa_sdd/flowcharts/catalog.md",
+        "_reversa_sdd/flowcharts/catalog-filter-url.md",
+        "_reversa_sdd/flowcharts/catalog-filtered-query.md",
+        "_reversa_sdd/flowcharts/catalog-pagination.md",
+        "_reversa_sdd/flowcharts/product-page.md",
+        "_reversa_sdd/flowcharts/product-page-gallery.md",
+        "_reversa_sdd/flowcharts/product-page-reviews.md",
+        "_reversa_sdd/flowcharts/product-page-jsonld.md",
+        "_reversa_sdd/flowcharts/cart.md",
+        "_reversa_sdd/flowcharts/cart-guest-cookie.md",
+        "_reversa_sdd/flowcharts/cart-auth-merge.md",
+        "_reversa_sdd/flowcharts/cart-ui-drawer.md",
+        "_reversa_sdd/flowcharts/checkout-orders.md",
+        "_reversa_sdd/flowcharts/checkout-create-order.md",
+        "_reversa_sdd/flowcharts/checkout-payment-methods.md",
+        "_reversa_sdd/flowcharts/checkout-order-success.md",
+        "_reversa_sdd/flowcharts/account.md",
+        "_reversa_sdd/flowcharts/account-orders.md",
+        "_reversa_sdd/flowcharts/account-order-detail.md",
+        "_reversa_sdd/flowcharts/account-wishlist.md",
+        "_reversa_sdd/flowcharts/search.md",
+        "_reversa_sdd/flowcharts/search-autocomplete.md",
+        "_reversa_sdd/flowcharts/search-algolia-fallback.md",
+        "_reversa_sdd/flowcharts/search-index-sync.md",
+        ".reversa/context/modules.json"
+      ],
+      "summary": {
+        "modules_count": 9,
+        "entities_count": 33,
+        "main_algorithms": [
+          "robots staging detection",
+          "sitemap locale expansion",
+          "locale validation and message import",
+          "locale switcher",
+          "breadcrumb URL composition",
+          "credentials verification",
+          "JWT/session role projection",
+          "registration auto-login",
+          "search param parsing",
+          "filtered product query",
+          "category tree construction",
+          "pagination window",
+          "product static param expansion",
+          "quantity break price table",
+          "gallery carousel and lightbox navigation",
+          "review summary",
+          "product schema generation",
+          "guest cookie parsing",
+          "guest-to-DB cart merge",
+          "cart DTO projection",
+          "stock capping",
+          "drawer lifecycle",
+          "order total calculation",
+          "negative stock prevention",
+          "concurrent order numbering",
+          "order snapshotting",
+          "account order pagination",
+          "account route guard",
+          "order ownership check",
+          "wishlist projection",
+          "password change",
+          "debounce search",
+          "Algolia-first fallback search",
+          "index sync fan-out",
+          "fallback contains search"
+        ]
+      }
+    }
+  },
+  "engines": [
+    "codex"
+  ],
+  "agents": [
+    "reversa",
+    "reversa-scout",
+    "reversa-archaeologist",
+    "reversa-detective",
+    "reversa-architect",
+    "reversa-writer",
+    "reversa-reviewer",
+    "reversa-visor",
+    "reversa-data-master",
+    "reversa-design-system",
+    "reversa-agents-help",
+    "reversa-reconstructor",
+    "reversa-migrate",
+    "reversa-paradigm-advisor",
+    "reversa-curator",
+    "reversa-strategist",
+    "reversa-designer",
+    "reversa-inspector",
+    "reversa-n8n"
+  ],
+  "created_files": [
+    ".agents\\skills\\reversa",
+    ".agents\\skills\\reversa-scout",
+    ".agents\\skills\\reversa-archaeologist",
+    ".agents\\skills\\reversa-detective",
+    ".agents\\skills\\reversa-architect",
+    ".agents\\skills\\reversa-writer",
+    ".agents\\skills\\reversa-reviewer",
+    ".agents\\skills\\reversa-visor",
+    ".agents\\skills\\reversa-data-master",
+    ".agents\\skills\\reversa-design-system",
+    ".agents\\skills\\reversa-agents-help",
+    ".agents\\skills\\reversa-reconstructor",
+    ".agents\\skills\\reversa-migrate",
+    ".agents\\skills\\reversa-paradigm-advisor",
+    ".agents\\skills\\reversa-curator",
+    ".agents\\skills\\reversa-strategist",
+    ".agents\\skills\\reversa-designer",
+    ".agents\\skills\\reversa-inspector",
+    ".agents\\skills\\reversa-n8n",
+    "AGENTS.md",
+    ".reversa\\state.json",
+    ".reversa\\config.toml",
+    ".reversa\\config.user.toml",
+    ".reversa\\plan.md",
+    ".reversa\\version",
+    ".reversa\\_config\\manifest.yaml"
+  ],
+  "phases": {
+    "escavacao": {
+      "modules_analyzed": [
+        "admin",
+        "design-system",
+        "documentation-tz"
+      ],
+      "artifacts": [
+        "_reversa_sdd/code-analysis.md",
+        "_reversa_sdd/data-dictionary.md",
+        "_reversa_sdd/inventory.md",
+        "_reversa_sdd/flowcharts/admin.md",
+        "_reversa_sdd/flowcharts/admin-auth-roles.md",
+        "_reversa_sdd/flowcharts/admin-current-gap.md",
+        ".reversa/context/modules.json",
+        "_reversa_sdd/dependencies.md",
+        "_reversa_sdd/flowcharts/design-system.md",
+        "_reversa_sdd/flowcharts/design-system-token-gap.md",
+        "_reversa_sdd/flowcharts/design-system-cleanup-order.md",
+        "_reversa_sdd/flowcharts/documentation-tz.md",
+        "_reversa_sdd/flowcharts/documentation-drift.md",
+        "_reversa_sdd/flowcharts/documentation-curation-order.md"
+      ],
+      "summary": {
+        "modules_count": 12,
+        "entities_count": 42,
+        "main_algorithms": [
+          "admin role guard",
+          "dashboard aggregate query",
+          "admin customer snapshot display",
+          "token-to-utility mapping",
+          "UI primitive variant composition",
+          "design cleanup order",
+          "documentation reading order",
+          "original coverage mapping",
+          "documentation curation order"
+        ]
+      }
+    },
+    "interpretacao": {
+      "status": "completed",
+      "completedAt": "2026-05-23T13:50:11.425Z",
+      "summary": "Phase 3 converted archaeology into interpretation artifacts: prioritized risk map, root causes, stabilization order, business rules, state machines, RBAC/ACL matrix, retroactive ADRs, C4 diagrams, ERD, external integration map, and spec impact matrix.",
+      "artifacts": [
+        "tools/reversa/_reversa_sdd/review/phase3-interpretation.md",
+        "tools/reversa/_reversa_sdd/review/business-rules-state-machines.md",
+        "tools/reversa/_reversa_sdd/review/rbac-acl-matrix.md",
+        "tools/reversa/_reversa_sdd/review/retroactive-adrs.md",
+        "tools/reversa/_reversa_sdd/architecture/c4-diagrams.md",
+        "tools/reversa/_reversa_sdd/architecture/erd-and-integrations.md",
+        "tools/reversa/_reversa_sdd/architecture/spec-impact-matrix.md"
+      ],
+      "priorities": {
+        "P0": [
+          "Build blocker resolved on 2026-05-23: product-reviews syntax fixed and checks pass.",
+          "Production SEO/JSON-LD must not contain localhost or duplicate locale segments."
+        ],
+        "P1": [
+          "Locale URL generation needs one contract.",
+          "Cart/checkout/payment/idempotency require production hardening.",
+          "Catalog/search/product page data must use consistent DB-backed behavior.",
+          "RBAC/admin and design-system compliance need completion.",
+          "Automated regression tests are missing."
+        ],
+        "P2": [
+          "Documentation must be consolidated into one current index."
+        ]
+      },
+      "nextPhase": "geracao"
+    },
+    "geracao": {
+      "status": "completed",
+      "completedAt": "2026-05-23T14:23:18.381Z",
+      "summary": "Phase 4 generated SDD module specs, API/contracts documentation, user stories with acceptance criteria, and code/spec traceability matrix.",
+      "artifacts": [
+        "tools/reversa/_reversa_sdd/specs/module-specs.md",
+        "tools/reversa/_reversa_sdd/specs/api-contracts.md",
+        "tools/reversa/_reversa_sdd/specs/user-stories-acceptance.md",
+        "tools/reversa/_reversa_sdd/specs/code-spec-traceability.md"
+      ]
+    },
+    "revisao": {
+      "status": "completed",
+      "completedAt": "2026-05-23T14:23:18.381Z",
+      "summary": "Phase 5 cross-reviewed generated specs, recorded remaining gaps/questions, created final confidence/remediation report, and added a current documentation index.",
+      "artifacts": [
+        "tools/reversa/_reversa_sdd/final/cross-review.md",
+        "tools/reversa/_reversa_sdd/final/gaps-and-questions.md",
+        "tools/reversa/_reversa_sdd/final/final-confidence-remediation.md",
+        "tools/reversa/_reversa_sdd/final/current-docs-index.md"
+      ],
+      "finalVerdict": "Reversa documentation is complete enough for developer handoff; code is not production-ready until P0/P1 remediation is completed.",
+      "postReviewUpdates": {
+        "completedAt": "2026-05-23T14:27:10.043Z",
+        "summary": "Resolved the P0 product-reviews syntax/build blocker and updated final Reversa docs to reflect current verification status.",
+        "verification": [
+          "npm.cmd run lint: pass",
+          "npx.cmd tsc --noEmit: pass",
+          "npx.cmd prisma validate: pass",
+          "npm.cmd run build: pass after allowing Google Fonts network fetch"
+        ]
+      }
+    }
+  },
+  "updatedAt": "2026-05-23T20:16:10.395Z",
+  "independentAgents": {
+    "designSystem": {
+      "status": "completed",
+      "completedAt": "2026-05-23T14:41:32.519Z",
+      "summary": "Static design-system and live HTML audit completed. Found 344 source inline styles, 32 large radius usages, live SEO/locale defects, hardcoded mobile cart badge, placeholder production media and incomplete product reviews state.",
+      "artifacts": [
+        "REVIEW_VISUAL_UX_DESIGN_LIVE_2026-05-23.md"
+      ]
+    },
+    "visor": {
+      "status": "partial",
+      "completedAt": "2026-05-23T14:41:32.519Z",
+      "summary": "Live HTML/DOM audit completed for home/catalog/cart/checkout/search/product pages. Screenshot/browser click-through remains pending because browser automation could not connect in this environment.",
+      "artifacts": [
+        "tools/reversa/_reversa_sdd/final/live_uk.html",
+        "tools/reversa/_reversa_sdd/final/live_uk_catalog.html",
+        "tools/reversa/_reversa_sdd/final/live_uk_product_castrol-edge-5w30-4l.html",
+        "REVIEW_VISUAL_UX_DESIGN_LIVE_2026-05-23.md"
+      ]
+    }
+  },
+  "finalConsolidatedReview": {
+    "status": "completed",
+    "completedAt": "2026-05-23T14:49:15.752Z",
+    "artifact": "REVERSA_FINAL_PROJECT_REVIEW_2026-05-23.md",
+    "verdict": "Not production-ready. Buildable technical prototype and staging candidate after SEO/locale fixes. Stabilization sprint required before feature expansion."
+  },
+  "sprint1Recheck": {
+    "status": "partial-pass",
+    "completedAt": "2026-05-23T15:14:00.169Z",
+    "artifact": "REVIEW_SPRINT1_RECHECK_2026-05-23.md",
+    "localVerification": [
+      "lint pass",
+      "tsc pass",
+      "prisma validate pass",
+      "build pass",
+      "local build HTML no localhost/duplicate locale in app pages"
+    ],
+    "remaining": [
+      "live Vercel still serves old localhost and duplicate locale HTML",
+      "getSiteUrl should read standard Vercel env names VERCEL_URL and VERCEL_PROJECT_PRODUCTION_URL"
+    ]
+  },
+  "sprint1FinalAcceptance": {
+    "status": "accepted",
+    "completedAt": "2026-05-23T20:16:10.395Z",
+    "artifact": "REVIEW_SPRINT1_FINAL_ACCEPTANCE_2026-05-23.md",
+    "verification": [
+      "npm.cmd run lint: pass",
+      "npx.cmd tsc --noEmit: pass",
+      "npx.cmd prisma validate: pass",
+      "npm.cmd run test: pass",
+      "npm.cmd run build: pass",
+      "live Vercel product/cart/search smoke: no localhost:3000, no /uk/uk, no /ru/ru"
+    ],
+    "nextFocus": [
+      "Sprint 2 Product Page Acceptance",
+      "Design-System cleanup",
+      "Commerce hardening"
+    ]
+  }
+}

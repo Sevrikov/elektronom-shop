@@ -57,8 +57,8 @@ export default async function OrderDetailPage({ params }: PageProps) {
     })
 
   const breadcrumbs = [
-    { name: uk ? 'Головна' : 'Главная', url: `/${locale}` },
-    { name: uk ? 'Мої замовлення' : 'Мои заказы', url: `/${locale}/orders` },
+    { name: uk ? 'Головна' : 'Главная', url: '/' },
+    { name: uk ? 'Мої замовлення' : 'Мои заказы', url: '/orders' },
     { name: `${uk ? 'Замовлення' : 'Заказ'} ${order.number}` },
   ]
 

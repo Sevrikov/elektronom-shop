@@ -29,7 +29,7 @@ export default async function BrandsPage({ params }: PageProps) {
   const brands = await getBrands()
 
   const breadcrumbs = [
-    { name: uk ? 'Головна' : 'Главная', url: `/${locale}` },
+    { name: uk ? 'Головна' : 'Главная', url: '/' },
     { name: uk ? 'Бренди' : 'Бренды' },
   ]
 

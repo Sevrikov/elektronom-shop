@@ -1,0 +1,11 @@
+{
+  "name": "elektronom-reversa-sandbox",
+  "private": true,
+  "description": "Isolated Reversa installation for Elektronom project analysis.",
+  "scripts": {
+    "reversa": "reversa"
+  },
+  "dependencies": {
+    "reversa": "1.2.24"
+  }
+}

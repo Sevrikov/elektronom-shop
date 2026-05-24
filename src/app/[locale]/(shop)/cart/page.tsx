@@ -79,7 +79,7 @@ async function CartPageContent({
   const items = await getCart(locale)
 
   const breadcrumbs = [
-    { name: uk ? 'Головна' : 'Главная', url: `/${locale}` },
+    { name: uk ? 'Головна' : 'Главная', url: '/' },
     { name: uk ? 'Кошик' : 'Корзина' },
   ]
 

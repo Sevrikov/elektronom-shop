@@ -24,7 +24,7 @@ export default async function AccountLayout({
   const uk = locale !== 'ru'
 
   const breadcrumbs = [
-    { name: uk ? 'Головна' : 'Главная', url: `/${locale}` },
+    { name: uk ? 'Головна' : 'Главная', url: '/' },
     { name: uk ? 'Особистий кабінет' : 'Личный кабинет' },
   ]
 

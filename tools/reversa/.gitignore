@@ -1,0 +1,4 @@
+node_modules/
+.reversa/config.user.toml
+_reversa_sdd/
+

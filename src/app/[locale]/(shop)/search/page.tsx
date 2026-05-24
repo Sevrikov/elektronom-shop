@@ -35,7 +35,7 @@ export default async function SearchPage({ params, searchParams }: PageProps) {
   const query = q?.trim() ?? ''
 
   const breadcrumbs = [
-    { name: uk ? 'Головна' : 'Главная', url: `/${locale}` },
+    { name: uk ? 'Головна' : 'Главная', url: '/' },
     { name: uk ? 'Пошук' : 'Поиск' },
   ]
 

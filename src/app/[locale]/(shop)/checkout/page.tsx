@@ -34,8 +34,8 @@ export default async function CheckoutPage({
   }
 
   const breadcrumbs = [
-    { name: uk ? 'Головна' : 'Главная', url: `/${locale}` },
-    { name: uk ? 'Кошик' : 'Корзина', url: `/${locale}/cart` },
+    { name: uk ? 'Головна' : 'Главная', url: '/' },
+    { name: uk ? 'Кошик' : 'Корзина', url: '/cart' },
     { name: uk ? 'Оформлення замовлення' : 'Оформление заказа' },
   ]
 

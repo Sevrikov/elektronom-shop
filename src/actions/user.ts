@@ -202,3 +202,76 @@ export async function removeFromWishlist(
     return { success: false, error: 'Помилка видалення з обраного' }
   }
 }
+
+// ─── Submit Product Review ────────────────────────────────────────────────────
+
+const SubmitReviewSchema = z.object({
+  productId: z.string().min(1),
+  rating: z.number().int().min(1).max(5),
+  comment: z.string().min(1).max(1000),
+  advantages: z.string().max(500).optional().nullable(),
+  disadvantages: z.string().max(500).optional().nullable(),
+})
+
+export async function submitProductReview(data: z.infer<typeof SubmitReviewSchema>) {
+  try {
+    const session = await auth()
+    if (!session?.user?.id) {
+      return { success: false, error: 'Неавторизовано' }
+    }
+
+    const parsed = SubmitReviewSchema.safeParse(data)
+    if (!parsed.success) {
+      return { success: false, error: 'Некоректні дані' }
+    }
+
+    const { productId, rating, comment, advantages, disadvantages } = parsed.data
+
+    // Check if the user already left a review for this product
+    const existing = await prisma.review.findUnique({
+      where: {
+        productId_userId: {
+          productId,
+          userId: session.user.id,
+        },
+      },
+      select: { id: true },
+    })
+
+    if (existing) {
+      return { success: false, error: 'Ви вже залишили відгук для цього товару' }
+    }
+
+    // Check if user has purchased the product
+    const hasOrdered = await prisma.order.findFirst({
+      where: {
+        userId: session.user.id,
+        status: 'DELIVERED',
+        items: {
+          some: { productId },
+        },
+      },
+      select: { id: true },
+    })
+
+    await prisma.review.create({
+      data: {
+        productId,
+        userId: session.user.id,
+        rating,
+        comment,
+        advantages: advantages || null,
+        disadvantages: disadvantages || null,
+        verifiedPurchase: !!hasOrdered,
+        isVisible: false, // Moderated review policy
+      },
+    })
+
+    logger.info('[submitProductReview] Submitted review', { userId: session.user.id, productId })
+    return { success: true }
+  } catch (error) {
+    logger.error('[submitProductReview] Error submitting review', { error: String(error) })
+    return { success: false, error: 'Помилка при збереженні відгуку' }
+  }
+}
+

@@ -7,6 +7,7 @@
 import { ShoppingCart } from 'lucide-react'
 import { useCartUIStore } from '@/store/cart-store'
 import { useEffect, useState } from 'react'
+import { usePathname } from 'next/navigation'
 import { getCartCount } from '@/actions/cart'
 
 interface CartButtonProps {
@@ -15,12 +16,14 @@ interface CartButtonProps {
 
 export function CartButton({ label }: CartButtonProps) {
   const openDrawer = useCartUIStore((s) => s.openDrawer)
+  const cartVersion = useCartUIStore((s) => s.cartVersion)
   const [count, setCount] = useState(0)
+  const pathname = usePathname()
 
-  // Загрузить количество при маунте
+  // Загрузить количество при маунте, изменении пути и версии корзины
   useEffect(() => {
     void getCartCount().then(setCount)
-  }, [])
+  }, [pathname, cartVersion])
 
   return (
     <button

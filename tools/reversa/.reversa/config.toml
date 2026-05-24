@@ -1,0 +1,53 @@
+# Reversa Project Configuration
+# Managed by Reversa sandbox. User overrides belong in config.user.toml.
+
+[project]
+name = "Elektronom"
+version = "1.0.0"
+
+[user]
+name = "Sevri"
+chat_language = "ru"
+doc_language = "ru"
+
+[output]
+folder = "_reversa_sdd"
+
+[agents]
+installed = [
+  "reversa",
+  "reversa-scout",
+  "reversa-archaeologist",
+  "reversa-detective",
+  "reversa-architect",
+  "reversa-writer",
+  "reversa-reviewer",
+  "reversa-visor",
+  "reversa-data-master",
+  "reversa-design-system",
+  "reversa-agents-help",
+  "reversa-reconstructor",
+  "reversa-migrate",
+  "reversa-paradigm-advisor",
+  "reversa-curator",
+  "reversa-strategist",
+  "reversa-designer",
+  "reversa-inspector",
+  "reversa-n8n"
+]
+
+[engines]
+installed = [
+  "codex"
+]
+
+[analysis]
+answer_mode = "chat"
+doc_level = "detalhado"
+
+[specs]
+layout = "feature-folder"
+granularity = "hybrid"
+custom_folders = []
+scout_suggestion = "hybrid"
+decided_at = "2026-05-23T00:00:00+03:00"

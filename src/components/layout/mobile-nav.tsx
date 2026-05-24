@@ -1,20 +1,33 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { useLocale, useTranslations } from 'next-intl'
 import { LayoutGrid, Search, ShoppingCart, User } from 'lucide-react'
 import type { Locale } from '@/types'
+import { getCartCount } from '@/actions/cart'
+import { useCartUIStore } from '@/store/cart-store'
 
 export default function MobileNav() {
   const locale = useLocale() as Locale
   const t = useTranslations('mobile')
+  const pathname = usePathname()
   const lp = (path: string) => `/${locale}${path}` as never
+
+  const [count, setCount] = useState(0)
+  const cartVersion = useCartUIStore((s) => s.cartVersion)
+
+  // Fetch cart count on mount, pathname and cartVersion changes
+  useEffect(() => {
+    void getCartCount().then(setCount)
+  }, [pathname, cartVersion])
 
   const tabs = [
     { label: t('catalog'), icon: LayoutGrid, href: '/catalog' },
     { label: t('search'), icon: Search, href: '/search' },
-    { label: t('cart'), icon: ShoppingCart, href: '/cart', badge: 3 },
-    { label: t('account'), icon: User, href: '/account' },
+    { label: t('cart'), icon: ShoppingCart, href: '/cart', badge: count },
+    { label: t('account'), icon: User, href: '/profile' },
   ] as const
 
   return (
@@ -52,3 +65,4 @@ export default function MobileNav() {
     </nav>
   )
 }
+

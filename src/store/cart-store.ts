@@ -9,6 +9,8 @@ interface CartUIStore {
   openDrawer: () => void
   closeDrawer: () => void
   toggleDrawer: () => void
+  cartVersion: number
+  triggerCartUpdate: () => void
 }
 
 export const useCartUIStore = create<CartUIStore>((set) => ({
@@ -16,4 +18,6 @@ export const useCartUIStore = create<CartUIStore>((set) => ({
   openDrawer: () => set({ isDrawerOpen: true }),
   closeDrawer: () => set({ isDrawerOpen: false }),
   toggleDrawer: () => set((s) => ({ isDrawerOpen: !s.isDrawerOpen })),
+  cartVersion: 0,
+  triggerCartUpdate: () => set((s) => ({ cartVersion: s.cartVersion + 1 })),
 }))

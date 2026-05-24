@@ -1,8 +1,9 @@
 import type { MetadataRoute } from 'next'
+import { getSiteUrl } from '@/lib/utils'
 
 export default function robots(): MetadataRoute.Robots {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://elektronom.com.ua'
-  const isStaging = siteUrl.includes('test.elektronom.com.ua') || siteUrl.includes('localhost') || siteUrl.includes('vercel.app')
+  const siteUrl = getSiteUrl()
+  const isStaging = siteUrl.includes('test.elektronom.com.ua') || siteUrl.includes('localhost') || siteUrl.includes('127.0.0.1') || siteUrl.includes('vercel.app')
 
   if (isStaging) {
     return {

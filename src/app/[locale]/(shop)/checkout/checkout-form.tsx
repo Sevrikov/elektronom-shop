@@ -1,6 +1,6 @@
 'use client'
 
-import { useTransition, useState } from 'react'
+import { useTransition, useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { Loader2, Sparkles } from 'lucide-react'
 import type { CartItem } from '@/actions/cart'
@@ -16,6 +16,11 @@ export function CheckoutForm({ items, locale }: CheckoutFormProps) {
   const uk = locale !== 'ru'
   const [isPending, startTransition] = useTransition()
   const [error, setError] = useState<string | null>(null)
+  const idempotencyKeyRef = useRef('')
+
+  useEffect(() => {
+    idempotencyKeyRef.current = crypto.randomUUID()
+  }, [])
 
   // Form state
   const [formData, setFormData] = useState({
@@ -58,7 +63,7 @@ export function CheckoutForm({ items, locale }: CheckoutFormProps) {
     }
 
     startTransition(async () => {
-      const response = await createOrder(formData, locale)
+      const response = await createOrder({ ...formData, idempotencyKey: idempotencyKeyRef.current }, locale)
       if (response.success && response.orderNumber) {
         router.push(`/${locale}/order-success?order=${response.orderNumber}` as never)
       } else {

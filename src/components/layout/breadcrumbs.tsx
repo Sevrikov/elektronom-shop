@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { ChevronRight } from 'lucide-react'
 import type { BreadcrumbItem } from '@/types'
+import { getSiteUrl, localizedPath } from '@/lib/utils'
 
 interface BreadcrumbsProps {
   items: BreadcrumbItem[]
@@ -8,15 +9,20 @@ interface BreadcrumbsProps {
 }
 
 export default function Breadcrumbs({ items, locale }: BreadcrumbsProps) {
+  const baseUrl = getSiteUrl()
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
-    itemListElement: items.map((item, i) => ({
-      '@type': 'ListItem',
-      position: i + 1,
-      name: item.name,
-      ...(item.url ? { item: `https://elektronom.com.ua/${locale}${item.url}` } : {}),
-    })),
+    itemListElement: items.map((item, i) => {
+      const path = item.url ? localizedPath(locale, item.url) : undefined
+      const absoluteUrl = path ? `${baseUrl}${path}` : undefined
+      return {
+        '@type': 'ListItem',
+        position: i + 1,
+        name: item.name,
+        ...(absoluteUrl ? { item: absoluteUrl } : {}),
+      }
+    }),
   }
 
   return (
@@ -45,7 +51,7 @@ export default function Breadcrumbs({ items, locale }: BreadcrumbsProps) {
                   </span>
                 ) : (
                   <Link
-                    href={`/${locale}${item.url}`}
+                    href={localizedPath(locale, item.url) as never}
                     className="transition-colors hover:underline text-text-muted"
                   >
                     {item.name}
@@ -59,3 +65,4 @@ export default function Breadcrumbs({ items, locale }: BreadcrumbsProps) {
     </>
   )
 }
+

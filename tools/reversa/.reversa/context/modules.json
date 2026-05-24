@@ -1,0 +1,3051 @@
+{
+  "generated_at": "2026-05-23T00:00:00+03:00",
+  "modules": [
+    {
+      "name": "app-router",
+      "path": "src/app",
+      "purpose": "Defines Next.js App Router shell, localized routing, root redirect, SEO system routes and global layout composition.",
+      "primary_files": [
+        "src/app/layout.tsx",
+        "src/app/page.tsx",
+        "src/app/[locale]/layout.tsx",
+        "src/app/[locale]/page.tsx",
+        "src/app/robots.ts",
+        "src/app/sitemap.ts",
+        "src/proxy.ts",
+        "src/i18n/request.ts",
+        "next.config.ts",
+        "instrumentation.ts"
+      ],
+      "functions": [
+        {
+          "name": "RootLayout",
+          "file": "src/app/layout.tsx",
+          "params": [
+            "children: React.ReactNode"
+          ],
+          "returns": "React.ReactNode",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "RootPage",
+          "file": "src/app/page.tsx",
+          "params": [],
+          "returns": "never via redirect('/uk')",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "robots",
+          "file": "src/app/robots.ts",
+          "params": [],
+          "returns": "MetadataRoute.Robots",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "sitemap",
+          "file": "src/app/sitemap.ts",
+          "params": [],
+          "returns": "Promise<MetadataRoute.Sitemap>",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "generateStaticParams",
+          "file": "src/app/[locale]/layout.tsx",
+          "params": [],
+          "returns": "{ locale: string }[]",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "generateMetadata",
+          "file": "src/app/[locale]/layout.tsx",
+          "params": [
+            "params: Promise<{ locale: string }>"
+          ],
+          "returns": "Promise<Metadata>",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "LocaleLayout",
+          "file": "src/app/[locale]/layout.tsx",
+          "params": [
+            "children: React.ReactNode",
+            "params: Promise<{ locale: string }>"
+          ],
+          "returns": "localized html shell",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "isValidLocale",
+          "file": "src/i18n/request.ts",
+          "params": [
+            "locale: string"
+          ],
+          "returns": "locale is Locale",
+          "confidence": "confirmed"
+        }
+      ],
+      "entities": [
+        {
+          "name": "Locale",
+          "fields": [
+            {
+              "name": "uk",
+              "type": "literal",
+              "required": true
+            },
+            {
+              "name": "ru",
+              "type": "literal",
+              "required": true
+            }
+          ],
+          "confidence": "confirmed"
+        },
+        {
+          "name": "SitemapEntry",
+          "fields": [
+            {
+              "name": "url",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "lastModified",
+              "type": "Date",
+              "required": true
+            },
+            {
+              "name": "changeFrequency",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "priority",
+              "type": "number",
+              "required": true
+            }
+          ],
+          "confidence": "confirmed"
+        }
+      ],
+      "business_rules": [
+        {
+          "description": "Root path redirects to Ukrainian locale /uk.",
+          "location": "src/app/page.tsx:4",
+          "confidence": "confirmed"
+        },
+        {
+          "description": "Only uk and ru are accepted locales.",
+          "location": "src/i18n/request.ts:4",
+          "confidence": "confirmed"
+        },
+        {
+          "description": "Locale prefix is always required.",
+          "location": "src/proxy.ts:8",
+          "confidence": "confirmed"
+        },
+        {
+          "description": "Staging, localhost and vercel.app deployments are disallowed in robots.",
+          "location": "src/app/robots.ts:5",
+          "confidence": "confirmed"
+        },
+        {
+          "description": "Sitemap dynamic product entries are capped at 200 and category entries at 50.",
+          "location": "src/app/sitemap.ts:30",
+          "confidence": "confirmed"
+        }
+      ],
+      "dependencies": [
+        "next",
+        "next/navigation",
+        "next-intl",
+        "next-intl/server",
+        "next/font/google",
+        "prisma",
+        "layout components",
+        "product queries"
+      ],
+      "algorithms": [
+        {
+          "name": "robots staging detection",
+          "description": "Classifies deployment as staging if site URL contains test.elektronom.com.ua, localhost or vercel.app.",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "sitemap locale expansion",
+          "description": "Expands static, product and category routes across uk and ru locales.",
+          "confidence": "confirmed"
+        }
+      ],
+      "complexity": "medium"
+    },
+    {
+      "name": "i18n-routing",
+      "path": "src/i18n + src/proxy.ts + localized layout/components",
+      "purpose": "Provides Ukrainian/Russian locale routing, message loading, localized links, locale switching and breadcrumb URL generation.",
+      "primary_files": [
+        "src/i18n/request.ts",
+        "src/i18n/messages/uk.json",
+        "src/i18n/messages/ru.json",
+        "src/proxy.ts",
+        "src/app/[locale]/layout.tsx",
+        "src/components/layout/header.tsx",
+        "src/components/layout/mobile-nav.tsx",
+        "src/components/layout/footer.tsx",
+        "src/components/layout/breadcrumbs.tsx"
+      ],
+      "functions": [
+        {
+          "name": "isValidLocale",
+          "file": "src/i18n/request.ts",
+          "params": [
+            "locale: string"
+          ],
+          "returns": "locale is Locale",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "getRequestConfig callback",
+          "file": "src/i18n/request.ts",
+          "params": [
+            "requestLocale"
+          ],
+          "returns": "{ locale, messages } or notFound()",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "switchLocale",
+          "file": "src/components/layout/header.tsx",
+          "params": [
+            "newLocale: Locale"
+          ],
+          "returns": "string pathname with replaced locale segment",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "lp",
+          "file": "src/components/layout/header.tsx and similar layout components",
+          "params": [
+            "path: string"
+          ],
+          "returns": "localized path",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "Breadcrumbs",
+          "file": "src/components/layout/breadcrumbs.tsx",
+          "params": [
+            "items: BreadcrumbItem[]",
+            "locale: string"
+          ],
+          "returns": "breadcrumb navigation and JSON-LD",
+          "confidence": "confirmed"
+        }
+      ],
+      "entities": [
+        {
+          "name": "Locale",
+          "fields": [
+            {
+              "name": "uk",
+              "type": "literal",
+              "required": true
+            },
+            {
+              "name": "ru",
+              "type": "literal",
+              "required": true
+            }
+          ],
+          "confidence": "confirmed"
+        },
+        {
+          "name": "MessageCatalog",
+          "fields": [
+            {
+              "name": "meta",
+              "type": "object",
+              "required": true
+            },
+            {
+              "name": "header",
+              "type": "object",
+              "required": true
+            },
+            {
+              "name": "home",
+              "type": "object",
+              "required": true
+            },
+            {
+              "name": "footer",
+              "type": "object",
+              "required": true
+            },
+            {
+              "name": "common",
+              "type": "object",
+              "required": true
+            },
+            {
+              "name": "mobile",
+              "type": "object",
+              "required": true
+            },
+            {
+              "name": "catalog",
+              "type": "object",
+              "required": true
+            },
+            {
+              "name": "cart",
+              "type": "object",
+              "required": true
+            }
+          ],
+          "confidence": "confirmed"
+        },
+        {
+          "name": "BreadcrumbItem",
+          "fields": [
+            {
+              "name": "name",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "url",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "confidence": "confirmed"
+        }
+      ],
+      "business_rules": [
+        {
+          "description": "Only uk and ru are valid storefront locales.",
+          "location": "src/i18n/request.ts:4",
+          "confidence": "confirmed"
+        },
+        {
+          "description": "All localized public routes use an always-present locale prefix.",
+          "location": "src/proxy.ts:9",
+          "confidence": "confirmed"
+        },
+        {
+          "description": "Breadcrumb item URLs are expected to be non-localized paths because Breadcrumbs prefixes locale itself.",
+          "location": "src/components/layout/breadcrumbs.tsx:48",
+          "confidence": "confirmed"
+        },
+        {
+          "description": "Ukrainian and Russian message catalogs currently have identical key sets.",
+          "location": "src/i18n/messages/*.json",
+          "confidence": "confirmed"
+        }
+      ],
+      "dependencies": [
+        "next-intl",
+        "next/navigation",
+        "next/link",
+        "locale message JSON",
+        "layout components",
+        "route pages that build breadcrumbs"
+      ],
+      "algorithms": [
+        {
+          "name": "locale validation and message import",
+          "description": "Validates request locale before dynamically importing the matching message JSON file.",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "locale switcher",
+          "description": "Replaces the first pathname segment with the other locale, but does not preserve query strings.",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "breadcrumb URL composition",
+          "description": "Prefixes every breadcrumb URL with the active locale and builds Schema.org BreadcrumbList items.",
+          "confidence": "confirmed"
+        }
+      ],
+      "complexity": "medium"
+    },
+    {
+      "name": "auth",
+      "path": "src/lib/auth.ts + auth/account routes",
+      "purpose": "Authenticates users through credentials and OAuth, enriches JWT/session with roles, registers users and guards account/admin routes.",
+      "primary_files": [
+        "src/lib/auth.ts",
+        "src/app/api/auth/[...nextauth]/route.ts",
+        "src/actions/auth.ts",
+        "src/app/[locale]/(auth)/login/login-form.tsx",
+        "src/app/[locale]/(auth)/register/register-form.tsx",
+        "src/app/[locale]/(account)/layout.tsx",
+        "src/app/[locale]/admin/page.tsx",
+        "src/types/next-auth.d.ts",
+        "prisma/schema.prisma",
+        "src/lib/env.ts"
+      ],
+      "functions": [
+        {
+          "name": "authorize",
+          "file": "src/lib/auth.ts",
+          "params": [
+            "credentials"
+          ],
+          "returns": "user payload or null",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "jwt callback",
+          "file": "src/lib/auth.ts",
+          "params": [
+            "token",
+            "user"
+          ],
+          "returns": "JWT with id and role",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "session callback",
+          "file": "src/lib/auth.ts",
+          "params": [
+            "session",
+            "token"
+          ],
+          "returns": "session with user id and role",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "requireAuth",
+          "file": "src/lib/auth.ts",
+          "params": [],
+          "returns": "session user or throws",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "requireAdmin",
+          "file": "src/lib/auth.ts",
+          "params": [],
+          "returns": "admin user or throws",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "registerUser",
+          "file": "src/actions/auth.ts",
+          "params": [
+            "name",
+            "email",
+            "password"
+          ],
+          "returns": "{ success, error? }",
+          "confidence": "confirmed"
+        }
+      ],
+      "entities": [
+        {
+          "name": "UserRole",
+          "fields": [
+            {
+              "name": "CUSTOMER",
+              "type": "enum",
+              "required": true
+            },
+            {
+              "name": "MANAGER",
+              "type": "enum",
+              "required": true
+            },
+            {
+              "name": "ADMIN",
+              "type": "enum",
+              "required": true
+            }
+          ],
+          "confidence": "confirmed"
+        },
+        {
+          "name": "User",
+          "fields": [
+            {
+              "name": "id",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "email",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "name",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "avatar",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "passwordHash",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "role",
+              "type": "UserRole",
+              "required": true
+            }
+          ],
+          "confidence": "confirmed"
+        },
+        {
+          "name": "Account",
+          "fields": [
+            {
+              "name": "provider",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "providerAccountId",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "access_token",
+              "type": "text",
+              "required": false
+            },
+            {
+              "name": "refresh_token",
+              "type": "text",
+              "required": false
+            }
+          ],
+          "confidence": "confirmed"
+        },
+        {
+          "name": "AuthSessionProjection",
+          "fields": [
+            {
+              "name": "session.user.id",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "session.user.role",
+              "type": "UserRole",
+              "required": true
+            }
+          ],
+          "confidence": "confirmed"
+        }
+      ],
+      "business_rules": [
+        {
+          "description": "NextAuth uses JWT session strategy.",
+          "location": "src/lib/auth.ts:24",
+          "confidence": "confirmed"
+        },
+        {
+          "description": "OAuth providers are enabled only when both ID and secret are present.",
+          "location": "src/lib/auth.ts:28",
+          "confidence": "confirmed"
+        },
+        {
+          "description": "Credentials login requires a stored password hash and bcrypt match.",
+          "location": "src/lib/auth.ts:66",
+          "confidence": "confirmed"
+        },
+        {
+          "description": "Admin routes require role ADMIN.",
+          "location": "src/lib/auth.ts:116",
+          "confidence": "confirmed"
+        },
+        {
+          "description": "New users are created with default CUSTOMER role.",
+          "location": "prisma/schema.prisma:31",
+          "confidence": "confirmed"
+        }
+      ],
+      "dependencies": [
+        "next-auth",
+        "@auth/prisma-adapter",
+        "bcryptjs",
+        "zod",
+        "Prisma User/Account models",
+        "Google OAuth",
+        "Facebook OAuth"
+      ],
+      "algorithms": [
+        {
+          "name": "credentials verification",
+          "description": "Validates credentials, loads user by email, checks password hash with bcrypt and returns a role-bearing user payload.",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "JWT/session role projection",
+          "description": "Copies id and role from authenticated user into JWT and then into session.",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "registration auto-login",
+          "description": "Creates a password user and immediately attempts credentials sign-in from the client.",
+          "confidence": "confirmed"
+        }
+      ],
+      "complexity": "medium"
+    },
+    {
+      "name": "catalog",
+      "path": "src/app/[locale]/(shop)/catalog + src/components/catalog + src/queries/products.ts",
+      "purpose": "Implements catalog hub and category product listings with filters, sorting, view mode and pagination.",
+      "primary_files": [
+        "src/app/[locale]/(shop)/catalog/page.tsx",
+        "src/app/[locale]/(shop)/catalog/[slug]/page.tsx",
+        "src/queries/products.ts",
+        "src/queries/categories.ts",
+        "src/lib/utils.ts",
+        "src/lib/catalog-data.ts",
+        "src/lib/catalog-hub-data.ts",
+        "src/lib/constants.ts",
+        "src/components/catalog/catalog-filters.tsx",
+        "src/components/catalog/product-grid.tsx",
+        "src/components/catalog/active-filters.tsx",
+        "src/components/shared/pagination.tsx",
+        "src/components/product/product-card.tsx"
+      ],
+      "functions": [
+        {
+          "name": "CatalogPage",
+          "file": "src/app/[locale]/(shop)/catalog/page.tsx",
+          "params": [
+            "params: Promise<{ locale: string }>"
+          ],
+          "returns": "catalog hub UI",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "CategoryPage",
+          "file": "src/app/[locale]/(shop)/catalog/[slug]/page.tsx",
+          "params": [
+            "params",
+            "searchParams"
+          ],
+          "returns": "category listing UI",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "getFilteredProducts",
+          "file": "src/queries/products.ts",
+          "params": [
+            "FilteredProductsInput"
+          ],
+          "returns": "{ products, total, page, pageSize, totalPages }",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "parseSearchParams",
+          "file": "src/lib/utils.ts",
+          "params": [
+            "Record<string, string | string[] | undefined>"
+          ],
+          "returns": "ActiveFilters",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "CatalogFilters.applyFilter",
+          "file": "src/components/catalog/catalog-filters.tsx",
+          "params": [
+            "key",
+            "value"
+          ],
+          "returns": "router.replace side effect",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "ProductGrid.handleSort",
+          "file": "src/components/catalog/product-grid.tsx",
+          "params": [
+            "sort: string"
+          ],
+          "returns": "router.replace side effect",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "Pagination.goToPage",
+          "file": "src/components/shared/pagination.tsx",
+          "params": [
+            "page: number"
+          ],
+          "returns": "router.replace side effect",
+          "confidence": "confirmed"
+        }
+      ],
+      "entities": [
+        {
+          "name": "FilteredProductsInput",
+          "fields": [
+            {
+              "name": "categorySlug",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "brandSlug",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "priceMin",
+              "type": "number",
+              "required": false
+            },
+            {
+              "name": "priceMax",
+              "type": "number",
+              "required": false
+            },
+            {
+              "name": "inStock",
+              "type": "boolean",
+              "required": false
+            },
+            {
+              "name": "sort",
+              "type": "sort enum",
+              "required": false
+            },
+            {
+              "name": "page",
+              "type": "number",
+              "required": false
+            },
+            {
+              "name": "pageSize",
+              "type": "number",
+              "required": false
+            },
+            {
+              "name": "attributes",
+              "type": "Record<string,string[]>",
+              "required": false
+            },
+            {
+              "name": "locale",
+              "type": "string",
+              "required": true
+            }
+          ],
+          "confidence": "confirmed"
+        },
+        {
+          "name": "ActiveFilters",
+          "fields": [
+            {
+              "name": "brand",
+              "type": "string[]",
+              "required": false
+            },
+            {
+              "name": "priceMin",
+              "type": "number",
+              "required": false
+            },
+            {
+              "name": "priceMax",
+              "type": "number",
+              "required": false
+            },
+            {
+              "name": "sort",
+              "type": "sort enum",
+              "required": false
+            },
+            {
+              "name": "page",
+              "type": "number",
+              "required": false
+            },
+            {
+              "name": "inStock",
+              "type": "boolean",
+              "required": false
+            },
+            {
+              "name": "dynamic keys",
+              "type": "string[] | number | boolean | string",
+              "required": false
+            }
+          ],
+          "confidence": "confirmed"
+        },
+        {
+          "name": "FilterDefinition",
+          "fields": [
+            {
+              "name": "key",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "type",
+              "type": "checkbox | pill | range",
+              "required": true
+            },
+            {
+              "name": "label",
+              "type": "Record<Locale,string>",
+              "required": true
+            },
+            {
+              "name": "options",
+              "type": "string[]",
+              "required": false
+            },
+            {
+              "name": "searchable",
+              "type": "boolean",
+              "required": false
+            },
+            {
+              "name": "unit",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "confidence": "confirmed"
+        },
+        {
+          "name": "ProductCardProjection",
+          "fields": [
+            {
+              "name": "id",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "slug",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "sku",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "price",
+              "type": "Decimal",
+              "required": true
+            },
+            {
+              "name": "comparePrice",
+              "type": "Decimal",
+              "required": false
+            },
+            {
+              "name": "stock",
+              "type": "number",
+              "required": true
+            },
+            {
+              "name": "translations",
+              "type": "array",
+              "required": true
+            },
+            {
+              "name": "images",
+              "type": "array",
+              "required": true
+            },
+            {
+              "name": "brand",
+              "type": "object",
+              "required": false
+            }
+          ],
+          "confidence": "confirmed"
+        }
+      ],
+      "business_rules": [
+        {
+          "description": "Category listing only displays active products in active categories.",
+          "location": "src/queries/products.ts:143",
+          "confidence": "confirmed"
+        },
+        {
+          "description": "Category page nominal page size is 12.",
+          "location": "src/app/[locale]/(shop)/catalog/[slug]/page.tsx:14",
+          "confidence": "confirmed"
+        },
+        {
+          "description": "Filtered product query defaults to page size 24 if pageSize is not supplied.",
+          "location": "src/queries/products.ts:138",
+          "confidence": "confirmed"
+        },
+        {
+          "description": "Filter changes reset pagination to page 1.",
+          "location": "src/components/catalog/catalog-filters.tsx:50",
+          "confidence": "confirmed"
+        }
+      ],
+      "dependencies": [
+        "Prisma Product",
+        "Prisma Category",
+        "next-intl",
+        "next/navigation",
+        "static catalog data",
+        "ProductCard",
+        "Pagination"
+      ],
+      "algorithms": [
+        {
+          "name": "search param parsing",
+          "description": "Converts URL search parameters into ActiveFilters, but currently does not split comma-separated arrays and expects inStock=true.",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "filtered product query",
+          "description": "Builds a Prisma where clause for category, brand, price and stock, then performs findMany and count in parallel.",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "category tree construction",
+          "description": "Builds nested category nodes from a flat category result set.",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "pagination window",
+          "description": "Computes page buttons with ellipsis for large result sets.",
+          "confidence": "confirmed"
+        }
+      ],
+      "complexity": "high"
+    },
+    {
+      "name": "product-page",
+      "path": "src/app/[locale]/(shop)/product/[slug] + src/components/product",
+      "purpose": "Renders product detail pages with SEO metadata, Product JSON-LD, image gallery/lightbox, price and stock controls, quantity breaks, characteristics, description, reviews, same-series products and related products.",
+      "primary_files": [
+        "src/app/[locale]/(shop)/product/[slug]/page.tsx",
+        "src/app/[locale]/(shop)/product/[slug]/loading.tsx",
+        "src/queries/products.ts",
+        "src/components/product/product-gallery.tsx",
+        "src/components/product/product-reviews.tsx",
+        "src/components/product/product-schema.tsx",
+        "src/components/product/product-attributes.tsx",
+        "src/components/product/same-series-products.tsx",
+        "src/components/product/related-products-section.tsx",
+        "src/components/product/similar-products.tsx",
+        "src/components/cart/add-to-cart-button.tsx",
+        "src/components/layout/breadcrumbs.tsx"
+      ],
+      "functions": [
+        {
+          "name": "generateStaticParams",
+          "file": "src/app/[locale]/(shop)/product/[slug]/page.tsx",
+          "params": [],
+          "returns": "top 1000 active product params expanded across locales",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "generateMetadata",
+          "file": "src/app/[locale]/(shop)/product/[slug]/page.tsx",
+          "params": [
+            "params"
+          ],
+          "returns": "Promise<Metadata>",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "QtyBreaksTable",
+          "file": "src/app/[locale]/(shop)/product/[slug]/page.tsx",
+          "params": [
+            "basePrice: number",
+            "breaks",
+            "locale: string"
+          ],
+          "returns": "quantity price table or null",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "ProductPage",
+          "file": "src/app/[locale]/(shop)/product/[slug]/page.tsx",
+          "params": [
+            "params"
+          ],
+          "returns": "product detail page UI",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "getProductBySlug",
+          "file": "src/queries/products.ts",
+          "params": [
+            "slug: string",
+            "locale: string"
+          ],
+          "returns": "product detail projection or null",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "ProductGallery",
+          "file": "src/components/product/product-gallery.tsx",
+          "params": [
+            "images",
+            "productName",
+            "locale"
+          ],
+          "returns": "interactive gallery and lightbox",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "ProductReviews",
+          "file": "src/components/product/product-reviews.tsx",
+          "params": [
+            "initialReviews",
+            "locale",
+            "productName"
+          ],
+          "returns": "reviews summary/list/modal",
+          "confidence": "confirmed but file currently unparsable"
+        },
+        {
+          "name": "ProductSchema",
+          "file": "src/components/product/product-schema.tsx",
+          "params": [
+            "product",
+            "locale"
+          ],
+          "returns": "Schema.org Product JSON-LD script",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "SameSeriesProducts",
+          "file": "src/components/product/same-series-products.tsx",
+          "params": [
+            "productId",
+            "categoryId",
+            "brandId",
+            "attributes",
+            "locale"
+          ],
+          "returns": "sidebar product list or null",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "RelatedProductsSection",
+          "file": "src/components/product/related-products-section.tsx",
+          "params": [
+            "categoryId",
+            "excludeId",
+            "locale"
+          ],
+          "returns": "bottom product-card grid or null",
+          "confidence": "confirmed"
+        }
+      ],
+      "entities": [
+        {
+          "name": "ProductDetailProjection",
+          "fields": [
+            {
+              "name": "id",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "slug",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "sku",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "price",
+              "type": "Decimal",
+              "required": true
+            },
+            {
+              "name": "comparePrice",
+              "type": "Decimal",
+              "required": false
+            },
+            {
+              "name": "costPrice",
+              "type": "Decimal",
+              "required": false
+            },
+            {
+              "name": "stock",
+              "type": "number",
+              "required": true
+            },
+            {
+              "name": "attributes",
+              "type": "JSON",
+              "required": false
+            },
+            {
+              "name": "brand",
+              "type": "object",
+              "required": false
+            },
+            {
+              "name": "category",
+              "type": "object",
+              "required": false
+            },
+            {
+              "name": "images",
+              "type": "array",
+              "required": true
+            },
+            {
+              "name": "translations",
+              "type": "array",
+              "required": true
+            },
+            {
+              "name": "reviews",
+              "type": "array",
+              "required": true
+            }
+          ],
+          "confidence": "confirmed"
+        },
+        {
+          "name": "ProductImage",
+          "fields": [
+            {
+              "name": "id",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "url",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "alt",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "sortOrder",
+              "type": "number",
+              "required": true
+            }
+          ],
+          "confidence": "confirmed"
+        },
+        {
+          "name": "ProductReview",
+          "fields": [
+            {
+              "name": "id",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "rating",
+              "type": "number",
+              "required": true
+            },
+            {
+              "name": "comment",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "createdAt",
+              "type": "Date|string",
+              "required": true
+            },
+            {
+              "name": "user.name",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "advantages",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "disadvantages",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "verifiedPurchase",
+              "type": "boolean",
+              "required": false
+            }
+          ],
+          "confidence": "confirmed"
+        },
+        {
+          "name": "QuantityBreak",
+          "fields": [
+            {
+              "name": "min",
+              "type": "number",
+              "required": true
+            },
+            {
+              "name": "discount",
+              "type": "number",
+              "required": true
+            },
+            {
+              "name": "unitPrice",
+              "type": "number",
+              "required": true
+            }
+          ],
+          "confidence": "confirmed"
+        },
+        {
+          "name": "ProductJsonLd",
+          "fields": [
+            {
+              "name": "@type",
+              "type": "Product",
+              "required": true
+            },
+            {
+              "name": "name",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "sku",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "image",
+              "type": "string[]",
+              "required": true
+            },
+            {
+              "name": "description",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "offers",
+              "type": "Offer",
+              "required": true
+            },
+            {
+              "name": "aggregateRating",
+              "type": "AggregateRating",
+              "required": false
+            }
+          ],
+          "confidence": "confirmed"
+        }
+      ],
+      "business_rules": [
+        {
+          "description": "Product pages are pre-generated for top 1000 active products per locale.",
+          "location": "src/app/[locale]/(shop)/product/[slug]/page.tsx:29",
+          "confidence": "confirmed"
+        },
+        {
+          "description": "Product detail pages only load active products.",
+          "location": "src/queries/products.ts:49",
+          "confidence": "confirmed"
+        },
+        {
+          "description": "Quantity stepper maximum is the current product stock.",
+          "location": "src/app/[locale]/(shop)/product/[slug]/page.tsx:327",
+          "confidence": "confirmed"
+        },
+        {
+          "description": "Quantity price breaks come from JSONB attributes.qty_breaks.",
+          "location": "src/app/[locale]/(shop)/product/[slug]/page.tsx:171",
+          "confidence": "confirmed"
+        },
+        {
+          "description": "Same-series products currently mean same category and brand, with category-only fallback.",
+          "location": "src/queries/products.ts:266",
+          "confidence": "confirmed"
+        },
+        {
+          "description": "Related products are other active products from the same category.",
+          "location": "src/queries/products.ts:237",
+          "confidence": "confirmed"
+        }
+      ],
+      "dependencies": [
+        "Prisma Product",
+        "Prisma ProductImage",
+        "Prisma Review",
+        "next/image",
+        "next/link",
+        "next/navigation",
+        "next-intl/server",
+        "AddToCartButton",
+        "Breadcrumbs"
+      ],
+      "algorithms": [
+        {
+          "name": "product static param expansion",
+          "description": "Queries active product slugs and expands each slug across uk and ru route params.",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "quantity break price table",
+          "description": "Converts JSON quantity tiers into discounted unit prices.",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "gallery carousel and lightbox navigation",
+          "description": "Uses client state with wraparound previous/next, Escape close and swipe gestures.",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "review summary",
+          "description": "Calculates average rating, star breakdown and simple all/positive/negative filters.",
+          "confidence": "confirmed but blocked by syntax error"
+        },
+        {
+          "name": "product schema generation",
+          "description": "Builds Schema.org Product/Offer/AggregateRating JSON-LD from product detail data.",
+          "confidence": "confirmed"
+        }
+      ],
+      "complexity": "high"
+    },
+    {
+      "name": "cart",
+      "path": "src/actions/cart.ts + src/components/cart + src/app/[locale]/(shop)/cart",
+      "purpose": "Manages guest and authenticated cart state, cart mutations, cart drawer, full cart page, header badge and add-to-cart controls.",
+      "primary_files": [
+        "src/actions/cart.ts",
+        "src/app/[locale]/(shop)/cart/page.tsx",
+        "src/components/cart/cart-page-client.tsx",
+        "src/components/cart/cart-drawer.tsx",
+        "src/components/cart/cart-item.tsx",
+        "src/components/cart/add-to-cart-button.tsx",
+        "src/components/cart/cart-button.tsx",
+        "src/components/layout/mobile-nav.tsx",
+        "src/store/cart-store.ts",
+        "src/hooks/use-cart.ts",
+        "prisma/schema.prisma"
+      ],
+      "functions": [
+        {
+          "name": "getCart",
+          "file": "src/actions/cart.ts",
+          "params": [
+            "locale: string"
+          ],
+          "returns": "Promise<CartItem[]>",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "getCartCount",
+          "file": "src/actions/cart.ts",
+          "params": [],
+          "returns": "Promise<number>",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "addToCart",
+          "file": "src/actions/cart.ts",
+          "params": [
+            "{ productId, quantity }"
+          ],
+          "returns": "{ success, error? }",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "removeFromCart",
+          "file": "src/actions/cart.ts",
+          "params": [
+            "{ productId }"
+          ],
+          "returns": "{ success, error? }",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "updateCartQuantity",
+          "file": "src/actions/cart.ts",
+          "params": [
+            "{ productId, quantity }"
+          ],
+          "returns": "{ success, error? }",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "clearCart",
+          "file": "src/actions/cart.ts",
+          "params": [],
+          "returns": "{ success }",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "mergeCartIfNeeded",
+          "file": "src/actions/cart.ts",
+          "params": [
+            "userId: string"
+          ],
+          "returns": "Promise<void>",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "AddToCartButton.handleClick",
+          "file": "src/components/cart/add-to-cart-button.tsx",
+          "params": [],
+          "returns": "cart mutation side effect",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "CartItem.changeQty",
+          "file": "src/components/cart/cart-item.tsx",
+          "params": [
+            "delta: number"
+          ],
+          "returns": "cart mutation side effect",
+          "confidence": "confirmed"
+        }
+      ],
+      "entities": [
+        {
+          "name": "CartCookieItem",
+          "fields": [
+            {
+              "name": "productId",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "quantity",
+              "type": "number",
+              "required": true
+            }
+          ],
+          "confidence": "confirmed"
+        },
+        {
+          "name": "CartItemDTO",
+          "fields": [
+            {
+              "name": "productId",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "quantity",
+              "type": "number",
+              "required": true
+            },
+            {
+              "name": "name",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "sku",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "price",
+              "type": "number",
+              "required": true
+            },
+            {
+              "name": "comparePrice",
+              "type": "number|null",
+              "required": false
+            },
+            {
+              "name": "imageUrl",
+              "type": "string|null",
+              "required": false
+            },
+            {
+              "name": "slug",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "stock",
+              "type": "number",
+              "required": true
+            },
+            {
+              "name": "inStock",
+              "type": "boolean",
+              "required": true
+            }
+          ],
+          "confidence": "confirmed"
+        },
+        {
+          "name": "CartItemModel",
+          "fields": [
+            {
+              "name": "id",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "userId",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "productId",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "quantity",
+              "type": "int",
+              "required": true
+            },
+            {
+              "name": "createdAt",
+              "type": "DateTime",
+              "required": true
+            },
+            {
+              "name": "updatedAt",
+              "type": "DateTime",
+              "required": true
+            }
+          ],
+          "confidence": "confirmed"
+        },
+        {
+          "name": "CartUIStore",
+          "fields": [
+            {
+              "name": "isDrawerOpen",
+              "type": "boolean",
+              "required": true
+            },
+            {
+              "name": "openDrawer",
+              "type": "function",
+              "required": true
+            },
+            {
+              "name": "closeDrawer",
+              "type": "function",
+              "required": true
+            },
+            {
+              "name": "toggleDrawer",
+              "type": "function",
+              "required": true
+            }
+          ],
+          "confidence": "confirmed"
+        }
+      ],
+      "business_rules": [
+        {
+          "description": "Guest carts are stored in the HTTP-only cart cookie for 30 days.",
+          "location": "src/actions/cart.ts:52",
+          "confidence": "confirmed"
+        },
+        {
+          "description": "Authenticated carts are stored in cart_items with a unique user/product row.",
+          "location": "prisma/schema.prisma:273",
+          "confidence": "confirmed"
+        },
+        {
+          "description": "Quantity mutations are capped to integer range 0/1 through 99 by Zod schemas.",
+          "location": "src/actions/cart.ts:16",
+          "confidence": "confirmed"
+        },
+        {
+          "description": "Guest cart is merged into DB cart on authenticated cart reads.",
+          "location": "src/actions/cart.ts:150",
+          "confidence": "confirmed"
+        },
+        {
+          "description": "Product stock is checked before add and update quantity actions.",
+          "location": "src/actions/cart.ts:285",
+          "confidence": "confirmed"
+        },
+        {
+          "description": "Zustand stores only drawer UI state and not cart business data.",
+          "location": "src/store/cart-store.ts:7",
+          "confidence": "confirmed"
+        }
+      ],
+      "dependencies": [
+        "Next Server Actions",
+        "next/headers cookies",
+        "next/cache revalidateTag",
+        "NextAuth auth()",
+        "Prisma CartItem/Product",
+        "Zod",
+        "Zustand",
+        "next/navigation router.refresh",
+        "next/image",
+        "lucide-react"
+      ],
+      "algorithms": [
+        {
+          "name": "guest cookie parsing",
+          "description": "Parses cart cookie JSON and structurally filters productId/quantity items.",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "guest-to-DB cart merge",
+          "description": "Moves cookie lines into authenticated cart rows inside a Prisma transaction and clears cookie afterwards.",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "cart DTO projection",
+          "description": "Maps product/cart records into UI-ready CartItem DTOs with localized name, price, image and stock state.",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "stock capping",
+          "description": "Caps add, merge and UI stepper quantities by product stock and max quantity 99.",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "drawer lifecycle",
+          "description": "Opens drawer through Zustand, loads cart on open and closes with Escape/backdrop.",
+          "confidence": "confirmed"
+        }
+      ],
+      "complexity": "high"
+    },
+    {
+      "name": "checkout-orders",
+      "path": "src/actions/order.ts + src/app/[locale]/(shop)/checkout + order routes",
+      "purpose": "Turns cart contents into persisted orders, validates checkout input, decrements product stock, creates order snapshots, clears carts and renders order success/account order views.",
+      "primary_files": [
+        "src/actions/order.ts",
+        "src/app/[locale]/(shop)/checkout/page.tsx",
+        "src/app/[locale]/(shop)/checkout/checkout-form.tsx",
+        "src/app/[locale]/(shop)/order-success/page.tsx",
+        "src/queries/orders.ts",
+        "src/app/[locale]/(account)/orders/page.tsx",
+        "src/app/[locale]/(account)/orders/[number]/page.tsx",
+        "prisma/schema.prisma",
+        "prisma/migrations/20260522062352_add_order_counter/migration.sql"
+      ],
+      "functions": [
+        {
+          "name": "createOrder",
+          "file": "src/actions/order.ts",
+          "params": [
+            "CreateOrderSchema data",
+            "locale: string"
+          ],
+          "returns": "{ success, orderNumber?, error? }",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "CheckoutPage",
+          "file": "src/app/[locale]/(shop)/checkout/page.tsx",
+          "params": [
+            "params"
+          ],
+          "returns": "checkout page or redirect to cart",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "CheckoutForm.handleSubmit",
+          "file": "src/app/[locale]/(shop)/checkout/checkout-form.tsx",
+          "params": [
+            "React.FormEvent"
+          ],
+          "returns": "createOrder side effect and router redirect",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "OrderSuccessPage",
+          "file": "src/app/[locale]/(shop)/order-success/page.tsx",
+          "params": [
+            "params",
+            "searchParams"
+          ],
+          "returns": "order success page",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "getUserOrders",
+          "file": "src/actions/order.ts",
+          "params": [],
+          "returns": "{ success, orders, error? }",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "getOrderByNumber",
+          "file": "src/queries/orders.ts",
+          "params": [
+            "number: string",
+            "userId: string"
+          ],
+          "returns": "owned order or null",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "getUserOrders",
+          "file": "src/queries/orders.ts",
+          "params": [
+            "userId: string",
+            "page: number"
+          ],
+          "returns": "paginated order list",
+          "confidence": "confirmed"
+        }
+      ],
+      "entities": [
+        {
+          "name": "CreateOrderInput",
+          "fields": [
+            {
+              "name": "firstName",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "lastName",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "email",
+              "type": "email string",
+              "required": true
+            },
+            {
+              "name": "phone",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "city",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "street",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "building",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "apartment",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "paymentMethod",
+              "type": "PaymentMethod",
+              "required": true
+            },
+            {
+              "name": "notes",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "confidence": "confirmed"
+        },
+        {
+          "name": "Order",
+          "fields": [
+            {
+              "name": "id",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "number",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "userId",
+              "type": "string|null",
+              "required": false
+            },
+            {
+              "name": "addressId",
+              "type": "string|null",
+              "required": false
+            },
+            {
+              "name": "status",
+              "type": "OrderStatus",
+              "required": true
+            },
+            {
+              "name": "paymentStatus",
+              "type": "PaymentStatus",
+              "required": true
+            },
+            {
+              "name": "paymentMethod",
+              "type": "PaymentMethod",
+              "required": true
+            },
+            {
+              "name": "subtotal",
+              "type": "Decimal",
+              "required": true
+            },
+            {
+              "name": "discount",
+              "type": "Decimal",
+              "required": true
+            },
+            {
+              "name": "shipping",
+              "type": "Decimal",
+              "required": true
+            },
+            {
+              "name": "total",
+              "type": "Decimal",
+              "required": true
+            },
+            {
+              "name": "customerData",
+              "type": "JSON",
+              "required": true
+            },
+            {
+              "name": "notes",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "confidence": "confirmed"
+        },
+        {
+          "name": "OrderItem",
+          "fields": [
+            {
+              "name": "id",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "orderId",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "productId",
+              "type": "string|null",
+              "required": false
+            },
+            {
+              "name": "snapshot",
+              "type": "JSON",
+              "required": true
+            },
+            {
+              "name": "quantity",
+              "type": "int",
+              "required": true
+            },
+            {
+              "name": "price",
+              "type": "Decimal",
+              "required": true
+            }
+          ],
+          "confidence": "confirmed"
+        },
+        {
+          "name": "OrderCounter",
+          "fields": [
+            {
+              "name": "year",
+              "type": "int",
+              "required": true
+            },
+            {
+              "name": "value",
+              "type": "int",
+              "required": true
+            }
+          ],
+          "confidence": "confirmed"
+        }
+      ],
+      "business_rules": [
+        {
+          "description": "Checkout with empty cart redirects to cart.",
+          "location": "src/app/[locale]/(shop)/checkout/page.tsx:30",
+          "confidence": "confirmed"
+        },
+        {
+          "description": "Order number format is ORD-YYYY-NNNNN.",
+          "location": "src/actions/order.ts:153",
+          "confidence": "confirmed"
+        },
+        {
+          "description": "Stock decrement uses updateMany with stock >= quantity to prevent negative stock.",
+          "location": "src/actions/order.ts:134",
+          "confidence": "confirmed"
+        },
+        {
+          "description": "Authenticated cart cleanup is inside the order transaction.",
+          "location": "src/actions/order.ts:194",
+          "confidence": "confirmed"
+        },
+        {
+          "description": "Order success route loads order summary by public order number.",
+          "location": "src/app/[locale]/(shop)/order-success/page.tsx:37",
+          "confidence": "confirmed"
+        }
+      ],
+      "dependencies": [
+        "Next Server Actions",
+        "next/headers cookies",
+        "next/navigation redirect/router",
+        "Prisma Order/OrderItem/Product/CartItem/OrderCounter",
+        "Zod",
+        "NextAuth auth()",
+        "cart actions",
+        "Breadcrumbs"
+      ],
+      "algorithms": [
+        {
+          "name": "order total calculation",
+          "description": "Sums current product DB prices multiplied by cart quantities; shipping and discount are currently zero.",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "negative stock prevention",
+          "description": "Each product stock decrement is guarded by updateMany where stock is at least requested quantity.",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "concurrent order numbering",
+          "description": "Uses yearly OrderCounter upsert with increment to generate unique sequential order numbers.",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "order snapshotting",
+          "description": "Copies localized product name, SKU, image and price into order item JSON snapshot.",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "account order pagination",
+          "description": "Paginated query implementation exists in src/queries/orders.ts, though current account action uses an unpaginated query.",
+          "confidence": "confirmed"
+        }
+      ],
+      "complexity": "high"
+    },
+    {
+      "name": "account",
+      "path": "src/app/[locale]/(account) + src/actions/user.ts + src/queries/orders.ts",
+      "purpose": "Protects customer account pages and renders personal cabinet order history, order detail, profile display, wishlist and sign-out.",
+      "primary_files": [
+        "src/app/[locale]/(account)/layout.tsx",
+        "src/app/[locale]/(account)/orders/page.tsx",
+        "src/app/[locale]/(account)/orders/[number]/page.tsx",
+        "src/app/[locale]/(account)/profile/page.tsx",
+        "src/app/[locale]/(account)/wishlist/page.tsx",
+        "src/app/[locale]/(account)/signout-button.tsx",
+        "src/actions/order.ts",
+        "src/queries/orders.ts",
+        "src/actions/user.ts",
+        "src/components/layout/header.tsx",
+        "src/components/layout/mobile-nav.tsx"
+      ],
+      "functions": [
+        {
+          "name": "AccountLayout",
+          "file": "src/app/[locale]/(account)/layout.tsx",
+          "params": [
+            "children",
+            "params"
+          ],
+          "returns": "protected account shell or redirect",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "OrdersPage",
+          "file": "src/app/[locale]/(account)/orders/page.tsx",
+          "params": [
+            "params"
+          ],
+          "returns": "order history UI",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "OrderDetailPage",
+          "file": "src/app/[locale]/(account)/orders/[number]/page.tsx",
+          "params": [
+            "params"
+          ],
+          "returns": "owned order detail or notFound",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "ProfilePage",
+          "file": "src/app/[locale]/(account)/profile/page.tsx",
+          "params": [
+            "params"
+          ],
+          "returns": "read-only session profile UI",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "WishlistPage",
+          "file": "src/app/[locale]/(account)/wishlist/page.tsx",
+          "params": [
+            "params"
+          ],
+          "returns": "wishlist products UI",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "SignOutButton",
+          "file": "src/app/[locale]/(account)/signout-button.tsx",
+          "params": [
+            "locale"
+          ],
+          "returns": "client signOut side effect",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "getOrderByNumber",
+          "file": "src/queries/orders.ts",
+          "params": [
+            "number: string",
+            "userId: string"
+          ],
+          "returns": "owned order or null",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "getWishlist",
+          "file": "src/actions/user.ts",
+          "params": [
+            "locale: string"
+          ],
+          "returns": "{ success, items, error? }",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "updateProfile",
+          "file": "src/actions/user.ts",
+          "params": [
+            "{ name }"
+          ],
+          "returns": "{ success, error? }",
+          "confidence": "confirmed but not wired to current UI"
+        },
+        {
+          "name": "changePassword",
+          "file": "src/actions/user.ts",
+          "params": [
+            "{ currentPassword, newPassword }"
+          ],
+          "returns": "{ success, error? }",
+          "confidence": "confirmed but not wired to current UI"
+        }
+      ],
+      "entities": [
+        {
+          "name": "AccountSessionUser",
+          "fields": [
+            {
+              "name": "id",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "name",
+              "type": "string|null",
+              "required": false
+            },
+            {
+              "name": "email",
+              "type": "string|null",
+              "required": false
+            },
+            {
+              "name": "image",
+              "type": "string|null",
+              "required": false
+            },
+            {
+              "name": "role",
+              "type": "UserRole",
+              "required": false
+            }
+          ],
+          "confidence": "confirmed"
+        },
+        {
+          "name": "AccountOrderListItem",
+          "fields": [
+            {
+              "name": "id",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "number",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "status",
+              "type": "OrderStatus",
+              "required": true
+            },
+            {
+              "name": "paymentStatus",
+              "type": "PaymentStatus",
+              "required": true
+            },
+            {
+              "name": "paymentMethod",
+              "type": "PaymentMethod",
+              "required": false
+            },
+            {
+              "name": "total",
+              "type": "Decimal",
+              "required": true
+            },
+            {
+              "name": "createdAt",
+              "type": "DateTime",
+              "required": true
+            },
+            {
+              "name": "items",
+              "type": "array",
+              "required": true
+            }
+          ],
+          "confidence": "confirmed"
+        },
+        {
+          "name": "WishlistItem",
+          "fields": [
+            {
+              "name": "id",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "productId",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "createdAt",
+              "type": "DateTime",
+              "required": true
+            },
+            {
+              "name": "product",
+              "type": "object",
+              "required": true
+            }
+          ],
+          "confidence": "confirmed"
+        },
+        {
+          "name": "ProfileActionInput",
+          "fields": [
+            {
+              "name": "updateProfile.name",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "changePassword.currentPassword",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "changePassword.newPassword",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "wishlist.productId",
+              "type": "string",
+              "required": true
+            }
+          ],
+          "confidence": "confirmed"
+        }
+      ],
+      "business_rules": [
+        {
+          "description": "Account routes require an authenticated session.",
+          "location": "src/app/[locale]/(account)/layout.tsx:19",
+          "confidence": "confirmed"
+        },
+        {
+          "description": "Unauthenticated account requests redirect to login with callback to orders.",
+          "location": "src/app/[locale]/(account)/layout.tsx:21",
+          "confidence": "confirmed"
+        },
+        {
+          "description": "Order detail is only returned when the order belongs to the current user.",
+          "location": "src/queries/orders.ts:62",
+          "confidence": "confirmed"
+        },
+        {
+          "description": "Wishlist reads and writes are scoped to the current session user.",
+          "location": "src/actions/user.ts:138",
+          "confidence": "confirmed"
+        },
+        {
+          "description": "OAuth-only accounts cannot change password through changePassword().",
+          "location": "src/actions/user.ts:56",
+          "confidence": "confirmed"
+        }
+      ],
+      "dependencies": [
+        "NextAuth auth/signOut",
+        "next/navigation redirect/notFound",
+        "Prisma User/Order/WishlistItem/Product",
+        "Breadcrumbs",
+        "lucide-react",
+        "bcryptjs",
+        "Zod"
+      ],
+      "algorithms": [
+        {
+          "name": "account route guard",
+          "description": "Validates locale and session before rendering nested account pages.",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "order ownership check",
+          "description": "Loads by order number and rejects if order.userId differs from the current user.",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "wishlist projection",
+          "description": "Loads current user's wishlist rows with nested product display projection.",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "password change",
+          "description": "Validates current password with bcrypt before storing a new hash.",
+          "confidence": "confirmed"
+        }
+      ],
+      "complexity": "medium"
+    },
+    {
+      "name": "search",
+      "path": "src/components/search + src/app/[locale]/(shop)/search + src/actions/search.ts",
+      "purpose": "Provides localized product search through header autocomplete, full search page, Algolia search/index helpers and Prisma fallback search.",
+      "primary_files": [
+        "src/components/search/search-box.tsx",
+        "src/app/[locale]/(shop)/search/page.tsx",
+        "src/actions/search.ts",
+        "src/queries/search.ts",
+        "src/lib/algolia.ts",
+        "src/hooks/use-debounce.ts",
+        "src/lib/env.ts",
+        "prisma/seed.ts",
+        "src/components/layout/header.tsx",
+        "src/components/layout/mobile-nav.tsx"
+      ],
+      "functions": [
+        {
+          "name": "SearchBox",
+          "file": "src/components/search/search-box.tsx",
+          "params": [],
+          "returns": "header autocomplete search UI",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "useDebounce",
+          "file": "src/hooks/use-debounce.ts",
+          "params": [
+            "value",
+            "delay"
+          ],
+          "returns": "debounced value",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "searchProducts",
+          "file": "src/actions/search.ts",
+          "params": [
+            "query: string",
+            "locale: string"
+          ],
+          "returns": "{ success, results, error? }",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "syncProductIndex",
+          "file": "src/actions/search.ts",
+          "params": [
+            "productId: string"
+          ],
+          "returns": "{ success, error? }",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "removeProductFromIndex",
+          "file": "src/actions/search.ts",
+          "params": [
+            "productId: string"
+          ],
+          "returns": "{ success, error? }",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "searchProductsFallback",
+          "file": "src/queries/search.ts",
+          "params": [
+            "query: string",
+            "locale: string",
+            "take: number"
+          ],
+          "returns": "{ products, total }",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "SearchPage",
+          "file": "src/app/[locale]/(shop)/search/page.tsx",
+          "params": [
+            "params",
+            "searchParams"
+          ],
+          "returns": "full search results page",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "getAlgoliaAdminClient",
+          "file": "src/lib/algolia.ts",
+          "params": [],
+          "returns": "Algolia admin client or null",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "getAlgoliaSearchClient",
+          "file": "src/lib/algolia.ts",
+          "params": [],
+          "returns": "Algolia search client or null",
+          "confidence": "confirmed"
+        }
+      ],
+      "entities": [
+        {
+          "name": "SearchResultProduct",
+          "fields": [
+            {
+              "name": "objectID",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "slug",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "sku",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "name",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "description",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "price",
+              "type": "number",
+              "required": true
+            },
+            {
+              "name": "comparePrice",
+              "type": "number|null",
+              "required": false
+            },
+            {
+              "name": "inStock",
+              "type": "boolean",
+              "required": true
+            },
+            {
+              "name": "categorySlug",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "categoryName",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "brandName",
+              "type": "string|null",
+              "required": false
+            },
+            {
+              "name": "image",
+              "type": "string|null",
+              "required": false
+            },
+            {
+              "name": "locale",
+              "type": "string",
+              "required": true
+            }
+          ],
+          "confidence": "confirmed"
+        },
+        {
+          "name": "SearchQueryInput",
+          "fields": [
+            {
+              "name": "query",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "locale",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "take",
+              "type": "number",
+              "required": false
+            },
+            {
+              "name": "hitsPerPage",
+              "type": "number",
+              "required": false
+            }
+          ],
+          "confidence": "confirmed"
+        },
+        {
+          "name": "AlgoliaEnvironment",
+          "fields": [
+            {
+              "name": "ALGOLIA_APP_ID",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "ALGOLIA_ADMIN_KEY",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "NEXT_PUBLIC_ALGOLIA_APP_ID",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "NEXT_PUBLIC_ALGOLIA_SEARCH_KEY",
+              "type": "string",
+              "required": false
+            }
+          ],
+          "confidence": "confirmed"
+        }
+      ],
+      "business_rules": [
+        {
+          "description": "Full search page only executes search for queries with length at least 2.",
+          "location": "src/app/[locale]/(shop)/search/page.tsx:45",
+          "confidence": "confirmed"
+        },
+        {
+          "description": "Header autocomplete executes search for any non-empty debounced query.",
+          "location": "src/components/search/search-box.tsx:33",
+          "confidence": "confirmed"
+        },
+        {
+          "description": "Algolia indices are locale-specific: products_uk and products_ru.",
+          "location": "src/actions/search.ts:51",
+          "confidence": "confirmed"
+        },
+        {
+          "description": "Missing Algolia credentials fall back to Prisma search or skip sync.",
+          "location": "src/actions/search.ts:28",
+          "confidence": "confirmed"
+        },
+        {
+          "description": "Prisma fallback searches localized product name and SKU only.",
+          "location": "src/queries/search.ts:21",
+          "confidence": "confirmed"
+        }
+      ],
+      "dependencies": [
+        "Algolia",
+        "Prisma Product",
+        "Next Server Actions",
+        "next-intl",
+        "next/image",
+        "next/link",
+        "useDebounce",
+        "productCardSelect",
+        "Breadcrumbs"
+      ],
+      "algorithms": [
+        {
+          "name": "debounce search",
+          "description": "Delays search execution by 300 ms after input changes.",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "Algolia-first fallback search",
+          "description": "Uses Algolia when configured and falls back to Prisma search on missing credentials or errors.",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "index sync fan-out",
+          "description": "Writes or deletes a product across uk and ru Algolia indices.",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "fallback contains search",
+          "description": "Uses Prisma contains filters on localized translation name and SKU.",
+          "confidence": "confirmed"
+        }
+      ],
+      "complexity": "medium"
+    },
+    {
+      "name": "admin",
+      "type": "route-module",
+      "status": "analyzed",
+      "files": [
+        "src/app/[locale]/admin/page.tsx",
+        "src/lib/auth.ts",
+        "src/app/robots.ts",
+        "prisma/schema.prisma"
+      ],
+      "entrypoints": [
+        "/{locale}/admin",
+        "AdminDashboardPage",
+        "requireAdmin",
+        "requireManager"
+      ],
+      "entities": [
+        {
+          "name": "AdminSessionUser",
+          "fields": [
+            {
+              "name": "id",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "email",
+              "type": "string|null",
+              "required": false
+            },
+            {
+              "name": "name",
+              "type": "string|null",
+              "required": false
+            },
+            {
+              "name": "role",
+              "type": "UserRole",
+              "required": true
+            }
+          ],
+          "confidence": "confirmed"
+        },
+        {
+          "name": "DashboardStats",
+          "fields": [
+            {
+              "name": "totalOrders",
+              "type": "number",
+              "required": true
+            },
+            {
+              "name": "totalUsers",
+              "type": "number",
+              "required": true
+            },
+            {
+              "name": "totalProducts",
+              "type": "number",
+              "required": true
+            }
+          ],
+          "confidence": "confirmed"
+        },
+        {
+          "name": "AdminRecentOrderRow",
+          "fields": [
+            {
+              "name": "id",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "number",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "total",
+              "type": "Decimal",
+              "required": true
+            },
+            {
+              "name": "status",
+              "type": "OrderStatus",
+              "required": true
+            },
+            {
+              "name": "customerData",
+              "type": "Json|null",
+              "required": false
+            },
+            {
+              "name": "createdAt",
+              "type": "DateTime",
+              "required": true
+            }
+          ],
+          "confidence": "confirmed"
+        }
+      ],
+      "business_rules": [
+        {
+          "description": "Admin dashboard requires exact ADMIN role; MANAGER is not accepted.",
+          "location": "src/lib/auth.ts:116",
+          "confidence": "confirmed"
+        },
+        {
+          "description": "Auth and permission failures redirect to the localized login page with admin callbackUrl.",
+          "location": "src/app/[locale]/admin/page.tsx:31",
+          "confidence": "confirmed"
+        },
+        {
+          "description": "Dashboard latest order list is limited to five rows with explicit select fields.",
+          "location": "src/app/[locale]/admin/page.tsx:42",
+          "confidence": "confirmed"
+        },
+        {
+          "description": "Admin page metadata is noindex/nofollow.",
+          "location": "src/app/[locale]/admin/page.tsx:15",
+          "confidence": "confirmed"
+        }
+      ],
+      "dependencies": [
+        "NextAuth",
+        "Prisma",
+        "next/navigation",
+        "next Metadata API",
+        "lucide-react",
+        "UserRole",
+        "Order",
+        "Product",
+        "User"
+      ],
+      "algorithms": [
+        {
+          "name": "admin role guard",
+          "description": "Checks current session and allows only users with role ADMIN.",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "dashboard aggregate query",
+          "description": "Runs order/user/product counts and latest-orders query in parallel.",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "admin customer snapshot display",
+          "description": "Casts order customerData JSON into firstName/lastName display text.",
+          "confidence": "confirmed"
+        }
+      ],
+      "complexity": "low-current / high-missing-scope"
+    },
+    {
+      "name": "design-system",
+      "type": "cross-cutting-ui-module",
+      "status": "analyzed",
+      "files": [
+        "src/app/globals.css",
+        "components.json",
+        "src/components/ui/button.tsx",
+        "src/components/ui/badge.tsx",
+        "src/components/ui/input.tsx",
+        "src/components/ui/sheet.tsx",
+        "src/components/layout/header.tsx",
+        "src/components/product/product-card.tsx",
+        "src/app/[locale]/(shop)/product/[slug]/page.tsx",
+        "src/components/home/hero-section.tsx",
+        "src/components/catalog/*"
+      ],
+      "entrypoints": [
+        "src/app/globals.css @theme",
+        "components/ui primitives",
+        "layout/header",
+        "product-card",
+        "product page",
+        "catalog/home components"
+      ],
+      "entities": [
+        {
+          "name": "ThemeTokens",
+          "fields": [
+            {
+              "name": "accent",
+              "type": "color scale",
+              "required": true
+            },
+            {
+              "name": "surface",
+              "type": "color scale",
+              "required": true
+            },
+            {
+              "name": "border",
+              "type": "color scale",
+              "required": true
+            },
+            {
+              "name": "text",
+              "type": "color scale",
+              "required": true
+            },
+            {
+              "name": "semantic",
+              "type": "color scale",
+              "required": true
+            },
+            {
+              "name": "radius",
+              "type": "4/6/8 px scale",
+              "required": true
+            }
+          ],
+          "confidence": "confirmed"
+        },
+        {
+          "name": "MissingPrimitiveTokenAliases",
+          "fields": [
+            {
+              "name": "primary",
+              "type": "Tailwind color token",
+              "required": false
+            },
+            {
+              "name": "background",
+              "type": "Tailwind color token",
+              "required": false
+            },
+            {
+              "name": "foreground",
+              "type": "Tailwind color token",
+              "required": false
+            },
+            {
+              "name": "muted",
+              "type": "Tailwind color token",
+              "required": false
+            },
+            {
+              "name": "input",
+              "type": "Tailwind color token",
+              "required": false
+            },
+            {
+              "name": "ring",
+              "type": "Tailwind color token",
+              "required": false
+            },
+            {
+              "name": "popover",
+              "type": "Tailwind color token",
+              "required": false
+            },
+            {
+              "name": "secondary",
+              "type": "Tailwind color token",
+              "required": false
+            }
+          ],
+          "confidence": "confirmed"
+        },
+        {
+          "name": "DesignSurfaceCounts",
+          "fields": [
+            {
+              "name": "inlineStyleOccurrences",
+              "type": "number",
+              "required": true
+            },
+            {
+              "name": "filesWithInlineStyles",
+              "type": "number/list",
+              "required": true
+            },
+            {
+              "name": "largeRadiusOccurrences",
+              "type": "number",
+              "required": true
+            }
+          ],
+          "confidence": "confirmed"
+        }
+      ],
+      "business_rules": [
+        {
+          "description": "Tailwind CSS v4 config lives in globals.css via @theme; no tailwind.config.ts/js exists.",
+          "location": "src/app/globals.css:9",
+          "confidence": "confirmed"
+        },
+        {
+          "description": "Design radius scale is 4/6/8 px, but app uses many rounded-2xl/4xl classes.",
+          "location": "src/app/globals.css:50",
+          "confidence": "confirmed"
+        },
+        {
+          "description": "Protocol bans inline styles, but app/components contain 344 style={{...}} occurrences.",
+          "location": "repository search",
+          "confidence": "confirmed"
+        },
+        {
+          "description": "UI primitives reference shadcn token names not declared in the Elektronom @theme.",
+          "location": "src/components/ui/button.tsx:7",
+          "confidence": "confirmed"
+        }
+      ],
+      "dependencies": [
+        "Tailwind CSS v4",
+        "@tailwindcss/postcss",
+        "tw-animate-css",
+        "@base-ui/react",
+        "class-variance-authority",
+        "lucide-react",
+        "shadcn base-nova"
+      ],
+      "algorithms": [
+        {
+          "name": "token-to-utility mapping",
+          "description": "Tailwind v4 @theme inline maps CSS variables to utilities.",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "UI primitive variant composition",
+          "description": "class-variance-authority maps variant/size props to utility classes.",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "design cleanup order",
+          "description": "Repair text, align primitive tokens, remove inline styles, normalize radius, then run visual QA.",
+          "confidence": "inferred"
+        }
+      ],
+      "complexity": "high-cross-cutting"
+    },
+    {
+      "name": "documentation-tz",
+      "type": "documentation-module",
+      "status": "analyzed",
+      "files": [
+        "MASTER_CONTEXT v1_02.md",
+        "AGENTS.md",
+        "docs/tz/README.md",
+        "docs/tz/TZ_00_SUMMARY.md",
+        "docs/tz/TZ_01_STATUS_AND_SCOPE.md",
+        "docs/tz/TZ_02_BACKEND_PROTOCOL.md",
+        "docs/tz/TZ_03_FRONTEND_ROUTES_COMPONENTS.md",
+        "docs/tz/TZ_04_DESIGN_SYSTEM.md",
+        "docs/tz/TZ_05_ACCEPTANCE_CHECKLIST.md",
+        "docs/tz/TZ_06_ORIGINAL_COVERAGE_MATRIX.md",
+        "docs/tz/MINI_TZ_LOCAL_TEST_SERVER.md",
+        "docs/tz/MINI_TZ_STAGING_DEPLOY.md",
+        "docs/tz/TZ_PRODUCT_PAGE_CONCEPT6_REWORK.md",
+        "docs/tz/TZ_PRODUCT_PAGE_LOWER_BLOCKS_REWORK.md",
+        "docs/tz/original/*",
+        "TZ_UPDATED_MASTER_CONTEXT_1_3.md",
+        "REVIEW_REPORT_*.md"
+      ],
+      "entrypoints": [
+        "AGENTS.md",
+        "MASTER_CONTEXT v1_02.md",
+        "docs/tz/README.md",
+        "docs/tz/TZ_05_ACCEPTANCE_CHECKLIST.md"
+      ],
+      "entities": [
+        {
+          "name": "DocumentationSources",
+          "fields": [
+            {
+              "name": "masterContext",
+              "type": "markdown",
+              "required": true
+            },
+            {
+              "name": "agentRules",
+              "type": "markdown",
+              "required": true
+            },
+            {
+              "name": "workingTzFolder",
+              "type": "folder",
+              "required": true
+            },
+            {
+              "name": "originalTzFolder",
+              "type": "folder",
+              "required": true
+            },
+            {
+              "name": "coverageMatrix",
+              "type": "markdown",
+              "required": true
+            },
+            {
+              "name": "acceptanceChecklist",
+              "type": "markdown",
+              "required": true
+            }
+          ],
+          "confidence": "confirmed"
+        },
+        {
+          "name": "CurrentStackSignals",
+          "fields": [
+            {
+              "name": "next",
+              "type": "semver",
+              "required": true
+            },
+            {
+              "name": "prisma",
+              "type": "semver",
+              "required": true
+            },
+            {
+              "name": "zustand",
+              "type": "semver",
+              "required": true
+            },
+            {
+              "name": "react",
+              "type": "semver",
+              "required": true
+            },
+            {
+              "name": "nextAuth",
+              "type": "semver",
+              "required": true
+            }
+          ],
+          "confidence": "confirmed"
+        },
+        {
+          "name": "DocumentationDriftItems",
+          "fields": [
+            {
+              "name": "staleStatusSnapshot",
+              "type": "markdown",
+              "required": false
+            },
+            {
+              "name": "masterContextInternalContradictions",
+              "type": "list",
+              "required": true
+            },
+            {
+              "name": "unfoldedReversaFindings",
+              "type": "list",
+              "required": true
+            }
+          ],
+          "confidence": "confirmed"
+        }
+      ],
+      "business_rules": [
+        {
+          "description": "AGENTS.md and MASTER_CONTEXT v1_02.md are the first protocol files to read before implementation.",
+          "location": "docs/tz/README.md:21",
+          "confidence": "confirmed"
+        },
+        {
+          "description": "Original Antigravity TZ files are historical reference only, not active implementation plan.",
+          "location": "docs/tz/README.md:23",
+          "confidence": "confirmed"
+        },
+        {
+          "description": "Old Prisma/Zustand/Master v1.2 references are superseded by MASTER v1.3 / Prisma 7 / Zustand 5.",
+          "location": "docs/tz/README.md:24",
+          "confidence": "confirmed"
+        },
+        {
+          "description": "Developer reports must list changed files, closed TZ points, checks and residual risks.",
+          "location": "docs/tz/TZ_05_ACCEPTANCE_CHECKLIST.md",
+          "confidence": "confirmed"
+        }
+      ],
+      "dependencies": [
+        "MASTER_CONTEXT v1_02.md",
+        "AGENTS.md",
+        "docs/tz",
+        "original Antigravity TZ files",
+        "review reports",
+        "Reversa findings"
+      ],
+      "algorithms": [
+        {
+          "name": "documentation reading order",
+          "description": "AGENTS -> MASTER -> docs/tz README -> active TZ docs -> coverage matrix/originals if needed.",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "original coverage mapping",
+          "description": "Maps each original TZ block into active working TZ files or historical archive.",
+          "confidence": "confirmed"
+        },
+        {
+          "name": "documentation curation order",
+          "description": "Fix MASTER contradictions, archive stale snapshots, update working TZs with Reversa findings, then maintain current next actions.",
+          "confidence": "inferred"
+        }
+      ],
+      "complexity": "medium-cross-cutting"
+    }
+  ]
+}

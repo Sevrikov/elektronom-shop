@@ -147,3 +147,45 @@ export function slugify(text: string): string {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
 }
+
+// ─── Site URL and Localization Helpers ────────────────────────────────────────
+
+export function getSiteUrl(): string {
+  const envUrl = process.env.NEXT_PUBLIC_SITE_URL;
+  const isLocal = !envUrl || envUrl.includes("localhost") || envUrl.includes("127.0.0.1");
+
+  if (isLocal && (process.env.NODE_ENV === "production" || process.env.VERCEL === "1")) {
+    const vercelUrl =
+      process.env.VERCEL_PROJECT_PRODUCTION_URL ||
+      process.env.VERCEL_URL ||
+      process.env.NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL ||
+      process.env.NEXT_PUBLIC_VERCEL_URL;
+    if (vercelUrl) {
+      return vercelUrl.startsWith("http") ? vercelUrl : `https://${vercelUrl}`;
+    }
+    return "https://elektronom.com.ua";
+  }
+
+  return envUrl || "https://elektronom.com.ua";
+}
+
+export function localizedPath(locale: string, path: string): string {
+  if (!path) return '';
+  const cleanPath = path.startsWith('/') ? path : `/${path}`;
+  const normalizedPath = cleanPath.replace(/\/+/g, '/');
+
+  if (normalizedPath === `/${locale}` || normalizedPath.startsWith(`/${locale}/`)) {
+    return normalizedPath;
+  }
+
+  const localeRegex = /^\/(uk|ru)(\/|$)/;
+  if (localeRegex.test(normalizedPath)) {
+    const pathWithoutLocale = normalizedPath.replace(localeRegex, '/');
+    const finalPath = pathWithoutLocale === '/' ? '' : pathWithoutLocale;
+    return `/${locale}${finalPath}`;
+  }
+
+  const finalPath = normalizedPath === '/' ? '' : normalizedPath;
+  return `/${locale}${finalPath}`;
+}
+

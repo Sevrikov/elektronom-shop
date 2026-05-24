@@ -1,6 +1,8 @@
 // components/product/product-schema.tsx
 // Server Component — JSON-LD Product schema.org
 
+import { getSiteUrl } from '@/lib/utils'
+
 interface ProductSchemaProps {
   product: {
     slug: string
@@ -21,7 +23,7 @@ const PRICE_VALID_UNTIL = new Date(Date.now() + 86400 * 30 * 1000)
   .split('T')[0]
 
 export function ProductSchema({ product, locale }: ProductSchemaProps) {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://elektronom.com.ua'
+  const baseUrl = getSiteUrl()
   const translation = product.translations.find((t) => t.locale === locale)
   const name = translation?.name ?? product.translations[0]?.name ?? product.sku
   const rawDesc = translation?.description ?? ''

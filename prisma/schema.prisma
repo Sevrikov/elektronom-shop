@@ -235,13 +235,16 @@ model ProductImage {
 // ─────────────────────────────────────────────
 
 model Review {
-  id        String   @id @default(cuid(2))
-  productId String
-  userId    String
-  rating    Int      // 1–5
-  comment   String?  @db.Text
-  isVisible Boolean  @default(true)
-  createdAt DateTime @default(now())
+  id               String   @id @default(cuid(2))
+  productId        String
+  userId           String
+  rating           Int      // 1–5
+  comment          String?  @db.Text
+  advantages       String?  @db.Text
+  disadvantages    String?  @db.Text
+  verifiedPurchase Boolean  @default(false)
+  isVisible        Boolean  @default(false)
+  createdAt        DateTime @default(now())
 
   product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
   user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -328,6 +331,7 @@ model Order {
   total         Decimal       @db.Decimal(12, 2)
   customerData  Json          // snapshot: name, email, phone
   notes         String?       @db.Text
+  idempotencyKey String?      @unique
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
 

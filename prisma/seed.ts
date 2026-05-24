@@ -11,9 +11,25 @@ const adapter = new PrismaPg({
 });
 const prisma = new PrismaClient({ adapter });
 
+type CategoryTranslationSeed = {
+  locale: string;
+  name: string;
+  description?: string | null;
+  metaTitle: string | null;
+  metaDesc: string | null;
+};
+
+type CategorySeed = {
+  slug: string;
+  sortOrder: number;
+  image: string | null;
+  translations: CategoryTranslationSeed[];
+  children?: CategorySeed[];
+};
+
 // ─── КАТЕГОРИИ ───────────────────────────────────────────────────────────────
 
-const CATEGORIES = [
+const CATEGORIES: CategorySeed[] = [
   {
     slug: "masla-dlya-avto",
     sortOrder: 1,
@@ -153,7 +169,9 @@ const PRODUCTS: ProductSeed[] = [
       },
     ],
     images: [
-      { url: "https://placehold.co/800x800/1a1a2e/ffffff?text=Castrol+EDGE+5W30", alt: "Castrol EDGE 5W-30 4L", sortOrder: 0 },
+      { url: "/images/products/castrol_edge_5w30.png", alt: "Castrol EDGE 5W-30 4L", sortOrder: 0 },
+      { url: "/images/products/castrol_edge_5w30_spec.png", alt: "Castrol EDGE 5W-30 4L Specifications", sortOrder: 1 },
+      { url: "/images/products/castrol_edge_pour.png", alt: "Castrol EDGE 5W-30 4L Pour Detail", sortOrder: 2 },
     ],
   },
   {
@@ -184,7 +202,7 @@ const PRODUCTS: ProductSeed[] = [
       },
     ],
     images: [
-      { url: "https://placehold.co/800x800/1a1a2e/ffffff?text=Castrol+EDGE+5W40", alt: "Castrol EDGE 5W-40 4L", sortOrder: 0 },
+      { url: "/images/products/castrol_edge_5w30.png", alt: "Castrol EDGE 5W-40 4L", sortOrder: 0 },
     ],
   },
   // SHELL
@@ -216,7 +234,7 @@ const PRODUCTS: ProductSeed[] = [
       },
     ],
     images: [
-      { url: "https://placehold.co/800x800/e63946/ffffff?text=Shell+Helix+Ultra", alt: "Shell Helix Ultra 5W-30 4L", sortOrder: 0 },
+      { url: "/images/products/shell_helix_ultra.png", alt: "Shell Helix Ultra 5W-30 4L", sortOrder: 0 },
     ],
   },
   // MOBIL
@@ -248,7 +266,7 @@ const PRODUCTS: ProductSeed[] = [
       },
     ],
     images: [
-      { url: "https://placehold.co/800x800/264653/ffffff?text=Mobil+1+ESP", alt: "Mobil 1 ESP 5W-30 4L", sortOrder: 0 },
+      { url: "/images/products/mobil1_esp.png", alt: "Mobil 1 ESP 5W-30 4L", sortOrder: 0 },
     ],
   },
   // LIQUI MOLY
@@ -280,7 +298,7 @@ const PRODUCTS: ProductSeed[] = [
       },
     ],
     images: [
-      { url: "https://placehold.co/800x800/2d6a4f/ffffff?text=Liqui+Moly", alt: "Liqui Moly Top Tec 4200 5W-30 4L", sortOrder: 0 },
+      { url: "/images/products/liqui_moly.png", alt: "Liqui Moly Top Tec 4200 5W-30 4L", sortOrder: 0 },
     ],
   },
   // MANNOL
@@ -312,7 +330,7 @@ const PRODUCTS: ProductSeed[] = [
       },
     ],
     images: [
-      { url: "https://placehold.co/800x800/6c757d/ffffff?text=Mannol+Energy", alt: "Mannol Energy 5W-30 4L", sortOrder: 0 },
+      { url: "/images/products/mannol_energy.png", alt: "Mannol Energy 5W-30 4L", sortOrder: 0 },
     ],
   },
   // TOTAL — трансмиссия
@@ -344,7 +362,7 @@ const PRODUCTS: ProductSeed[] = [
       },
     ],
     images: [
-      { url: "https://placehold.co/800x800/e9c46a/1a1a2e?text=Total+75W90", alt: "Total Transmission TM 8 75W-90 1L", sortOrder: 0 },
+      { url: "/images/products/total_transmission.png", alt: "Total Transmission TM 8 75W-90 1L", sortOrder: 0 },
     ],
   },
   // Фильтры
@@ -376,10 +394,12 @@ const PRODUCTS: ProductSeed[] = [
       },
     ],
     images: [
-      { url: "https://placehold.co/800x800/457b9d/ffffff?text=Bosch+Filter", alt: "Bosch Oil Filter 0451103079", sortOrder: 0 },
+      { url: "/images/products/bosch_filter.png", alt: "Bosch Oil Filter 0451103079", sortOrder: 0 },
     ],
   },
 ];
+
+
 
 // ─── SEED FUNCTION ────────────────────────────────────────────────────────────
 

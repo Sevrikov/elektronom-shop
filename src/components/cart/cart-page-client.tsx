@@ -13,6 +13,7 @@ import { clearCart } from '@/actions/cart'
 import { CartItem } from '@/components/cart/cart-item'
 import { formatPrice } from '@/lib/utils'
 import type { CartItem as CartItemType } from '@/actions/cart'
+import { useCartUIStore } from '@/store/cart-store'
 
 interface CartPageClientProps {
   items: CartItemType[]
@@ -36,6 +37,7 @@ export function CartPageClient({ items, locale }: CartPageClientProps) {
     startTransition(async () => {
       await clearCart()
       router.refresh()
+      useCartUIStore.getState().triggerCartUpdate()
     })
   }
 

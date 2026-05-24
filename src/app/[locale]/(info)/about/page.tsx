@@ -25,7 +25,7 @@ export default async function AboutPage({ params }: PageProps) {
   const uk = locale !== 'ru'
 
   const breadcrumbs = [
-    { name: uk ? 'Головна' : 'Главная', url: `/${locale}` },
+    { name: uk ? 'Головна' : 'Главная', url: '/' },
     { name: uk ? 'Про компанію' : 'О компании' },
   ]
 

@@ -44,8 +44,8 @@ export default async function BrandPage({ params, searchParams }: PageProps) {
   })
 
   const breadcrumbs = [
-    { name: uk ? 'Головна' : 'Главная', url: `/${locale}` },
-    { name: uk ? 'Бренди' : 'Бренды', url: `/${locale}/brands` },
+    { name: uk ? 'Головна' : 'Главная', url: '/' },
+    { name: uk ? 'Бренди' : 'Бренды', url: '/brands' },
     { name: brand.name },
   ]
 

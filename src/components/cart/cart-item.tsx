@@ -10,6 +10,7 @@ import { Minus, Plus, Trash2, Loader2 } from 'lucide-react'
 import { useState, useTransition } from 'react'
 import { removeFromCart, updateCartQuantity } from '@/actions/cart'
 import { formatPrice } from '@/lib/utils'
+import { useCartUIStore } from '@/store/cart-store'
 
 interface CartItemProps {
   item: {
@@ -42,6 +43,7 @@ export function CartItem({ item, locale, onUpdate }: CartItemProps) {
     startTransition(async () => {
       await updateCartQuantity({ productId: item.productId, quantity: next })
       onUpdate?.()
+      useCartUIStore.getState().triggerCartUpdate()
     })
   }
 
@@ -49,6 +51,7 @@ export function CartItem({ item, locale, onUpdate }: CartItemProps) {
     startTransition(async () => {
       await removeFromCart({ productId: item.productId })
       onUpdate?.()
+      useCartUIStore.getState().triggerCartUpdate()
     })
   }
 
