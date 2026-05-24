@@ -12,10 +12,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { locale } = await params
   const uk = locale !== 'ru'
   return {
-    title: `${uk ? 'Про компанію' : 'О компании'} | ЕЛЕКТРОНОМ`,
+    title: `${uk ? 'Про компанію' : 'О компании'} | Electronom`,
     description: uk
-      ? 'ЕЛЕКТРОНОМ — офіційний дистриб\'ютор 40+ брендів електрообладнання в Україні. Надійний постачальник для будівельних компаній та електриків.'
-      : 'ЕЛЕКТРОНОМ — официальный дистрибьютор 40+ брендов электрооборудования в Украине. Надёжный поставщик для строительных компаний и электриков.',
+      ? 'Electronom — офіційний дистриб\'ютор 40+ брендів електрообладнання в Україні. Надійний постачальник для будівельних компаній та електриків.'
+      : 'Electronom — официальный дистрибьютор 40+ брендов электрооборудования в Украине. Надёжный поставщик для строительных компаний и электриков.',
   }
 }
 
@@ -44,7 +44,7 @@ export default async function AboutPage({ params }: PageProps) {
         {/* Hero Section */}
         <div className="bg-white border border-border rounded-2xl p-8 lg:p-12 mt-4 mb-8 shadow-sm">
           <h1 className="text-3xl font-extrabold text-text-primary mb-4">
-            ЕЛЕКТРОНОМ
+            Electronom
           </h1>
           <p className="text-text-muted text-base leading-relaxed max-w-2xl">
             {uk

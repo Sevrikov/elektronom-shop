@@ -23,7 +23,7 @@ export const productCardSelect = {
     select: { locale: true, name: true },
   },
   images: {
-    select: { url: true, alt: true, sortOrder: true },
+    select: { url: true, alt: true, sortOrder: true, provider: true, publicId: true },
     orderBy: { sortOrder: "asc" as const },
     take: 2,
   },
@@ -70,7 +70,7 @@ export async function getProductBySlug(slug: string, locale: string) {
         take: 1,
       },
       images: {
-        select: { id: true, url: true, alt: true, sortOrder: true },
+        select: { id: true, url: true, alt: true, sortOrder: true, provider: true, publicId: true },
         orderBy: { sortOrder: "asc" },
       },
       brand: {

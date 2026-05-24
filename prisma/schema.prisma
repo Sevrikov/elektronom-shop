@@ -220,7 +220,13 @@ model ProductTranslation {
 model ProductImage {
   id        String  @id @default(cuid(2))
   productId String
+  provider  String  @default("LOCAL") // CLOUDINARY | VERCEL_BLOB | LOCAL
+  publicId  String?
   url       String
+  width     Int?
+  height    Int?
+  format    String?
+  size      Int?
   alt       String?
   sortOrder Int     @default(0)
 

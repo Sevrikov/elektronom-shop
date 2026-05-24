@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <mask id="m1">
+      <rect width="200" height="200" fill="black"></rect>
+      <path d="M 30 22 L 170 22 L 170 56 L 30 56 Z" fill="white"></path>
+      <path d="M 30 83 L 130 83 L 130 117 L 30 117 Z" fill="white"></path>
+      <path d="M 30 144 L 170 144 L 170 178 L 30 178 Z" fill="white"></path>
+    </mask>
+  </defs>
+  <g transform="skewX(-10) translate(8 0)">
+    <path d="M 28 22 L 56 22 L 44 80 L 58 80 L 40 178 L 28 178 Z" fill="#67E2FF"></path>
+    <g fill="#1A56DB">
+      <path d="M 30 22 L 170 22 L 170 56 L 30 56 Z"></path>
+      <path d="M 30 83 L 130 83 L 130 117 L 30 117 Z"></path>
+      <path d="M 30 144 L 170 144 L 170 178 L 30 178 Z"></path>
+    </g>
+    <g fill="none" stroke="#0E2D6B" stroke-width="2">
+      <path d="M 30 22 L 170 22 L 170 56 L 30 56 Z"></path>
+      <path d="M 30 83 L 130 83 L 130 117 L 30 117 Z"></path>
+      <path d="M 30 144 L 170 144 L 170 178 L 30 178 Z"></path>
+    </g>
+    <circle cx="148" cy="39" r="9" fill="#FFFFFF"></circle>
+    <circle cx="110" cy="100" r="9" fill="#FFFFFF"></circle>
+    <circle cx="148" cy="161" r="9" fill="#FFFFFF"></circle>
+    <g mask="url(#m1)"><path d="M 28 22 L 56 22 L 44 80 L 58 80 L 40 178 L 28 178 Z" fill="#5B8AFF"></path></g>
+  </g>
+</svg>

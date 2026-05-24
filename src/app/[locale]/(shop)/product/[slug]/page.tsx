@@ -63,7 +63,7 @@ export async function generateMetadata({
   const baseUrl = getSiteUrl()
 
   return {
-    title: `${name} — купити | ЕЛЕКТРОНОМ`,
+    title: `${name} — купити | Electronom`,
     description,
     alternates: {
       canonical: `${baseUrl}/${locale}/product/${slug}`,
@@ -74,7 +74,7 @@ export async function generateMetadata({
       },
     },
     openGraph: {
-      title: `${name} | ЕЛЕКТРОНОМ`,
+      title: `${name} | Electronom`,
       description,
       images: product.images[0]
         ? [{ url: product.images[0].url }]

@@ -11,7 +11,7 @@ export async function generateMetadata({
   const { locale } = await params
   const uk = locale !== 'ru'
   return {
-    title: `${uk ? 'Вхід' : 'Вход'} | ЕЛЕКТРОНОМ`,
+    title: `${uk ? 'Вхід' : 'Вход'} | Electronom`,
   }
 }
 

@@ -43,7 +43,24 @@ const envSchema = z.object({
   ALGOLIA_ADMIN_KEY: z.string().optional(),
   NEXT_PUBLIC_ALGOLIA_APP_ID: z.string().optional(),
   NEXT_PUBLIC_ALGOLIA_SEARCH_KEY: z.string().optional(),
-});
+
+  // Cloudinary
+  CLOUDINARY_CLOUD_NAME: z.string().optional(),
+  CLOUDINARY_API_KEY: z.string().optional(),
+  CLOUDINARY_API_SECRET: z.string().optional(),
+}).refine(
+  (data) => {
+    const hasAny = !!(data.CLOUDINARY_CLOUD_NAME || data.CLOUDINARY_API_KEY || data.CLOUDINARY_API_SECRET);
+    if (hasAny) {
+      return !!(data.CLOUDINARY_CLOUD_NAME && data.CLOUDINARY_API_KEY && data.CLOUDINARY_API_SECRET);
+    }
+    return true;
+  },
+  {
+    message: "If Cloudinary is configured, all credentials (CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET) must be set",
+    path: ["CLOUDINARY_CLOUD_NAME"],
+  }
+);
 
 const _env = envSchema.safeParse(process.env);
 

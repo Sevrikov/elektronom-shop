@@ -24,7 +24,7 @@ export async function generateMetadata({
   const t = await getTranslations({ locale, namespace: 'catalog' })
 
   return {
-    title: `${t('title')} — ЕЛЕКТРОНОМ`,
+    title: `${t('title')} — Electronom`,
     description: 'Каталог електротоварів, інструменту та освітлення — 10 000+ SKU в наявності на складі',
   }
 }

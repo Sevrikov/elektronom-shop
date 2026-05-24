@@ -47,6 +47,7 @@ import {
   type CustomerData,
   type OrderItemSnapshot,
 } from '@/actions/admin'
+import { ImageUploader, type ProductImageInput } from '@/components/admin/image-uploader'
 
 interface AdminPanelClientProps {
   initialStats: {
@@ -91,15 +92,33 @@ export default function AdminPanelClient({
   const [productModalOpen, setProductModalOpen] = useState(false)
 
   // Product Form State
-  const [productForm, setProductForm] = useState({
+  const [productForm, setProductForm] = useState<{
+    id: string
+    sku: string
+    slug: string
+    categoryId: string
+    brandId: string
+    price: number
+    comparePrice: string | number
+    costPrice: string | number
+    stock: number
+    isActive: boolean
+    isFeatured: boolean
+    sortOrder: number
+    nameUk: string
+    descriptionUk: string
+    nameRu: string
+    descriptionRu: string
+    images: ProductImageInput[]
+  }>({
     id: '',
     sku: '',
     slug: '',
     categoryId: '',
     brandId: '',
     price: 0,
-    comparePrice: '' as string | number,
-    costPrice: '' as string | number,
+    comparePrice: '',
+    costPrice: '',
     stock: 0,
     isActive: true,
     isFeatured: false,
@@ -108,7 +127,7 @@ export default function AdminPanelClient({
     descriptionUk: '',
     nameRu: '',
     descriptionRu: '',
-    imagesText: '',
+    images: [],
   })
 
   // Orders tab states
@@ -333,9 +352,6 @@ export default function AdminPanelClient({
     const transUk = prod.translations?.find((t) => t.locale === 'uk')
     const transRu = prod.translations?.find((t) => t.locale === 'ru')
 
-    // Find and map image strings
-    const imageList = prod.images?.map((im) => im.url) || []
-
     setProductForm({
       id: prod.id,
       sku: prod.sku,
@@ -353,7 +369,18 @@ export default function AdminPanelClient({
       descriptionUk: transUk?.description || '',
       nameRu: transRu?.name || '',
       descriptionRu: transRu?.description || '',
-      imagesText: imageList.join('\n'),
+      images: (prod.images || []).map((img) => ({
+        id: img.id,
+        url: img.url,
+        provider: img.provider,
+        publicId: img.publicId,
+        width: img.width,
+        height: img.height,
+        format: img.format,
+        size: img.size,
+        alt: img.alt,
+        sortOrder: img.sortOrder,
+      })),
     })
     setProductModalOpen(true)
   }
@@ -377,17 +404,13 @@ export default function AdminPanelClient({
       descriptionUk: '',
       nameRu: '',
       descriptionRu: '',
-      imagesText: '',
+      images: [],
     })
     setProductModalOpen(true)
   }
 
   const handleProductSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    const imgs = productForm.imagesText
-      .split('\n')
-      .map((line) => line.trim())
-      .filter((line) => line.length > 0)
 
     const payload = {
       id: productForm.id || undefined,
@@ -406,7 +429,7 @@ export default function AdminPanelClient({
       descriptionUk: productForm.descriptionUk,
       nameRu: productForm.nameRu,
       descriptionRu: productForm.descriptionRu,
-      images: imgs,
+      images: productForm.images,
     }
 
     startTransition(async () => {
@@ -1568,15 +1591,12 @@ export default function AdminPanelClient({
                 </div>
 
                 <div className="border-t border-slate-100 pt-4">
-                  <label className="block text-[10px] font-extrabold text-slate-400 uppercase tracking-wider mb-1">
-                    {uk ? 'Зображення (по одному URL на рядок)' : 'Изображения (по одному URL на строку)'}
+                  <label className="block text-[10px] font-extrabold text-slate-400 uppercase tracking-wider mb-2">
+                    {uk ? 'Зображення товару' : 'Изображения товара'}
                   </label>
-                  <textarea
-                    value={productForm.imagesText}
-                    onChange={(e) => setProductForm({ ...productForm, imagesText: e.target.value })}
-                    rows={3}
-                    className="w-full p-3 border border-slate-200 rounded-lg outline-none text-xs font-semibold font-mono"
-                    placeholder="/images/products/some-image.jpg"
+                  <ImageUploader
+                    images={productForm.images}
+                    onChange={(newImages) => setProductForm({ ...productForm, images: newImages })}
                   />
                 </div>
 

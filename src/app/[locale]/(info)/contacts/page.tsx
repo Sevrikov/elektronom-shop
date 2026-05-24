@@ -12,10 +12,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { locale } = await params
   const uk = locale !== 'ru'
   return {
-    title: `${uk ? 'Контакти' : 'Контакты'} | ЕЛЕКТРОНОМ`,
+    title: `${uk ? 'Контакти' : 'Контакты'} | Electronom`,
     description: uk
-      ? 'Контактна інформація інтернет-магазину ЕЛЕКТРОНОМ. Телефон, email, адреса складу в Києві.'
-      : 'Контактная информация интернет-магазина ЕЛЕКТРОНОМ. Телефон, email, адрес склада в Киеве.',
+      ? 'Контактна інформація інтернет-магазину Electronom. Телефон, email, адреса складу в Києві.'
+      : 'Контактная информация интернет-магазина Electronom. Телефон, email, адрес склада в Киеве.',
   }
 }
 

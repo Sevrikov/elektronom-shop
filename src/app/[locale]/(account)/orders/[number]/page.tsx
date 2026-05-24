@@ -14,7 +14,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { locale, number } = await params
   const uk = locale !== 'ru'
   return {
-    title: `${uk ? 'Замовлення' : 'Заказ'} ${number} | ЕЛЕКТРОНОМ`,
+    title: `${uk ? 'Замовлення' : 'Заказ'} ${number} | Electronom`,
     robots: { index: false, follow: false },
   }
 }

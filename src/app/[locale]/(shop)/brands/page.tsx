@@ -14,7 +14,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { locale } = await params
   const uk = locale !== 'ru'
   return {
-    title: `${uk ? 'Бренди' : 'Бренды'} | ЕЛЕКТРОНОМ`,
+    title: `${uk ? 'Бренди' : 'Бренды'} | Electronom`,
     description: uk
       ? 'Офіційний дистриб\'ютор 40+ брендів електрообладнання. ABB, Schneider Electric, Legrand, Bosch та інші.'
       : 'Официальный дистрибьютор 40+ брендов электрооборудования. ABB, Schneider Electric, Legrand, Bosch и другие.',

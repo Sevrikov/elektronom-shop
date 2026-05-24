@@ -13,7 +13,7 @@ export async function generateMetadata({
   const { locale } = await params
   const uk = locale !== 'ru'
   return {
-    title: `${uk ? 'Оформлення замовлення' : 'Оформление заказа'} | ЕЛЕКТРОНОМ`,
+    title: `${uk ? 'Оформлення замовлення' : 'Оформление заказа'} | Electronom`,
     robots: { index: false, follow: true },
   }
 }

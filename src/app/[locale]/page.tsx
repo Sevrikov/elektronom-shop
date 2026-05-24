@@ -85,7 +85,7 @@ export default async function HomePage({
       <div className="flex gap-6">
         <CategorySidebar />
         <div className="flex-1 min-w-0 flex flex-col gap-6">
-          <HybridDrawer />
+          <HybridDrawer locale={loc} />
           <ValueProps />
           <CategoriesSection />
           <Suspense fallback={<LoadingSkeleton />}>

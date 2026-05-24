@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Elektronom — баннери з реальними фото</title>
+<link rel="stylesheet" href="banner-styles.css">
+<style>
+  html, body {
+    margin: 0; padding: 0;
+    background: #F5F7FA;
+    font-family: 'Inter', system-ui, sans-serif;
+    color: #1A1F2B;
+  }
+  .page {
+    max-width: 1480px;
+    margin: 0 auto;
+    padding: 48px 24px 96px;
+  }
+  .page__head {
+    margin-bottom: 32px;
+  }
+  .page__head h1 {
+    font-family: 'Inter Tight', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.012em;
+    margin: 0 0 4px;
+  }
+  .page__head p {
+    color: #6A7280;
+    font-size: 14px;
+    margin: 0;
+  }
+  .slot {
+    margin-bottom: 56px;
+  }
+  .slot__hdr {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .slot__hdr h2 {
+    font-family: 'Inter Tight', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    margin: 0;
+  }
+  .slot__hdr span {
+    font-size: 12px;
+    color: #6A7280;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .slot__hdr .pill {
+    margin-left: auto;
+    font-size: 11px;
+    background: #E7F5EC;
+    color: #2A9D4A;
+    padding: 3px 8px;
+    border-radius: 3px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .slot__hdr .pill--placeholder {
+    background: #FBEAEA;
+    color: #C13B3B;
+  }
+  .frame {
+    background: #FFF;
+    padding: 0;
+    border-radius: 8px;
+    border: 1px solid #E6EAF0;
+    overflow: hidden;
+  }
+  .frame--desktop { width: 1440px; height: 420px; }
+  .frame--mobile  { width: 390px;  height: 220px; }
+  .row {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+  .row__mobile-set { gap: 16px; }
+  footer.note {
+    margin-top: 64px;
+    padding: 20px 24px;
+    background: #FFF;
+    border: 1px solid #E6EAF0;
+    border-radius: 8px;
+    font-size: 13px;
+    line-height: 20px;
+    color: #6A7280;
+  }
+  footer.note strong { color: #1A1F2B; }
+  footer.note a { color: #3B7BD9; text-decoration: none; }
+</style>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel" src="banner-ui.jsx"></script>
+<script type="text/babel" src="banners.jsx"></script>
+
+<script type="text/babel">
+const { BannerAutomation, BannerProtection, BannerBackup, BannerCategory, BannerOfferJack, BannerATS, BannerRivetGun, Carousel } = window.Banners;
+
+function App() {
+  const carouselSlides = [BannerOfferJack, BannerAutomation, BannerATS, BannerBackup];
+  return (
+    <div className="page">
+      <header className="page__head">
+        <h1>Elektronom — фінальні баннери для головної</h1>
+        <p>Чотири основні концепти з реальними фото та підтвердженими даними з elektronom.com.ua. Розмір desktop 1440×420 + mobile 390×220.</p>
+      </header>
+
+      <section className="slot">
+        <div className="slot__hdr">
+          <h2>Жива карусель з переходами</h2>
+          <span>1440 × 420 · клікати стрілки / точки</span>
+        </div>
+        <div className="frame frame--desktop">
+          <Carousel slides={carouselSlides} variant="desktop"/>
+        </div>
+      </section>
+
+      <section className="slot">
+        <div className="slot__hdr">
+          <h2>E · Спецпропозиція тижня — INTERTOOL GT0401</h2>
+          <span>−50% · 999 → 500 ₴ · артикул GT0401</span>
+          <span className="pill">фото з сайту</span>
+        </div>
+        <div className="frame frame--desktop"><BannerOfferJack variant="desktop" showChrome={false}/></div>
+        <div style={{ marginTop: 16 }}>
+          <div className="frame frame--mobile"><BannerOfferJack variant="mobile" showChrome={false}/></div>
+        </div>
+      </section>
+
+      <section className="slot">
+        <div className="slot__hdr">
+          <h2>A · Автоматика — Реле LY2 АСКО-УКРЕМ</h2>
+          <span>AC 220V · 10A · від 77,25 ₴/шт від 100 шт · артикул A0090070002</span>
+          <span className="pill">фото з сайту</span>
+        </div>
+        <div className="frame frame--desktop"><BannerAutomation variant="desktop" showChrome={false}/></div>
+        <div style={{ marginTop: 16 }}>
+          <div className="frame frame--mobile"><BannerAutomation variant="mobile" showChrome={false}/></div>
+        </div>
+      </section>
+
+      <section className="slot">
+        <div className="slot__hdr">
+          <h2>F · АВР Kraft KRF-ATS100A/2p</h2>
+          <span>100A · 400V · 50 мс · 1 400 ₴ · артикул 51-00100</span>
+          <span className="pill">фото з сайту</span>
+        </div>
+        <div className="frame frame--desktop"><BannerATS variant="desktop" showChrome={false}/></div>
+        <div style={{ marginTop: 16 }}>
+          <div className="frame frame--mobile"><BannerATS variant="mobile" showChrome={false}/></div>
+        </div>
+      </section>
+
+      <section className="slot">
+        <div className="slot__hdr">
+          <h2>C · Резервне живлення — Trinix LFP 12V20Ah</h2>
+          <span>12.8V · 20Ah · LiFePO4 · &gt;4000 циклів · 3 750 ₴ · артикул 44-00093</span>
+          <span className="pill">фото з сайту</span>
+        </div>
+        <div className="frame frame--desktop"><BannerBackup variant="desktop" showChrome={false}/></div>
+        <div style={{ marginTop: 16 }}>
+          <div className="frame frame--mobile"><BannerBackup variant="mobile" showChrome={false}/></div>
+        </div>
+      </section>
+
+      <footer className="note">
+        <strong>Інші концепти (B · UTrust ПЗВ, G · Storm RT-0020 заклепковий, D · категорія)</strong> в master-канві <a href="Banners.html">Banners.html</a> — поки що з SVG-плейсхолдерами. Додайте URL фото в <code>PHOTOS</code> об'єкт у <code>banners.jsx</code> — рендериться автоматично. Повний документ із dev-нотатками: <a href="HOMEPAGE_FIRST_BANNER_DESIGN_REPORT.md">HOMEPAGE_FIRST_BANNER_DESIGN_REPORT.md</a>.
+      </footer>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>

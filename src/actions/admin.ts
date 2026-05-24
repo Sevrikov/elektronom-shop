@@ -5,6 +5,7 @@ import { z } from 'zod'
 import { prisma } from '@/lib/prisma'
 import { requireAdmin } from '@/lib/auth'
 import { syncProductIndex, removeProductFromIndex } from '@/actions/search'
+import { deleteProductImage } from '@/lib/storage'
 import type { OrderStatus, Prisma } from '@/generated/prisma/client'
 
 export interface CustomerData {
@@ -55,7 +56,16 @@ export interface AdminProductItem {
     name: string
   } | null
   images: {
+    id: string
+    provider: string
+    publicId: string | null
     url: string
+    width: number | null
+    height: number | null
+    format: string | null
+    size: number | null
+    alt: string | null
+    sortOrder: number
   }[]
 }
 
@@ -121,6 +131,19 @@ export interface AdminBrandItem {
 }
 
 // Zod validations
+const ProductImageInputSchema = z.object({
+  id: z.string().optional(),
+  url: z.string(),
+  provider: z.string().default('LOCAL'),
+  publicId: z.string().nullable().optional(),
+  width: z.number().nullable().optional(),
+  height: z.number().nullable().optional(),
+  format: z.string().nullable().optional(),
+  size: z.number().nullable().optional(),
+  alt: z.string().nullable().optional(),
+  sortOrder: z.number().default(0),
+})
+
 const SaveProductSchema = z.object({
   id: z.string().optional(),
   sku: z.string().min(1),
@@ -138,7 +161,7 @@ const SaveProductSchema = z.object({
   descriptionUk: z.string().optional(),
   nameRu: z.string().min(1),
   descriptionRu: z.string().optional(),
-  images: z.array(z.string()).default([]), // array of image URLs
+  images: z.array(ProductImageInputSchema).default([]),
 })
 
 const SaveCategorySchema = z.object({
@@ -226,7 +249,18 @@ export async function getProductsAdmin(
           },
           images: {
             orderBy: { sortOrder: 'asc' },
-            select: { url: true },
+            select: {
+              id: true,
+              provider: true,
+              publicId: true,
+              url: true,
+              width: true,
+              height: true,
+              format: true,
+              size: true,
+              alt: true,
+              sortOrder: true,
+            },
           },
         },
       }),
@@ -267,39 +301,68 @@ export async function saveProductAdmin(data: z.infer<typeof SaveProductSchema>) 
 
     let product
     if (id) {
-      // Update product
-      product = await prisma.product.update({
-        where: { id },
-        data: {
-          ...fields,
-          translations: {
-            upsert: [
-              {
-                where: { productId_locale: { productId: id, locale: 'uk' } },
-                update: { name: nameUk, description: descriptionUk ?? null },
-                create: { locale: 'uk', name: nameUk, description: descriptionUk ?? null },
-              },
-              {
-                where: { productId_locale: { productId: id, locale: 'ru' } },
-                update: { name: nameRu, description: descriptionRu ?? null },
-                create: { locale: 'ru', name: nameRu, description: descriptionRu ?? null },
-              },
-            ],
-          },
-        },
-        select: { id: true },
+      // Fetch existing images to identify deleted ones before DB update
+      const existingImages = await prisma.productImage.findMany({
+        where: { productId: id },
+        select: { id: true, url: true, provider: true, publicId: true },
       })
 
-      // Update images
-      await prisma.productImage.deleteMany({ where: { productId: id } })
-      if (images.length > 0) {
-        await prisma.productImage.createMany({
-          data: images.map((url, idx) => ({
-            productId: id,
-            url,
-            sortOrder: idx,
-          })),
+      const newUrls = new Set(images.map((img) => img.url))
+      const imagesToDelete = existingImages.filter((img) => !newUrls.has(img.url))
+
+      // Execute all DB modifications inside a transaction
+      product = await prisma.$transaction(async (tx) => {
+        const updatedProduct = await tx.product.update({
+          where: { id },
+          data: {
+            ...fields,
+            translations: {
+              upsert: [
+                {
+                  where: { productId_locale: { productId: id, locale: 'uk' } },
+                  update: { name: nameUk, description: descriptionUk ?? null },
+                  create: { locale: 'uk', name: nameUk, description: descriptionUk ?? null },
+                },
+                {
+                  where: { productId_locale: { productId: id, locale: 'ru' } },
+                  update: { name: nameRu, description: descriptionRu ?? null },
+                  create: { locale: 'ru', name: nameRu, description: descriptionRu ?? null },
+                },
+              ],
+            },
+          },
+          select: { id: true },
         })
+
+        await tx.productImage.deleteMany({ where: { productId: id } })
+        
+        if (images.length > 0) {
+          await tx.productImage.createMany({
+            data: images.map((img, idx) => ({
+              productId: id,
+              url: img.url,
+              provider: img.provider,
+              publicId: img.publicId || null,
+              width: img.width || null,
+              height: img.height || null,
+              format: img.format || null,
+              size: img.size || null,
+              alt: img.alt || null,
+              sortOrder: img.sortOrder ?? idx,
+            })),
+          })
+        }
+
+        return updatedProduct
+      })
+
+      // Safely delete removed files from storage provider after successful DB commit
+      for (const img of imagesToDelete) {
+        try {
+          await deleteProductImage(img.publicId, img.provider as 'CLOUDINARY' | 'LOCAL', img.url)
+        } catch (storageErr) {
+          console.error(`Failed to clean up storage image ${img.url}:`, storageErr)
+        }
       }
     } else {
       // Create product
@@ -313,9 +376,16 @@ export async function saveProductAdmin(data: z.infer<typeof SaveProductSchema>) 
             ],
           },
           images: {
-            create: images.map((url, idx) => ({
-              url,
-              sortOrder: idx,
+            create: images.map((img, idx) => ({
+              url: img.url,
+              provider: img.provider,
+              publicId: img.publicId || null,
+              width: img.width || null,
+              height: img.height || null,
+              format: img.format || null,
+              size: img.size || null,
+              alt: img.alt || null,
+              sortOrder: img.sortOrder ?? idx,
             })),
           },
         },
@@ -382,6 +452,16 @@ export async function deleteProductAdmin(productId: string) {
 
     // Remove from Algolia first
     await removeProductFromIndex(productId)
+
+    // Fetch and delete all images from storage provider
+    const productImages = await prisma.productImage.findMany({
+      where: { productId },
+      select: { url: true, provider: true, publicId: true },
+    })
+
+    for (const img of productImages) {
+      await deleteProductImage(img.publicId, img.provider as 'CLOUDINARY' | 'LOCAL', img.url)
+    }
 
     await prisma.product.delete({
       where: { id: productId },

@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Elektronom — Hero banner concepts</title>
+<link rel="stylesheet" href="banner-styles.css">
+<style>
+  html, body { margin: 0; padding: 0; background: #f0eee9; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; }
+  /* sample of the live homepage frame for context */
+  .frame-pad { background: #FFFFFF; padding: 16px; border-radius: 12px; border: 1px solid #E6EAF0; }
+  .frame-pad--mobile { padding: 8px; border-radius: 14px; }
+  /* in-canvas info card */
+  .pitch {
+    background: #FFFFFF;
+    border: 1px solid #E6EAF0;
+    border-radius: 8px;
+    padding: 20px 24px;
+    color: #1A1F2B;
+    font-size: 13px;
+    line-height: 20px;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    box-sizing: border-box;
+  }
+  .pitch h3 { font-family: 'Inter Tight', sans-serif; font-size: 18px; font-weight: 700; margin: 0 0 8px; letter-spacing: -0.01em; }
+  .pitch .lead { font-size: 13px; color: #6A7280; margin: 0 0 14px; }
+  .pitch h4 { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: #6A7280; margin: 14px 0 6px; }
+  .pitch ul { margin: 0; padding-left: 16px; }
+  .pitch li { margin-bottom: 4px; }
+  .pitch code, .pitch .mono { font-family: 'JetBrains Mono', ui-monospace, monospace; background: #F5F7FA; padding: 1px 5px; border-radius: 3px; font-size: 12px; color: #1A1F2B; }
+  .pitch a { color: #3B7BD9; text-decoration: none; }
+  .pitch .row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
+  .pitch .sw { width: 28px; height: 28px; border-radius: 4px; border: 1px solid #E6EAF0; }
+  .pitch .label { font-size: 11px; color: #6A7280; }
+  .pitch .kvs { display: grid; grid-template-columns: 110px 1fr; gap: 6px 12px; font-size: 12px; }
+  .pitch .kvs dt { color: #6A7280; }
+  .pitch .kvs dd { margin: 0; color: #1A1F2B; }
+</style>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel" src="design-canvas.jsx"></script>
+<script type="text/babel" src="banner-ui.jsx"></script>
+<script type="text/babel" src="banners.jsx"></script>
+
+<script type="text/babel">
+const { BannerAutomation, BannerProtection, BannerBackup, BannerCategory, BannerOfferJack, BannerATS, BannerRivetGun, Carousel } = window.Banners;
+
+function Frame({ children, mobile = false }) {
+  return (
+    <div className={mobile ? "frame-pad frame-pad--mobile" : "frame-pad"} style={{ width: '100%', height: '100%', boxSizing: 'border-box', display: 'flex' }}>
+      <div style={{ flex: 1, position: 'relative', borderRadius: 8, overflow: 'hidden' }}>
+        {children}
+      </div>
+    </div>
+  );
+}
+
+function Intro() {
+  return (
+    <div className="pitch">
+      <h3>Перший баннер головної · Hero carousel</h3>
+      <p className="lead">
+        Концепти першого слайду промо-зони сайту elektronom.com.ua.
+        Чотири варіанти направлення (різні товари + товарна група),
+        кожен зібраний на токенах ELEKTRONOM. Праворуч — desktop, нижче — compact, tablet та mobile.
+      </p>
+      <h4>Тема</h4>
+      <div>Автоматика, захист та резервне живлення — товарні групи, які найкраще збігаються з позиціонуванням магазину.</div>
+      <h4>Палітра</h4>
+      <div className="row">
+        <div><div className="sw" style={{ background: '#3B7BD9' }}/><div className="label">accent</div></div>
+        <div><div className="sw" style={{ background: '#E8EEF7' }}/><div className="label">subtle</div></div>
+        <div><div className="sw" style={{ background: '#F5F7FA' }}/><div className="label">alt</div></div>
+        <div><div className="sw" style={{ background: '#FFFFFF' }}/><div className="label">white</div></div>
+        <div><div className="sw" style={{ background: '#1A1F2B' }}/><div className="label">text</div></div>
+        <div><div className="sw" style={{ background: '#2A9D4A' }}/><div className="label">в наявності</div></div>
+      </div>
+      <h4>Енергія</h4>
+      <ul>
+        <li>крупний товар праворуч</li>
+        <li>сильний короткий headline</li>
+        <li>2–4 інфографічні chip-и характеристик</li>
+        <li>синій solid CTA + secondary link</li>
+        <li>фон — світла технічна сітка / схема / синусоїда (без агресивного темно-синього)</li>
+      </ul>
+      <h4>Усі цифри підтверджуються</h4>
+      <ul>
+        <li>характеристики беруться зі сторінки конкретного товару;</li>
+        <li>скидки / "топ" — лише якщо є джерело;</li>
+        <li>внутрішні аналітичні цифри не показуємо публічно.</li>
+      </ul>
+      <h4>Звіт</h4>
+      <div>Повний документ — <span className="mono">HOMEPAGE_FIRST_BANNER_DESIGN_REPORT.md</span></div>
+    </div>
+  );
+}
+
+function NotesAuto() {
+  return (
+    <div className="pitch">
+      <h3>A · Автоматика — Реле LY2</h3>
+      <p className="lead">Кандидат №1. Сильно вирівняний по позиціонуванню (електротехніка, B2B-щитове обладнання).</p>
+      <h4>Товар</h4>
+      <div>Реле проміжне LY2 АСКО-УКРЕМ <span className="mono">A0090070002</span></div>
+      <div><a href="https://elektronom.com.ua/p1554670317-rele-promezhutochnoe-ly2.html" target="_blank">elektronom.com.ua/p1554670317…</a></div>
+      <h4>Інфографічні chips</h4>
+      <dl className="kvs">
+        <dt>AC 220 V</dt><dd>напруга котушки — з картки товару</dd>
+        <dt>10 A</dt><dd>номінальна комутація — з картки товару</dd>
+        <dt>2CO / DPDT</dt><dd>конфігурація контактів</dd>
+        <dt>В наявності</dt><dd>з API наявності — рендерити динамічно</dd>
+      </dl>
+      <h4>Фон</h4>
+      <div>Технічна сітка 40×40, акцентна вертикаль <span className="mono">#3B7BD9</span>, натяк на DIN-рейку знизу.</div>
+    </div>
+  );
+}
+
+function NotesPzv() {
+  return (
+    <div className="pitch">
+      <h3>B · Захист — ПЗВ UTrust</h3>
+      <p className="lead">Сильний альтернативний варіант. Більш "інженерний" фон зі схемними доріжками.</p>
+      <h4>Товар</h4>
+      <div>UTrust 1P+N 40A 30mA Тип A <span className="mono">A0010210136</span></div>
+      <div style={{ color: '#6A7280', marginTop: 4 }}>⚠ Точну product URL потрібно підтвердити (поки знайдено в листингах).</div>
+      <h4>Інфографічні chips</h4>
+      <dl className="kvs">
+        <dt>40 A</dt><dd>номінал — з SKU</dd>
+        <dt>30 mA</dt><dd>чутливість витоку — з SKU</dd>
+        <dt>Тип A</dt><dd>тип спрацьовування — з SKU</dd>
+        <dt>Захист лінії</dt><dd>нейтральне формулювання — без цифри</dd>
+      </dl>
+      <h4>Фон</h4>
+      <div>Світло-блакитна схема: тонкі траси та вузли, ліве затемнення під текст.</div>
+    </div>
+  );
+}
+
+function NotesBattery() {
+  return (
+    <div className="pitch">
+      <h3>C · Резервне живлення — Trinix LiFePO4</h3>
+      <p className="lead">Окрема тема, добре працює в карусель як другий-третій слайд.</p>
+      <h4>Товар</h4>
+      <div>Акумулятор 12.8В 12V20Ah LiFePO4 Trinix LFP <span className="mono">44-00093</span></div>
+      <div><a href="https://elektronom.com.ua/ua/p2852315599-akkumulyator-128v-12v20ah.html" target="_blank">elektronom.com.ua/ua/p2852315599…</a></div>
+      <h4>Інфографічні chips</h4>
+      <dl className="kvs">
+        <dt>12.8 V</dt><dd>номінальна напруга</dd>
+        <dt>20 Ah</dt><dd>ємність</dd>
+        <dt>LiFePO4</dt><dd>хімія</dd>
+        <dt>&gt; 4000 циклів</dt><dd>ресурс — лише якщо в даташиті</dd>
+      </dl>
+      <h4>Фон</h4>
+      <div>Осцилоскопний градієнт із синусоїдами — натяк на стабільне 220 В після ДБЖ.</div>
+    </div>
+  );
+}
+
+function NotesCategory() {
+  return (
+    <div className="pitch">
+      <h3>D · Категорійний — три товари в групі</h3>
+      <p className="lead">Найбільш «безпечний» варіант. Замість одного товару — повідомлення про товарну групу. Підходить, якщо не хочемо прив'язуватись до конкретного SKU.</p>
+      <h4>Тема</h4>
+      <div>Автоматика та резервне живлення для дому і бізнесу</div>
+      <h4>Інфографічні chips</h4>
+      <dl className="kvs">
+        <dt>Автоматика</dt><dd>категорія сайту</dd>
+        <dt>ПЗВ</dt><dd>підкатегорія</dd>
+        <dt>Акумулятори</dt><dd>підкатегорія</dd>
+        <dt>Швидка доставка</dt><dd>value-prop сайту</dd>
+      </dl>
+      <h4>Фон</h4>
+      <div>Лівий акцентний блок <span className="mono">#E8EEF7</span> + сітка. Тонка синя лінія зверху як рубрика.</div>
+    </div>
+  );
+}
+
+function App() {
+  const carouselSlides = [BannerOfferJack, BannerAutomation, BannerProtection, BannerBackup, BannerATS, BannerCategory];
+  return (
+    <DesignCanvas>
+      <DCSection id="intro" title="Elektronom · Перший баннер головної" subtitle="Hero для каруселі на головній. 7 концептів (вкл. спецпропозицію) + робоча карусель з переходами. Всі цифри — лише з підтверджених джерел.">
+        <DCArtboard id="brief" label="Бриф" width={420} height={420}><Intro/></DCArtboard>
+        <DCArtboard id="live-carousel" label="★ Жива карусель з переходами · 1440×420" width={1440} height={420}>
+          <Frame><Carousel slides={carouselSlides} variant="desktop"/></Frame>
+        </DCArtboard>
+        <DCArtboard id="A-hero" label="A · Автоматика — Реле LY2 · 1440×420" width={1440} height={420}>
+          <Frame><BannerAutomation variant="desktop"/></Frame>
+        </DCArtboard>
+        <DCArtboard id="A-notes" label="A · нотатки" width={420} height={420}><NotesAuto/></DCArtboard>
+      </DCSection>
+
+      <DCSection id="offer" title="Спецпропозиція тижня" subtitle="По аналітиці топ-товар за виручкою — INTERTOOL GT0401. Червоний badge, прямий CTA до товару.">
+        <DCArtboard id="E-hero" label="E · Спецпропозиція — Підставка GT0401 · 1440×420" width={1440} height={420}>
+          <Frame><BannerOfferJack variant="desktop"/></Frame>
+        </DCArtboard>
+        <DCArtboard id="E-mobile" label="E · mobile · 390×220" width={390} height={220}>
+          <Frame mobile><BannerOfferJack variant="mobile"/></Frame>
+        </DCArtboard>
+        <DCArtboard id="F-hero" label="F · АВР Kraft KRF-ATS100A · 1440×420" width={1440} height={420}>
+          <Frame><BannerATS variant="desktop"/></Frame>
+        </DCArtboard>
+        <DCArtboard id="F-mobile" label="F · mobile · 390×220" width={390} height={220}>
+          <Frame mobile><BannerATS variant="mobile"/></Frame>
+        </DCArtboard>
+        <DCArtboard id="G-hero" label="G · Заклепковий пістолет Storm RT-0020 · 1440×420" width={1440} height={420}>
+          <Frame><BannerRivetGun variant="desktop"/></Frame>
+        </DCArtboard>
+        <DCArtboard id="G-mobile" label="G · mobile · 390×220" width={390} height={220}>
+          <Frame mobile><BannerRivetGun variant="mobile"/></Frame>
+        </DCArtboard>
+      </DCSection>
+
+      <DCSection id="alternatives" title="Альтернативні слайди каруселі" subtitle="Друга-четверта позиції — щоб карусель не виглядала однотипно.">
+        <DCArtboard id="B-hero" label="B · Захист — ПЗВ UTrust · 1440×420" width={1440} height={420}>
+          <Frame><BannerProtection variant="desktop"/></Frame>
+        </DCArtboard>
+        <DCArtboard id="B-notes" label="B · нотатки" width={420} height={420}><NotesPzv/></DCArtboard>
+        <DCArtboard id="C-hero" label="C · Резервне живлення — Trinix · 1440×420" width={1440} height={420}>
+          <Frame><BannerBackup variant="desktop"/></Frame>
+        </DCArtboard>
+        <DCArtboard id="C-notes" label="C · нотатки" width={420} height={420}><NotesBattery/></DCArtboard>
+        <DCArtboard id="D-hero" label="D · Категорійний — товарна група · 1440×420" width={1440} height={420}>
+          <Frame><BannerCategory variant="desktop"/></Frame>
+        </DCArtboard>
+        <DCArtboard id="D-notes" label="D · нотатки" width={420} height={420}><NotesCategory/></DCArtboard>
+      </DCSection>
+
+      <DCSection id="adaptives" title="Адаптиви для головного концепту (A)" subtitle="Десктоп compact (1020×320), планшет (768×320), мобайл (390×220).">
+        <DCArtboard id="A-compact" label="A · compact · 1020×320" width={1020} height={320}>
+          <Frame><BannerAutomation variant="compact"/></Frame>
+        </DCArtboard>
+        <DCArtboard id="A-tablet" label="A · tablet · 768×320" width={768} height={320}>
+          <Frame><BannerAutomation variant="tablet"/></Frame>
+        </DCArtboard>
+        <DCArtboard id="A-mobile" label="A · mobile · 390×220" width={390} height={220}>
+          <Frame mobile><BannerAutomation variant="mobile"/></Frame>
+        </DCArtboard>
+      </DCSection>
+
+      <DCSection id="mobile-set" title="Мобільні версії альтернатив" subtitle="Щоб видно було, що mobile — не зменшений desktop.">
+        <DCArtboard id="B-mobile" label="B · ПЗВ · 390×220" width={390} height={220}>
+          <Frame mobile><BannerProtection variant="mobile"/></Frame>
+        </DCArtboard>
+        <DCArtboard id="C-mobile" label="C · Trinix · 390×220" width={390} height={220}>
+          <Frame mobile><BannerBackup variant="mobile"/></Frame>
+        </DCArtboard>
+        <DCArtboard id="D-mobile" label="D · Категорія · 390×220" width={390} height={220}>
+          <Frame mobile><BannerCategory variant="mobile"/></Frame>
+        </DCArtboard>
+      </DCSection>
+    </DesignCanvas>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>

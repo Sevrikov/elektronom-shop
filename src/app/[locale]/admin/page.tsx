@@ -13,7 +13,7 @@ export async function generateMetadata({
   const { locale } = await params
   const uk = locale !== 'ru'
   return {
-    title: `${uk ? 'Панель адміністратора' : 'Панель администратора'} | ЕЛЕКТРОНОМ`,
+    title: `${uk ? 'Панель адміністратора' : 'Панель администратора'} | Electronom`,
     robots: { index: false, follow: false },
   }
 }

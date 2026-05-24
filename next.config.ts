@@ -16,6 +16,11 @@ const nextConfig: NextConfig = {
       // Добавлять только реальные домены изображений
       {
         protocol: 'https',
+        hostname: 'res.cloudinary.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
         hostname: 'images.prom.ua',
         pathname: '/**',
       },

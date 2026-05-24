@@ -4,6 +4,7 @@ import { Check } from 'lucide-react'
 import type { Locale } from '@/types'
 import { formatPrice, getDiscountPercent } from '@/lib/utils'
 import { AddToCartButton } from '@/components/cart/add-to-cart-button'
+import { getTransformedImageUrl } from '@/lib/images'
 
 // ─── Тип товара из Prisma (tasks 1.9 productCardSelect) ──────────────────────
 
@@ -18,7 +19,7 @@ export interface PrismaProductCard {
   isFeatured: boolean
   createdAt: Date
   translations: { locale: string; name: string }[]
-  images: { url: string; alt: string | null; sortOrder: number }[]
+  images: { url: string; alt: string | null; sortOrder: number; provider: string; publicId?: string | null }[]
   brand: { slug: string; name: string } | null
   category: { slug: string }
 }
@@ -62,7 +63,7 @@ export default function ProductCard({ product, locale, view = 'grid' }: ProductC
           )}
           {mainImage ? (
             <Image
-              src={mainImage.url}
+              src={getTransformedImageUrl(mainImage, { width: 320, height: 320, crop: 'limit' })}
               alt={mainImage.alt ?? name}
               fill
               className="object-contain p-2"
@@ -159,7 +160,7 @@ export default function ProductCard({ product, locale, view = 'grid' }: ProductC
 
         {mainImage ? (
           <Image
-            src={mainImage.url}
+            src={getTransformedImageUrl(mainImage, { width: 320, height: 320, crop: 'limit' })}
             alt={mainImage.alt ?? name}
             fill
             className="object-contain p-3"
@@ -217,3 +218,4 @@ export default function ProductCard({ product, locale, view = 'grid' }: ProductC
     </article>
   )
 }
+

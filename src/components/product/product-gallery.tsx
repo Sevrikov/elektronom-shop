@@ -3,12 +3,15 @@
 import Image from 'next/image'
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { ChevronLeft, ChevronRight, ZoomIn, X, ImageIcon } from 'lucide-react'
+import { getTransformedImageUrl } from '@/lib/images'
 
 interface ProductImage {
   id?: string
   url: string
   alt?: string | null
   sortOrder?: number
+  provider?: string
+  publicId?: string | null
 }
 
 interface ProductGalleryProps {
@@ -98,7 +101,7 @@ export function ProductGallery({ images, productName, locale }: ProductGalleryPr
                 onClick={() => setLightboxOpen(true)}
               >
                 <Image
-                  src={activeImage.url}
+                  src={getTransformedImageUrl(activeImage, { width: 800, height: 800, crop: 'limit' })}
                   alt={activeImage.alt ?? productName}
                   fill
                   className={`object-contain p-4 transition-transform duration-300 ${
@@ -164,7 +167,7 @@ export function ProductGallery({ images, productName, locale }: ProductGalleryPr
                 }`}
               >
                 <Image
-                  src={img.url}
+                  src={getTransformedImageUrl(img, { width: 150, height: 150, crop: 'fill' })}
                   alt={img.alt ?? `${productName} ${index + 1}`}
                   fill
                   className="object-contain p-1"
@@ -193,7 +196,7 @@ export function ProductGallery({ images, productName, locale }: ProductGalleryPr
             onTouchEnd={handleTouchEnd}
           >
             <Image
-              src={activeImage.url}
+              src={getTransformedImageUrl(activeImage, { width: 1600, height: 1600, crop: 'limit' })}
               alt={activeImage.alt ?? productName}
               fill
               className="object-contain"
@@ -247,3 +250,4 @@ export function ProductGallery({ images, productName, locale }: ProductGalleryPr
     </>
   )
 }
+

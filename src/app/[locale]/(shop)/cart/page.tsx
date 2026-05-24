@@ -19,10 +19,10 @@ export async function generateMetadata({
   const { locale } = await params
   const uk = locale !== 'ru'
   return {
-    title: `${uk ? 'Кошик' : 'Корзина'} | ЕЛЕКТРОНОМ`,
+    title: `${uk ? 'Кошик' : 'Корзина'} | Electronom`,
     description: uk
-      ? 'Ваш кошик покупок в інтернет-магазині ЕЛЕКТРОНОМ'
-      : 'Ваша корзина покупок в интернет-магазине ЭЛЕКТРОНОМ',
+      ? 'Ваш кошик покупок в інтернет-магазині Electronom'
+      : 'Ваша корзина покупок в интернет-магазине Electronom',
     robots: { index: false, follow: true },
     alternates: {
       languages: {

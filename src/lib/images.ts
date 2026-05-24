@@ -1,0 +1,57 @@
+/**
+ * Standardizes image URLs, prepending CDN domains if necessary.
+ */
+export function getImageUrl(urlOrPath: string): string {
+  if (!urlOrPath) return ''
+  if (urlOrPath.startsWith('http://') || urlOrPath.startsWith('https://')) {
+    return urlOrPath
+  }
+  return urlOrPath
+}
+
+/**
+ * Generates a transformed Cloudinary URL with specified width, height, crop, format, and quality.
+ * Returns the original URL if not hosted on Cloudinary.
+ * Designed to be safe for both client-side and server-side usage.
+ */
+export function getTransformedImageUrl(
+  image: { url: string; provider?: string | null; publicId?: string | null } | string,
+  options: {
+    width?: number
+    height?: number
+    crop?: 'fill' | 'scale' | 'thumb' | 'fit' | 'limit'
+    quality?: string | number
+    format?: string
+  }
+): string {
+  const url = typeof image === 'string' ? image : image?.url
+  const provider = typeof image === 'string' ? null : image?.provider
+
+  if (!url) return ''
+
+  // Check if it's Cloudinary, either via provider or URL domain
+  const isCloudinary = provider === 'CLOUDINARY' || url.includes('res.cloudinary.com')
+
+  if (isCloudinary) {
+    // We want to insert transformations after "/image/upload/"
+    const target = '/image/upload'
+    const index = url.indexOf(target)
+    if (index !== -1) {
+      const parts = []
+      if (options.width) parts.push(`w_${options.width}`)
+      if (options.height) parts.push(`h_${options.height}`)
+      if (options.crop) parts.push(`c_${options.crop}`)
+      else if (options.width || options.height) parts.push('c_fill')
+      
+      parts.push(`q_${options.quality || 'auto'}`)
+      parts.push(`f_${options.format || 'auto'}`)
+
+      const transformStr = parts.join(',')
+      const insertPosition = index + target.length
+      
+      return url.slice(0, insertPosition) + '/' + transformStr + url.slice(insertPosition)
+    }
+  }
+
+  return url
+}

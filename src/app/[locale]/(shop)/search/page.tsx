@@ -19,8 +19,8 @@ export async function generateMetadata({ params, searchParams }: PageProps): Pro
   const query = q?.trim() ?? ''
   return {
     title: query
-      ? `${uk ? 'Результати пошуку' : 'Результаты поиска'}: "${query}" | ЕЛЕКТРОНОМ`
-      : `${uk ? 'Пошук' : 'Поиск'} | ЕЛЕКТРОНОМ`,
+      ? `${uk ? 'Результати пошуку' : 'Результаты поиска'}: "${query}" | Electronom`
+      : `${uk ? 'Пошук' : 'Поиск'} | Electronom`,
     robots: { index: false, follow: true },
   }
 }
