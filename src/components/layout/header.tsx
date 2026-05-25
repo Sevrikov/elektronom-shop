@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { useRouter, usePathname } from 'next/navigation'
 import {
@@ -30,6 +30,19 @@ export default function Header({ workload = 0 }: Props) {
   const headerRef = useRef<HTMLElement>(null)
 
   const otherLocale: Locale = locale === 'uk' ? 'ru' : 'uk'
+
+  const [isDark, setIsDark] = useState(false)
+
+  // Listen to dark mode changes
+  useEffect(() => {
+    const check = () => {
+      setIsDark(document.documentElement.classList.contains('dark'))
+    }
+    check()
+    const observer = new MutationObserver(check)
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
+    return () => observer.disconnect()
+  }, [])
 
   // Expose header height as CSS variable so the menu can position itself
   useEffect(() => {
@@ -154,7 +167,7 @@ export default function Header({ workload = 0 }: Props) {
               {/* Full Logo (Desktop & Mobile) */}
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src="/logo/electronom.svg"
+                src={isDark ? "/logo/electronom-dark.svg" : "/logo/electronom.svg"}
                 alt="Electronom"
                 className="h-10 sm:h-[56px] w-auto select-none"
               />

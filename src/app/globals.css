@@ -726,11 +726,6 @@
   border-color: var(--color-border) !important;
 }
 
-/* Header logo invert for readability in dark mode */
-.dark #header-logo img {
-  filter: brightness(0) invert(1);
-}
-
 .dark .text-text-primary,
 .dark .text-slate-900,
 .dark .text-slate-800,
