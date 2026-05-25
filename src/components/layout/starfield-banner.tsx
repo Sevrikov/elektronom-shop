@@ -40,35 +40,38 @@ export function StarfieldBanner() {
     }
 
     // 2. Far Background Stars (Crosses & Dots)
-    const bgStars: { x: number, y: number, opacity: number, type: 'cross' | 'dot' }[] = []
+    const bgStars: { x: number, y: number, z: number, opacity: number, type: 'cross' | 'dot' }[] = []
     for (let i = 0; i < 5000; i++) {
       bgStars.push({
-        x: Math.random() * 4000,
-        y: Math.random() * 2000 - 1000,
+        x: Math.random() * 4000 - 2000,
+        y: Math.random() * 4000 - 2000,
+        z: Math.random() * 2000,
         opacity: Math.random() * 0.5 + 0.1,
-        type: Math.random() > 0.8 ? 'cross' : 'dot'
+        type: Math.random() > 0.6 ? 'cross' : 'dot' // More crosses per user request
       })
     }
 
     // 3. Spiral Galaxies
-    const galaxies: { cx: number, cy: number, dots: {x: number, y: number, o: number}[] }[] = []
-    for (let i = 0; i < 8; i++) {
-      const cx = Math.random() * 4000
-      const cy = Math.random() * 2000 - 1000
-      const arms = 2 + Math.floor(Math.random() * 3)
+    const galaxies: { x: number, y: number, z: number, angle: number, dots: {x: number, y: number, o: number}[] }[] = []
+    for (let i = 0; i < 15; i++) { // More galaxies
+      const x = Math.random() * 8000 - 4000
+      const y = Math.random() * 4000 - 2000
+      const z = Math.random() * 3000
+      const angle = Math.random() * Math.PI * 2
+      const arms = 2 + Math.floor(Math.random() * 4) // 2 to 5 arms
       const gDots: {x: number, y: number, o: number}[] = []
       for (let j = 0; j < 400; j++) {
         const arm = j % arms
-        const angle = (Math.random() * Math.PI * 2) + (arm * Math.PI * 2 / arms)
-        const radius = Math.random() * 150 + 20
-        const spiralAngle = angle + (radius * 0.05)
+        const armAngle = (Math.random() * Math.PI * 2) + (arm * Math.PI * 2 / arms)
+        const radius = Math.random() * 200 + 20
+        const spiralAngle = armAngle + (radius * 0.05)
         gDots.push({
           x: Math.cos(spiralAngle) * radius,
           y: Math.sin(spiralAngle) * radius,
           o: Math.random() * 0.5 + 0.1
         })
       }
-      galaxies.push({ cx, cy, dots: gDots })
+      galaxies.push({ x, y, z, angle, dots: gDots })
     }
 
     // 4. Cinematic Events State
@@ -95,26 +98,46 @@ export function StarfieldBanner() {
 
       // ─── Draw Far Background Stars (Crosses & Dots) ───
       for (const p of bgStars) {
-        p.x -= 0.1 // Very slow pan
-        if (p.x < -10) p.x = canvas.width + 10
+        p.z -= speed * 0.1 // Much slower than hyperspace stars
+        if (p.z <= 0) {
+          p.z = 2000
+          p.x = Math.random() * 4000 - 2000
+          p.y = Math.random() * 4000 - 2000
+        }
+
+        const scale = 500 / Math.max(p.z, 1)
+        const px = p.x * scale + cx
+        const py = p.y * scale + cy
+        
         ctx.fillStyle = `rgba(36, 161, 222, ${p.opacity})`
-        const py = p.y + cy
         if (p.type === 'cross') {
-          ctx.fillRect(p.x, py - 1, 1, 3) // Vertical line
-          ctx.fillRect(p.x - 1, py, 3, 1) // Horizontal line
+          const s = 1.5 * scale // scales up as it gets closer
+          ctx.fillRect(px, py - s, s, s * 3)
+          ctx.fillRect(px - s, py, s * 3, s)
         } else {
-          ctx.fillRect(p.x, py, 1.5, 1.5)
+          const s = 1.5 * scale
+          ctx.fillRect(px, py, s, s)
         }
       }
 
       // ─── Draw Spiral Galaxies ───
       for (const g of galaxies) {
-        g.cx -= 0.05 // pan left even slower
-        if (g.cx < -300) g.cx = canvas.width + 300
-        const gy = g.cy + cy
+        g.z -= speed * 0.05 // Even slower
+        g.angle += 0.001 // slow rotation
+        if (g.z <= 0) {
+          g.z = 3000
+          g.x = Math.random() * 8000 - 4000
+          g.y = Math.random() * 4000 - 2000
+        }
+
+        const scale = 500 / Math.max(g.z, 1)
+        const gx = g.x * scale + cx
+        const gy = g.y * scale + cy
+        
         ctx.save()
-        ctx.translate(g.cx, gy)
-        ctx.rotate(tick * 0.001) // slow rotation
+        ctx.translate(gx, gy)
+        ctx.rotate(g.angle)
+        ctx.scale(scale, scale) // Scale the galaxy down based on distance
         for (const d of g.dots) {
           ctx.fillStyle = `rgba(36, 161, 222, ${d.o})`
           ctx.fillRect(d.x, d.y, 2, 2)
