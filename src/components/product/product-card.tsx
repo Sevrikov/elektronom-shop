@@ -54,7 +54,7 @@ export default function ProductCard({ product, locale, view = 'grid' }: ProductC
         {/* Image */}
         <Link
           href={`/${locale}/product/${product.slug}`}
-          className="relative shrink-0 w-[140px] h-[140px] rounded-md flex items-center justify-center overflow-hidden bg-surface-alt"
+          className="relative shrink-0 w-[140px] h-[140px] rounded-md flex items-center justify-center overflow-hidden bg-image-container"
         >
           {discount > 0 && (
             <div className="absolute top-1.5 right-1.5 px-1.5 py-0.5 rounded text-[10px] font-bold text-white z-10 bg-destructive">
@@ -139,7 +139,7 @@ export default function ProductCard({ product, locale, view = 'grid' }: ProductC
       {/* Image */}
       <Link
         href={`/${locale}/product/${product.slug}`}
-        className="relative h-[160px] flex items-center justify-center overflow-hidden bg-surface-alt"
+        className="relative h-[160px] flex items-center justify-center overflow-hidden bg-image-container"
       >
         {/* Stock badge */}
         <div

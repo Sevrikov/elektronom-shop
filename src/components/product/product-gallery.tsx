@@ -93,7 +93,7 @@ export function ProductGallery({ images, productName, locale }: ProductGalleryPr
     <>
       <div className="flex flex-col gap-3">
         {/* Main image */}
-        <div className="relative overflow-hidden rounded-lg bg-surface-alt border border-border aspect-square group">
+        <div className="relative overflow-hidden rounded-lg bg-image-container border border-border aspect-square group">
           {activeImage ? (
             <>
               <div
@@ -162,7 +162,7 @@ export function ProductGallery({ images, productName, locale }: ProductGalleryPr
                 key={img.id ?? index}
                 onClick={() => setActiveIndex(index)}
                 aria-label={`Фото ${index + 1}`}
-                className={`relative shrink-0 rounded-lg overflow-hidden transition-all w-16 h-16 bg-surface-alt border cursor-pointer ${
+                className={`relative shrink-0 rounded-lg overflow-hidden transition-all w-16 h-16 bg-image-container border cursor-pointer ${
                   index === activeIndex ? 'border-2 border-accent shadow-sm' : 'border-border hover:border-border-strong'
                 }`}
               >

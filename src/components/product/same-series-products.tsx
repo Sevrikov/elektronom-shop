@@ -76,7 +76,7 @@ export async function SameSeriesProducts({
               {/* Image */}
               <Link
                 href={`/${locale}/product/${p.slug}` as never}
-                className="w-14 h-14 relative rounded-md border border-border bg-surface-alt shrink-0 overflow-hidden flex items-center justify-center"
+                className="w-14 h-14 relative rounded-md border border-border bg-image-container shrink-0 overflow-hidden flex items-center justify-center"
               >
                 {image ? (
                   <Image

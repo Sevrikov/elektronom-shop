@@ -183,7 +183,7 @@ export default function Header({ workload = 0 }: Props) {
                 <div className="flex items-center gap-2">
                   <a href="viber://chat?number=%2B380672206791" aria-label="Viber" className="hover:opacity-80 transition-opacity flex items-center justify-center size-8 relative">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src="/logo/Viber.webp" alt="Viber" className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[68px] h-[68px] max-w-none object-contain mix-blend-multiply" />
+                    <img src="/logo/Viber.webp" alt="Viber" className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[68px] h-[68px] max-w-none object-contain" />
                     {/* Golden Crown */}
                     <span className="absolute -top-[8px] right-[0px] text-[12px] drop-shadow-md z-10" style={{ transform: 'rotate(15deg)' }}>👑</span>
                   </a>

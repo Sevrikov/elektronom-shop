@@ -60,7 +60,7 @@ export function CartItem({ item, locale, onUpdate }: CartItemProps) {
       {/* Image */}
       <Link
         href={lp(`/product/${item.slug}`)}
-        className="relative shrink-0 w-[72px] h-[72px] rounded-md overflow-hidden bg-surface-alt border border-border"
+        className="relative shrink-0 w-[72px] h-[72px] rounded-md overflow-hidden bg-image-container border border-border"
       >
         {item.imageUrl ? (
           <Image

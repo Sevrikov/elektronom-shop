@@ -666,6 +666,11 @@
   mix-blend-mode: normal !important;
 }
 
+/* Product image container background to blend with white-background images */
+.bg-image-container {
+  background-color: #FFFFFF !important;
+}
+
 /* Shift the product image closer to the text in promo banners */
 .eb__product [class*="eb__photo-wrapper"] {
   margin-left: -90px;
