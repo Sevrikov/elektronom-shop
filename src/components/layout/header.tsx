@@ -82,21 +82,21 @@ export default function Header({ categories, workload = 0 }: Props) {
               style={{ fontFamily: '"Press Start 2P", monospace', fontSize: '9px', textShadow: '1px 1px 0 #fff, -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff' }}
             >
               {[1, 2, 3].map((set) => (
-                <div key={set} className="flex items-center gap-16 px-8 text-[#24A1DE] drop-shadow-[0_1px_1px_rgba(255,255,255,1)]">
+                <div key={set} className="flex items-center gap-16 px-8 whitespace-nowrap text-[#24A1DE] drop-shadow-[0_1px_1px_rgba(255,255,255,1)]">
                   <div className="flex items-center gap-2">
-                    <Percent className="size-3" strokeWidth={3} />
+                    <Percent className="size-5" strokeWidth={3} />
                     <span>{locale === 'uk' ? 'ЗНИЖКИ ДЛЯ ОПТУ' : 'СКИДКИ ДЛЯ ОПТА'}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Truck className="size-3" strokeWidth={3} />
+                    <Truck className="size-5" strokeWidth={3} />
                     <span>{locale === 'uk' ? 'ВІД 1500 ГРН ДОСТАВКА БЕЗКОШТОВНО' : 'ОТ 1500 ГРН ДОСТАВКА БЕСПЛАТНО'}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <MessageCircle className="size-3" strokeWidth={3} />
+                    <MessageCircle className="size-5" strokeWidth={3} />
                     <span>{locale === 'uk' ? 'ОПТОВІ ЗНИЖКИ - ДЕТАЛІ У VIBER' : 'ОПТОВЫЕ СКИДКИ - ДЕТАЛИ В VIBER'}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Package className="size-3" strokeWidth={3} />
+                    <Package className="size-5" strokeWidth={3} />
                     <span>{locale === 'uk' ? 'ДРОПШИПІНГ: ВІДПРАВКА ТОВАРУ' : 'ДРОПШИПИНГ: ОТПРАВКА ТОВАРА'}</span>
                   </div>
                 </div>
@@ -179,12 +179,12 @@ export default function Header({ categories, workload = 0 }: Props) {
                 <div className="flex items-center gap-2">
                   <a href="viber://chat?number=%2B380672206791" aria-label="Viber" className="hover:opacity-80 transition-opacity flex items-center justify-center size-8 relative">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src="/logo/Viber.webp" alt="Viber" className="size-[28px] object-contain drop-shadow-sm" />
+                    <img src="/logo/Viber.webp" alt="Viber" className="w-[38px] h-[38px] max-w-none object-contain drop-shadow-sm" />
                     {/* Golden Crown */}
-                    <span className="absolute -top-[10px] -right-[6px] text-[16px] drop-shadow-md z-10" style={{ transform: 'rotate(15deg)' }}>👑</span>
+                    <span className="absolute -top-[5px] -right-[5px] text-[12px] drop-shadow-md z-10" style={{ transform: 'rotate(15deg)' }}>👑</span>
                   </a>
-                  <a href="tg://resolve?domain=elektronom" aria-label="Telegram" className="hover:opacity-80 transition-opacity flex items-center justify-center size-8">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="#24A1DE">
+                  <a href="tg://resolve?domain=elektronom" aria-label="Telegram" className="hover:opacity-80 transition-opacity flex items-center justify-center size-8 ml-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="#24A1DE">
                       <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
                     </svg>
                   </a>
