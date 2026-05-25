@@ -47,10 +47,17 @@ export default function CategorySidebar({ categories = [] }: Props) {
   const promo = activeSlug ? getPromoForSlug(activeSlug, locale) : null
 
   return (
-    <aside
-      className="hidden lg:block w-[280px] shrink-0 sticky top-[140px] self-start z-40"
-      onMouseLeave={() => setActiveSlug(null)}
-    >
+    <>
+      {/* Backdrop overlay */}
+      <div 
+        className={`fixed inset-0 bg-black/40 z-30 transition-opacity duration-300 ${activeSlug ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`} 
+        aria-hidden="true"
+      />
+      
+      <aside
+        className="hidden lg:block w-[280px] shrink-0 sticky top-[140px] self-start z-40"
+        onMouseLeave={() => setActiveSlug(null)}
+      >
       <div
         className="rounded-lg overflow-hidden"
         style={{ border: '1px solid var(--color-border)', background: '#fff' }}
@@ -174,5 +181,6 @@ export default function CategorySidebar({ categories = [] }: Props) {
         </div>
       )}
     </aside>
+    </>
   )
 }
