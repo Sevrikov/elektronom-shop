@@ -7,27 +7,46 @@
    Tailwind CSS v4: all config via @theme, no tailwind.config.ts
    ═══════════════════════════════════════════════════════════════════ */
 
-@theme inline {
-  /* ─── Brand Palette (Concept 6 v2) ─── */
+:root {
   --color-accent: #3B7BD9;
   --color-accent-hover: #2C67BE;
   --color-accent-press: #23528F;
   --color-accent-subtle: #E8EEF7;
 
-  /* ─── Surfaces ─── */
   --color-surface-white: #FFFFFF;
   --color-surface-alt: #F5F7FA;
   --color-surface-raised: #EEF2F7;
   --color-surface-accent: #E8EEF7;
 
-  /* ─── Borders ─── */
   --color-border: #E6EAF0;
   --color-border-strong: #D5DCE5;
   --color-border-dashed: #C9D1DC;
 
-  /* ─── Text ─── */
   --color-text-primary: #1A1F2B;
   --color-text-muted: #6A7280;
+}
+
+@theme inline {
+  /* ─── Brand Palette (Concept 6 v2) ─── */
+  --color-accent: var(--color-accent);
+  --color-accent-hover: var(--color-accent-hover);
+  --color-accent-press: var(--color-accent-press);
+  --color-accent-subtle: var(--color-accent-subtle);
+
+  /* ─── Surfaces ─── */
+  --color-surface-white: var(--color-surface-white);
+  --color-surface-alt: var(--color-surface-alt);
+  --color-surface-raised: var(--color-surface-raised);
+  --color-surface-accent: var(--color-surface-accent);
+
+  /* ─── Borders ─── */
+  --color-border: var(--color-border);
+  --color-border-strong: var(--color-border-strong);
+  --color-border-dashed: var(--color-border-dashed);
+
+  /* ─── Text ─── */
+  --color-text-primary: var(--color-text-primary);
+  --color-text-muted: var(--color-text-muted);
 
   /* ─── Semantic ─── */
   --color-success: #2A9D4A;
@@ -642,6 +661,9 @@
 /* Global helper classes to remove white backgrounds from product images */
 .remove-white-bg, .mix-blend-multiply {
   mix-blend-mode: multiply !important;
+}
+.dark .remove-white-bg, .dark .mix-blend-multiply {
+  mix-blend-mode: normal !important;
 }
 
 /* Shift the product image closer to the text in promo banners */

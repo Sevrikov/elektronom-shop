@@ -56,7 +56,7 @@ export default function CategoriesSection() {
             key={cat.slug}
             href={lp(`/catalog/${cat.slug}`)}
             className="flex items-center gap-3 p-3.5 rounded-lg transition-all group hover:shadow-md"
-            style={{ background: '#fff', border: '1px solid var(--color-border)' }}
+            style={{ background: 'var(--color-surface-white)', border: '1px solid var(--color-border)' }}
           >
             <div
               className="size-10 rounded-lg flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform"

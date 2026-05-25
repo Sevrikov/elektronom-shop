@@ -9,7 +9,7 @@ export default function PrefooterCta() {
   return (
     <section
       className="rounded-lg overflow-hidden"
-      style={{ background: 'var(--color-text-primary)' }}
+      style={{ background: 'var(--color-footer-bg)' }}
     >
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 p-8">
         {/* Left: Text */}

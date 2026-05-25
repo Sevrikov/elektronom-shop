@@ -39,7 +39,7 @@ export default function HybridDrawer({ locale }: { locale: string }) {
       {/* Bottom row: CTA cards + theme toggle */}
       <div className="flex flex-col sm:flex-row items-stretch gap-3 p-3 bg-surface-alt border-t border-border">
         {/* CTA Card: Guided */}
-        <div className="flex-1 flex items-start gap-3 p-3.5 rounded-md cursor-pointer transition-shadow hover:shadow-md bg-white border border-border">
+        <div className="flex-1 flex items-start gap-3 p-3.5 rounded-md cursor-pointer transition-shadow hover:shadow-md bg-surface-white border border-border">
           <div className="size-9 rounded-md flex items-center justify-center shrink-0 bg-accent-subtle">
             <Compass className="size-[18px] text-accent" strokeWidth={1.5} />
           </div>
@@ -60,7 +60,7 @@ export default function HybridDrawer({ locale }: { locale: string }) {
         </div>
 
         {/* CTA Card: B2B */}
-        <div className="flex-1 flex items-start gap-3 p-3.5 rounded-md cursor-pointer transition-shadow hover:shadow-md bg-white border border-border">
+        <div className="flex-1 flex items-start gap-3 p-3.5 rounded-md cursor-pointer transition-shadow hover:shadow-md bg-surface-white border border-border">
           <div className="size-9 rounded-md flex items-center justify-center shrink-0 bg-accent-subtle">
             <FileText className="size-[18px] text-accent" strokeWidth={1.5} />
           </div>
@@ -83,7 +83,7 @@ export default function HybridDrawer({ locale }: { locale: string }) {
         {/* Theme toggle (SVG circuit breaker) */}
         <div 
           onClick={toggleTheme}
-          className="hidden sm:flex items-center gap-3 px-4 rounded-md shrink-0 bg-white border border-border cursor-pointer select-none transition-all hover:shadow-md active:scale-[0.98]"
+          className="hidden sm:flex items-center gap-3 px-4 rounded-md shrink-0 bg-surface-white border border-border cursor-pointer select-none transition-all hover:shadow-md active:scale-[0.98]"
         >
           <div className="flex flex-col items-center gap-1">
             {/* SVG circuit breaker */}
