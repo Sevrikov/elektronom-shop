@@ -75,25 +75,32 @@ export default function Header({ categories, workload = 0 }: Props) {
           {/* Canvas Starfield Animation */}
           <StarfieldBanner />
 
-          {/* Text Content (Blue text with white glow for readability over stars) */}
-          <div className="relative z-10 h-full mx-auto max-w-[1280px] px-4 lg:px-6 w-full flex items-center justify-between gap-4 text-[11px] sm:text-xs font-black uppercase tracking-wide text-[#24A1DE] drop-shadow-[0_1px_2px_rgba(255,255,255,1)]" style={{ textShadow: '1px 1px 0 #fff, -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff' }}>
-            <div className="flex items-center gap-1.5 shrink-0 bg-white/80 px-2 py-0.5 rounded backdrop-blur-sm shadow-sm border border-white/50">
-              <Percent className="size-4" strokeWidth={3} />
-              <span className="hidden md:inline">{locale === 'uk' ? 'Знижки для опту' : 'Скидки для опта'}</span>
-            </div>
-            <div className="flex items-center gap-1.5 shrink-0 bg-white/80 px-2 py-0.5 rounded backdrop-blur-sm shadow-sm border border-white/50">
-              <Truck className="size-4" strokeWidth={3} />
-              <span className="hidden sm:inline">{locale === 'uk' ? 'Від 1500 грн доставка безкоштовно' : 'От 1500 грн доставка бесплатно'}</span>
-              <span className="sm:hidden">{locale === 'uk' ? 'Безкоштовна доставка' : 'Бесплатная доставка'}</span>
-            </div>
-            <div className="flex items-center gap-1.5 shrink-0 bg-white/80 px-2 py-0.5 rounded backdrop-blur-sm shadow-sm border border-white/50">
-              <MessageCircle className="size-4" strokeWidth={3} />
-              <span className="hidden lg:inline">{locale === 'uk' ? 'Оптові знижки для постійних клієнтів - деталі у Viber' : 'Оптовые скидки для постоянных клиентов - детали в Viber'}</span>
-              <span className="hidden md:inline lg:hidden">{locale === 'uk' ? 'Оптові знижки у Viber' : 'Оптовые скидки в Viber'}</span>
-            </div>
-            <div className="flex items-center gap-1.5 shrink-0 bg-white/80 px-2 py-0.5 rounded backdrop-blur-sm shadow-sm border border-white/50">
-              <Package className="size-4" strokeWidth={3} />
-              <span className="hidden md:inline">{locale === 'uk' ? 'Дропшипінг: відправка товару' : 'Дропшипинг: отправка товара'}</span>
+          {/* Text Content: Pixel Marquee */}
+          <div className="absolute inset-0 z-10 flex items-center overflow-hidden pointer-events-none">
+            <div 
+              className="animate-marquee flex items-center w-max" 
+              style={{ fontFamily: '"Press Start 2P", monospace', fontSize: '9px', textShadow: '1px 1px 0 #fff, -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff' }}
+            >
+              {[1, 2, 3].map((set) => (
+                <div key={set} className="flex items-center gap-12 px-6 text-[#24A1DE] drop-shadow-[0_1px_1px_rgba(255,255,255,1)]">
+                  <div className="flex items-center gap-2 bg-white/90 px-3 py-1.5 rounded-sm border-2 border-[#24A1DE] shadow-md">
+                    <Percent className="size-3" strokeWidth={3} />
+                    <span>{locale === 'uk' ? 'ЗНИЖКИ ДЛЯ ОПТУ' : 'СКИДКИ ДЛЯ ОПТА'}</span>
+                  </div>
+                  <div className="flex items-center gap-2 bg-white/90 px-3 py-1.5 rounded-sm border-2 border-[#24A1DE] shadow-md">
+                    <Truck className="size-3" strokeWidth={3} />
+                    <span>{locale === 'uk' ? 'ВІД 1500 ГРН ДОСТАВКА БЕЗКОШТОВНО' : 'ОТ 1500 ГРН ДОСТАВКА БЕСПЛАТНО'}</span>
+                  </div>
+                  <div className="flex items-center gap-2 bg-white/90 px-3 py-1.5 rounded-sm border-2 border-[#24A1DE] shadow-md">
+                    <MessageCircle className="size-3" strokeWidth={3} />
+                    <span>{locale === 'uk' ? 'ОПТОВІ ЗНИЖКИ - ДЕТАЛІ У VIBER' : 'ОПТОВЫЕ СКИДКИ - ДЕТАЛИ В VIBER'}</span>
+                  </div>
+                  <div className="flex items-center gap-2 bg-white/90 px-3 py-1.5 rounded-sm border-2 border-[#24A1DE] shadow-md">
+                    <Package className="size-3" strokeWidth={3} />
+                    <span>{locale === 'uk' ? 'ДРОПШИПІНГ: ВІДПРАВКА ТОВАРУ' : 'ДРОПШИПИНГ: ОТПРАВКА ТОВАРА'}</span>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -138,7 +145,7 @@ export default function Header({ categories, workload = 0 }: Props) {
           className="border-b"
           style={{ background: '#fff', borderColor: 'var(--color-border)' }}
         >
-          <div className="h-[100px] mx-auto max-w-[1280px] px-4 lg:px-6 flex items-center gap-6">
+          <div className="h-[76px] mx-auto max-w-[1280px] px-4 lg:px-6 flex items-center gap-6">
             {/* Logo */}
             <Link
               href={lp('/')}
@@ -151,14 +158,14 @@ export default function Header({ categories, workload = 0 }: Props) {
               <img
                 src="/logo/electronom.svg"
                 alt="Electronom"
-                className="hidden sm:block h-[96px] w-auto select-none"
+                className="hidden sm:block h-[56px] w-auto select-none"
               />
               {/* Mobile Mark Logo */}
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/logo/electronom-mark.svg"
                 alt="Electronom"
-                className="block sm:hidden h-20 w-auto select-none"
+                className="block sm:hidden h-12 w-auto select-none"
               />
             </Link>
 
@@ -170,9 +177,11 @@ export default function Header({ categories, workload = 0 }: Props) {
                 </a>
                 <span className="text-[11px] font-bold text-text-muted uppercase tracking-wider ml-1">{locale === 'uk' ? 'Напишіть нам:' : 'Напишите нам:'}</span>
                 <div className="flex items-center gap-2">
-                  <a href="viber://chat?number=%2B380672206791" aria-label="Viber" className="hover:opacity-80 transition-opacity flex items-center justify-center size-8">
+                  <a href="viber://chat?number=%2B380672206791" aria-label="Viber" className="hover:opacity-80 transition-opacity flex items-center justify-center size-8 relative">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src="/logo/Viber.webp" alt="Viber" className="size-8 object-contain" />
+                    <img src="/logo/Viber.webp" alt="Viber" className="size-[28px] object-contain drop-shadow-sm" />
+                    {/* Golden Crown */}
+                    <span className="absolute -top-[10px] -right-[6px] text-[16px] drop-shadow-md z-10" style={{ transform: 'rotate(15deg)' }}>👑</span>
                   </a>
                   <a href="tg://resolve?domain=elektronom" aria-label="Telegram" className="hover:opacity-80 transition-opacity flex items-center justify-center size-8">
                     <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="#24A1DE">

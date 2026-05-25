@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
 /* ═══════════════════════════════════════════════════════════════════
    Electronom — Design System Tokens (Concept 6 v2)
@@ -63,6 +64,12 @@
   --animate-run-left: runLeft 18s linear infinite 5s;
   --animate-day-night: dayNight 12s ease-in-out infinite alternate;
   --animate-pan-bg: panBg 30s linear infinite;
+  --animate-marquee: marquee 30s linear infinite;
+
+  @keyframes marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
 
   @keyframes rain {
     0% { background-position: 0 0; }
