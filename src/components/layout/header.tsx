@@ -153,19 +153,12 @@ export default function Header({ categories, workload = 0 }: Props) {
               id="header-logo"
               aria-label={locale === 'uk' ? 'Electronom — головна' : 'Electronom — главная'}
             >
-              {/* Desktop Full Logo */}
+              {/* Full Logo (Desktop & Mobile) */}
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src="/logo/electronom-logo.svg"
+                src="/logo/electronom.svg"
                 alt="Electronom"
-                className="hidden sm:block h-[56px] w-auto select-none"
-              />
-              {/* Mobile Mark Logo */}
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src="/logo/electronom-mark.svg"
-                alt="Electronom"
-                className="block sm:hidden h-12 w-auto select-none"
+                className="h-10 sm:h-[56px] w-auto select-none"
               />
             </Link>
 
@@ -179,7 +172,7 @@ export default function Header({ categories, workload = 0 }: Props) {
                 <div className="flex items-center gap-2">
                   <a href="viber://chat?number=%2B380672206791" aria-label="Viber" className="hover:opacity-80 transition-opacity flex items-center justify-center size-8 relative">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src="/logo/Viber.webp" alt="Viber" className="w-[38px] h-[38px] max-w-none object-contain drop-shadow-sm mix-blend-multiply" />
+                    <img src="/logo/Viber.webp" alt="Viber" className="w-[38px] h-[38px] max-w-none object-contain mix-blend-multiply" />
                     {/* Golden Crown */}
                     <span className="absolute -top-[5px] -right-[5px] text-[12px] drop-shadow-md z-10" style={{ transform: 'rotate(15deg)' }}>👑</span>
                   </a>

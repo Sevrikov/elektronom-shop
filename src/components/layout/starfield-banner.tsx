@@ -39,22 +39,26 @@ export function StarfieldBanner() {
       })
     }
 
-    // 2. Far Background Stars (Crosses)
-    const bgStars: { x: number, y: number, opacity: number }[] = []
-    for (let i = 0; i < 600; i++) {
+    // 2. Far Background Stars (Crosses & Dots)
+    const bgStars: { x: number, y: number, opacity: number, type: 'cross' | 'dot' }[] = []
+    for (let i = 0; i < 3000; i++) {
       bgStars.push({
         x: Math.random() * 4000,
         y: Math.random() * 2000 - 1000,
-        opacity: Math.random() * 0.4 + 0.1
+        opacity: Math.random() * 0.5 + 0.1,
+        type: Math.random() > 0.8 ? 'cross' : 'dot'
       })
     }
 
     // 3. Cinematic Events State
     let tick = 0
     let alienState = { active: false, timer: 0, x: 0, y: 0, scale: 0 }
-    let earthState = { active: false, x: -100, y: 20, z: 1000 }
-    let voyagerState = { active: false, x: 2000, y: 10, z: 800 }
     let shipState = { active: false, x: 0, y: 0, z: 2000, speed: 0, length: 0 }
+    
+    // Sequence Manager
+    const eventTypes = ['earth', 'voyager', 'station', 'sun', 'blackhole']
+    let currentEventIdx = 0
+    let eventState = { active: false, type: 'earth', x: 0, y: 0, z: 0 }
 
     const speed = 70 // Hyperspace speed
 
@@ -68,82 +72,125 @@ export function StarfieldBanner() {
       const cx = canvas.width / 2
       const cy = canvas.height / 2
 
-      // ─── Draw Far Background Stars (Crosses) ───
+      // ─── Draw Far Background Stars (Crosses & Dots) ───
       for (const p of bgStars) {
         p.x -= 0.1 // Very slow pan
         if (p.x < -10) p.x = canvas.width + 10
         ctx.fillStyle = `rgba(36, 161, 222, ${p.opacity})`
         const py = p.y + cy
-        ctx.fillRect(p.x, py - 1, 1, 3) // Vertical line
-        ctx.fillRect(p.x - 1, py, 3, 1) // Horizontal line
+        if (p.type === 'cross') {
+          ctx.fillRect(p.x, py - 1, 1, 3) // Vertical line
+          ctx.fillRect(p.x - 1, py, 3, 1) // Horizontal line
+        } else {
+          ctx.fillRect(p.x, py, 1, 1)
+        }
       }
 
-      // ─── Draw Earth Event ───
-      if (!earthState.active && Math.random() < 0.001) {
-        earthState = { active: true, x: -200, y: Math.random() * canvas.height, z: 1500 }
-      }
-      if (earthState.active) {
-        earthState.x += 2
-        earthState.z -= 10
-        const scale = 2000 / Math.max(earthState.z, 100)
-        const ex = (earthState.x / Math.max(earthState.z, 1)) * 800 + cx
-        const ey = (earthState.y / Math.max(earthState.z, 1)) * 800 + cy
+      // ─── Large Events Manager ───
+      if (!eventState.active && Math.random() < 0.003) {
+        const type = eventTypes[currentEventIdx]
+        currentEventIdx = (currentEventIdx + 1) % eventTypes.length
         
-        // Draw Earth (Blue circle with darker blue blocks)
-        const radius = 15 * scale
-        ctx.beginPath()
-        ctx.arc(ex, ey, radius, 0, Math.PI * 2)
-        ctx.fillStyle = '#24A1DE' // Blue
-        ctx.fill()
+        let startX = Math.random() * canvas.width * 2 - canvas.width
+        let startY = Math.random() * canvas.height
+        let startZ = 1500
         
-        // Pixel continents
-        ctx.fillStyle = '#1D4ED8' // Darker Blue
-        ctx.fillRect(ex - radius*0.4, ey - radius*0.3, radius*0.8, radius*0.4)
-        ctx.fillRect(ex - radius*0.2, ey + radius*0.1, radius*0.6, radius*0.5)
-
-        // Draw Moon
-        const mx = ex + Math.cos(tick * 0.05) * (radius * 2)
-        const my = ey + Math.sin(tick * 0.05) * (radius * 0.5)
-        ctx.beginPath()
-        ctx.arc(mx, my, radius * 0.3, 0, Math.PI * 2)
-        ctx.fillStyle = '#60A5FA' // Lighter Blue
-        ctx.fill()
-
-        if (earthState.z < 0) earthState.active = false
+        if (type === 'voyager' || type === 'station') {
+          startX = canvas.width + 200
+          startZ = 800
+        }
+        
+        eventState = { active: true, type, x: startX, y: startY, z: startZ }
       }
 
-      // ─── Draw Voyager Event ───
-      if (!voyagerState.active && Math.random() < 0.002) {
-        voyagerState = { active: true, x: canvas.width + 200, y: Math.random() * canvas.height, z: 800 }
-      }
-      if (voyagerState.active) {
-        voyagerState.x -= 4
-        voyagerState.z -= 5
-        const scale = 1000 / Math.max(voyagerState.z, 100)
-        const vx = (voyagerState.x / Math.max(voyagerState.z, 1)) * 800 + cx
-        const vy = (voyagerState.y / Math.max(voyagerState.z, 1)) * 800 + cy
+      if (eventState.active) {
+        const type = eventState.type
+        if (type === 'earth' || type === 'sun' || type === 'blackhole') {
+          eventState.x += 2
+          eventState.z -= 10
+        } else {
+          eventState.x -= 4
+          eventState.z -= 5
+        }
 
-        ctx.save()
-        ctx.translate(vx, vy)
-        ctx.rotate(tick * 0.02)
-        ctx.scale(scale, scale)
-        // Dish
-        ctx.strokeStyle = '#60A5FA' // Light Blue
-        ctx.lineWidth = 2
-        ctx.beginPath()
-        ctx.arc(0, 0, 8, Math.PI, Math.PI * 2)
-        ctx.stroke()
-        // Body
-        ctx.fillStyle = '#24A1DE' // Blue
-        ctx.fillRect(-4, 0, 8, 12)
-        // Antenna
-        ctx.beginPath()
-        ctx.moveTo(0, 12)
-        ctx.lineTo(15, 25)
-        ctx.stroke()
-        ctx.restore()
+        const scale = 2000 / Math.max(eventState.z, 100)
+        const ex = (eventState.x / Math.max(eventState.z, 1)) * 800 + cx
+        const ey = (eventState.y / Math.max(eventState.z, 1)) * 800 + cy
 
-        if (voyagerState.z < 0 || voyagerState.x < -1000) voyagerState.active = false
+        if (type === 'earth') {
+          const radius = 15 * scale
+          ctx.beginPath()
+          ctx.arc(ex, ey, radius, 0, Math.PI * 2)
+          ctx.fillStyle = '#24A1DE'
+          ctx.fill()
+          ctx.fillStyle = '#1D4ED8'
+          ctx.fillRect(ex - radius*0.4, ey - radius*0.3, radius*0.8, radius*0.4)
+          ctx.fillRect(ex - radius*0.2, ey + radius*0.1, radius*0.6, radius*0.5)
+          const mx = ex + Math.cos(tick * 0.05) * (radius * 2)
+          const my = ey + Math.sin(tick * 0.05) * (radius * 0.5)
+          ctx.beginPath()
+          ctx.arc(mx, my, radius * 0.3, 0, Math.PI * 2)
+          ctx.fillStyle = '#60A5FA'
+          ctx.fill()
+        } else if (type === 'voyager') {
+          ctx.save()
+          ctx.translate(ex, ey)
+          ctx.rotate(tick * 0.02)
+          ctx.scale(scale, scale)
+          ctx.strokeStyle = '#60A5FA'
+          ctx.lineWidth = 2
+          ctx.beginPath()
+          ctx.arc(0, 0, 8, Math.PI, Math.PI * 2)
+          ctx.stroke()
+          ctx.fillStyle = '#24A1DE'
+          ctx.fillRect(-4, 0, 8, 12)
+          ctx.beginPath()
+          ctx.moveTo(0, 12)
+          ctx.lineTo(15, 25)
+          ctx.stroke()
+          ctx.restore()
+        } else if (type === 'station') {
+          ctx.save()
+          ctx.translate(ex, ey)
+          ctx.scale(scale, scale)
+          ctx.fillStyle = '#24A1DE'
+          ctx.fillRect(-10, -10, 20, 20) // Core
+          ctx.fillStyle = '#1D4ED8'
+          ctx.fillRect(-35, -5, 25, 10) // Left Panel
+          ctx.fillRect(10, -5, 25, 10) // Right Panel
+          ctx.restore()
+        } else if (type === 'sun') {
+          const radius = 25 * scale
+          ctx.beginPath()
+          ctx.arc(ex, ey, radius, 0, Math.PI * 2)
+          ctx.fillStyle = '#24A1DE'
+          ctx.fill()
+          ctx.strokeStyle = '#60A5FA'
+          ctx.lineWidth = 2 * scale
+          for(let i=0; i<8; i++) {
+            ctx.beginPath()
+            const angle = (i * Math.PI / 4) + (tick * 0.02)
+            ctx.moveTo(ex + Math.cos(angle)*radius*1.2, ey + Math.sin(angle)*radius*1.2)
+            ctx.lineTo(ex + Math.cos(angle)*radius*1.8, ey + Math.sin(angle)*radius*1.8)
+            ctx.stroke()
+          }
+        } else if (type === 'blackhole') {
+          const radius = 30 * scale
+          ctx.beginPath()
+          ctx.ellipse(ex, ey, radius * 2, radius * 0.5, tick * 0.05, 0, Math.PI * 2)
+          ctx.strokeStyle = '#60A5FA'
+          ctx.lineWidth = 4 * scale
+          ctx.stroke()
+          ctx.beginPath()
+          ctx.arc(ex, ey, radius, 0, Math.PI * 2)
+          ctx.fillStyle = '#ffffff'
+          ctx.fill()
+          ctx.strokeStyle = '#1D4ED8'
+          ctx.lineWidth = 2 * scale
+          ctx.stroke()
+        }
+
+        if (eventState.z < 0 || eventState.x < -1500) eventState.active = false
       }
 
       // ─── Draw Fast Spaceships ───
