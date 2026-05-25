@@ -22,6 +22,7 @@ export function getTransformedImageUrl(
     crop?: 'fill' | 'scale' | 'thumb' | 'fit' | 'limit'
     quality?: string | number
     format?: string
+    removeBg?: boolean
   }
 ): string {
   const url = typeof image === 'string' ? image : image?.url
@@ -38,6 +39,13 @@ export function getTransformedImageUrl(
     const index = url.indexOf(target)
     if (index !== -1) {
       const parts = []
+      
+      // Enable AI background removal if env variable is set or option is passed
+      const enableBgRemoval = process.env.NEXT_PUBLIC_CLOUDINARY_BG_REMOVAL === 'true' || options.removeBg
+      if (enableBgRemoval) {
+        parts.push('e_bgremoval')
+      }
+
       if (options.width) parts.push(`w_${options.width}`)
       if (options.height) parts.push(`h_${options.height}`)
       if (options.crop) parts.push(`c_${options.crop}`)
@@ -55,3 +63,4 @@ export function getTransformedImageUrl(
 
   return url
 }
+

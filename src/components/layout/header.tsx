@@ -169,7 +169,7 @@ export default function Header({ workload = 0 }: Props) {
               <img
                 src={isDark ? "/logo/electronom-dark.png" : "/logo/electronom.svg"}
                 alt="Electronom"
-                className="h-10 sm:h-[56px] w-auto select-none"
+                className="h-12 sm:h-[64px] w-auto select-none"
               />
             </Link>
 
