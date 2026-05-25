@@ -15,6 +15,7 @@ import {
   Battery,
 } from 'lucide-react'
 import { cn, localizedPath } from '@/lib/utils'
+import { TransparentImage } from '@/components/shared/transparent-image'
 
 // Image widths for variants
 const PSIZE = {
@@ -472,15 +473,11 @@ function ProductPhoto({ src, alt, fallback, variant }: ProductPhotoProps) {
 
   return (
     <div className={cn("relative flex items-center justify-center select-none", wrapperClass)}>
-      <Image
+      <TransparentImage
         src={src}
         alt={alt}
-        width={width}
-        height={height}
         onError={() => setError(true)}
-        className="object-contain block transition-opacity duration-300 pointer-events-none mix-blend-multiply"
-        sizes={`(max-width: 639px) 130px, (max-width: 1023px) 220px, (max-width: 1279px) 320px, 420px`}
-        priority={variant === 'desktop'}
+        className="transition-opacity duration-300 pointer-events-none w-full h-full"
       />
     </div>
   )

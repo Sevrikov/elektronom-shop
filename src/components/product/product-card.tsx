@@ -5,6 +5,7 @@ import type { Locale } from '@/types'
 import { formatPrice, getDiscountPercent } from '@/lib/utils'
 import { AddToCartButton } from '@/components/cart/add-to-cart-button'
 import { getTransformedImageUrl } from '@/lib/images'
+import { TransparentImage } from '@/components/shared/transparent-image'
 
 // ─── Тип товара из Prisma (tasks 1.9 productCardSelect) ──────────────────────
 
@@ -54,7 +55,7 @@ export default function ProductCard({ product, locale, view = 'grid' }: ProductC
         {/* Image */}
         <Link
           href={`/${locale}/product/${product.slug}`}
-          className="relative shrink-0 w-[140px] h-[140px] rounded-md flex items-center justify-center overflow-hidden bg-image-container"
+          className="relative shrink-0 w-[140px] h-[140px] rounded-md flex items-center justify-center overflow-hidden bg-surface-alt"
         >
           {discount > 0 && (
             <div className="absolute top-1.5 right-1.5 px-1.5 py-0.5 rounded text-[10px] font-bold text-white z-10 bg-destructive">
@@ -62,13 +63,10 @@ export default function ProductCard({ product, locale, view = 'grid' }: ProductC
             </div>
           )}
           {mainImage ? (
-            <Image
+            <TransparentImage
               src={getTransformedImageUrl(mainImage, { width: 320, height: 320, crop: 'limit' })}
               alt={mainImage.alt ?? name}
-              fill
-              className="object-contain p-2"
-              sizes="140px"
-              unoptimized={mainImage.url.startsWith('https://placehold.co')}
+              className="p-2"
             />
           ) : (
             <div className="size-14 rounded-lg flex items-center justify-center bg-surface-raised">
@@ -139,7 +137,7 @@ export default function ProductCard({ product, locale, view = 'grid' }: ProductC
       {/* Image */}
       <Link
         href={`/${locale}/product/${product.slug}`}
-        className="relative h-[160px] flex items-center justify-center overflow-hidden bg-image-container"
+        className="relative h-[160px] flex items-center justify-center overflow-hidden bg-surface-alt"
       >
         {/* Stock badge */}
         <div
@@ -159,13 +157,10 @@ export default function ProductCard({ product, locale, view = 'grid' }: ProductC
         )}
 
         {mainImage ? (
-          <Image
+          <TransparentImage
             src={getTransformedImageUrl(mainImage, { width: 320, height: 320, crop: 'limit' })}
             alt={mainImage.alt ?? name}
-            fill
-            className="object-contain p-3"
-            sizes="(max-width: 768px) 50vw, (max-width: 1280px) 33vw, 25vw"
-            unoptimized={mainImage.url.startsWith('https://placehold.co')}
+            className="p-3"
           />
         ) : (
           <div className="size-16 rounded-lg flex items-center justify-center bg-surface-raised">

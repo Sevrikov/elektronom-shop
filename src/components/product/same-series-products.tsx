@@ -5,6 +5,7 @@ import { ChevronRight, ImageIcon } from 'lucide-react'
 import { getSameSeriesProducts } from '@/queries/products'
 import { formatPrice } from '@/lib/utils'
 import { AddToCartButton } from '@/components/cart/add-to-cart-button'
+import { TransparentImage } from '@/components/shared/transparent-image'
 
 interface SameSeriesProductsProps {
   productId: string
@@ -76,15 +77,13 @@ export async function SameSeriesProducts({
               {/* Image */}
               <Link
                 href={`/${locale}/product/${p.slug}` as never}
-                className="w-14 h-14 relative rounded-md border border-border bg-image-container shrink-0 overflow-hidden flex items-center justify-center"
+                className="w-14 h-14 relative rounded-md border border-border bg-surface-alt shrink-0 overflow-hidden flex items-center justify-center"
               >
                 {image ? (
-                  <Image
+                  <TransparentImage
                     src={image}
                     alt={name}
-                    fill
-                    className="object-contain p-1"
-                    sizes="56px"
+                    className="p-1"
                   />
                 ) : (
                   <ImageIcon className="size-6 text-border-strong" strokeWidth={1.5} />

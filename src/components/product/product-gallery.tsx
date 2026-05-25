@@ -4,6 +4,7 @@ import Image from 'next/image'
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { ChevronLeft, ChevronRight, ZoomIn, X, ImageIcon } from 'lucide-react'
 import { getTransformedImageUrl } from '@/lib/images'
+import { TransparentImage } from '@/components/shared/transparent-image'
 
 interface ProductImage {
   id?: string
@@ -93,25 +94,21 @@ export function ProductGallery({ images, productName, locale }: ProductGalleryPr
     <>
       <div className="flex flex-col gap-3">
         {/* Main image */}
-        <div className="relative overflow-hidden rounded-lg bg-image-container border border-border aspect-square group">
+        <div className="relative overflow-hidden rounded-lg bg-surface-alt border border-border aspect-square group">
           {activeImage ? (
             <>
               <div
                 className="relative w-full h-full cursor-zoom-in"
                 onClick={() => setLightboxOpen(true)}
               >
-                <Image
+                <TransparentImage
                   src={getTransformedImageUrl(activeImage, { width: 800, height: 800, crop: 'limit' })}
                   alt={activeImage.alt ?? productName}
-                  fill
-                  className={`object-contain p-4 transition-transform duration-300 ${
+                  className={`p-4 transition-transform duration-300 ${
                     zoomed ? 'scale-105' : 'scale-100'
                   }`}
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                  priority
                   onMouseEnter={() => setZoomed(true)}
                   onMouseLeave={() => setZoomed(false)}
-                  unoptimized={activeImage.url.startsWith('https://placehold.co')}
                 />
                 <div className="absolute top-3 right-3 p-1.5 rounded-md opacity-0 group-hover:opacity-100 transition-opacity bg-white/90 border border-border">
                   <ZoomIn className="size-4 text-text-muted" />
@@ -162,17 +159,14 @@ export function ProductGallery({ images, productName, locale }: ProductGalleryPr
                 key={img.id ?? index}
                 onClick={() => setActiveIndex(index)}
                 aria-label={`Фото ${index + 1}`}
-                className={`relative shrink-0 rounded-lg overflow-hidden transition-all w-16 h-16 bg-image-container border cursor-pointer ${
+                className={`relative shrink-0 rounded-lg overflow-hidden transition-all w-16 h-16 bg-surface-alt border cursor-pointer ${
                   index === activeIndex ? 'border-2 border-accent shadow-sm' : 'border-border hover:border-border-strong'
                 }`}
               >
-                <Image
+                <TransparentImage
                   src={getTransformedImageUrl(img, { width: 150, height: 150, crop: 'fill' })}
                   alt={img.alt ?? `${productName} ${index + 1}`}
-                  fill
-                  className="object-contain p-1"
-                  sizes="64px"
-                  unoptimized={img.url.startsWith('https://placehold.co')}
+                  className="p-1"
                 />
               </button>
             ))}
@@ -195,14 +189,10 @@ export function ProductGallery({ images, productName, locale }: ProductGalleryPr
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
           >
-            <Image
+            <TransparentImage
               src={getTransformedImageUrl(activeImage, { width: 1600, height: 1600, crop: 'limit' })}
               alt={activeImage.alt ?? productName}
-              fill
-              className="object-contain"
-              sizes="90vw"
-              priority
-              unoptimized={activeImage.url.startsWith('https://placehold.co')}
+              className="w-full h-full"
             />
           </div>
 

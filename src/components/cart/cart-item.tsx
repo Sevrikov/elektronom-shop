@@ -11,6 +11,7 @@ import { useState, useTransition } from 'react'
 import { removeFromCart, updateCartQuantity } from '@/actions/cart'
 import { formatPrice } from '@/lib/utils'
 import { useCartUIStore } from '@/store/cart-store'
+import { TransparentImage } from '@/components/shared/transparent-image'
 
 interface CartItemProps {
   item: {
@@ -60,16 +61,13 @@ export function CartItem({ item, locale, onUpdate }: CartItemProps) {
       {/* Image */}
       <Link
         href={lp(`/product/${item.slug}`)}
-        className="relative shrink-0 w-[72px] h-[72px] rounded-md overflow-hidden bg-image-container border border-border"
+        className="relative shrink-0 w-[72px] h-[72px] rounded-md overflow-hidden bg-surface-alt border border-border"
       >
         {item.imageUrl ? (
-          <Image
+          <TransparentImage
             src={item.imageUrl}
             alt={item.name}
-            fill
-            className="object-contain p-1.5"
-            sizes="72px"
-            unoptimized={item.imageUrl.startsWith('https://placehold.co')}
+            className="p-1.5"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center">
