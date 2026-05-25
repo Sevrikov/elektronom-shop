@@ -9,6 +9,7 @@ import Header from '@/components/layout/header'
 import Footer from '@/components/layout/footer'
 import MobileNav from '@/components/layout/mobile-nav'
 import { CartDrawer } from '@/components/cart/cart-drawer'
+import { AssistantWidget } from '@/components/assistant/assistant-widget'
 import { getSiteUrl } from '@/lib/utils'
 import { getCategoryTree } from '@/queries/categories'
 import { getWorkloadCount } from '@/queries/workload'
@@ -84,6 +85,7 @@ export default async function LocaleLayout({
             <Footer />
             <MobileNav />
             <CartDrawer locale={locale} />
+            <AssistantWidget locale={locale} />
           </Suspense>
         </NextIntlClientProvider>
       </body>

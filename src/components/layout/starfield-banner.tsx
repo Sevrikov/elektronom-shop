@@ -51,16 +51,16 @@ export function StarfieldBanner() {
       })
     }
 
-    // 3. Spiral Galaxies
-    const galaxies: { x: number, y: number, z: number, angle: number, dots: {x: number, y: number, o: number}[] }[] = []
+    // 3. Spiral Galaxies (Denser, richer blue/cyan, defined arms)
+    const galaxies: { x: number, y: number, z: number, angle: number, dots: {x: number, y: number, o: number, s: number}[] }[] = []
     for (let i = 0; i < 15; i++) { // More galaxies
       const x = Math.random() * 8000 - 4000
       const y = Math.random() * 4000 - 2000
       const z = Math.random() * 3000
       const angle = Math.random() * Math.PI * 2
       const arms = 2 + Math.floor(Math.random() * 4) // 2 to 5 arms
-      const gDots: {x: number, y: number, o: number}[] = []
-      for (let j = 0; j < 400; j++) {
+      const gDots: {x: number, y: number, o: number, s: number}[] = []
+      for (let j = 0; j < 500; j++) {
         const arm = j % arms
         const armAngle = (Math.random() * Math.PI * 2) + (arm * Math.PI * 2 / arms)
         const radius = Math.random() * 200 + 20
@@ -68,10 +68,94 @@ export function StarfieldBanner() {
         gDots.push({
           x: Math.cos(spiralAngle) * radius,
           y: Math.sin(spiralAngle) * radius,
-          o: Math.random() * 0.5 + 0.1
+          o: Math.random() * 0.7 + 0.3, // Brighter base opacity
+          s: Math.random() * 2 + 1.2   // Variable dot sizes
         })
       }
       galaxies.push({ x, y, z, angle, dots: gDots })
+    }
+
+    // 3b. Middle-Layer Spiral Galaxies (medium-sized, tilted, intermediate speed)
+    const midGalaxies: { 
+      x: number, 
+      y: number, 
+      z: number, 
+      angle: number, 
+      tiltAngle: number, 
+      inclination: number, 
+      dots: {x: number, y: number, o: number, s: number}[] 
+    }[] = []
+    for (let i = 0; i < 10; i++) {
+      const x = Math.random() * 6000 - 3000
+      const y = Math.random() * 3000 - 1500
+      const z = Math.random() * 2000
+      const angle = Math.random() * Math.PI * 2
+      const tiltAngle = Math.random() * Math.PI * 2
+      const inclination = Math.random() * 0.5 + 0.25 // tilt factor (Y aspect ratio)
+      const arms = 2 + Math.floor(Math.random() * 4) // 2 to 5 arms
+      const maxRadius = Math.random() * 70 + 50 // 50 to 120 pixels
+      
+      const gDots: {x: number, y: number, o: number, s: number}[] = []
+      
+      // Core bulge (denser center)
+      for (let j = 0; j < 70; j++) {
+        const r = Math.random() * 12
+        const coreAngle = Math.random() * Math.PI * 2
+        gDots.push({
+          x: Math.cos(coreAngle) * r,
+          y: Math.sin(coreAngle) * r,
+          o: Math.random() * 0.9 + 0.4,
+          s: Math.random() * 2.5 + 1.5
+        })
+      }
+      
+      // Spiral arms
+      for (let j = 70; j < 420; j++) {
+        const r = 12 + Math.random() * (maxRadius - 12)
+        const arm = j % arms
+        const armAngle = (arm * Math.PI * 2 / arms)
+        const spread = (Math.random() - 0.5) * 0.35
+        const spiralAngle = armAngle + (r * 0.06) + spread
+        gDots.push({
+          x: Math.cos(spiralAngle) * r,
+          y: Math.sin(spiralAngle) * r,
+          o: Math.random() * 0.8 + 0.3,
+          s: Math.random() * 2 + 1.2
+        })
+      }
+      midGalaxies.push({ x, y, z, angle, tiltAngle, inclination, dots: gDots })
+    }
+
+    // 3c. Nebulae (gaseous color clouds in space for deep 3D volume)
+    const nebulae: {
+      x: number,
+      y: number,
+      z: number,
+      radius: number,
+      color1: string,
+      color2: string
+    }[] = []
+    
+    const nebulaColors = [
+      { c1: 'rgba(59, 123, 217, 0.18)', c2: 'rgba(0, 162, 255, 0.05)' }, // rich blue/cyan
+      { c1: 'rgba(124, 58, 237, 0.18)', c2: 'rgba(139, 92, 246, 0.04)' }, // bright violet/purple
+      { c1: 'rgba(6, 182, 212, 0.18)', c2: 'rgba(34, 211, 238, 0.04)' },  // intense cyan
+    ]
+
+    for (let i = 0; i < 8; i++) {
+      const x = Math.random() * 6000 - 3000
+      const y = Math.random() * 3000 - 1500
+      const z = Math.random() * 2500
+      const radius = Math.random() * 350 + 250 // large gas clouds
+      const colorSet = nebulaColors[i % nebulaColors.length] || nebulaColors[0]!
+      nebulae.push({
+        x,
+        y,
+        z,
+        radius,
+        color1: colorSet.c1,
+        color2: colorSet.c2,
+      })
     }
 
     // 4. Cinematic Events State
@@ -96,6 +180,38 @@ export function StarfieldBanner() {
       const cx = canvas.width / 2
       const cy = canvas.height / 2
 
+      // ─── Draw Nebulae (Background color clouds) ───
+      for (const n of nebulae) {
+        n.z -= speed * 0.12 // speed layer
+        if (n.z <= 0) {
+          n.z = 2500
+          n.x = Math.random() * 6000 - 3000
+          n.y = Math.random() * 3000 - 1500
+        }
+
+        const scale = 500 / Math.max(n.z, 1)
+        const nx = n.x * scale + cx
+        const ny = n.y * scale + cy
+        const rScaled = n.radius * scale
+
+        if (rScaled > 5) {
+          ctx.save()
+          ctx.translate(nx, ny)
+          
+          const grad = ctx.createRadialGradient(0, 0, 0, 0, 0, rScaled)
+          grad.addColorStop(0, n.color1)
+          grad.addColorStop(0.5, n.color2)
+          grad.addColorStop(1, 'rgba(0, 0, 0, 0)')
+          
+          ctx.fillStyle = grad
+          ctx.beginPath()
+          ctx.arc(0, 0, rScaled, 0, Math.PI * 2)
+          ctx.fill()
+          
+          ctx.restore()
+        }
+      }
+
       // ─── Draw Far Background Stars (Crosses & Dots) ───
       for (const p of bgStars) {
         p.z -= speed * 0.1 // Much slower than hyperspace stars
@@ -109,7 +225,7 @@ export function StarfieldBanner() {
         const px = p.x * scale + cx
         const py = p.y * scale + cy
         
-        ctx.fillStyle = `rgba(36, 161, 222, ${p.opacity})`
+        ctx.fillStyle = `rgba(0, 162, 255, ${p.opacity})` // Brighter neon blue starfield
         if (p.type === 'cross') {
           const s = 1.5 * scale // scales up as it gets closer
           ctx.fillRect(px, py - s, s, s * 3)
@@ -120,7 +236,7 @@ export function StarfieldBanner() {
         }
       }
 
-      // ─── Draw Spiral Galaxies ───
+      // ─── Draw Spiral Galaxies (Denser, richer blue/cyan, defined arms) ───
       for (const g of galaxies) {
         g.z -= speed * 0.05 // Even slower
         g.angle += 0.001 // slow rotation
@@ -139,8 +255,39 @@ export function StarfieldBanner() {
         ctx.rotate(g.angle)
         ctx.scale(scale, scale) // Scale the galaxy down based on distance
         for (const d of g.dots) {
-          ctx.fillStyle = `rgba(36, 161, 222, ${d.o})`
-          ctx.fillRect(d.x, d.y, 2, 2)
+          // Contrast rich cyan-blue mix
+          ctx.fillStyle = `rgba(0, 191, 255, ${d.o})`
+          ctx.fillRect(d.x, d.y, d.s, d.s)
+        }
+        ctx.restore()
+      }
+
+      // ─── Draw Middle-Layer Spiral Galaxies (Vibrant, high-contrast) ───
+      for (const g of midGalaxies) {
+        g.z -= speed * 0.25 // speed layer between far (0.1) and fast stars (1.0)
+        g.angle += 0.004 // rotate slightly faster
+        if (g.z <= 0) {
+          g.z = 2000
+          g.x = Math.random() * 6000 - 3000
+          g.y = Math.random() * 3000 - 1500
+        }
+
+        const scale = 500 / Math.max(g.z, 1)
+        const gx = g.x * scale + cx
+        const gy = g.y * scale + cy
+        
+        ctx.save()
+        ctx.translate(gx, gy)
+        ctx.rotate(g.tiltAngle) // Tilt axis in 2D space
+        ctx.scale(scale, scale * g.inclination) // Apply inclination tilt
+        ctx.rotate(g.angle) // Spin the galaxy
+        
+        for (const d of g.dots) {
+          // Fade in as it gets closer, fade out when resetting
+          const fadeOpacity = d.o * Math.min(1, (2000 - g.z) / 400)
+          // Denser bright blue/cyan mix
+          ctx.fillStyle = `rgba(0, 140, 255, ${fadeOpacity})`
+          ctx.fillRect(d.x, d.y, d.s, d.s)
         }
         ctx.restore()
       }
@@ -151,7 +298,7 @@ export function StarfieldBanner() {
         currentEventIdx = (currentEventIdx + 1) % eventTypes.length
         
         let startX = Math.random() * canvas.width * 2 - canvas.width
-        let startY = Math.random() * canvas.height
+        const startY = Math.random() * canvas.height
         let startZ = 1500
         
         if (type === 'voyager' || type === 'station') {

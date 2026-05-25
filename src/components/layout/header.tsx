@@ -1,11 +1,11 @@
 'use client'
 
-import { useState, useCallback, useEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { useRouter, usePathname } from 'next/navigation'
 import {
-  Heart, User, Phone,
-  LayoutGrid, ChevronDown, Tag, Menu,
+  Heart, User,
+  LayoutGrid, Tag, Menu,
 } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import { contactInfo, contactPhones } from '@/lib/constants'
@@ -22,7 +22,7 @@ interface Props {
   workload?: number
 }
 
-export default function Header({ categories, workload = 0 }: Props) {
+export default function Header({ workload = 0 }: Props) {
   const locale = useLocale() as Locale
   const t = useTranslations('header')
   const router = useRouter()
@@ -30,8 +30,6 @@ export default function Header({ categories, workload = 0 }: Props) {
   const headerRef = useRef<HTMLElement>(null)
 
   const otherLocale: Locale = locale === 'uk' ? 'ru' : 'uk'
-
-  const [prevPathname, setPrevPathname] = useState(pathname)
 
   // Expose header height as CSS variable so the menu can position itself
   useEffect(() => {
@@ -174,7 +172,7 @@ export default function Header({ categories, workload = 0 }: Props) {
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src="/logo/Viber.webp" alt="Viber" className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[68px] h-[68px] max-w-none object-contain mix-blend-multiply" />
                     {/* Golden Crown */}
-                    <span className="absolute -top-[2px] right-[2px] text-[12px] drop-shadow-md z-10" style={{ transform: 'rotate(15deg)' }}>👑</span>
+                    <span className="absolute -top-[8px] right-[0px] text-[12px] drop-shadow-md z-10" style={{ transform: 'rotate(15deg)' }}>👑</span>
                   </a>
                   <a href="tg://resolve?domain=elektronom" aria-label="Telegram" className="hover:opacity-80 transition-opacity flex items-center justify-center size-8 ml-2">
                     <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="#24A1DE">
@@ -276,16 +274,14 @@ export default function Header({ categories, workload = 0 }: Props) {
                 <Link
                   key={item.key}
                   href={lp(item.href)}
-                  className="text-sm font-medium py-2 transition-colors hover:text-[#4F8EF7]"
-                  style={{ color: 'var(--color-text-primary)' }}
+                  className="text-sm font-medium py-2 transition-colors text-text-primary hover:text-accent"
                 >
                   {t(`nav.${item.key}`)}
                 </Link>
               ))}
               <Link
                 href={lp('/promotions')}
-                className="ml-auto inline-flex items-center gap-1.5 text-sm font-semibold transition-colors"
-                style={{ color: 'var(--color-accent)' }}
+                className="ml-auto inline-flex items-center gap-1.5 text-sm font-semibold transition-colors text-accent hover:text-accent-hover"
               >
                 <Tag className="size-3.5" strokeWidth={1.5} />
                 {t('nav.specials')}

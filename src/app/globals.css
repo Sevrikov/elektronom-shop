@@ -1,6 +1,6 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
-@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
 /* ═══════════════════════════════════════════════════════════════════
    Electronom — Design System Tokens (Concept 6 v2)
@@ -213,7 +213,6 @@
 
 .eb__content {
   position: relative;
-  z-index: 2;
   flex: 1 1 auto;
   display: flex;
   align-items: stretch;
@@ -386,7 +385,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 32px 56px 32px 16px;
+  padding: 32px 32px 32px 0px; /* Reduced right padding, removed left padding to shift closer to text */
   min-width: 0;
 }
 .eb__product {
@@ -395,7 +394,12 @@
   height: 100%;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start; /* Align product photo to the left, closer to text */
+}
+@media (max-width: 639px) {
+  .eb__product {
+    justify-content: center; /* Center on mobile screens */
+  }
 }
 .eb__placeholder-note {
   position: absolute;
@@ -528,7 +532,7 @@
   .eb .eb__copy { padding: 28px 20px 28px 32px !important; gap: 10px !important; flex: 1 1 58% !important; }
   .eb .eb__h1 { font-size: 26px !important; line-height: 1.12 !important; max-width: 14ch !important; }
   .eb .eb__sub { font-size: 13px !important; line-height: 19px !important; }
-  .eb .eb__stage { padding: 16px 24px !important; flex: 0 0 42% !important; }
+  .eb .eb__stage { padding: 16px 16px 16px 0px !important; flex: 0 0 42% !important; }
   .eb .eb__chip { font-size: 12px !important; padding: 4px 8px !important; }
 }
 
@@ -536,7 +540,7 @@
   .eb .eb__copy { padding: 36px 24px 36px 40px !important; gap: 12px !important; }
   .eb .eb__h1 { font-size: 32px !important; line-height: 1.1 !important; }
   .eb .eb__sub { font-size: 14px !important; line-height: 20px !important; }
-  .eb .eb__stage { padding: 24px 40px 24px 8px !important; }
+  .eb .eb__stage { padding: 24px 24px 24px 0px !important; }
 }
 
 .carousel-eb {
@@ -633,4 +637,24 @@
 
 .eb__photo-wrapper--desktop-battery { width: 420px; height: 357px; }
 .eb__photo-wrapper--desktop-relay { width: 420px; height: 420px; }
-.eb__photo-wrapper--desktop-other { width: 420px; height: 441px; }
+.eb__photo-wrapper--desktop-other { width: 420px; height: 441px; }
+
+/* Global helper classes to remove white backgrounds from product images */
+.remove-white-bg, .mix-blend-multiply {
+  mix-blend-mode: multiply !important;
+}
+
+/* Shift the product image closer to the text in promo banners */
+.eb__product [class*="eb__photo-wrapper"] {
+  margin-left: -90px;
+}
+@media (max-width: 1023px) {
+  .eb__product [class*="eb__photo-wrapper"] {
+    margin-left: -50px;
+  }
+}
+@media (max-width: 639px) {
+  .eb__product [class*="eb__photo-wrapper"] {
+    margin-left: 0;
+  }
+}

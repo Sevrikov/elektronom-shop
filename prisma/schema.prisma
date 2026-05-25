@@ -39,6 +39,7 @@ model User {
   wishlist     WishlistItem[]
   orders       Order[]
   reviews      Review[]
+  assistantSessions AssistantSession[]
 
   @@index([email])
   @@map("users")
@@ -129,6 +130,7 @@ model Category {
   children     Category[]            @relation("CategoryTree")
   translations CategoryTranslation[]
   products     Product[]
+  technicalDocuments TechnicalDocument[]
 
   @@index([parentId])
   @@index([slug])
@@ -160,6 +162,7 @@ model Brand {
   createdAt DateTime @default(now())
 
   products Product[]
+  technicalDocuments TechnicalDocument[]
 
   @@index([slug])
   @@map("brands")
@@ -372,4 +375,84 @@ model OrderCounter {
   value Int @default(0)
 
   @@map("order_counters")
+}
+
+// ─────────────────────────────────────────────
+// ASSISTANT & RAG MODELS
+// ─────────────────────────────────────────────
+
+model TechnicalDocument {
+  id          String         @id @default(cuid(2))
+  title       String
+  fileUrl     String?
+  fileType    String?        // PDF | TXT | DOCX
+  content     String?        @db.Text
+  categoryId  String?
+  brandId     String?
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  chunks      DocumentChunk[]
+  category    Category?      @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  brand       Brand?         @relation(fields: [brandId], references: [id], onDelete: SetNull)
+
+  @@index([categoryId])
+  @@index([brandId])
+  @@map("technical_documents")
+}
+
+model DocumentChunk {
+  id          String            @id @default(cuid(2))
+  documentId  String
+  content     String            @db.Text
+  embedding   String?           @db.Text // JSON-serialized float array representing OpenAI/Claude embedding
+  createdAt   DateTime          @default(now())
+
+  document    TechnicalDocument @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@index([documentId])
+  @@map("document_chunks")
+}
+
+model AssistantSession {
+  id          String             @id @default(cuid(2))
+  userId      String?
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+
+  user        User?              @relation(fields: [userId], references: [id], onDelete: SetNull)
+  messages    AssistantMessage[]
+
+  @@index([userId])
+  @@map("assistant_sessions")
+}
+
+model AssistantMessage {
+  id          String           @id @default(cuid(2))
+  sessionId   String
+  role        String           // USER | ASSISTANT
+  content     String           @db.Text
+  structured  Json?            // Recommended products, warnings, sources metadata
+  feedback    String?          // HELPFUL | UNHELPFUL
+  createdAt   DateTime         @default(now())
+
+  session     AssistantSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId])
+  @@map("assistant_messages")
+}
+
+model SupplierInventory {
+  id           String   @id @default(cuid(2))
+  sku          String   @unique
+  mpn          String?
+  supplierSku  String?
+  name         String
+  stock        Int      @default(0)
+  price        Decimal  @db.Decimal(12, 2)
+  supplierName String
+  updatedAt    DateTime @updatedAt
+
+  @@index([sku])
+  @@map("supplier_inventory")
 }
