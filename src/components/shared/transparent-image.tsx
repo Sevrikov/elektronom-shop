@@ -110,7 +110,7 @@ export function TransparentImage({
           return (max - min) <= 15 && min >= 180
         })
 
-        let outerThresh = threshold
+        let avgBg = threshold
         let innerThresh = threshold
 
         if (validCorners.length > 0) {
@@ -118,10 +118,7 @@ export function TransparentImage({
           for (const c of validCorners) {
             sumBg += (c.r + c.g + c.b) / 3
           }
-          const avgBg = sumBg / validCorners.length
-          // outerThresh removes shadows (which are darker than avgBg)
-          outerThresh = Math.max(180, Math.round(avgBg - 35))
-          // innerThresh isolates internal holes strictly (closer to avgBg)
+          avgBg = sumBg / validCorners.length
           innerThresh = Math.max(235, Math.round(avgBg - 5))
         } else {
           // If no neutral light background is detected at corners,
@@ -129,13 +126,132 @@ export function TransparentImage({
           setProcessedSrc(imgSrc)
           return
         }
+
+        // 1. Coarse BFS to find product bounding box
+        const visitedCoarse = new Uint8Array(w * h)
+        const cQueue = new Int32Array(w * h)
+        let cHead = 0
+        let cTail = 0
+
+        const coarseThresh = Math.max(180, Math.round(avgBg - 15))
+
+        const isCoarseWhite = (x: number, y: number) => {
+          const idx = (y * w + x) * 4
+          const r = data[idx] ?? 0
+          const g = data[idx + 1] ?? 0
+          const b = data[idx + 2] ?? 0
+          const a = data[idx + 3] ?? 0
+          if (a < 10) return true
+          return r >= coarseThresh && g >= coarseThresh && b >= coarseThresh
+        }
+
+        const getIdx = (x: number, y: number) => y * w + x
+
+        const enqueueCoarse = (x: number, y: number) => {
+          const idx = y * w + x
+          visitedCoarse[idx] = 1
+          cQueue[cTail++] = idx
+        }
+
+        for (let x = 0; x < w; x++) {
+          if (isCoarseWhite(x, 0)) {
+            const idx = getIdx(x, 0)
+            if (visitedCoarse[idx] === 0) enqueueCoarse(x, 0)
+          }
+          if (isCoarseWhite(x, h - 1)) {
+            const idx = getIdx(x, h - 1)
+            if (visitedCoarse[idx] === 0) enqueueCoarse(x, h - 1)
+          }
+        }
+        for (let y = 1; y < h - 1; y++) {
+          if (isCoarseWhite(0, y)) {
+            const idx = getIdx(0, y)
+            if (visitedCoarse[idx] === 0) enqueueCoarse(0, y)
+          }
+          if (isCoarseWhite(w - 1, y)) {
+            const idx = getIdx(w - 1, y)
+            if (visitedCoarse[idx] === 0) enqueueCoarse(w - 1, y)
+          }
+        }
+
+        while (cHead < cTail) {
+          const idx = cQueue[cHead++]
+          if (idx === undefined) continue
+
+          const x = idx % w
+          const y = Math.floor(idx / w)
+
+          if (x + 1 < w) {
+            const nIdx = idx + 1
+            if (visitedCoarse[nIdx] === 0 && isCoarseWhite(x + 1, y)) {
+              visitedCoarse[nIdx] = 1
+              cQueue[cTail++] = nIdx
+            }
+          }
+          if (x - 1 >= 0) {
+            const nIdx = idx - 1
+            if (visitedCoarse[nIdx] === 0 && isCoarseWhite(x - 1, y)) {
+              visitedCoarse[nIdx] = 1
+              cQueue[cTail++] = nIdx
+            }
+          }
+          if (y + 1 < h) {
+            const nIdx = idx + w
+            if (visitedCoarse[nIdx] === 0 && isCoarseWhite(x, y + 1)) {
+              visitedCoarse[nIdx] = 1
+              cQueue[cTail++] = nIdx
+            }
+          }
+          if (y - 1 >= 0) {
+            const nIdx = idx - w
+            if (visitedCoarse[nIdx] === 0 && isCoarseWhite(x, y - 1)) {
+              visitedCoarse[nIdx] = 1
+              cQueue[cTail++] = nIdx
+            }
+          }
+        }
+
+        // Find bounding box of remaining non-background pixels (the product)
+        let minY = h
+        let maxY = 0
+        for (let idx = 0; idx < w * h; idx++) {
+          if (visitedCoarse[idx] === 0) {
+            const y = Math.floor(idx / w)
+            if (y < minY) minY = y
+            if (y > maxY) maxY = y
+          }
+        }
+
+        if (minY > maxY) {
+          minY = 0
+          maxY = h
+        }
+
+        const productH = maxY - minY
+        const yTop = minY + productH * 0.4
+        const yMid = minY + productH * 0.75
+        const yBot = maxY + 10
+
+        const tTop = Math.max(180, Math.round(avgBg - 15))
+        const tMid = Math.max(180, Math.round(avgBg - 30))
+        const tBot = Math.max(160, Math.round(avgBg - 55))
+
+        const getOuterThresh = (y: number) => {
+          if (y <= yTop) return tTop
+          if (y >= yBot) return tBot
+          if (y < yMid) {
+            const pctVal = (y - yTop) / (yMid - yTop)
+            return tTop + (tMid - tTop) * pctVal
+          } else {
+            const pctVal = (y - yMid) / (yBot - yMid)
+            return tMid + (tBot - tMid) * pctVal
+          }
+        }
         
         // Pre-allocate queues for performance
         const queue = new Int32Array(w * h)
         let qHead = 0
         let qTail = 0
-
-        const getIdx = (x: number, y: number) => y * w + x
 
         const isOuterWhite = (x: number, y: number) => {
           const idx = (y * w + x) * 4
@@ -144,7 +260,8 @@ export function TransparentImage({
           const b = data[idx + 2] ?? 0
           const a = data[idx + 3] ?? 0
           if (a < 10) return true
-          return r >= outerThresh && g >= outerThresh && b >= outerThresh
+          const thresh = getOuterThresh(y)
+          return r >= thresh && g >= thresh && b >= thresh
         }
 
         const isInnerWhite = (x: number, y: number) => {
@@ -163,7 +280,7 @@ export function TransparentImage({
           queue[qTail++] = idx
         }
 
-        // Phase 1: BFS for Outer Background starting from all boundary edges (using outerThresh)
+        // Phase 2: BFS for Outer Background starting from all boundary edges (using outerThresh)
         for (let x = 0; x < w; x++) {
           if (isOuterWhite(x, 0)) {
             const idx = getIdx(x, 0)
@@ -223,7 +340,7 @@ export function TransparentImage({
           }
         }
 
-        // Phase 2: Topological internal closed white areas/holes detection (using innerThresh)
+        // Phase 3: Topological internal closed white areas/holes detection (using innerThresh)
         const compQueue = new Int32Array(w * h)
 
         for (let y = 0; y < h; y++) {
