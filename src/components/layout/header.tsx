@@ -87,19 +87,7 @@ export default function Header({ categories }: Props) {
             style={{ color: 'var(--color-text-muted)' }}
           >
             <div className="hidden sm:flex items-center gap-4">
-              <a
-                href={`tel:${contactPhones[0]?.replace(/[\s()-]/g, '')}`}
-                className="inline-flex items-center gap-1.5 font-medium hover:opacity-80 transition-opacity"
-                style={{ color: 'var(--color-text-primary)' }}
-                aria-label={t('callUs')}
-              >
-                <Phone className="size-3.5" />
-                {contactPhones[0]}
-              </a>
-              <span style={{ color: 'var(--color-border-strong)' }}>|</span>
-              <span>{contactPhones[1]}</span>
-              <span style={{ color: 'var(--color-border-strong)' }}>|</span>
-              <span>{contactInfo.email}</span>
+              <span className="font-medium hover:text-text-primary transition-colors cursor-pointer">{contactInfo.email}</span>
             </div>
             <div className="flex items-center gap-3 ml-auto">
               <button
@@ -153,9 +141,37 @@ export default function Header({ categories }: Props) {
               />
             </Link>
 
+            {/* Contact info (moved from topbar) */}
+            <div className="hidden xl:flex flex-col items-start gap-0.5 mt-1 shrink-0">
+              <div className="flex items-center gap-2">
+                <a href={`tel:${contactPhones[0]?.replace(/[\s()-]/g, '')}`} className="text-xl font-bold tracking-tight text-text-primary hover:text-accent transition-colors">
+                  {contactPhones[0]}
+                </a>
+                <a href="viber://chat?number=%2B380672206791" aria-label="Viber" className="hover:opacity-80 transition-opacity flex items-center justify-center size-6 bg-[#7360F2]/10 rounded-full">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="#7360F2">
+                    <path d="M20.5 12.33c-.15-3.83-3.13-6.93-6.94-7.22-.39-.03-.78-.05-1.17-.05-4.99 0-9.03 4.04-9.03 9.03 0 1.25.26 2.45.72 3.54a1.05 1.05 0 00.32.48l1.37 1.05c.29.22.38.61.19.92-.8 1.34-1.22 2.87-1.22 4.47 0 .24.19.43.43.43h5.27c4.61 0 8.44-3.5 8.97-8.01.03-.29.05-.59.05-.88 0-.58-.02-1.16-.08-1.74-.01-.13.06-.26.17-.32l1.65-.96a1.04 1.04 0 00.41-1.42l-.84-1.46c-.15-.27-.08-.62.15-.81l1.58-1.31c.36-.29.35-.85-.02-1.12l-1.98-1.63zM12 21.05c-1.28 0-2.52-.3-3.62-.84-.13-.06-.28-.08-.41-.05l-3.23.95c-.37.11-.7-.2-.61-.56l.86-3.39c.03-.13.02-.27-.04-.39-.5-.95-.78-2.02-.78-3.15 0-3.9 3.17-7.07 7.07-7.07 3.9 0 7.07 3.17 7.07 7.07 0 3.9-3.17 7.07-7.07 7.07zm-2.07-3.67c-1.57-.42-2.92-1.4-3.79-2.79-.31-.48-.2-1.12.24-1.51l.8-.7c.36-.31.89-.28 1.22.06l1.37 1.45c.26.27.27.7.02.99l-.36.42c-.22.25-.19.64.06.87.58.53 1.25.96 1.99 1.26.29.11.61.04.81-.19l.39-.45c.27-.31.74-.35 1.06-.11l1.52 1.15c.37.28.43.81.14 1.18l-.66.86c-.34.44-.94.63-1.47.46z"/>
+                  </svg>
+                </a>
+                <a href="tg://resolve?domain=elektronom" aria-label="Telegram" className="hover:opacity-80 transition-opacity flex items-center justify-center size-6 bg-[#2AABEE]/10 rounded-full">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="#2AABEE">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/>
+                  </svg>
+                </a>
+              </div>
+              <div className="flex items-center gap-2 text-[12px] text-text-muted font-medium">
+                <a href={`tel:${contactPhones[1]?.replace(/[\s()-]/g, '')}`} className="hover:text-text-primary transition-colors">
+                  {contactPhones[1]}
+                </a>
+                <span className="text-border-strong">•</span>
+                <span className="text-[11px] font-semibold text-accent uppercase tracking-wider">{t('callUs')}</span>
+              </div>
+            </div>
+
             {/* Search */}
-            <div className="hidden md:flex flex-1 items-center justify-center">
-              <SearchBox />
+            <div className="hidden md:flex flex-1 max-w-[480px] ml-auto mr-4 justify-end">
+              <div className="w-full">
+                <SearchBox />
+              </div>
             </div>
 
             {/* Right icons */}
