@@ -63,12 +63,12 @@ export default function CategorySidebar({ categories = [] }: Props) {
     <>
       {/* Backdrop overlay */}
       <div 
-        className={`fixed inset-0 bg-black/40 z-30 transition-opacity duration-300 ${activeSlug ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`} 
+        className={`fixed inset-0 bg-black/40 z-[60] transition-opacity duration-300 ${activeSlug ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`} 
         aria-hidden="true"
       />
       
       <aside
-        className="hidden lg:block w-[280px] shrink-0 sticky top-[140px] self-start z-40"
+        className={`hidden lg:block w-[280px] shrink-0 sticky top-[140px] self-start ${activeSlug ? 'z-[70]' : 'z-40'}`}
         onMouseLeave={() => setActiveSlug(null)}
       >
       <div
@@ -123,8 +123,7 @@ export default function CategorySidebar({ categories = [] }: Props) {
       {/* Flyout Mega Menu */}
       {activeSlug && activeCategory && (
         <div
-          className="absolute left-[280px] top-0 bottom-0 min-h-full bg-surface-white border border-border shadow-xl rounded-r-lg flex overflow-hidden w-[700px] z-50"
-          style={{ minHeight: '100%' }}
+          className="absolute left-[280px] top-0 bg-surface-white border border-border shadow-xl rounded-r-lg flex overflow-hidden w-[700px] z-50 max-h-[calc(100vh-140px)]"
         >
           {/* Col 2: Subcategories */}
           <div className="flex-1 min-w-0 overflow-y-auto px-6 py-5">
