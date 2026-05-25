@@ -41,8 +41,21 @@ export default function CategorySidebar({ categories = [] }: Props) {
 
   const [activeSlug, setActiveSlug] = useState<string | null>(null)
 
-  // Find the currently hovered category from the DB tree
-  const activeCategory = activeSlug ? categories.find((c) => c.slug === activeSlug) : null
+  // Find the currently hovered category from the DB tree, or use a fallback
+  const dbCategory = activeSlug ? categories.find((c) => c.slug === activeSlug) : null
+  const sidebarInfo = activeSlug ? sidebarCategories.find(c => c.slug === activeSlug) : null
+  
+  const activeCategory = dbCategory || (activeSlug && sidebarInfo ? {
+    name: sidebarInfo.name[locale],
+    slug: activeSlug,
+    children: [
+      { name: locale === 'uk' ? 'Підкатегорія 1' : 'Подкатегория 1', slug: `${activeSlug}-sub1` },
+      { name: locale === 'uk' ? 'Підкатегорія 2' : 'Подкатегория 2', slug: `${activeSlug}-sub2` },
+      { name: locale === 'uk' ? 'Підкатегорія 3' : 'Подкатегория 3', slug: `${activeSlug}-sub3` },
+      { name: locale === 'uk' ? 'Підкатегорія 4' : 'Подкатегория 4', slug: `${activeSlug}-sub4` },
+    ]
+  } : null)
+
   const popular = activeSlug ? getPopularForSlug(activeSlug, locale) : []
   const promo = activeSlug ? getPromoForSlug(activeSlug, locale) : null
 
@@ -110,7 +123,8 @@ export default function CategorySidebar({ categories = [] }: Props) {
       {/* Flyout Mega Menu */}
       {activeSlug && activeCategory && (
         <div
-          className="absolute left-[280px] top-0 bottom-0 min-h-full bg-surface-white border border-border shadow-xl rounded-r-lg flex overflow-hidden w-[700px]"
+          className="absolute left-[280px] top-0 bottom-0 min-h-full bg-surface-white border border-border shadow-xl rounded-r-lg flex overflow-hidden w-[700px] z-50"
+          style={{ minHeight: '100%' }}
         >
           {/* Col 2: Subcategories */}
           <div className="flex-1 min-w-0 overflow-y-auto px-6 py-5">
