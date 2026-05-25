@@ -79,7 +79,7 @@ export default function Header({ categories, workload = 0 }: Props) {
           <div className="absolute inset-0 z-10 flex items-center overflow-hidden pointer-events-none">
             <div 
               className="animate-marquee flex items-center w-max" 
-              style={{ fontFamily: '"Press Start 2P", monospace', fontSize: '9px', textShadow: '1px 1px 0 #fff, -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff' }}
+              style={{ fontFamily: '"Press Start 2P", monospace', fontSize: '11px', textShadow: '1px 1px 0 #fff, -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff' }}
             >
               {[1, 2, 3].map((set) => (
                 <div key={set} className="flex items-center gap-16 px-8 whitespace-nowrap text-[#24A1DE] drop-shadow-[0_1px_1px_rgba(255,255,255,1)]">
@@ -179,7 +179,7 @@ export default function Header({ categories, workload = 0 }: Props) {
                 <div className="flex items-center gap-2">
                   <a href="viber://chat?number=%2B380672206791" aria-label="Viber" className="hover:opacity-80 transition-opacity flex items-center justify-center size-8 relative">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src="/logo/Viber.webp" alt="Viber" className="w-[38px] h-[38px] max-w-none object-contain drop-shadow-sm" />
+                    <img src="/logo/Viber.webp" alt="Viber" className="w-[38px] h-[38px] max-w-none object-contain drop-shadow-sm mix-blend-multiply" />
                     {/* Golden Crown */}
                     <span className="absolute -top-[5px] -right-[5px] text-[12px] drop-shadow-md z-10" style={{ transform: 'rotate(15deg)' }}>👑</span>
                   </a>

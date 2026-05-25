@@ -28,7 +28,7 @@ export function StarfieldBanner() {
     // ─── Setup Entities ───
     
     // 1. Hyperspace Stars
-    const numStars = 800
+    const numStars = 3500
     const stars: { x: number, y: number, z: number, isGalaxy: boolean }[] = []
     for (let i = 0; i < numStars; i++) {
       stars.push({
@@ -41,12 +41,12 @@ export function StarfieldBanner() {
 
     // 2. Milky Way Background (slow panning dust)
     const dustParticles: { x: number, y: number, size: number, opacity: number }[] = []
-    for (let i = 0; i < 200; i++) {
+    for (let i = 0; i < 3000; i++) {
       dustParticles.push({
-        x: Math.random() * 2000,
-        y: Math.random() * 100,
-        size: Math.random() * 3 + 1,
-        opacity: Math.random() * 0.3 + 0.1
+        x: Math.random() * 4000,
+        y: Math.random() * 2000 - 1000,
+        size: Math.random() > 0.9 ? 2 : 1,
+        opacity: Math.random() * 0.4 + 0.1
       })
     }
 
@@ -57,7 +57,7 @@ export function StarfieldBanner() {
     let voyagerState = { active: false, x: 2000, y: 10, z: 800 }
     let shipState = { active: false, x: 0, y: 0, z: 2000, speed: 0, length: 0 }
 
-    const speed = 25 // Hyperspace speed
+    const speed = 45 // Hyperspace speed
 
     const render = () => {
       tick++
@@ -74,7 +74,7 @@ export function StarfieldBanner() {
         p.x -= 0.5 // Slow pan left
         if (p.x < -10) p.x = canvas.width + 10
         ctx.fillStyle = `rgba(36, 161, 222, ${p.opacity})`
-        ctx.fillRect(p.x, p.y, p.size, p.size)
+        ctx.fillRect(p.x, p.y + cy, p.size, p.size)
       }
 
       // ─── Draw Earth Event ───
