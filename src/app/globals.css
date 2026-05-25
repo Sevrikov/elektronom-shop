@@ -657,4 +657,131 @@
   .eb__product [class*="eb__photo-wrapper"] {
     margin-left: 0;
   }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   GLOBAL DARK MODE OVERRIDES (Tailwind CSS v4 CSS Variable Strategy)
+   ═══════════════════════════════════════════════════════════════════ */
+.dark {
+  --color-accent: #60A5FA;
+  --color-accent-hover: #93C5FD;
+  --color-accent-press: #2563EB;
+  --color-accent-subtle: #1E293B;
+
+  --color-surface-white: #1E293B;
+  --color-surface-alt: #0F172A;
+  --color-surface-raised: #334155;
+  --color-surface-accent: #1E293B;
+
+  --color-border: #334155;
+  --color-border-strong: #475569;
+  --color-border-dashed: #475569;
+
+  --color-text-primary: #F8FAFC;
+  --color-text-muted: #94A3B8;
+
+  --color-success: #4ADE80;
+  --color-success-subtle: #14532D;
+  --color-destructive: #F87171;
+  --color-error: #F87171;
+  --color-error-subtle: #451A03;
+  --color-warning: #FBBF24;
+  --color-warning-subtle: #78350F;
+  
+  color-scheme: dark;
+}
+
+/* Force dark backgrounds on components using hardcoded bg-white or inline background style */
+.dark body {
+  background-color: var(--color-surface-alt) !important;
+  color: var(--color-text-primary) !important;
+}
+
+.dark .bg-white,
+.dark [style*="background: #fff"],
+.dark [style*="background: white"],
+.dark [style*="background: rgb(255, 255, 255)"],
+.dark [style*="background-color: #fff"],
+.dark [style*="background-color: white"] {
+  background-color: var(--color-surface-white) !important;
+  background: var(--color-surface-white) !important;
+}
+
+.dark [style*="background: var(--color-surface-alt)"],
+.dark [style*="background-color: var(--color-surface-alt)"] {
+  background-color: var(--color-surface-alt) !important;
+  background: var(--color-surface-alt) !important;
+}
+
+.dark [style*="color: var(--color-text-primary)"] {
+  color: var(--color-text-primary) !important;
+}
+
+.dark [style*="color: var(--color-text-muted)"] {
+  color: var(--color-text-muted) !important;
+}
+
+.dark [style*="borderColor: var(--color-border)"],
+.dark [style*="border-color: var(--color-border)"] {
+  border-color: var(--color-border) !important;
+}
+
+/* Header logo invert for readability in dark mode */
+.dark #header-logo img {
+  filter: brightness(0) invert(1);
+}
+
+.dark .text-text-primary,
+.dark .text-slate-900,
+.dark .text-slate-800,
+.dark .text-gray-900,
+.dark .text-gray-800 {
+  color: var(--color-text-primary) !important;
+}
+
+.dark .text-text-muted,
+.dark .text-slate-600,
+.dark .text-slate-700,
+.dark .text-gray-600,
+.dark .text-gray-700 {
+  color: var(--color-text-muted) !important;
+}
+
+.dark .border-border,
+.dark .border-slate-200,
+.dark .border-slate-100,
+.dark .border-gray-200,
+.dark .border-gray-100 {
+  border-color: var(--color-border) !important;
+}
+
+.dark .bg-surface-alt,
+.dark .bg-slate-50,
+.dark .bg-gray-50 {
+  background-color: var(--color-surface-alt) !important;
+}
+
+.dark .bg-slate-100,
+.dark .bg-gray-100 {
+  background-color: var(--color-surface-raised) !important;
+}
+
+.dark .eb__bg--grid {
+  background: linear-gradient(180deg, var(--color-surface-white) 0%, var(--color-surface-alt) 100%) !important;
+}
+.dark .eb__bg--circuit {
+  background: linear-gradient(135deg, var(--color-surface-white) 0%, var(--color-surface-accent) 100%) !important;
+}
+.dark .eb__bg--surge {
+  background: linear-gradient(180deg, var(--color-surface-white) 0%, var(--color-surface-raised) 100%) !important;
+}
+
+.dark input, .dark select, .dark textarea {
+  background-color: var(--color-surface-alt) !important;
+  color: var(--color-text-primary) !important;
+  border-color: var(--color-border) !important;
+}
+
+.dark .shadow-md, .dark .shadow-lg {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3) !important;
 }

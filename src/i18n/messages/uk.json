@@ -41,7 +41,8 @@
       "b2bBody": "Список SKU → КП за 1 робочий день",
       "b2bLink": "Надіслати →",
       "themeLabel": "ТЕМА:",
-      "themeDay": "День"
+      "themeDay": "День",
+      "themeNight": "Ніч"
     },
     "valueProps": {
       "stock": "В наявності на складі",
