@@ -41,7 +41,7 @@ export function StarfieldBanner() {
 
     // 2. Far Background Stars (Crosses & Dots)
     const bgStars: { x: number, y: number, opacity: number, type: 'cross' | 'dot' }[] = []
-    for (let i = 0; i < 3000; i++) {
+    for (let i = 0; i < 5000; i++) {
       bgStars.push({
         x: Math.random() * 4000,
         y: Math.random() * 2000 - 1000,
@@ -50,7 +50,28 @@ export function StarfieldBanner() {
       })
     }
 
-    // 3. Cinematic Events State
+    // 3. Spiral Galaxies
+    const galaxies: { cx: number, cy: number, dots: {x: number, y: number, o: number}[] }[] = []
+    for (let i = 0; i < 8; i++) {
+      const cx = Math.random() * 4000
+      const cy = Math.random() * 2000 - 1000
+      const arms = 2 + Math.floor(Math.random() * 3)
+      const gDots: {x: number, y: number, o: number}[] = []
+      for (let j = 0; j < 400; j++) {
+        const arm = j % arms
+        const angle = (Math.random() * Math.PI * 2) + (arm * Math.PI * 2 / arms)
+        const radius = Math.random() * 150 + 20
+        const spiralAngle = angle + (radius * 0.05)
+        gDots.push({
+          x: Math.cos(spiralAngle) * radius,
+          y: Math.sin(spiralAngle) * radius,
+          o: Math.random() * 0.5 + 0.1
+        })
+      }
+      galaxies.push({ cx, cy, dots: gDots })
+    }
+
+    // 4. Cinematic Events State
     let tick = 0
     let alienState = { active: false, timer: 0, x: 0, y: 0, scale: 0 }
     let shipState = { active: false, x: 0, y: 0, z: 2000, speed: 0, length: 0 }
@@ -82,8 +103,23 @@ export function StarfieldBanner() {
           ctx.fillRect(p.x, py - 1, 1, 3) // Vertical line
           ctx.fillRect(p.x - 1, py, 3, 1) // Horizontal line
         } else {
-          ctx.fillRect(p.x, py, 1, 1)
+          ctx.fillRect(p.x, py, 1.5, 1.5)
         }
+      }
+
+      // ─── Draw Spiral Galaxies ───
+      for (const g of galaxies) {
+        g.cx -= 0.05 // pan left even slower
+        if (g.cx < -300) g.cx = canvas.width + 300
+        const gy = g.cy + cy
+        ctx.save()
+        ctx.translate(g.cx, gy)
+        ctx.rotate(tick * 0.001) // slow rotation
+        for (const d of g.dots) {
+          ctx.fillStyle = `rgba(36, 161, 222, ${d.o})`
+          ctx.fillRect(d.x, d.y, 2, 2)
+        }
+        ctx.restore()
       }
 
       // ─── Large Events Manager ───
@@ -152,28 +188,57 @@ export function StarfieldBanner() {
         } else if (type === 'station') {
           ctx.save()
           ctx.translate(ex, ey)
+          ctx.rotate(tick * 0.01) // slowly rotate station
           ctx.scale(scale, scale)
+          // Outer Ring
+          ctx.beginPath()
+          ctx.arc(0, 0, 30, 0, Math.PI * 2)
+          ctx.strokeStyle = '#1D4ED8'
+          ctx.lineWidth = 4
+          ctx.stroke()
+          // Spokes
+          ctx.beginPath()
+          ctx.moveTo(-30, 0)
+          ctx.lineTo(30, 0)
+          ctx.moveTo(0, -30)
+          ctx.lineTo(0, 30)
+          ctx.strokeStyle = '#24A1DE'
+          ctx.lineWidth = 2
+          ctx.stroke()
+          // Central Core
           ctx.fillStyle = '#24A1DE'
-          ctx.fillRect(-10, -10, 20, 20) // Core
-          ctx.fillStyle = '#1D4ED8'
-          ctx.fillRect(-35, -5, 25, 10) // Left Panel
-          ctx.fillRect(10, -5, 25, 10) // Right Panel
+          ctx.fillRect(-8, -8, 16, 16)
+          // Illuminators (Windows)
+          ctx.fillStyle = '#ffffff'
+          for (let w = 0; w < 12; w++) {
+            const wa = w * (Math.PI / 6)
+            ctx.fillRect(Math.cos(wa)*29 - 1, Math.sin(wa)*29 - 1, 2, 2)
+          }
+          ctx.fillRect(-3, -3, 2, 2)
+          ctx.fillRect(1, -3, 2, 2)
+          ctx.fillRect(-3, 1, 2, 2)
+          ctx.fillRect(1, 1, 2, 2)
           ctx.restore()
         } else if (type === 'sun') {
           const radius = 25 * scale
+          // Draw base
           ctx.beginPath()
           ctx.arc(ex, ey, radius, 0, Math.PI * 2)
-          ctx.fillStyle = '#24A1DE'
+          ctx.fillStyle = '#1D4ED8' // Darker blue base
           ctx.fill()
-          ctx.strokeStyle = '#60A5FA'
-          ctx.lineWidth = 2 * scale
-          for(let i=0; i<8; i++) {
-            ctx.beginPath()
-            const angle = (i * Math.PI / 4) + (tick * 0.02)
-            ctx.moveTo(ex + Math.cos(angle)*radius*1.2, ey + Math.sin(angle)*radius*1.2)
-            ctx.lineTo(ex + Math.cos(angle)*radius*1.8, ey + Math.sin(angle)*radius*1.8)
-            ctx.stroke()
-          }
+          // Draw textured plasma
+          ctx.fillStyle = '#24A1DE'
+          ctx.beginPath()
+          ctx.arc(ex - radius*0.2, ey - radius*0.2, radius*0.6, 0, Math.PI*2)
+          ctx.fill()
+          ctx.fillStyle = '#60A5FA'
+          ctx.fillRect(ex + radius*0.1, ey + radius*0.2, radius*0.4, radius*0.3)
+          ctx.fillRect(ex - radius*0.4, ey + radius*0.1, radius*0.3, radius*0.3)
+          // Animated vortex
+          ctx.fillStyle = '#1E3A8A' // Very dark blue spot
+          const vx = ex + Math.cos(tick*0.05)*radius*0.5
+          const vy = ey + Math.sin(tick*0.05)*radius*0.5
+          ctx.fillRect(vx, vy, radius*0.2, radius*0.2)
         } else if (type === 'blackhole') {
           const radius = 30 * scale
           ctx.beginPath()
