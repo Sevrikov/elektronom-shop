@@ -63,7 +63,6 @@ export const megaMenuConfig: MegaMenuCategoryConfig[] = [
       ctaUk: 'До інструментів',
       ctaRu: 'К инструментам',
       href: '/catalog/instrumenty',
-      image: undefined,
     },
   },
   {
@@ -81,7 +80,6 @@ export const megaMenuConfig: MegaMenuCategoryConfig[] = [
       ctaUk: 'Вибрати LED',
       ctaRu: 'Выбрать LED',
       href: '/catalog/osvitlennya-led',
-      image: undefined,
     },
   },
   {
@@ -99,7 +97,6 @@ export const megaMenuConfig: MegaMenuCategoryConfig[] = [
       ctaUk: 'До кабелів',
       ctaRu: 'К кабелям',
       href: '/catalog/kabel-ta-provid',
-      image: undefined,
     },
   },
   {
@@ -116,7 +113,6 @@ export const megaMenuConfig: MegaMenuCategoryConfig[] = [
       ctaUk: 'До розеток',
       ctaRu: 'К розеткам',
       href: '/catalog/rozetky-ta-vymykachi',
-      image: undefined,
     },
   },
   {
@@ -134,7 +130,6 @@ export const megaMenuConfig: MegaMenuCategoryConfig[] = [
       ctaUk: 'До автоматики',
       ctaRu: 'К автоматике',
       href: '/catalog/avtomatyka',
-      image: undefined,
     },
   },
   {
@@ -151,7 +146,6 @@ export const megaMenuConfig: MegaMenuCategoryConfig[] = [
       ctaUk: 'Розумний дім',
       ctaRu: 'Умный дом',
       href: '/catalog/rozumnyy-dim',
-      image: undefined,
     },
   },
 ]

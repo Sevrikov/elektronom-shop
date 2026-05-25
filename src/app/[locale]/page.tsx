@@ -11,6 +11,7 @@ import ProductCard from '@/components/product/product-card'
 import Link from 'next/link'
 import { ChevronRight } from 'lucide-react'
 import type { Locale } from '@/types'
+import { getCategoryTree } from '@/queries/categories'
 
 // ─── Server Component — реальная карусель из БД ──────────────────────────────
 
@@ -79,11 +80,12 @@ export default async function HomePage({
   setRequestLocale(locale)
   const loc = locale as Locale
   const t = await getTranslations({ locale: loc, namespace: 'home' })
+  const categories = await getCategoryTree(loc)
 
   return (
     <div className="mx-auto max-w-[1280px] px-4 lg:px-6 py-6">
       <div className="flex gap-6">
-        <CategorySidebar />
+        <CategorySidebar categories={categories} />
         <div className="flex-1 min-w-0 flex flex-col gap-6">
           <HybridDrawer locale={loc} />
           <ValueProps />
