@@ -55,7 +55,7 @@ export function StarfieldBanner() {
     let alienState = { active: false, timer: 0, x: 0, y: 0, scale: 0 }
     let earthState = { active: false, x: -100, y: 20, z: 1000 }
     let voyagerState = { active: false, x: 2000, y: 10, z: 800 }
-    let shipState = { active: false, x: 0, y: 0, speed: 0, length: 0 }
+    let shipState = { active: false, x: 0, y: 0, z: 2000, speed: 0, length: 0 }
 
     const speed = 25 // Hyperspace speed
 
@@ -88,15 +88,15 @@ export function StarfieldBanner() {
         const ex = (earthState.x / Math.max(earthState.z, 1)) * 800 + cx
         const ey = (earthState.y / Math.max(earthState.z, 1)) * 800 + cy
         
-        // Draw Earth (Blue circle with green blocks)
+        // Draw Earth (Blue circle with darker blue blocks)
         const radius = 15 * scale
         ctx.beginPath()
         ctx.arc(ex, ey, radius, 0, Math.PI * 2)
-        ctx.fillStyle = '#24A1DE'
+        ctx.fillStyle = '#24A1DE' // Blue
         ctx.fill()
         
         // Pixel continents
-        ctx.fillStyle = '#10B981' // Green
+        ctx.fillStyle = '#1D4ED8' // Darker Blue
         ctx.fillRect(ex - radius*0.4, ey - radius*0.3, radius*0.8, radius*0.4)
         ctx.fillRect(ex - radius*0.2, ey + radius*0.1, radius*0.6, radius*0.5)
 
@@ -105,7 +105,7 @@ export function StarfieldBanner() {
         const my = ey + Math.sin(tick * 0.05) * (radius * 0.5)
         ctx.beginPath()
         ctx.arc(mx, my, radius * 0.3, 0, Math.PI * 2)
-        ctx.fillStyle = '#9CA3AF' // Grey
+        ctx.fillStyle = '#60A5FA' // Lighter Blue
         ctx.fill()
 
         if (earthState.z < 0) earthState.active = false
@@ -127,13 +127,13 @@ export function StarfieldBanner() {
         ctx.rotate(tick * 0.02)
         ctx.scale(scale, scale)
         // Dish
-        ctx.strokeStyle = '#4B5563'
+        ctx.strokeStyle = '#60A5FA' // Light Blue
         ctx.lineWidth = 2
         ctx.beginPath()
         ctx.arc(0, 0, 8, Math.PI, Math.PI * 2)
         ctx.stroke()
         // Body
-        ctx.fillStyle = '#D1D5DB'
+        ctx.fillStyle = '#24A1DE' // Blue
         ctx.fillRect(-4, 0, 8, 12)
         // Antenna
         ctx.beginPath()
@@ -149,23 +149,31 @@ export function StarfieldBanner() {
       if (!shipState.active && Math.random() < 0.01) {
         shipState = { 
           active: true, 
-          x: -500, 
-          y: Math.random() * canvas.height, 
-          speed: Math.random() * 40 + 20,
-          length: Math.random() * 100 + 50
+          x: Math.random() * 4000 - 2000, 
+          y: Math.random() * 4000 - 2000, 
+          z: 2000,
+          speed: Math.random() * 50 + 50, // Super fast
+          length: Math.random() * 200 + 100
         }
       }
       if (shipState.active) {
-        shipState.x += shipState.speed
+        shipState.z -= shipState.speed
         
-        ctx.strokeStyle = '#3B82F6' // Fast blue streak
-        ctx.lineWidth = 3
+        const px = (shipState.x / Math.max(shipState.z, 1)) * 800 + cx
+        const py = (shipState.y / Math.max(shipState.z, 1)) * 800 + cy
+        
+        const prevZ = shipState.z + shipState.length
+        const prevPx = (shipState.x / Math.max(prevZ, 1)) * 800 + cx
+        const prevPy = (shipState.y / Math.max(prevZ, 1)) * 800 + cy
+        
+        ctx.strokeStyle = '#24A1DE' // Fast blue streak
+        ctx.lineWidth = 4 * (2000 / Math.max(shipState.z, 100))
         ctx.beginPath()
-        ctx.moveTo(shipState.x, shipState.y)
-        ctx.lineTo(shipState.x - shipState.length, shipState.y)
+        ctx.moveTo(px, py)
+        ctx.lineTo(prevPx, prevPy)
         ctx.stroke()
 
-        if (shipState.x - shipState.length > canvas.width) shipState.active = false
+        if (shipState.z < 0) shipState.active = false
       }
 
       // ─── Draw Hyperspace Stars ───
@@ -219,7 +227,7 @@ export function StarfieldBanner() {
         
         // Jump to screen, hold, fall off
         if (alienState.timer < 30) {
-          alienState.scale += 0.2 // Jump forward
+          alienState.scale += 0.06 // Jump forward (much smaller max scale)
         } else if (alienState.timer > 150) {
           alienState.y += 10 // Fall down
         }
@@ -232,18 +240,18 @@ export function StarfieldBanner() {
         ctx.translate(ax, ay)
         ctx.scale(s, s)
 
-        // Pixel Alien (Grey)
-        ctx.fillStyle = '#6B7280'
+        // Pixel Alien (Blue)
+        ctx.fillStyle = '#24A1DE'
         
         // Head
         ctx.fillRect(-10, -15, 20, 15)
-        // Eyes (Black)
-        ctx.fillStyle = '#111827'
+        // Eyes (White)
+        ctx.fillStyle = '#ffffff'
         ctx.fillRect(-8, -10, 4, 4)
         ctx.fillRect(4, -10, 4, 4)
         
         // Waving Hand
-        ctx.fillStyle = '#6B7280'
+        ctx.fillStyle = '#24A1DE'
         if (alienState.timer > 30 && alienState.timer < 150) {
           // Hand goes up and down
           const handY = Math.sin(tick * 0.5) * 5

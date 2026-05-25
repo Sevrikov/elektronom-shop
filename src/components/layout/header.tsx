@@ -82,20 +82,20 @@ export default function Header({ categories, workload = 0 }: Props) {
               style={{ fontFamily: '"Press Start 2P", monospace', fontSize: '9px', textShadow: '1px 1px 0 #fff, -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff' }}
             >
               {[1, 2, 3].map((set) => (
-                <div key={set} className="flex items-center gap-12 px-6 text-[#24A1DE] drop-shadow-[0_1px_1px_rgba(255,255,255,1)]">
-                  <div className="flex items-center gap-2 bg-white/90 px-3 py-1.5 rounded-sm border-2 border-[#24A1DE] shadow-md">
+                <div key={set} className="flex items-center gap-16 px-8 text-[#24A1DE] drop-shadow-[0_1px_1px_rgba(255,255,255,1)]">
+                  <div className="flex items-center gap-2">
                     <Percent className="size-3" strokeWidth={3} />
                     <span>{locale === 'uk' ? 'ЗНИЖКИ ДЛЯ ОПТУ' : 'СКИДКИ ДЛЯ ОПТА'}</span>
                   </div>
-                  <div className="flex items-center gap-2 bg-white/90 px-3 py-1.5 rounded-sm border-2 border-[#24A1DE] shadow-md">
+                  <div className="flex items-center gap-2">
                     <Truck className="size-3" strokeWidth={3} />
                     <span>{locale === 'uk' ? 'ВІД 1500 ГРН ДОСТАВКА БЕЗКОШТОВНО' : 'ОТ 1500 ГРН ДОСТАВКА БЕСПЛАТНО'}</span>
                   </div>
-                  <div className="flex items-center gap-2 bg-white/90 px-3 py-1.5 rounded-sm border-2 border-[#24A1DE] shadow-md">
+                  <div className="flex items-center gap-2">
                     <MessageCircle className="size-3" strokeWidth={3} />
                     <span>{locale === 'uk' ? 'ОПТОВІ ЗНИЖКИ - ДЕТАЛІ У VIBER' : 'ОПТОВЫЕ СКИДКИ - ДЕТАЛИ В VIBER'}</span>
                   </div>
-                  <div className="flex items-center gap-2 bg-white/90 px-3 py-1.5 rounded-sm border-2 border-[#24A1DE] shadow-md">
+                  <div className="flex items-center gap-2">
                     <Package className="size-3" strokeWidth={3} />
                     <span>{locale === 'uk' ? 'ДРОПШИПІНГ: ВІДПРАВКА ТОВАРУ' : 'ДРОПШИПИНГ: ОТПРАВКА ТОВАРА'}</span>
                   </div>
