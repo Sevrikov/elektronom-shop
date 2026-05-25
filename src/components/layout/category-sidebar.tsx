@@ -72,12 +72,12 @@ export default function CategorySidebar({ categories = [] }: Props) {
         onMouseLeave={() => setActiveSlug(null)}
       >
       <div
-        className="rounded-lg overflow-hidden"
-        style={{ border: '1px solid var(--color-border)', background: '#fff' }}
+        className="rounded-lg overflow-hidden border border-border"
+        style={{ background: 'var(--color-surface-white)' }}
       >
         {/* Title */}
-        <div className="px-4 py-3" style={{ borderBottom: '1px solid var(--color-border)' }}>
-          <h3 className="text-[11px] font-bold tracking-widest" style={{ color: 'var(--color-text-muted)' }}>
+        <div className="px-4 py-3 border-b border-border">
+          <h3 className="text-[11px] font-bold tracking-widest text-text-muted dark:text-blue-400/80">
             {t('title')}
           </h3>
         </div>
@@ -87,6 +87,7 @@ export default function CategorySidebar({ categories = [] }: Props) {
           <ul className="py-1">
             {sidebarCategories.map((cat) => {
               const IconComp = iconMap[cat.icon] ?? Zap
+              const isActive = activeSlug === cat.slug
               return (
                 <li
                   key={cat.id}
@@ -94,22 +95,49 @@ export default function CategorySidebar({ categories = [] }: Props) {
                 >
                   <Link
                     href={lp(`/catalog/${cat.slug}`)}
-                    className={['flex items-center gap-3 px-4 py-[7px] text-[13px] transition-colors group', activeSlug === cat.slug ? 'bg-surface-alt text-[var(--color-accent)]' : 'text-[var(--color-text-primary)]'].join(' ')}
+                    className={[
+                      'flex items-center gap-3 px-4 py-[7px] text-[13px] transition-all duration-150 group rounded-md mx-1',
+                      isActive
+                        ? 'bg-surface-alt text-accent dark:bg-blue-300 dark:text-[#0a2a6b]'
+                        : 'text-text-primary dark:text-blue-400 hover:bg-slate-50 dark:hover:bg-blue-300'
+                    ].join(' ')}
                   >
                     <IconComp
-                      className="size-4 shrink-0 group-hover:text-[var(--color-accent)] transition-colors"
+                      className={[
+                        'size-4 shrink-0 transition-colors',
+                        isActive
+                          ? 'text-accent dark:text-[#0a2a6b]'
+                          : 'text-text-muted group-hover:text-accent dark:text-blue-400 dark:group-hover:text-[#0a2a6b]'
+                      ].join(' ')}
                       strokeWidth={1.5}
-                      style={{ color: 'var(--color-text-muted)' }}
                     />
-                    <span className="flex-1 truncate group-hover:text-[var(--color-accent)] transition-colors">
+                    <span
+                      className={[
+                        'flex-1 truncate transition-colors font-medium',
+                        isActive
+                          ? 'text-accent dark:text-[#0a2a6b]'
+                          : 'text-text-primary group-hover:text-accent dark:text-blue-400 dark:group-hover:text-[#0a2a6b]'
+                      ].join(' ')}
+                    >
                       {cat.name[locale]}
                     </span>
-                    <span className="text-[11px]" style={{ color: 'var(--color-text-muted)' }}>
+                    <span
+                      className={[
+                        'text-[11px] transition-colors',
+                        isActive
+                          ? 'text-accent/80 dark:text-[#0a2a6b]'
+                          : 'text-text-muted group-hover:text-accent dark:text-blue-400/70 dark:group-hover:text-[#0a2a6b]'
+                      ].join(' ')}
+                    >
                       {cat.count}
                     </span>
                     <ChevronRight
-                      className={['size-3.5 transition-opacity', activeSlug === cat.slug ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'].join(' ')}
-                      style={{ color: 'var(--color-accent)' }}
+                      className={[
+                        'size-3.5 transition-opacity transition-colors',
+                        isActive
+                          ? 'opacity-100 text-accent dark:text-[#0a2a6b]'
+                          : 'opacity-0 group-hover:opacity-100 text-accent dark:group-hover:text-[#0a2a6b]'
+                      ].join(' ')}
                       strokeWidth={1.5}
                     />
                   </Link>

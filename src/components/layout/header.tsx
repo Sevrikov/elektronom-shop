@@ -154,7 +154,7 @@ export default function Header({ workload = 0 }: Props) {
         {/* ═══ Header Row 1: Logo + Search + Icons ═══ */}
         <div
           className="border-b"
-          style={{ background: '#fff', borderColor: 'var(--color-border)' }}
+          style={{ background: 'var(--color-surface-white)', borderColor: 'var(--color-border)' }}
         >
           <div className="h-[76px] mx-auto max-w-[1280px] px-4 lg:px-6 flex items-center gap-6">
             {/* Logo */}
@@ -167,7 +167,7 @@ export default function Header({ workload = 0 }: Props) {
               {/* Full Logo (Desktop & Mobile) */}
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src={isDark ? "/logo/electronom-dark.svg" : "/logo/electronom.svg"}
+                src={isDark ? "/logo/electronom-dark.png" : "/logo/electronom.svg"}
                 alt="Electronom"
                 className="h-10 sm:h-[56px] w-auto select-none"
               />
@@ -267,7 +267,7 @@ export default function Header({ workload = 0 }: Props) {
         {/* ═══ Header Row 2: Catalog button + Nav ═══ */}
         <div
           className="border-b"
-          style={{ background: '#fff', borderColor: 'var(--color-border)' }}
+          style={{ background: 'var(--color-surface-white)', borderColor: 'var(--color-border)' }}
         >
           <nav
             className="hidden lg:flex h-12 mx-auto max-w-[1280px] px-4 lg:px-6 items-center gap-6"
