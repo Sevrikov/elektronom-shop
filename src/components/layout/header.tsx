@@ -26,6 +26,8 @@ export default function Header({ categories, workload = 0 }: Props) {
   const pathname = usePathname()
   const headerRef = useRef<HTMLElement>(null)
 
+  const otherLocale: Locale = locale === 'uk' ? 'ru' : 'uk'
+
   const [prevPathname, setPrevPathname] = useState(pathname)
 
   // Expose header height as CSS variable so the menu can position itself
