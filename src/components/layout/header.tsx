@@ -142,28 +142,34 @@ export default function Header({ categories }: Props) {
             </Link>
 
             {/* Contact info (moved from topbar) */}
-            <div className="hidden xl:flex flex-col items-start gap-0.5 mt-1 shrink-0">
-              <div className="flex items-center gap-2">
-                <a href={`tel:${contactPhones[0]?.replace(/[\s()-]/g, '')}`} className="text-xl font-bold tracking-tight text-text-primary hover:text-accent transition-colors">
+            <div className="hidden xl:flex flex-col items-start gap-1 mt-1 shrink-0">
+              <div className="flex items-center gap-3">
+                <a href={`tel:${contactPhones[0]?.replace(/[\s()-]/g, '')}`} className="text-2xl font-black tracking-tight text-text-primary hover:text-accent transition-colors">
                   {contactPhones[0]}
                 </a>
-                <a href="viber://chat?number=%2B380672206791" aria-label="Viber" className="hover:opacity-80 transition-opacity flex items-center justify-center size-6 bg-[#7360F2]/10 rounded-full">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="#7360F2">
-                    <path d="M20.5 12.33c-.15-3.83-3.13-6.93-6.94-7.22-.39-.03-.78-.05-1.17-.05-4.99 0-9.03 4.04-9.03 9.03 0 1.25.26 2.45.72 3.54a1.05 1.05 0 00.32.48l1.37 1.05c.29.22.38.61.19.92-.8 1.34-1.22 2.87-1.22 4.47 0 .24.19.43.43.43h5.27c4.61 0 8.44-3.5 8.97-8.01.03-.29.05-.59.05-.88 0-.58-.02-1.16-.08-1.74-.01-.13.06-.26.17-.32l1.65-.96a1.04 1.04 0 00.41-1.42l-.84-1.46c-.15-.27-.08-.62.15-.81l1.58-1.31c.36-.29.35-.85-.02-1.12l-1.98-1.63zM12 21.05c-1.28 0-2.52-.3-3.62-.84-.13-.06-.28-.08-.41-.05l-3.23.95c-.37.11-.7-.2-.61-.56l.86-3.39c.03-.13.02-.27-.04-.39-.5-.95-.78-2.02-.78-3.15 0-3.9 3.17-7.07 7.07-7.07 3.9 0 7.07 3.17 7.07 7.07 0 3.9-3.17 7.07-7.07 7.07zm-2.07-3.67c-1.57-.42-2.92-1.4-3.79-2.79-.31-.48-.2-1.12.24-1.51l.8-.7c.36-.31.89-.28 1.22.06l1.37 1.45c.26.27.27.7.02.99l-.36.42c-.22.25-.19.64.06.87.58.53 1.25.96 1.99 1.26.29.11.61.04.81-.19l.39-.45c.27-.31.74-.35 1.06-.11l1.52 1.15c.37.28.43.81.14 1.18l-.66.86c-.34.44-.94.63-1.47.46z"/>
+                <a href="viber://chat?number=%2B380672206791" aria-label="Viber" className="hover:opacity-80 transition-opacity flex items-center justify-center size-7 rounded-full shadow-sm" style={{ background: '#7360F2' }}>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 512 512">
+                    <path fill="#FFF" d="M380.5 240.2c-1.1-39.7-32.5-72-72-75.1-4-.3-8.2-.5-12.2-.5-51.8 0-93.8 42-93.8 93.8 0 13 2.7 25.4 7.5 36.8a10.8 10.8 0 0 0 3.3 5l14.2 10.9c3 2.3 4 6.3 2 9.5-8.3 14-12.7 30-12.7 46.5 0 2.5 2 4.5 4.5 4.5h54.7c47.8 0 87.7-36.4 93.1-83.3.3-3 .5-6.1.5-9.1 0-6-.2-12-.8-18.1-.1-1.3.6-2.7 1.8-3.3l17.1-10a10.8 10.8 0 0 0 4.3-14.8l-8.7-15.2c-1.5-2.8-.8-6.4 1.5-8.4l16.4-13.6c3.8-3.1 3.7-8.9-.2-11.7l-20.5-16.9zm-136.5 73.5c-13.3 0-26.2-3.1-37.6-8.7-1.3-.6-2.9-.8-4.2-.5l-33.5 9.8c-3.8 1.1-7.2-2.1-6.3-5.8l8.9-35.2c.3-1.3.2-2.8-.4-4-5.2-9.9-8.1-21-8.1-32.8 0-40.5 32.9-73.4 73.4-73.4s73.4 32.9 73.4 73.4-32.9 73.4-73.4 73.4zm-21.5-38.1c-16.3-4.4-30.3-14.5-39.3-29-.3-5-.2-11.6 2.5-15.6l8.3-7.2c3.7-3.2 9.2-2.9 12.6.6l14.2 15a10.5 10.5 0 0 1 .2 10.3l-3.8 4.4c-2.3 2.6-2 6.7.6 9 6 5.5 13 10 20.6 13.1 3 1.1 6.3.4 8.4-2l4-4.7c2.8-3.2 7.7-3.6 11-.1l15.8 11.9c3.8 2.9 4.4 8.4 1.4 12.2l-6.8 8.9c-3.5 4.5-9.7 6.5-15.2 4.7z"/>
                   </svg>
                 </a>
-                <a href="tg://resolve?domain=elektronom" aria-label="Telegram" className="hover:opacity-80 transition-opacity flex items-center justify-center size-6 bg-[#2AABEE]/10 rounded-full">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="#2AABEE">
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/>
+                <a href="tg://resolve?domain=elektronom" aria-label="Telegram" className="hover:opacity-80 transition-opacity flex items-center justify-center size-7 rounded-full shadow-sm" style={{ background: '#24A1DE' }}>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 240 240">
+                    <path fill="#FFF" d="M53.6 116.6l125.8-48.4c5.8-2.2 11.2 1.4 9.1 10.3l-21.3 100.4c-1.8 8.1-6.6 10.2-13.4 6.3l-37-27.2-17.8 17.2c-2 2-3.6 3.6-7.4 3.6l2.6-38 69.1-62.4c3-2.7-.7-4.2-4.6-1.6l-85.4 53.7-36.8-11.5c-8-2.5-8.2-8 1.7-11.9z"/>
                   </svg>
                 </a>
               </div>
-              <div className="flex items-center gap-2 text-[12px] text-text-muted font-medium">
-                <a href={`tel:${contactPhones[1]?.replace(/[\s()-]/g, '')}`} className="hover:text-text-primary transition-colors">
-                  {contactPhones[1]}
-                </a>
+              <div className="flex items-center gap-2 text-[12px] font-medium mt-0.5">
+                <span style={{ color: 'var(--color-error)' }} className="font-semibold">{contactInfo.workingHours[locale]}</span>
                 <span className="text-border-strong">•</span>
                 <span className="text-[11px] font-semibold text-accent uppercase tracking-wider">{t('callUs')}</span>
+                <span className="text-border-strong">•</span>
+                <div className="flex items-center gap-1.5 text-accent bg-accent/10 px-2 py-0.5 rounded-full">
+                  <span className="relative flex size-[6px]">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
+                    <span className="relative inline-flex rounded-full size-[6px] bg-accent"></span>
+                  </span>
+                  <span className="text-[10px] font-bold uppercase tracking-widest leading-none mt-0.5">{locale === 'uk' ? 'онлайн' : 'онлайн'}</span>
+                </div>
               </div>
             </div>
 
