@@ -12,6 +12,9 @@ import { contactInfo, contactPhones } from '@/lib/constants'
 import type { Locale } from '@/types'
 import { CartButton } from '@/components/cart/cart-button'
 import { SearchBox } from '@/components/search/search-box'
+import { CategorySidebar } from '@/components/layout/category-sidebar'
+import { ThemeSwitcher } from '@/components/ui/theme-switcher'
+import { StarfieldBanner } from '@/components/layout/starfield-banner'
 import { Truck, Percent, MessageCircle, Package } from 'lucide-react'
 import type { CategoryTreeNode } from '@/queries/categories'
 
@@ -67,47 +70,29 @@ export default function Header({ categories, workload = 0 }: Props) {
   return (
     <>
       <header ref={headerRef} className="sticky top-0 z-50 w-full">
-        {/* ═══ Animated Fallout Promo Banner ═══ */}
-        <div className="relative w-full overflow-hidden bg-[#e2e8f0] border-b border-border select-none h-10">
-          {/* 1. Desert Background (Grayscale & Lightened to act as a white-grey banner) */}
-          <div className="absolute inset-0 bg-[url('/images/fallout_desert.png')] bg-repeat-x bg-[length:auto_100%] animate-pan-bg opacity-30 grayscale" />
+        {/* ═══ Animated Hyperspace Promo Banner ═══ */}
+        <div className="relative w-full overflow-hidden bg-white border-b border-border select-none h-10">
           
-          {/* 2. Day/Night Cycle (Darkens the background slightly) */}
-          <div className="absolute inset-0 bg-[#0c1445] animate-day-night mix-blend-multiply pointer-events-none" />
-          
-          {/* 3. Pixel Rain (Blue rain effect) */}
-          <div 
-            className="absolute -inset-[100%] animate-rain pointer-events-none opacity-40 mix-blend-multiply"
-            style={{ 
-              backgroundImage: 'repeating-linear-gradient(135deg, rgba(36,161,222,0) 0%, rgba(36,161,222,0) 2%, rgba(36,161,222,0.8) 2.5%, rgba(36,161,222,0) 3%)',
-              backgroundSize: '30px 30px'
-            }} 
-          />
+          {/* Canvas Starfield Animation */}
+          <StarfieldBanner />
 
-          {/* 4. Running Characters (Emojis for 8-bit vibe) */}
-          <div className="absolute inset-0 pointer-events-none overflow-hidden drop-shadow-md">
-            <div className="absolute top-1 text-2xl animate-run-right">🤖🧑‍🎓</div> {/* Power Armor with student */}
-            <div className="absolute top-1 text-2xl animate-run-left" style={{ animationDelay: '3s' }}>🏃‍♂️🧟‍♂️</div> {/* Vault hero & monster */}
-            <div className="absolute top-1 text-2xl animate-run-right" style={{ animationDelay: '8s' }}>🦹‍♂️🚜</div> {/* Raiders */}
-          </div>
-
-          {/* 5. Text Content (Blue text with white glow/shadow for readability) */}
-          <div className="relative z-10 h-full mx-auto max-w-[1280px] px-4 lg:px-6 w-full flex items-center justify-between gap-4 text-[11px] sm:text-xs font-black uppercase tracking-wide text-[#24A1DE] drop-shadow-[0_1px_2px_rgba(255,255,255,0.9)]" style={{ textShadow: '1px 1px 0 #fff, -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff' }}>
-            <div className="flex items-center gap-1.5 shrink-0 bg-white/60 px-2 py-0.5 rounded backdrop-blur-sm">
+          {/* Text Content (Blue text with white glow for readability over stars) */}
+          <div className="relative z-10 h-full mx-auto max-w-[1280px] px-4 lg:px-6 w-full flex items-center justify-between gap-4 text-[11px] sm:text-xs font-black uppercase tracking-wide text-[#24A1DE] drop-shadow-[0_1px_2px_rgba(255,255,255,1)]" style={{ textShadow: '1px 1px 0 #fff, -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff' }}>
+            <div className="flex items-center gap-1.5 shrink-0 bg-white/80 px-2 py-0.5 rounded backdrop-blur-sm shadow-sm border border-white/50">
               <Percent className="size-4" strokeWidth={3} />
               <span className="hidden md:inline">{locale === 'uk' ? 'Знижки для опту' : 'Скидки для опта'}</span>
             </div>
-            <div className="flex items-center gap-1.5 shrink-0 bg-white/60 px-2 py-0.5 rounded backdrop-blur-sm">
+            <div className="flex items-center gap-1.5 shrink-0 bg-white/80 px-2 py-0.5 rounded backdrop-blur-sm shadow-sm border border-white/50">
               <Truck className="size-4" strokeWidth={3} />
               <span className="hidden sm:inline">{locale === 'uk' ? 'Від 1500 грн доставка безкоштовно' : 'От 1500 грн доставка бесплатно'}</span>
               <span className="sm:hidden">{locale === 'uk' ? 'Безкоштовна доставка' : 'Бесплатная доставка'}</span>
             </div>
-            <div className="flex items-center gap-1.5 shrink-0 bg-white/60 px-2 py-0.5 rounded backdrop-blur-sm">
+            <div className="flex items-center gap-1.5 shrink-0 bg-white/80 px-2 py-0.5 rounded backdrop-blur-sm shadow-sm border border-white/50">
               <MessageCircle className="size-4" strokeWidth={3} />
               <span className="hidden lg:inline">{locale === 'uk' ? 'Оптові знижки для постійних клієнтів - деталі у Viber' : 'Оптовые скидки для постоянных клиентов - детали в Viber'}</span>
               <span className="hidden md:inline lg:hidden">{locale === 'uk' ? 'Оптові знижки у Viber' : 'Оптовые скидки в Viber'}</span>
             </div>
-            <div className="flex items-center gap-1.5 shrink-0 bg-white/60 px-2 py-0.5 rounded backdrop-blur-sm">
+            <div className="flex items-center gap-1.5 shrink-0 bg-white/80 px-2 py-0.5 rounded backdrop-blur-sm shadow-sm border border-white/50">
               <Package className="size-4" strokeWidth={3} />
               <span className="hidden md:inline">{locale === 'uk' ? 'Дропшипінг: відправка товару' : 'Дропшипинг: отправка товара'}</span>
             </div>
@@ -188,7 +173,7 @@ export default function Header({ categories, workload = 0 }: Props) {
                 <div className="flex items-center gap-2">
                   <a href="viber://chat?number=%2B380672206791" aria-label="Viber" className="hover:opacity-80 transition-opacity flex items-center justify-center size-8">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src="/Viber.webp" alt="Viber" className="size-8 object-contain" />
+                    <img src="/logo/Viber.webp" alt="Viber" className="size-8 object-contain" />
                   </a>
                   <a href="tg://resolve?domain=elektronom" aria-label="Telegram" className="hover:opacity-80 transition-opacity flex items-center justify-center size-8">
                     <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="#24A1DE">
