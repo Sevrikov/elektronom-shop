@@ -11,6 +11,7 @@ import MobileNav from '@/components/layout/mobile-nav'
 import { CartDrawer } from '@/components/cart/cart-drawer'
 import { getSiteUrl } from '@/lib/utils'
 import { getCategoryTree } from '@/queries/categories'
+import { getWorkloadCount } from '@/queries/workload'
 
 const inter = Inter({
   variable: '--font-sans',
@@ -65,9 +66,10 @@ export default async function LocaleLayout({
   }
 
   setRequestLocale(locale)
-  const [messages, categories] = await Promise.all([
+  const [messages, categories, workload] = await Promise.all([
     getMessages({ locale }),
     getCategoryTree(locale),
+    getWorkloadCount(),
   ])
 
   return (
@@ -75,7 +77,7 @@ export default async function LocaleLayout({
       <body className="min-h-full flex flex-col font-sans" style={{ background: 'var(--color-surface-alt)' }}>
         <NextIntlClientProvider messages={messages} locale={locale}>
           <Suspense fallback={null}>
-            <Header categories={categories} />
+            <Header categories={categories} workload={workload} />
             <main className="flex-1 pb-16 lg:pb-0">
               {children}
             </main>

@@ -17,9 +17,10 @@ import { CatalogMegaMenuClient } from '@/components/layout/catalog-mega-menu-cli
 
 interface Props {
   categories: CategoryTreeNode[]
+  workload?: number
 }
 
-export default function Header({ categories }: Props) {
+export default function Header({ categories, workload = 0 }: Props) {
   const locale = useLocale() as Locale
   const t = useTranslations('header')
   const router = useRouter()
@@ -170,6 +171,28 @@ export default function Header({ categories }: Props) {
                     <span className="relative inline-flex rounded-full size-[6px] bg-green-500"></span>
                   </span>
                   <span className="text-[10px] font-bold uppercase tracking-widest leading-none mt-0.5">{locale === 'uk' ? 'онлайн' : 'онлайн'}</span>
+                </div>
+                
+                {/* Workload Scale */}
+                <div className="relative h-[18px] w-[160px] bg-surface-alt rounded-full overflow-hidden border border-border ml-3 flex items-center shadow-inner" title={`${t('workload', { fallback: 'Завантаженість' })}: ${workload}%`}>
+                  {/* Fill Container (clips the fixed-width gradient) */}
+                  <div 
+                    className="absolute left-0 top-0 bottom-0 overflow-hidden"
+                    style={{ width: `${workload}%`, transition: 'width 1s ease-out' }}
+                  >
+                    {/* Fixed-width gradient so colors don't squash */}
+                    <div 
+                      className="absolute left-0 top-0 bottom-0 w-[160px]"
+                      style={{ background: 'linear-gradient(90deg, #3b82f6 0%, #10b981 35%, #eab308 70%, #ef4444 100%)' }}
+                    />
+                  </div>
+                  {/* Text on top */}
+                  <span 
+                    className="relative z-10 w-full text-center text-[9px] font-bold uppercase tracking-widest text-white px-2"
+                    style={{ textShadow: '0px 1px 2px rgba(0,0,0,0.8)' }}
+                  >
+                    {locale === 'uk' ? 'Завантаженість' : 'Загруженность'}: {workload}%
+                  </span>
                 </div>
               </div>
             </div>
