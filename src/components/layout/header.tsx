@@ -12,6 +12,7 @@ import { contactInfo, contactPhones } from '@/lib/constants'
 import type { Locale } from '@/types'
 import { CartButton } from '@/components/cart/cart-button'
 import { SearchBox } from '@/components/search/search-box'
+import { Truck, Percent, MessageCircle, Package } from 'lucide-react'
 import type { CategoryTreeNode } from '@/queries/categories'
 
 interface Props {
@@ -66,6 +67,30 @@ export default function Header({ categories, workload = 0 }: Props) {
   return (
     <>
       <header ref={headerRef} className="sticky top-0 z-50 w-full">
+        {/* ═══ Promo Banner ═══ */}
+        <div className="bg-[#24A1DE] text-white overflow-hidden flex items-center justify-center">
+          <div className="h-9 mx-auto max-w-[1280px] px-4 lg:px-6 w-full flex items-center justify-between gap-4 text-[11px] sm:text-xs font-bold uppercase tracking-wide">
+            <div className="flex items-center gap-1.5 shrink-0">
+              <Percent className="size-4" strokeWidth={2.5} />
+              <span className="hidden md:inline">{locale === 'uk' ? 'Знижки для опту' : 'Скидки для опта'}</span>
+            </div>
+            <div className="flex items-center gap-1.5 shrink-0">
+              <Truck className="size-4" strokeWidth={2.5} />
+              <span className="hidden sm:inline">{locale === 'uk' ? 'Від 1500 грн доставка безкоштовно' : 'От 1500 грн доставка бесплатно'}</span>
+              <span className="sm:hidden">{locale === 'uk' ? 'Безкоштовна доставка' : 'Бесплатная доставка'}</span>
+            </div>
+            <div className="flex items-center gap-1.5 shrink-0">
+              <MessageCircle className="size-4" strokeWidth={2.5} />
+              <span className="hidden lg:inline">{locale === 'uk' ? 'Оптові знижки для постійних клієнтів - деталі у Viber' : 'Оптовые скидки для постоянных клиентов - детали в Viber'}</span>
+              <span className="hidden md:inline lg:hidden">{locale === 'uk' ? 'Оптові знижки у Viber' : 'Оптовые скидки в Viber'}</span>
+            </div>
+            <div className="flex items-center gap-1.5 shrink-0">
+              <Package className="size-4" strokeWidth={2.5} />
+              <span className="hidden md:inline">{locale === 'uk' ? 'Дропшипінг: відправка товару' : 'Дропшипинг: отправка товара'}</span>
+            </div>
+          </div>
+        </div>
+
         {/* ═══ Topbar ═══ */}
         <div
           className="border-b"
@@ -76,7 +101,7 @@ export default function Header({ categories, workload = 0 }: Props) {
             style={{ color: 'var(--color-text-muted)' }}
           >
             <div className="hidden sm:flex items-center gap-4">
-              <span className="font-medium hover:text-text-primary transition-colors cursor-pointer">{contactInfo.email}</span>
+              {/* Email removed from left side to make room, or can just leave empty if user prefers */}
             </div>
             <div className="flex items-center gap-3 ml-auto">
               <button
@@ -139,9 +164,8 @@ export default function Header({ categories, workload = 0 }: Props) {
                 <span className="text-[11px] font-bold text-text-muted uppercase tracking-wider ml-1">{locale === 'uk' ? 'Напишіть нам:' : 'Напишите нам:'}</span>
                 <div className="flex items-center gap-2">
                   <a href="viber://chat?number=%2B380672206791" aria-label="Viber" className="hover:opacity-80 transition-opacity flex items-center justify-center size-8">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="#7360F2">
-                      <path d="M21.246 16.923c-.144-4.148-3.385-7.51-7.515-7.822-.423-.03-.845-.054-1.267-.054-5.405 0-9.782 4.377-9.782 9.782 0 1.354.282 2.654.78 3.835a1.137 1.137 0 00.347.52l1.484 1.137c.314.238.411.66.205.996-.866 1.452-1.321 3.109-1.321 4.842 0 .26.205.466.466.466h5.708c4.993 0 9.14-3.791 9.715-8.677.032-.314.054-.64.054-.953 0-.628-.022-1.256-.086-1.885-.01-.14.065-.281.184-.346l1.787-1.04a1.126 1.126 0 00.444-1.538l-.91-1.581c-.162-.293-.086-.672.163-.878l1.711-1.42c.39-.314.379-.92-.021-1.213l-2.146-1.765zM12 24c-1.386 0-2.73-.325-3.92-.91-.141-.065-.303-.087-.444-.054l-3.5.1.03c-.4.12-.758-.217-.66-.607l.93-3.672c.032-.14.022-.292-.043-.422-.541-1.029-.844-2.188-.844-3.412 0-4.225 3.433-7.658 7.658-7.658 4.225 0 7.658 3.433 7.658 7.658 0 4.225-3.433 7.658-7.658 7.658zM9.757 20.02c-1.7-.455-3.162-1.516-4.105-3.022-.336-.52-.217-1.213.26-1.636l.866-.758c.39-.336.964-.303 1.321.065l1.484 1.57c.281.293.292.758.021 1.072l-.39.455c-.238.27-.205.693.065.942.628.574 1.354 1.04 2.155 1.365.314.12.66.043.878-.206l.422-.487c.292-.336.801-.379 1.148-.12l1.646 1.246c.401.303.466.877.151 1.278l-.715.932c-.368.476-1.018.682-1.592.498z"/>
-                    </svg>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src="/Viber.webp" alt="Viber" className="size-8 object-contain" />
                   </a>
                   <a href="tg://resolve?domain=elektronom" aria-label="Telegram" className="hover:opacity-80 transition-opacity flex items-center justify-center size-8">
                     <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="#24A1DE">
