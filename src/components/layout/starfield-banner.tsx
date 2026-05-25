@@ -55,6 +55,7 @@ export function StarfieldBanner() {
 
       for (let i = 0; i < numStars; i++) {
         const star = stars[i]
+        if (!star) continue
         
         // Galaxies move faster
         star.z -= star.isGalaxy ? speed * 1.5 : speed
