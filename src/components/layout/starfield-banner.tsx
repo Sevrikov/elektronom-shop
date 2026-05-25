@@ -88,7 +88,7 @@ export function StarfieldBanner() {
 
       // ─── Large Events Manager ───
       if (!eventState.active && Math.random() < 0.003) {
-        const type = eventTypes[currentEventIdx]
+        const type = eventTypes[currentEventIdx] || 'earth'
         currentEventIdx = (currentEventIdx + 1) % eventTypes.length
         
         let startX = Math.random() * canvas.width * 2 - canvas.width
