@@ -67,25 +67,48 @@ export default function Header({ categories, workload = 0 }: Props) {
   return (
     <>
       <header ref={headerRef} className="sticky top-0 z-50 w-full">
-        {/* ═══ Promo Banner ═══ */}
-        <div className="bg-[#24A1DE] text-white overflow-hidden flex items-center justify-center">
-          <div className="h-9 mx-auto max-w-[1280px] px-4 lg:px-6 w-full flex items-center justify-between gap-4 text-[11px] sm:text-xs font-bold uppercase tracking-wide">
-            <div className="flex items-center gap-1.5 shrink-0">
-              <Percent className="size-4" strokeWidth={2.5} />
+        {/* ═══ Animated Fallout Promo Banner ═══ */}
+        <div className="relative w-full overflow-hidden bg-[#e2e8f0] border-b border-border select-none h-10">
+          {/* 1. Desert Background (Grayscale & Lightened to act as a white-grey banner) */}
+          <div className="absolute inset-0 bg-[url('/images/fallout_desert.png')] bg-repeat-x bg-[length:auto_100%] animate-pan-bg opacity-30 grayscale" />
+          
+          {/* 2. Day/Night Cycle (Darkens the background slightly) */}
+          <div className="absolute inset-0 bg-[#0c1445] animate-day-night mix-blend-multiply pointer-events-none" />
+          
+          {/* 3. Pixel Rain (Blue rain effect) */}
+          <div 
+            className="absolute -inset-[100%] animate-rain pointer-events-none opacity-40 mix-blend-multiply"
+            style={{ 
+              backgroundImage: 'repeating-linear-gradient(135deg, rgba(36,161,222,0) 0%, rgba(36,161,222,0) 2%, rgba(36,161,222,0.8) 2.5%, rgba(36,161,222,0) 3%)',
+              backgroundSize: '30px 30px'
+            }} 
+          />
+
+          {/* 4. Running Characters (Emojis for 8-bit vibe) */}
+          <div className="absolute inset-0 pointer-events-none overflow-hidden drop-shadow-md">
+            <div className="absolute top-1 text-2xl animate-run-right">🤖🧑‍🎓</div> {/* Power Armor with student */}
+            <div className="absolute top-1 text-2xl animate-run-left" style={{ animationDelay: '3s' }}>🏃‍♂️🧟‍♂️</div> {/* Vault hero & monster */}
+            <div className="absolute top-1 text-2xl animate-run-right" style={{ animationDelay: '8s' }}>🦹‍♂️🚜</div> {/* Raiders */}
+          </div>
+
+          {/* 5. Text Content (Blue text with white glow/shadow for readability) */}
+          <div className="relative z-10 h-full mx-auto max-w-[1280px] px-4 lg:px-6 w-full flex items-center justify-between gap-4 text-[11px] sm:text-xs font-black uppercase tracking-wide text-[#24A1DE] drop-shadow-[0_1px_2px_rgba(255,255,255,0.9)]" style={{ textShadow: '1px 1px 0 #fff, -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff' }}>
+            <div className="flex items-center gap-1.5 shrink-0 bg-white/60 px-2 py-0.5 rounded backdrop-blur-sm">
+              <Percent className="size-4" strokeWidth={3} />
               <span className="hidden md:inline">{locale === 'uk' ? 'Знижки для опту' : 'Скидки для опта'}</span>
             </div>
-            <div className="flex items-center gap-1.5 shrink-0">
-              <Truck className="size-4" strokeWidth={2.5} />
+            <div className="flex items-center gap-1.5 shrink-0 bg-white/60 px-2 py-0.5 rounded backdrop-blur-sm">
+              <Truck className="size-4" strokeWidth={3} />
               <span className="hidden sm:inline">{locale === 'uk' ? 'Від 1500 грн доставка безкоштовно' : 'От 1500 грн доставка бесплатно'}</span>
               <span className="sm:hidden">{locale === 'uk' ? 'Безкоштовна доставка' : 'Бесплатная доставка'}</span>
             </div>
-            <div className="flex items-center gap-1.5 shrink-0">
-              <MessageCircle className="size-4" strokeWidth={2.5} />
+            <div className="flex items-center gap-1.5 shrink-0 bg-white/60 px-2 py-0.5 rounded backdrop-blur-sm">
+              <MessageCircle className="size-4" strokeWidth={3} />
               <span className="hidden lg:inline">{locale === 'uk' ? 'Оптові знижки для постійних клієнтів - деталі у Viber' : 'Оптовые скидки для постоянных клиентов - детали в Viber'}</span>
               <span className="hidden md:inline lg:hidden">{locale === 'uk' ? 'Оптові знижки у Viber' : 'Оптовые скидки в Viber'}</span>
             </div>
-            <div className="flex items-center gap-1.5 shrink-0">
-              <Package className="size-4" strokeWidth={2.5} />
+            <div className="flex items-center gap-1.5 shrink-0 bg-white/60 px-2 py-0.5 rounded backdrop-blur-sm">
+              <Package className="size-4" strokeWidth={3} />
               <span className="hidden md:inline">{locale === 'uk' ? 'Дропшипінг: відправка товару' : 'Дропшипинг: отправка товара'}</span>
             </div>
           </div>
