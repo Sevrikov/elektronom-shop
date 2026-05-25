@@ -156,7 +156,7 @@ export default function Header({ categories, workload = 0 }: Props) {
               {/* Desktop Full Logo */}
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src="/logo/electronom.svg"
+                src="/logo/electronom-logo.svg"
                 alt="Electronom"
                 className="hidden sm:block h-[56px] w-auto select-none"
               />

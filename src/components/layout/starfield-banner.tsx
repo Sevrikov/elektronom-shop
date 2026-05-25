@@ -28,7 +28,7 @@ export function StarfieldBanner() {
     // ─── Setup Entities ───
     
     // 1. Hyperspace Stars
-    const numStars = 3500
+    const numStars = 6000
     const stars: { x: number, y: number, z: number, isGalaxy: boolean }[] = []
     for (let i = 0; i < numStars; i++) {
       stars.push({
@@ -39,13 +39,12 @@ export function StarfieldBanner() {
       })
     }
 
-    // 2. Milky Way Background (slow panning dust)
-    const dustParticles: { x: number, y: number, size: number, opacity: number }[] = []
-    for (let i = 0; i < 3000; i++) {
-      dustParticles.push({
+    // 2. Far Background Stars (Crosses)
+    const bgStars: { x: number, y: number, opacity: number }[] = []
+    for (let i = 0; i < 600; i++) {
+      bgStars.push({
         x: Math.random() * 4000,
         y: Math.random() * 2000 - 1000,
-        size: Math.random() > 0.9 ? 2 : 1,
         opacity: Math.random() * 0.4 + 0.1
       })
     }
@@ -57,7 +56,7 @@ export function StarfieldBanner() {
     let voyagerState = { active: false, x: 2000, y: 10, z: 800 }
     let shipState = { active: false, x: 0, y: 0, z: 2000, speed: 0, length: 0 }
 
-    const speed = 45 // Hyperspace speed
+    const speed = 70 // Hyperspace speed
 
     const render = () => {
       tick++
@@ -69,12 +68,14 @@ export function StarfieldBanner() {
       const cx = canvas.width / 2
       const cy = canvas.height / 2
 
-      // ─── Draw Milky Way Background ───
-      for (const p of dustParticles) {
-        p.x -= 0.5 // Slow pan left
+      // ─── Draw Far Background Stars (Crosses) ───
+      for (const p of bgStars) {
+        p.x -= 0.1 // Very slow pan
         if (p.x < -10) p.x = canvas.width + 10
         ctx.fillStyle = `rgba(36, 161, 222, ${p.opacity})`
-        ctx.fillRect(p.x, p.y + cy, p.size, p.size)
+        const py = p.y + cy
+        ctx.fillRect(p.x, py - 1, 1, 3) // Vertical line
+        ctx.fillRect(p.x - 1, py, 3, 1) // Horizontal line
       }
 
       // ─── Draw Earth Event ───
@@ -204,7 +205,7 @@ export function StarfieldBanner() {
           
           if (!star.isGalaxy) {
             // Draw streak for hyperspace
-            const prevZ = star.z + speed
+            const prevZ = star.z + speed * 3 // Longer streaks
             const prevPx = (star.x / prevZ) * 800 + cx
             const prevPy = (star.y / prevZ) * 800 + cy
             
