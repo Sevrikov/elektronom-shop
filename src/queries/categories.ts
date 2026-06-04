@@ -7,6 +7,8 @@ import { prisma } from "@/lib/prisma";
 import { Prisma } from "@/generated/prisma/client";
 import { getCategoryFilterConfig } from "@/lib/catalog-filter-config";
 import type { ActiveFilters, CategoryFacets, FacetOption } from "@/types";
+import { mapFrontendToDbAttributeKey, mapDbToFrontendAttributeKey } from "@/lib/attribute-mapper";
+
 
 // ─── Все категории ────────────────────────────────────────────────────────────
 
@@ -241,8 +243,9 @@ function getFilterSqls(activeFilters: ActiveFilters, excludeKey?: string) {
     if (excludeKey === key) continue;
     const values = activeFilters[key];
     if (Array.isArray(values) && values.length > 0) {
+      const dbKey = mapFrontendToDbAttributeKey(key);
       fragments.push(
-        Prisma.sql`((jsonb_typeof(p.attributes->${key}) = 'array' AND p.attributes->${key} ?| ${values}) OR (p.attributes->>${key} IN (${Prisma.join(values)})))`
+        Prisma.sql`((jsonb_typeof(p.attributes->${dbKey}) = 'array' AND p.attributes->${dbKey} ?| ${values}) OR (p.attributes->>${dbKey} IN (${Prisma.join(values)})))`
       );
     }
   }
@@ -269,6 +272,7 @@ export async function getCategoryFacets({
     const allowedAttributeKeys = filterConfig.order.filter(
       (k) => !["brand", "price", "inStock", "sort", "page"].includes(k)
     );
+    const allowedDbAttributeKeys = allowedAttributeKeys.map(mapFrontendToDbAttributeKey);
 
     // 1. Calculate total matched products under current active filters
     const allFilters = getFilterSqls(activeFilters);
@@ -394,7 +398,7 @@ export async function getCategoryFacets({
     let activeAttrCountsResult: { key: string; value: string; count: number }[] = [];
     let allCategoryAttributes: { key: string; value: string }[] = [];
 
-    if (allowedAttributeKeys.length > 0) {
+    if (allowedDbAttributeKeys.length > 0) {
       nonActiveAttrCountsResult = await prisma.$queryRaw<{ key: string; value: string; count: number }[]>(
         Prisma.sql`
           SELECT 
@@ -411,7 +415,7 @@ export async function getCategoryFacets({
               END
             ) as value
             FROM jsonb_each(p.attributes)
-            WHERE key IN (${Prisma.join(allowedAttributeKeys)})
+            WHERE key IN (${Prisma.join(allowedDbAttributeKeys)})
           ) attr
           ${whereClause}
           GROUP BY attr.key, attr.value
@@ -425,6 +429,8 @@ export async function getCategoryFacets({
         const excludeWhere = excludeFilters.length > 0
           ? Prisma.sql`WHERE p."categoryId" IN (${Prisma.join(categoryIds)}) AND ${Prisma.join(excludeFilters, ' AND ')}`
           : Prisma.sql`WHERE p."categoryId" IN (${Prisma.join(categoryIds)})`;
+
+        const excludeDbKey = mapFrontendToDbAttributeKey(excludeKey);
 
         const res = await prisma.$queryRaw<{ key: string; value: string; count: number }[]>(
           Prisma.sql`
@@ -442,7 +448,7 @@ export async function getCategoryFacets({
                 END
               ) as value
               FROM jsonb_each(p.attributes)
-              WHERE key = ${excludeKey}
+              WHERE key = ${excludeDbKey}
             ) attr
             ${excludeWhere}
             GROUP BY attr.key, attr.value
@@ -465,7 +471,7 @@ export async function getCategoryFacets({
               END
             ) as value
             FROM jsonb_each(p.attributes)
-            WHERE key IN (${Prisma.join(allowedAttributeKeys)})
+            WHERE key IN (${Prisma.join(allowedDbAttributeKeys)})
           ) attr
           WHERE p."categoryId" IN (${Prisma.join(categoryIds)}) AND p."isActive" = true
         `
@@ -474,18 +480,21 @@ export async function getCategoryFacets({
 
     const attributeCountsMap = new Map<string, number>();
     for (const r of nonActiveAttrCountsResult) {
-      attributeCountsMap.set(`${r.key}:${r.value}`, r.count);
+      const frontendKey = mapDbToFrontendAttributeKey(r.key);
+      attributeCountsMap.set(`${frontendKey}:${r.value}`, r.count);
     }
     for (const r of activeAttrCountsResult) {
-      attributeCountsMap.set(`${r.key}:${r.value}`, r.count);
+      const frontendKey = mapDbToFrontendAttributeKey(r.key);
+      attributeCountsMap.set(`${frontendKey}:${r.value}`, r.count);
     }
 
     const possibleValuesByKey = new Map<string, Set<string>>();
     for (const item of allCategoryAttributes) {
-      if (!possibleValuesByKey.has(item.key)) {
-        possibleValuesByKey.set(item.key, new Set());
+      const frontendKey = mapDbToFrontendAttributeKey(item.key);
+      if (!possibleValuesByKey.has(frontendKey)) {
+        possibleValuesByKey.set(frontendKey, new Set());
       }
-      possibleValuesByKey.get(item.key)!.add(item.value);
+      possibleValuesByKey.get(frontendKey)!.add(item.value);
     }
 
     for (const key of activeAttributeKeys) {

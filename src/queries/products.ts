@@ -7,6 +7,7 @@ import { prisma } from "@/lib/prisma";
 import type { Prisma } from "@/generated/prisma/client";
 import type { ActiveFilters } from "@/types";
 import { getCategorySubtreeIds } from "./categories";
+import { mapFrontendToDbAttributeKey } from "@/lib/attribute-mapper";
 // Legacy re-export kept for backward compatibility
 export { parseSearchParams } from "@/lib/utils";
 export { parseCatalogSearchParams } from "@/lib/catalog-filter-url";
@@ -184,62 +185,65 @@ function buildAttributeWhere(
   if (entries.length === 0) return [];
 
   // One AND-condition per attribute key; within each key: OR across values
-  return entries.map(([key, values]) => ({
-    OR: values.flatMap((val) => {
-      const conditions: Prisma.ProductWhereInput[] = [
-        {
-          attributes: {
-            path: [key],
-            equals: val,
+  return entries.map(([key, values]) => {
+    const dbKey = mapFrontendToDbAttributeKey(key);
+    return {
+      OR: values.flatMap((val) => {
+        const conditions: Prisma.ProductWhereInput[] = [
+          {
+            attributes: {
+              path: [dbKey],
+              equals: val,
+            },
           },
-        },
-        {
-          attributes: {
-            path: [key],
-            array_contains: val,
+          {
+            attributes: {
+              path: [dbKey],
+              array_contains: val,
+            },
           },
-        },
-      ];
+        ];
 
-      const numVal = Number(val);
-      if (!isNaN(numVal) && val.trim() !== '') {
-        conditions.push(
-          {
-            attributes: {
-              path: [key],
-              equals: numVal,
+        const numVal = Number(val);
+        if (!isNaN(numVal) && val.trim() !== '') {
+          conditions.push(
+            {
+              attributes: {
+                path: [dbKey],
+                equals: numVal,
+              },
             },
-          },
-          {
-            attributes: {
-              path: [key],
-              array_contains: numVal,
-            },
-          }
-        );
-      }
+            {
+              attributes: {
+                path: [dbKey],
+                array_contains: numVal,
+              },
+            }
+          );
+        }
 
-      if (val === 'true' || val === 'false') {
-        const boolVal = val === 'true';
-        conditions.push(
-          {
-            attributes: {
-              path: [key],
-              equals: boolVal,
+        if (val === 'true' || val === 'false') {
+          const boolVal = val === 'true';
+          conditions.push(
+            {
+              attributes: {
+                path: [dbKey],
+                equals: boolVal,
+              },
             },
-          },
-          {
-            attributes: {
-              path: [key],
-              array_contains: boolVal,
-            },
-          }
-        );
-      }
+            {
+              attributes: {
+                path: [dbKey],
+                array_contains: boolVal,
+              },
+            }
+          );
+        }
 
-      return conditions;
-    }),
-  }));
+        return conditions;
+      }),
+    };
+  });
 }
 
 /**
