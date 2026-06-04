@@ -1,4 +1,3 @@
-import Image from 'next/image'
 import Link from 'next/link'
 import { Check } from 'lucide-react'
 import type { Locale } from '@/types'
@@ -20,7 +19,7 @@ export interface PrismaProductCard {
   isFeatured: boolean
   createdAt: Date
   translations: { locale: string; name: string }[]
-  images: { url: string; alt: string | null; sortOrder: number; provider: string; publicId?: string | null }[]
+  images: { url: string; processedUrl?: string | null; alt: string | null; sortOrder: number; provider: string; publicId?: string | null }[]
   brand: { slug: string; name: string } | null
   category: { slug: string }
 }

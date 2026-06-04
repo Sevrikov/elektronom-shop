@@ -14,7 +14,7 @@ import type { UserRole } from "@/generated/prisma/client";
 
 const credentialsSchema = z.object({
   email: z.string().email(),
-  password: z.string().min(6),
+  password: z.string().min(8), // B-10: §13 requires min 8 chars
 });
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
@@ -98,8 +98,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   },
 
   pages: {
-    signIn: "/uk/login",
-    error: "/uk/login",
+    // B-5 TODO: make locale-aware via proxy.ts or middleware so ru-users land on /ru/login
+    // Currently hardcoded to /uk/login — acceptable MVP; fix requires locale detection in proxy.ts
+    signIn: '/uk/login',
+    error: '/uk/login',
   },
 });
 

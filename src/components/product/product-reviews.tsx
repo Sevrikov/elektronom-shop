@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useTransition } from 'react'
+import { useState, useTransition, useEffect } from 'react'
 import { Star, X, Check, Loader2 } from 'lucide-react'
 import Link from 'next/link'
 import { submitProductReview } from '@/actions/user'
@@ -31,7 +31,7 @@ interface ProductReviewsProps {
   initialReviews: Review[]
   locale: string
   productName: string
-  currentUser: CurrentUser | null
+  currentUser?: CurrentUser | null
 }
 
 export function ProductReviews({
@@ -39,22 +39,40 @@ export function ProductReviews({
   initialReviews,
   locale,
   productName,
-  currentUser,
+  currentUser: initialCurrentUser,
 }: ProductReviewsProps) {
   const loc = locale === 'ru' ? 'ru' : 'uk'
   const reviews = initialReviews
   const showWriteButton = true
 
+  const [currentUser, setCurrentUser] = useState<CurrentUser | null>(initialCurrentUser ?? null)
   const [activeFilter, setActiveFilter] = useState<'all' | 'positive' | 'negative'>('all')
   const [modalOpen, setModalOpen] = useState(false)
   const [formSubmitted, setFormSubmitted] = useState(false)
   const [newRating, setNewRating] = useState(5)
-  const [newName, setNewName] = useState(currentUser?.name ?? '')
+  const [newName, setNewName] = useState(initialCurrentUser?.name ?? '')
   const [newComment, setNewComment] = useState('')
   const [newAdv, setNewAdv] = useState('')
   const [newDisadv, setNewDisadv] = useState('')
   const [submitError, setSubmitError] = useState<string | null>(null)
   const [isPending, startTransition] = useTransition()
+
+  useEffect(() => {
+    if (initialCurrentUser) return
+    fetch('/api/auth/session')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data?.user) {
+          const userObj = {
+            name: data.user.name ?? '',
+            email: data.user.email ?? '',
+          }
+          setCurrentUser(userObj)
+          setNewName(userObj.name)
+        }
+      })
+      .catch(() => {})
+  }, [initialCurrentUser])
 
   // Translation helpers
   const t = {

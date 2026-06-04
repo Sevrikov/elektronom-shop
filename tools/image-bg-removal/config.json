@@ -1,0 +1,78 @@
+{
+  "jack_stand.jpg": {
+    "distBlock": 4,
+    "floorShadowY": 0.82,
+    "minHoleSize": 800,
+    "redrawAnnotations": true
+  },
+  "jack_stand_arbitrated.png": {
+    "distBlock": 4,
+    "floorShadowY": 0.82,
+    "minHoleSize": 800,
+    "redrawAnnotations": true
+  },
+  "7138921733_w640_h640_podstavka-pod-mashinu.jpg": {
+    "distBlock": 4,
+    "floorShadowY": 0.82,
+    "minHoleSize": 800,
+    "redrawAnnotations": true
+  },
+  "6335425546_w640_h640_avtomatichnij-peremikach-avr.jpg": {
+    "distBlock": 2,
+    "floorShadowY": 0.85,
+    "minHoleSize": 99999
+  },
+  "relay_ly2_mock.png": {
+    "distBlock": 0,
+    "skipProcessing": true
+  },
+  "trinix_battery_mock.png": {
+    "distBlock": 0,
+    "skipProcessing": true
+  },
+  "castrol_edge_5w30.png": {
+    "distBlock": 0,
+    "floorShadowY": 0.85,
+    "minHoleSize": 99999
+  },
+  "liqui_moly.png": {
+    "distBlock": 0,
+    "floorShadowY": 0.85,
+    "minHoleSize": 99999
+  },
+  "mannol_energy.png": {
+    "distBlock": 0,
+    "floorShadowY": 0.85,
+    "minHoleSize": 99999
+  },
+  "mobil1_esp.png": {
+    "distBlock": 0,
+    "floorShadowY": 0.85,
+    "minHoleSize": 99999
+  },
+  "shell_helix_ultra.png": {
+    "distBlock": 0,
+    "floorShadowY": 0.85,
+    "minHoleSize": 99999
+  },
+  "total_transmission.png": {
+    "distBlock": 0,
+    "floorShadowY": 0.85,
+    "minHoleSize": 99999
+  },
+  "bosch_filter.png": {
+    "distBlock": 0,
+    "floorShadowY": 0.65,
+    "minHoleSize": 99999,
+    "tBot": 100,
+    "outlineThreshMin": 95
+  },
+  "castrol_edge_5w30_spec.png": {
+    "distBlock": 0,
+    "skipProcessing": true
+  },
+  "castrol_edge_pour.png": {
+    "distBlock": 0,
+    "skipProcessing": true
+  }
+}

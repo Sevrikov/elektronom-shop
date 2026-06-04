@@ -13,6 +13,7 @@ import { AssistantWidget } from '@/components/assistant/assistant-widget'
 import { getSiteUrl } from '@/lib/utils'
 import { getCategoryTree } from '@/queries/categories'
 import { getWorkloadCount } from '@/queries/workload'
+import { contactInfo, socialLinks } from '@/lib/constants'
 
 const inter = Inter({
   variable: '--font-sans',
@@ -89,8 +90,38 @@ export default async function LocaleLayout({
             `,
           }}
         />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'Organization',
+              'name': 'Electronom',
+              'url': 'https://elektronom.com.ua',
+              'logo': 'https://elektronom.com.ua/electronom.png',
+              'contactPoint': {
+                '@type': 'ContactPoint',
+                'telephone': contactInfo.phone.replace(/[^\d+]/g, ''),
+                'contactType': 'sales',
+                'areaServed': 'UA',
+                'availableLanguage': ['Ukrainian', 'Russian']
+              },
+              'address': {
+                '@type': 'PostalAddress',
+                'streetAddress': locale === 'uk' ? 'вул. Прикладна 10' : 'ул. Прикладная 10',
+                'addressLocality': locale === 'uk' ? 'Київ' : 'Киев',
+                'addressCountry': 'UA'
+              },
+              'sameAs': [
+                socialLinks.facebook,
+                socialLinks.instagram,
+                socialLinks.telegram
+              ]
+            })
+          }}
+        />
       </head>
-      <body className="min-h-full flex flex-col font-sans" style={{ background: 'var(--color-surface-alt)' }}>
+      <body className="min-h-full flex flex-col font-sans bg-surface-alt">
         <NextIntlClientProvider messages={messages} locale={locale}>
           <Suspense fallback={null}>
             <Header categories={categories} workload={workload} />

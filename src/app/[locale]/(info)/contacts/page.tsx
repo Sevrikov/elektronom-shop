@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import { isValidLocale } from '@/i18n/request'
 import Breadcrumbs from '@/components/layout/breadcrumbs'
 import { Phone, Mail, MapPin, Clock } from 'lucide-react'
+import { contactInfo } from '@/lib/constants'
 
 interface PageProps {
   params: Promise<{ locale: string }>
@@ -33,30 +34,30 @@ export default async function ContactsPage({ params }: PageProps) {
     {
       icon: Phone,
       title: uk ? 'Телефон' : 'Телефон',
-      value: '+38 (000) 000-00-00',
-      href: 'tel:+380000000000',
-      sub: uk ? 'Пн-Пт: 9:00-18:00' : 'Пн-Пт: 9:00-18:00',
+      value: contactInfo.phone,
+      href: `tel:${contactInfo.phone.replace(/[\s()-]/g, '')}`,
+      sub: contactInfo.workingHours[locale as 'uk' | 'ru'],
     },
     {
       icon: Mail,
       title: 'Email',
-      value: 'info@elektronom.ua',
-      href: 'mailto:info@elektronom.ua',
+      value: contactInfo.email ?? 'info@elektronom.com.ua',
+      href: `mailto:${contactInfo.email ?? 'info@elektronom.com.ua'}`,
       sub: uk ? 'Відповідаємо протягом 1 дня' : 'Отвечаем в течение 1 дня',
     },
     {
       icon: MapPin,
       title: uk ? 'Склад / Самовивіз' : 'Склад / Самовывоз',
-      value: uk ? 'м. Київ, вул. Прикладна 10' : 'г. Киев, ул. Прикладная 10',
+      value: contactInfo.address[locale as 'uk' | 'ru'],
       href: 'https://maps.google.com',
-      sub: uk ? 'Пн-Пт: 9:00-18:00' : 'Пн-Пт: 9:00-18:00',
+      sub: contactInfo.workingHours[locale as 'uk' | 'ru'],
     },
     {
       icon: Clock,
       title: uk ? 'Графік роботи' : 'График работы',
-      value: uk ? 'Понеділок — П\'ятниця' : 'Понедельник — Пятница',
+      value: uk ? 'Понеділок — Субота' : 'Понедельник — Суббота',
       href: null,
-      sub: '9:00 — 18:00',
+      sub: '7:00 — 19:00',
     },
   ]
 

@@ -1,0 +1,381 @@
+{
+  "generated_at": "2026-05-30T00:00:00Z",
+  "modules": [
+    {
+      "name": "catalog",
+      "path": "src/queries, src/lib/catalog-*, src/components/catalog",
+      "purpose": "Дерево категорий, страница категории с динамическими фасетными фильтрами и реактивными счётчиками, листинг товаров, бренды",
+      "primary_files": [
+        "src/queries/products.ts",
+        "src/queries/categories.ts",
+        "src/queries/brands.ts",
+        "src/lib/catalog-filter-url.ts",
+        "src/lib/catalog-filter-config.ts",
+        "src/lib/catalog-data.ts",
+        "src/lib/catalog-tree.ts",
+        "src/config/catalog-mega-menu.ts"
+      ],
+      "functions": [
+        { "name": "getFilteredProducts", "file": "src/queries/products.ts", "params": ["input: FilteredProductsInput"], "returns": "Promise<{products,total,page,pageSize,totalPages}>", "confidence": "confirmed" },
+        { "name": "buildProductWhere", "file": "src/queries/products.ts", "params": ["{categorySlug, activeFilters, excludeFacetKey}"], "returns": "Prisma.ProductWhereInput", "confidence": "confirmed" },
+        { "name": "buildAttributeWhere", "file": "src/queries/products.ts", "params": ["attributes: Record<string,string[]>"], "returns": "Prisma.ProductWhereInput[]", "confidence": "confirmed" },
+        { "name": "getCategoryFacets", "file": "src/queries/categories.ts", "params": ["{categorySlug, activeFilters, locale}"], "returns": "Promise<CategoryFacets>", "confidence": "confirmed" },
+        { "name": "getCategoryProductsForFacets", "file": "src/queries/categories.ts", "params": ["slug: string"], "returns": "Promise<Product[]> (take 50000)", "confidence": "confirmed" },
+        { "name": "getCategoryTree", "file": "src/queries/categories.ts", "params": ["locale: string"], "returns": "Promise<CategoryTreeNode[]>", "confidence": "confirmed" },
+        { "name": "parseCatalogSearchParams", "file": "src/lib/catalog-filter-url.ts", "params": ["sp"], "returns": "ActiveFilters", "confidence": "confirmed" },
+        { "name": "buildCatalogHref", "file": "src/lib/catalog-filter-url.ts", "params": ["pathname", "filters"], "returns": "string", "confidence": "confirmed" }
+      ],
+      "entities": [
+        { "name": "Category", "confidence": "confirmed" },
+        { "name": "CategoryTranslation", "confidence": "confirmed" },
+        { "name": "Brand", "confidence": "confirmed" },
+        { "name": "Product", "confidence": "confirmed" },
+        { "name": "ProductTranslation", "confidence": "confirmed" },
+        { "name": "ProductImage", "confidence": "confirmed" }
+      ],
+      "business_rules": [
+        { "description": "JSONB-фильтр атрибутов: AND между ключами, OR внутри ключа", "location": "src/queries/products.ts:149", "confidence": "confirmed" },
+        { "description": "priceMin > priceMax → автосвап", "location": "src/lib/catalog-filter-url.ts:46", "confidence": "confirmed" },
+        { "description": "Любая мутация фильтра сбрасывает page на 1", "location": "src/lib/catalog-filter-url.ts:134", "confidence": "confirmed" },
+        { "description": "Реактивные счётчики фасетов через исключение своей группы (excludeFacetKey)", "location": "src/queries/categories.ts:200", "confidence": "confirmed" },
+        { "description": "Опция фасета disabled при count==0 и не выбрана", "location": "src/queries/categories.ts:366", "confidence": "confirmed" },
+        { "description": "Показываются только isActive товары/категории", "location": "src/queries/products.ts:253", "confidence": "confirmed" }
+      ],
+      "dependencies": ["core-infra", "search", "product"],
+      "algorithms": [
+        "Фасетные счётчики exclude-self (reactive facets)",
+        "32-бакетная гистограмма цен",
+        "JSONB multi-type coercion (string/number/boolean × equals/array_contains)",
+        "Построение дерева категорий из плоского списка (Map + parentId)"
+      ],
+      "complexity": "high",
+      "findings": [
+        { "id": "C-1", "level": "gap", "text": "Расчёт фасетов грузит до 50000 товаров в память (MVP-лимит)" },
+        { "id": "C-2", "level": "inferred", "text": "Две реализации фасет-логики (SQL vs in-memory) — риск рассинхрона" },
+        { "id": "C-3", "level": "inferred", "text": "Дублирование конфигов фильтров (catalog-data vs catalog-filter-config)" },
+        { "id": "C-4", "level": "gap", "text": "qtyBreaks в mock, но нет в схеме Product" },
+        { "id": "C-5", "level": "inferred", "text": "Mock catalogProducts соседствует с реальными запросами" }
+      ]
+    },
+    {
+      "name": "product",
+      "path": "src/app/[locale]/(shop)/product, src/components/product",
+      "purpose": "Карточка товара: галерея, характеристики, цена/наличие, оптовые цены, отзывы с премодерацией, похожие/та же серия, SEO",
+      "primary_files": [
+        "src/app/[locale]/(shop)/product/[slug]/page.tsx",
+        "src/queries/products.ts",
+        "src/actions/user.ts",
+        "src/components/product/product-reviews.tsx",
+        "src/components/product/product-schema.tsx",
+        "src/components/product/product-gallery.tsx"
+      ],
+      "functions": [
+        { "name": "ProductPage", "file": "src/app/[locale]/(shop)/product/[slug]/page.tsx", "params": ["{params}"], "returns": "JSX (RSC)", "confidence": "confirmed" },
+        { "name": "generateStaticParams", "file": "src/app/[locale]/(shop)/product/[slug]/page.tsx", "params": [], "returns": "top-1000×2 locale = ~2000", "confidence": "confirmed" },
+        { "name": "getProductBySlug", "file": "src/queries/products.ts", "params": ["slug", "locale"], "returns": "Promise<Product|null>", "confidence": "confirmed" },
+        { "name": "submitProductReview", "file": "src/actions/user.ts", "params": ["{productId,rating,comment,advantages?,disadvantages?}"], "returns": "Promise<{success,error?}>", "confidence": "confirmed" },
+        { "name": "getSameSeriesProducts", "file": "src/queries/products.ts", "params": ["productId","categoryId","brandId","attributes","locale"], "returns": "Promise<Product[]>", "confidence": "confirmed" }
+      ],
+      "entities": [
+        { "name": "Product", "confidence": "confirmed" },
+        { "name": "ProductImage", "confidence": "confirmed" },
+        { "name": "ProductTranslation", "confidence": "confirmed" },
+        { "name": "Review", "confidence": "confirmed" }
+      ],
+      "business_rules": [
+        { "description": "Отзыв: 1 на пользователя+товар (unique productId_userId)", "location": "src/actions/user.ts:231", "confidence": "confirmed" },
+        { "description": "verifiedPurchase = есть DELIVERED-заказ с этим товаром", "location": "src/actions/user.ts:246", "confidence": "confirmed" },
+        { "description": "Отзыв создаётся isVisible=false (премодерация)", "location": "src/actions/user.ts:266", "confidence": "confirmed" },
+        { "description": "rating 1-5, comment 1-1000 (zod)", "location": "src/actions/user.ts:208", "confidence": "confirmed" },
+        { "description": "qty_breaks читаются из attributes JSONB {min,discount%}", "location": "src/app/[locale]/(shop)/product/[slug]/page.tsx:177", "confidence": "confirmed" }
+      ],
+      "dependencies": ["catalog", "cart-checkout-orders", "auth-account", "core-infra"],
+      "algorithms": [
+        "ISR generateStaticParams (top-1000×2 locale)",
+        "hreflang + canonical + JSON-LD (SEO)",
+        "Опт-цена base×(1−discount/100)"
+      ],
+      "complexity": "medium",
+      "findings": [
+        { "id": "P-1", "level": "gap", "text": "dangerouslySetInnerHTML на описании — потенциальный XSS, проверить санитайз" },
+        { "id": "P-2", "level": "inferred", "text": "Несогласованность qty breaks: attributes.qty_breaks {min,discount} vs mock qtyBreaks {minQty,unitPrice}" },
+        { "id": "P-4", "level": "inferred", "text": "~2000 страниц пре-рендерятся на билде" },
+        { "id": "P-5", "level": "inferred", "text": "Разнобой бренда Electronom/Elektronom" }
+      ]
+    },
+    {
+      "name": "cart-checkout-orders",
+      "path": "src/actions/cart.ts, src/actions/order.ts, src/queries/orders.ts, src/store/cart-store.ts",
+      "purpose": "Корзина (гость cookie / авторизованный БД, merge при входе), оформление заказа с атомарной транзакцией, заказы пользователя",
+      "primary_files": [
+        "src/actions/order.ts",
+        "src/actions/cart.ts",
+        "src/queries/orders.ts",
+        "src/store/cart-store.ts",
+        "src/hooks/use-cart.ts"
+      ],
+      "functions": [
+        { "name": "createOrder", "file": "src/actions/order.ts", "params": ["data: CreateOrderSchema", "locale"], "returns": "Promise<{success, orderNumber?, error?}>", "confidence": "confirmed" },
+        { "name": "getCart", "file": "src/actions/cart.ts", "params": ["locale"], "returns": "Promise<CartItem[]>", "confidence": "confirmed" },
+        { "name": "addToCart", "file": "src/actions/cart.ts", "params": ["{productId, quantity}"], "returns": "Promise<{success, error?}>", "confidence": "confirmed" },
+        { "name": "mergeCartIfNeeded", "file": "src/actions/cart.ts", "params": ["userId"], "returns": "Promise<void>", "confidence": "confirmed" },
+        { "name": "getOrderByNumber", "file": "src/queries/orders.ts", "params": ["number", "userId"], "returns": "Promise<Order|null> (ownership check)", "confidence": "confirmed" }
+      ],
+      "entities": [
+        { "name": "CartItem", "confidence": "confirmed" },
+        { "name": "Order", "confidence": "confirmed" },
+        { "name": "OrderItem", "confidence": "confirmed" },
+        { "name": "OrderCounter", "confidence": "confirmed" }
+      ],
+      "business_rules": [
+        { "description": "Идемпотентность заказа по idempotencyKey", "location": "src/actions/order.ts:62", "confidence": "confirmed" },
+        { "description": "Гонко-безопасное списание стока: updateMany where stock>=qty, count==0 → throw", "location": "src/actions/order.ts:150", "confidence": "confirmed" },
+        { "description": "Номер заказа ORD-YYYY-NNNNN через OrderCounter.upsert в транзакции", "location": "src/actions/order.ts:170", "confidence": "confirmed" },
+        { "description": "Гостевая корзина — httpOnly cookie 30 дней; merge в БД при входе", "location": "src/actions/cart.ts:91", "confidence": "confirmed" },
+        { "description": "Количество клэмпится: min(qty, stock, 99)", "location": "src/actions/cart.ts:117", "confidence": "confirmed" },
+        { "description": "Проверка владения заказом: order.userId !== userId → null", "location": "src/queries/orders.ts:62", "confidence": "confirmed" }
+      ],
+      "dependencies": ["catalog", "auth-account", "core-infra"],
+      "algorithms": [
+        "Атомарная транзакция заказа (Prisma $transaction)",
+        "Оптимистичная блокировка стока (условный updateMany)",
+        "Слияние гостевой и пользовательской корзины"
+      ],
+      "complexity": "high",
+      "findings": [
+        { "id": "O-2", "level": "confirmed", "text": "Гонко-безопасное атомарное списание стока (сильная сторона)" },
+        { "id": "O-4", "level": "inferred", "text": "shipping/discount захардкожены 0 — нет доставки/промо" },
+        { "id": "O-5", "level": "inferred", "text": "addressId не привязывается при создании заказа" },
+        { "id": "O-6", "level": "inferred", "text": "Видимость гостевых заказов ограничена (только 5-мин cookie)" },
+        { "id": "O-7", "level": "inferred", "text": "Дублирование getUserOrders (actions vs queries)" },
+        { "id": "O-8", "level": "inferred", "text": "Онлайн-оплата не инициируется в createOrder (paymentStatus PENDING)" }
+      ]
+    },
+    {
+      "name": "auth-account",
+      "path": "src/lib/auth.ts, src/actions/auth.ts, src/actions/user.ts, src/app/[locale]/(account)",
+      "purpose": "Аутентификация (Credentials + Google/Facebook), RBAC, профиль, смена пароля, wishlist",
+      "primary_files": [
+        "src/lib/auth.ts",
+        "src/actions/auth.ts",
+        "src/actions/user.ts",
+        "src/app/api/auth/[...nextauth]/route.ts"
+      ],
+      "functions": [
+        { "name": "registerUser", "file": "src/actions/auth.ts", "params": ["{name,email,password}"], "returns": "Promise<{success,error?}>", "confidence": "confirmed" },
+        { "name": "authorize (Credentials)", "file": "src/lib/auth.ts", "params": ["credentials"], "returns": "User|null", "confidence": "confirmed" },
+        { "name": "requireAuth/requireAdmin/requireManager", "file": "src/lib/auth.ts", "params": [], "returns": "User (throws)", "confidence": "confirmed" },
+        { "name": "changePassword", "file": "src/actions/user.ts", "params": ["{currentPassword,newPassword}"], "returns": "Promise<{success,error?}>", "confidence": "confirmed" },
+        { "name": "toggleWishlist", "file": "src/actions/user.ts", "params": ["{productId}"], "returns": "Promise<{success,added?}>", "confidence": "confirmed" }
+      ],
+      "entities": [
+        { "name": "User", "confidence": "confirmed" },
+        { "name": "Account", "confidence": "confirmed" },
+        { "name": "Session", "confidence": "confirmed" },
+        { "name": "VerificationToken", "confidence": "confirmed" },
+        { "name": "Address", "confidence": "confirmed" },
+        { "name": "WishlistItem", "confidence": "confirmed" }
+      ],
+      "business_rules": [
+        { "description": "JWT-сессия, role в токене/сессии", "location": "src/lib/auth.ts:82", "confidence": "confirmed" },
+        { "description": "Credentials: bcrypt.compare, password ≥6", "location": "src/lib/auth.ts:48", "confidence": "confirmed" },
+        { "description": "Регистрация: уникальный email, bcrypt cost 10", "location": "src/actions/auth.ts:23", "confidence": "confirmed" },
+        { "description": "Смена пароля запрещена для OAuth-аккаунтов", "location": "src/actions/user.ts:57", "confidence": "confirmed" },
+        { "description": "RBAC: requireAdmin/requireManager по UserRole", "location": "src/lib/auth.ts:116", "confidence": "confirmed" }
+      ],
+      "dependencies": ["core-infra"],
+      "algorithms": ["bcrypt hashing", "JWT session callbacks", "RBAC role gating"],
+      "complexity": "medium",
+      "findings": [
+        { "id": "A-1", "level": "inferred", "text": "Address без CRUD-действия (checkout снапшотит customerData)" },
+        { "id": "A-2", "level": "inferred", "text": "Нет email-верификации/авто-логина при регистрации (VerificationToken/Resend не задействованы)" },
+        { "id": "A-3", "level": "inferred", "text": "signIn/error захардкожены на /uk/login" },
+        { "id": "A-4", "level": "inferred", "text": "Профиль редактирует только name (phone/avatar без UI)" },
+        { "id": "A-6", "level": "inferred", "text": "JWT-стратегия при наличии Session-таблицы (не используется для хранения)" }
+      ]
+    },
+    {
+      "name": "assistant",
+      "path": "src/lib/assistant, src/app/api/assistant/chat, src/components/assistant",
+      "purpose": "AI технический ассистент (Claude): подбор оборудования, расчёт, сравнение/замена, черновик заказа",
+      "primary_files": [
+        "src/lib/assistant/claude.ts",
+        "src/app/api/assistant/chat/route.ts",
+        "src/lib/assistant/prompts.ts",
+        "src/lib/assistant/draft-order.ts",
+        "src/lib/assistant/types.ts"
+      ],
+      "functions": [
+        { "name": "queryAssistant", "file": "src/lib/assistant/claude.ts", "params": ["message", "history", "locale"], "returns": "Promise<AssistantResponse>", "confidence": "confirmed" },
+        { "name": "extractAndParseJson", "file": "src/lib/assistant/claude.ts", "params": ["text"], "returns": "any (JSON)", "confidence": "confirmed" },
+        { "name": "POST", "file": "src/app/api/assistant/chat/route.ts", "params": ["req"], "returns": "NextResponse", "confidence": "confirmed" },
+        { "name": "calculateDraftOrder/buildComparison", "file": "src/lib/assistant/draft-order.ts", "params": ["items"], "returns": "draft/comparison", "confidence": "confirmed" }
+      ],
+      "entities": [
+        { "name": "AssistantSession", "confidence": "confirmed" },
+        { "name": "AssistantMessage", "confidence": "confirmed" },
+        { "name": "TechnicalDocument", "confidence": "unknown" },
+        { "name": "DocumentChunk", "confidence": "unknown" }
+      ],
+      "business_rules": [
+        { "description": "Регидратация рекомендаций из БД (цена/сток не от LLM)", "location": "src/lib/assistant/claude.ts:203", "confidence": "confirmed" },
+        { "description": "Prompt-injection фильтры → 400", "location": "src/app/api/assistant/chat/route.ts:7", "confidence": "confirmed" },
+        { "description": "Rate limit: тот же IP в пределах 2с → 429 (скан БД)", "location": "src/app/api/assistant/chat/route.ts:51", "confidence": "confirmed" },
+        { "description": "История усекается до 10, message ≤800", "location": "src/app/api/assistant/chat/route.ts:84", "confidence": "confirmed" },
+        { "description": "Оценка стоимости токенов и логирование costUsd", "location": "src/app/api/assistant/chat/route.ts:118", "confidence": "confirmed" }
+      ],
+      "dependencies": ["catalog", "core-infra"],
+      "algorithms": [
+        "Keyword retrieval по товарам + prompt-stuffing (НЕ векторный RAG)",
+        "JSON-extraction из ответа LLM + zod-валидация",
+        "DB-регидратация результата LLM (anti-hallucination)",
+        "DB-based rate limiting"
+      ],
+      "complexity": "high",
+      "findings": [
+        { "id": "AS-1", "level": "gap", "text": "RAG не векторный: embedding/DocumentChunk/TechnicalDocument не используются" },
+        { "id": "AS-2", "level": "gap", "text": "ANTHROPIC_API_KEY отсутствует в .env.example" },
+        { "id": "AS-3", "level": "confirmed", "text": "Регидратация из БД — защита от галлюцинаций цен/наличия" },
+        { "id": "AS-5", "level": "inferred", "text": "Rate limit на скане БД (IP в JSON, без индекса) — неэффективно" },
+        { "id": "AS-7", "level": "inferred", "text": "IP в открытом виде в AssistantMessage.structured (PII)" },
+        { "id": "AS-8", "level": "inferred", "text": "sources захардкожены (нет реального цитирования документов)" }
+      ]
+    },
+    {
+      "name": "search",
+      "path": "src/lib/algolia.ts, src/actions/search.ts, src/queries/search.ts, src/components/search",
+      "purpose": "Полнотекстовый поиск товаров через Algolia с деградацией на Prisma",
+      "primary_files": [
+        "src/lib/algolia.ts",
+        "src/actions/search.ts",
+        "src/queries/search.ts"
+      ],
+      "functions": [
+        { "name": "searchProducts", "file": "src/actions/search.ts", "params": ["query", "locale"], "returns": "Promise<{success, results, error?}>", "confidence": "confirmed" },
+        { "name": "syncProductIndex", "file": "src/actions/search.ts", "params": ["productId"], "returns": "Promise<{success, error?}>", "confidence": "confirmed" },
+        { "name": "removeProductFromIndex", "file": "src/actions/search.ts", "params": ["productId"], "returns": "Promise<{success, error?}>", "confidence": "confirmed" },
+        { "name": "getAlgoliaAdminClient/getAlgoliaSearchClient", "file": "src/lib/algolia.ts", "params": [], "returns": "AlgoliaClient|null", "confidence": "confirmed" }
+      ],
+      "entities": [{ "name": "Product (Algolia index products_{locale})", "confidence": "confirmed" }],
+      "business_rules": [
+        { "description": "Поиск: индекс products_{locale}, hitsPerPage 12, fallback на Prisma", "location": "src/actions/search.ts:51", "confidence": "confirmed" },
+        { "description": "Синхронизация: inactive → delete из индекса, иначе upsert в uk+ru", "location": "src/actions/search.ts:156", "confidence": "confirmed" }
+      ],
+      "dependencies": ["catalog", "core-infra"],
+      "algorithms": ["Algolia search + graceful Prisma fallback", "Per-locale index sync"],
+      "complexity": "low-medium",
+      "findings": [
+        { "id": "SE-1", "level": "confirmed", "text": "Грациозная деградация Algolia→Prisma" },
+        { "id": "SE-2", "level": "inferred", "text": "Нет полной переиндексации (только on-demand per-product)" },
+        { "id": "SE-4", "level": "inferred", "text": "Консистентность индекса зависит от вызова sync на каждое изменение" }
+      ]
+    },
+    {
+      "name": "admin",
+      "path": "src/actions/admin.ts, src/app/api/admin, src/components/admin",
+      "purpose": "Админка: CRUD товаров/категорий/брендов, заказы, модерация отзывов, загрузка изображений, Content Factory",
+      "primary_files": [
+        "src/actions/admin.ts",
+        "src/app/api/admin/upload/route.ts"
+      ],
+      "functions": [
+        { "name": "saveProductAdmin", "file": "src/actions/admin.ts", "params": ["data"], "returns": "Promise (transaction)", "confidence": "confirmed" },
+        { "name": "launchContentFactoryForProductAdmin", "file": "src/actions/admin.ts", "params": ["..."], "returns": "Promise (fetch external)", "confidence": "confirmed" },
+        { "name": "updateOrderStatusAdmin", "file": "src/actions/admin.ts", "params": ["orderId", "status"], "returns": "Promise", "confidence": "confirmed" },
+        { "name": "toggleReviewVisibilityAdmin", "file": "src/actions/admin.ts", "params": ["reviewId"], "returns": "Promise", "confidence": "confirmed" },
+        { "name": "POST/DELETE upload", "file": "src/app/api/admin/upload/route.ts", "params": ["req"], "returns": "NextResponse", "confidence": "confirmed" }
+      ],
+      "entities": [
+        { "name": "Product", "confidence": "confirmed" },
+        { "name": "Category", "confidence": "confirmed" },
+        { "name": "Brand", "confidence": "confirmed" },
+        { "name": "Order", "confidence": "confirmed" },
+        { "name": "Review", "confidence": "confirmed" },
+        { "name": "ProductImage", "confidence": "confirmed" }
+      ],
+      "business_rules": [
+        { "description": "Все admin-действия под requireAdmin()", "location": "src/actions/admin.ts:323", "confidence": "confirmed" },
+        { "description": "Content Factory: fetch CONTENT_FACTORY_API_URL (default 127.0.0.1:8028) + токен", "location": "src/actions/admin.ts:692", "confidence": "confirmed" },
+        { "description": "Upload: тип jpeg/png/webp/avif, ≤10МБ; DELETE local — защита path traversal", "location": "src/app/api/admin/upload/route.ts:35", "confidence": "confirmed" },
+        { "description": "Модерация отзывов: toggleReviewVisibility / delete", "location": "src/actions/admin.ts:1500", "confidence": "confirmed" }
+      ],
+      "dependencies": ["catalog", "product", "cart-checkout-orders", "search", "auth-account", "suppliers", "core-infra"],
+      "algorithms": ["Транзакционный upsert товара", "Bulk-операции", "Polling Content Factory runId"],
+      "complexity": "high",
+      "findings": [
+        { "id": "AD-1", "level": "confirmed", "text": "Единообразный RBAC requireAdmin везде" },
+        { "id": "AD-3", "level": "confirmed", "text": "Upload: валидация + защита path traversal" },
+        { "id": "AD-4", "level": "inferred", "text": "Content Factory default localhost:8028 (риск в проде)" },
+        { "id": "AD-5", "level": "inferred", "text": "Роль MANAGER не используется (только ADMIN)" },
+        { "id": "AD-6", "level": "inferred", "text": "admin.ts — god-файл ~1540 строк, 6 доменов" }
+      ]
+    },
+    {
+      "name": "suppliers",
+      "path": "src/actions/get-asko-products.ts, src/actions/analyze-products.ts",
+      "purpose": "Интеграция поставщиков (ASKO) — заявлена через SupplierInventory, но в runtime отсутствует; файлы — dev/маркетинг-скрипты",
+      "primary_files": [
+        "src/actions/get-asko-products.ts",
+        "src/actions/analyze-products.ts"
+      ],
+      "functions": [
+        { "name": "main (get-asko-products)", "file": "src/actions/get-asko-products.ts", "params": [], "returns": "void (tsx script, dead code после return)", "confidence": "confirmed" },
+        { "name": "(top-level analyze-products)", "file": "src/actions/analyze-products.ts", "params": [], "returns": "пишет scratch/groups_*", "confidence": "confirmed" }
+      ],
+      "entities": [
+        { "name": "SupplierInventory", "confidence": "confirmed" }
+      ],
+      "business_rules": [
+        { "description": "SupplierInventory наполняется внешне (скрипты C:\\робот), нет runtime-кода в репо", "location": "prisma/schema.prisma:445", "confidence": "inferred" },
+        { "description": "valueScore = clicks*basketWeight + impressions*0.005*basketWeight (Google Ads группировка)", "location": "src/actions/analyze-products.ts:67", "confidence": "confirmed" }
+      ],
+      "dependencies": ["core-infra"],
+      "algorithms": ["Категоризация товаров по ключевым словам (ads)", "valueScore-группировка в 25 групп ставок"],
+      "complexity": "low",
+      "findings": [
+        { "id": "SU-1", "level": "gap", "text": "SupplierInventory без runtime-кода (внешний синк)" },
+        { "id": "SU-2", "level": "gap", "text": "get-asko-products.ts — dev-скрипт с мёртвым кодом после return" },
+        { "id": "SU-3", "level": "inferred", "text": "analyze-products.ts — Google Ads скрипт с хардкод-путями в actions/" },
+        { "id": "SU-4", "level": "inferred", "text": "Dev-скрипты смешаны с 'use server' экшенами" }
+      ]
+    },
+    {
+      "name": "core-infra",
+      "path": "src/lib, src/i18n, src/config",
+      "purpose": "Инфраструктура: Prisma-клиент, валидация env, хранилище изображений, i18n, логирование, утилиты",
+      "primary_files": [
+        "src/lib/prisma.ts",
+        "src/lib/env.ts",
+        "src/lib/storage.ts",
+        "src/lib/images.ts",
+        "src/i18n/request.ts",
+        "src/lib/utils.ts",
+        "src/lib/logger.ts"
+      ],
+      "functions": [
+        { "name": "createPrismaClient (singleton)", "file": "src/lib/prisma.ts", "params": [], "returns": "PrismaClient", "confidence": "confirmed" },
+        { "name": "uploadProductImage", "file": "src/lib/storage.ts", "params": ["File|base64", "folder?"], "returns": "Promise<UploadedImageResult>", "confidence": "confirmed" },
+        { "name": "deleteProductImage", "file": "src/lib/storage.ts", "params": ["publicId", "provider", "url?"], "returns": "Promise<{success,error?}>", "confidence": "confirmed" },
+        { "name": "getRequestConfig", "file": "src/i18n/request.ts", "params": ["{requestLocale}"], "returns": "config (locale+messages)", "confidence": "confirmed" }
+      ],
+      "entities": [],
+      "business_rules": [
+        { "description": "Prisma singleton с adapter-pg (HMR-safe)", "location": "src/lib/prisma.ts:9", "confidence": "confirmed" },
+        { "description": "Zod-валидация env, throw в production при ошибке", "location": "src/lib/env.ts:65", "confidence": "confirmed" },
+        { "description": "Cloudinary all-or-nothing refine", "location": "src/lib/env.ts:51", "confidence": "confirmed" },
+        { "description": "Локальное хранилище только в dev; защита path traversal при удалении", "location": "src/lib/storage.ts:177", "confidence": "confirmed" },
+        { "description": "i18n: uk/ru, notFound на невалидной локали", "location": "src/i18n/request.ts:15", "confidence": "confirmed" }
+      ],
+      "dependencies": [],
+      "algorithms": ["Prisma singleton", "Zod env validation", "Cloudinary/local storage selection", "next-intl locale resolution"],
+      "complexity": "medium",
+      "findings": [
+        { "id": "CI-1", "level": "confirmed", "text": "Prisma singleton + adapter-pg корректно" },
+        { "id": "CI-2", "level": "confirmed", "text": "Zod env-валидация fail-fast в проде" },
+        { "id": "CI-3", "level": "inferred", "text": "ANTHROPIC_API_KEY/CONTENT_FACTORY_* не в env.ts (сырой process.env)" },
+        { "id": "CI-4", "level": "inferred", "text": ".env.example ↔ env.ts рассинхрон (Cloudinary/Anthropic)" },
+        { "id": "CI-5", "level": "confirmed", "text": "storage: запрет local в проде + защита path traversal" }
+      ]
+    }
+  ]
+}

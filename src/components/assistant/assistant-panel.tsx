@@ -9,6 +9,7 @@ import { AssistantDraftOrderPanel } from './assistant-draft-order';
 import { AssistantOrderComparisonPanel } from './assistant-order-comparison';
 import { calculateDraftOrder } from '@/lib/assistant/draft-order';
 import type { ChatMessage, AssistantState, RecommendedProduct, AssistantDraftOrder, AssistantOrderComparison } from '@/lib/assistant/types';
+import { EngineeringDraftSchema, getEngineeringPrompt } from '@/lib/assistant/prompts/engineering';
 
 interface Props {
   locale: string;
@@ -56,28 +57,9 @@ export function AssistantPanel({ locale, isFullPage = false, onClose }: Props) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const recognitionRef = useRef<any>(null);
 
-  // First greeting trigger
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      const greetingMsg = t('greeting');
+  // First greeting or query-param auto-run trigger
+  const initialPromptProcessed = useRef(false);
 
-      setMessages([
-        {
-          id: 'greeting_msg',
-          role: 'assistant',
-          content: greetingMsg,
-          structured: {
-            message: greetingMsg,
-            questions: [t('greetingQ1'), t('greetingQ2')],
-          },
-          createdAt: new Date().toISOString(),
-        },
-      ]);
-      setCharacterState('idle');
-    }, 1500);
-
-    return () => clearTimeout(timer);
-  }, [t]);
 
   // Scroll to bottom whenever messages or comparison changes
   useEffect(() => {
@@ -163,7 +145,7 @@ export function AssistantPanel({ locale, isFullPage = false, onClose }: Props) {
   };
 
   // Send request message to server endpoint
-  const handleSendMessage = async (text: string) => {
+  async function handleSendMessage(text: string) {
     if (!text.trim()) return;
 
     // Add user message
@@ -274,7 +256,68 @@ export function AssistantPanel({ locale, isFullPage = false, onClose }: Props) {
         }
       }, 700);
     }, 700);
-  };
+  }
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const params = new URLSearchParams(window.location.search);
+    const promptParam = params.get('prompt');
+    const scenario = params.get('scenario');
+
+    if (promptParam && !initialPromptProcessed.current) {
+      initialPromptProcessed.current = true;
+      // Skip the greeting and run the prompt immediately
+      setTimeout(() => {
+        handleSendMessage(promptParam);
+      }, 0);
+      return;
+    }
+
+    if (scenario === 'engineering' && !initialPromptProcessed.current) {
+      initialPromptProcessed.current = true;
+      const draftStr = sessionStorage.getItem('engineering_draft');
+      if (draftStr) {
+        try {
+          const parsedRaw = JSON.parse(draftStr);
+          const validation = EngineeringDraftSchema.safeParse(parsedRaw);
+          if (validation.success) {
+            const prompt = getEngineeringPrompt(validation.data, locale);
+            setTimeout(() => {
+              handleSendMessage(prompt);
+            }, 0);
+            return;
+          } else {
+            console.warn('Engineering draft failed schema validation:', validation.error);
+          }
+        } catch (e) {
+          console.error('Failed to parse engineering draft context', e);
+        }
+      }
+    }
+
+    if (!promptParam) {
+      const timer = setTimeout(() => {
+        const greetingMsg = t('greeting');
+
+        setMessages([
+          {
+            id: 'greeting_msg',
+            role: 'assistant',
+            content: greetingMsg,
+            structured: {
+              message: greetingMsg,
+              questions: [t('greetingQ1'), t('greetingQ2')],
+            },
+            createdAt: new Date().toISOString(),
+          },
+        ]);
+        setCharacterState('idle');
+      }, 1500);
+
+      return () => clearTimeout(timer);
+    }
+  }, [t, locale]);
 
   // Handle adding product from recommended cards
   const handleAddToSelection = (product: RecommendedProduct) => {
@@ -445,7 +488,7 @@ export function AssistantPanel({ locale, isFullPage = false, onClose }: Props) {
           <div>
             <h2 className="font-bold text-sm tracking-wide flex items-center gap-1.5">
               <Sparkles size={14} className="text-blue-400 fill-blue-400" />
-              Elektronom AI Assistant
+              Electronom AI Assistant
             </h2>
             <span className="text-[10px] text-emerald-400 font-mono block">
               ● {characterState === 'idle' ? t('ready') : characterState.toUpperCase()}

@@ -6,12 +6,13 @@ import { z } from 'zod'
 import { prisma } from '@/lib/prisma'
 import { logger } from '@/lib/logger'
 import { auth } from '@/lib/auth'
+import { sendOrderConfirmation } from '@/lib/email'
 
 const CreateOrderSchema = z.object({
   firstName: z.string().min(1),
   lastName: z.string().min(1),
   email: z.string().email(),
-  phone: z.string().min(10),
+  phone: z.string().regex(/^\+380\d{9}$/, 'Phone must be in format +380XXXXXXXXX'), // B-11: §14
   city: z.string().min(1),
   street: z.string().min(1),
   building: z.string().min(1),
@@ -139,8 +140,12 @@ export async function createOrder(data: z.infer<typeof CreateOrderSchema>, local
       }
     })
 
-    const shipping = 0 // Free shipping or static
-    const discount = 0
+    // B-7: TODO — replace with config-driven shipping fee (free above threshold, fixed tariff)
+    // See lib/config/shipping.ts once A-1 (payment) and discount/promo are implemented
+    const SHIPPING_FEE = 0 // Free shipping (all orders) — change when policy is defined
+    const DISCOUNT_AMOUNT = 0 // TODO: apply promo-code / coupon discount here
+    const shipping = SHIPPING_FEE
+    const discount = DISCOUNT_AMOUNT
     const total = subtotal + shipping - discount
 
     // Database transaction to write order and decrement stock
@@ -229,6 +234,21 @@ export async function createOrder(data: z.infer<typeof CreateOrderSchema>, local
       userId: session?.user?.id,
     })
 
+    // A-7: Send confirmation email fire-and-forget (failure must not abort order)
+    void sendOrderConfirmation({
+      orderNumber: newOrder.number,
+      customerName: `${parsed.data.firstName} ${parsed.data.lastName}`,
+      customerEmail: parsed.data.email,
+      locale: (locale === 'ru' ? 'ru' : 'uk'),
+      total: total,
+      items: itemsData.map((it) => ({
+        name: it.snapshot.name,
+        sku: it.snapshot.sku,
+        quantity: it.quantity,
+        price: Number(it.snapshot.price),
+      })),
+    })
+
     const cookieStore = await cookies()
     cookieStore.set('last_created_order', newOrder.number, {
       maxAge: 300, // 5 minutes
@@ -248,38 +268,4 @@ export async function createOrder(data: z.infer<typeof CreateOrderSchema>, local
   }
 }
 
-export async function getUserOrders() {
-  try {
-    const session = await auth()
-    if (!session?.user?.id) {
-      return { success: false, orders: [], error: 'Неавторизовано' }
-    }
 
-    const orders = await prisma.order.findMany({
-      where: { userId: session.user.id },
-      orderBy: { createdAt: 'desc' },
-      select: {
-        id: true,
-        number: true,
-        status: true,
-        paymentStatus: true,
-        paymentMethod: true,
-        total: true,
-        createdAt: true,
-        items: {
-          select: {
-            id: true,
-            quantity: true,
-            price: true,
-            snapshot: true,
-          },
-        },
-      },
-    })
-
-    return { success: true, orders }
-  } catch (error) {
-    console.error('[getUserOrders] Error:', error)
-    return { success: false, orders: [], error: 'Помилка завантаження замовлень' }
-  }
-}

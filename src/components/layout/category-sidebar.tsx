@@ -2,32 +2,12 @@
 
 import Link from 'next/link'
 import { useLocale, useTranslations } from 'next-intl'
-import {
-  Zap, Plug, Cable, Lightbulb, Power, Server,
-  Wrench, Gauge, Activity, Shield, Link2,
-  Square, Circle, ToggleRight, Repeat, Box,
-  House, Cpu, Bell, Video, Flame, Cog,
-  Droplet, Wind, Thermometer, TrendingUp,
-  BatteryCharging, Battery, ChevronRight,
-} from 'lucide-react'
-import { sidebarCategories } from '@/lib/constants'
+import { ChevronRight } from 'lucide-react'
 import type { Locale } from '@/types'
-import type { LucideIcon } from 'lucide-react'
 import type { CategoryTreeNode } from '@/queries/categories'
 import { getPopularForSlug, getPromoForSlug } from '@/config/catalog-mega-menu'
 import { useState } from 'react'
-
-const iconMap: Record<string, LucideIcon> = {
-  zap: Zap, plug: Plug, cable: Cable, lightbulb: Lightbulb,
-  power: Power, server: Server, wrench: Wrench,
-  drill: Wrench, gauge: Gauge, activity: Activity,
-  shield: Shield, 'link-2': Link2, square: Square,
-  circle: Circle, 'toggle-right': ToggleRight, repeat: Repeat,
-  box: Box, house: House, cpu: Cpu, bell: Bell, video: Video,
-  flame: Flame, cog: Cog, droplet: Droplet, wind: Wind,
-  thermometer: Thermometer, 'trending-up': TrendingUp,
-  'battery-charging': BatteryCharging, battery: Battery,
-}
+import CategoryIcon from '@/components/ui/category-icon'
 
 interface Props {
   categories?: CategoryTreeNode[]
@@ -41,20 +21,11 @@ export default function CategorySidebar({ categories = [] }: Props) {
 
   const [activeSlug, setActiveSlug] = useState<string | null>(null)
 
-  // Find the currently hovered category from the DB tree, or use a fallback
-  const dbCategory = activeSlug ? categories.find((c) => c.slug === activeSlug) : null
-  const sidebarInfo = activeSlug ? sidebarCategories.find(c => c.slug === activeSlug) : null
-  
-  const activeCategory = dbCategory || (activeSlug && sidebarInfo ? {
-    name: sidebarInfo.name[locale],
-    slug: activeSlug,
-    children: [
-      { name: locale === 'uk' ? 'Підкатегорія 1' : 'Подкатегория 1', slug: `${activeSlug}-sub1` },
-      { name: locale === 'uk' ? 'Підкатегорія 2' : 'Подкатегория 2', slug: `${activeSlug}-sub2` },
-      { name: locale === 'uk' ? 'Підкатегорія 3' : 'Подкатегория 3', slug: `${activeSlug}-sub3` },
-      { name: locale === 'uk' ? 'Підкатегорія 4' : 'Подкатегория 4', slug: `${activeSlug}-sub4` },
-    ]
-  } : null)
+  // Show root categories that have at least 1 product, sorted by count descending
+  const activeCats = categories.filter((c) => c.count > 0).sort((a, b) => b.count - a.count)
+
+  // Find the currently hovered category from the DB tree
+  const activeCategory = activeSlug ? activeCats.find((c) => c.slug === activeSlug) : null
 
   const popular = activeSlug ? getPopularForSlug(activeSlug, locale) : []
   const promo = activeSlug ? getPromoForSlug(activeSlug, locale) : null
@@ -85,8 +56,7 @@ export default function CategorySidebar({ categories = [] }: Props) {
         {/* Category list */}
         <nav className="sidebar-scroll max-h-[calc(100vh-200px)] overflow-y-auto">
           <ul className="py-1">
-            {sidebarCategories.map((cat) => {
-              const IconComp = iconMap[cat.icon] ?? Zap
+            {activeCats.map((cat) => {
               const isActive = activeSlug === cat.slug
               return (
                 <li
@@ -102,14 +72,9 @@ export default function CategorySidebar({ categories = [] }: Props) {
                         : 'text-text-primary dark:text-blue-400 hover:bg-slate-50 dark:hover:bg-blue-300'
                     ].join(' ')}
                   >
-                    <IconComp
-                      className={[
-                        'size-4 shrink-0 transition-colors',
-                        isActive
-                          ? 'text-accent dark:text-[#0a2a6b]'
-                          : 'text-text-muted group-hover:text-accent dark:text-blue-400 dark:group-hover:text-[#0a2a6b]'
-                      ].join(' ')}
-                      strokeWidth={1.5}
+                    <CategoryIcon
+                      slug={cat.slug}
+                      className="size-4 shrink-0 transition-transform duration-150 group-hover:scale-110"
                     />
                     <span
                       className={[
@@ -119,7 +84,7 @@ export default function CategorySidebar({ categories = [] }: Props) {
                           : 'text-text-primary group-hover:text-accent dark:text-blue-400 dark:group-hover:text-[#0a2a6b]'
                       ].join(' ')}
                     >
-                      {cat.name[locale]}
+                      {cat.name}
                     </span>
                     <span
                       className={[
@@ -162,17 +127,46 @@ export default function CategorySidebar({ categories = [] }: Props) {
               {activeCategory.name}
             </Link>
             {activeCategory.children.length > 0 ? (
-              <div className="grid grid-cols-2 gap-x-6 gap-y-2">
-                {activeCategory.children.map((child) => (
-                  <Link
-                    key={child.slug}
-                    href={lp(`/catalog/${child.slug}`)}
-                    className="flex items-center gap-1.5 py-1 text-[13px] text-text-primary hover:text-accent transition-colors group"
-                  >
-                    <ChevronRight className="size-3 shrink-0 text-border-strong group-hover:text-accent transition-colors" strokeWidth={2} />
-                    {child.name}
-                  </Link>
-                ))}
+              <div className="grid grid-cols-2 gap-x-6 gap-y-4">
+                {activeCategory.children
+                  .filter((child) => child.count > 0)
+                  .sort((a, b) => b.count - a.count)
+                  .map((child) => {
+                    const grandChildren = child.children
+                      ? child.children.filter((gc) => gc.count > 0).sort((a, b) => b.count - a.count)
+                      : []
+                    return (
+                      <div key={child.slug} className="flex flex-col gap-1.5">
+                        <Link
+                          href={lp(`/catalog/${child.slug}`)}
+                          className="flex items-center gap-1 text-[13px] font-bold text-text-primary hover:text-accent transition-colors group/sub"
+                        >
+                          <ChevronRight className="size-3 shrink-0 text-border-strong group-hover/sub:text-accent transition-colors" strokeWidth={2.5} />
+                          <span>{child.name}</span>
+                          <span className="text-[10px] text-text-muted font-normal ml-0.5" style={{ fontVariantNumeric: 'tabular-nums' }}>
+                            ({child.count})
+                          </span>
+                        </Link>
+                        {grandChildren.length > 0 && (
+                          <div className="flex flex-col gap-1 pl-4 mt-0.5 border-l border-slate-100 dark:border-slate-800">
+                            {grandChildren.map((gc) => (
+                              <Link
+                                key={gc.slug}
+                                href={lp(`/catalog/${gc.slug}`)}
+                                className="text-[11px] text-text-muted hover:text-accent transition-colors flex items-center gap-1 group/gc"
+                              >
+                                <span className="text-slate-300 dark:text-slate-700 select-none">└─</span>
+                                <span>{gc.name}</span>
+                                <span className="text-[9px] text-slate-400 dark:text-slate-500 font-normal ml-0.5" style={{ fontVariantNumeric: 'tabular-nums' }}>
+                                  ({gc.count})
+                                </span>
+                              </Link>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    )
+                  })}
               </div>
             ) : (
               <p className="text-sm text-text-muted">{tMenu('noSubcategories')}</p>

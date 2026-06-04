@@ -39,6 +39,40 @@ const nextConfig: NextConfig = {
   },
 
   typedRoutes: true,
+
+  async redirects() {
+    const targets = [
+      { from: 'power-bank', to: 'poverbanky' },
+      { from: 'heneratory-1', to: 'heneratory' },
+      { from: 'tepla-pidloha-zubr-dc', to: 'tepla-pidloha' },
+      { from: 'kabeli-i-roz-yemy', to: 'kabeli-droty' },
+      { from: 'elektrika', to: 'elektryka' },
+      { from: 'osvitlennya-led', to: 'led-osvitlennya' },
+      { from: 'kabel-ta-provid', to: 'kabeli-droty' },
+      { from: 'rozetky-ta-vymykachi', to: 'elektroustanovochni-vyroby' },
+      { from: 'rozumnyy-dim', to: 'rozumnyy-budynok' },
+    ]
+
+    const redirectsList = []
+    for (const t of targets) {
+      redirectsList.push({
+        source: `/ru/catalog/${t.from}`,
+        destination: `/ru/catalog/${t.to}`,
+        permanent: true,
+      })
+      redirectsList.push({
+        source: `/uk/catalog/${t.from}`,
+        destination: `/uk/catalog/${t.to}`,
+        permanent: true,
+      })
+      redirectsList.push({
+        source: `/catalog/${t.from}`,
+        destination: `/catalog/${t.to}`,
+        permanent: true,
+      })
+    }
+    return redirectsList
+  },
 }
 
 export default withNextIntl(nextConfig)

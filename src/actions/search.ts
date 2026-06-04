@@ -3,6 +3,7 @@
 import { prisma } from '@/lib/prisma'
 import { getAlgoliaAdminClient, getAlgoliaSearchClient } from '@/lib/algolia'
 import { searchProductsFallback } from '@/queries/search'
+import type { Locale } from '@/types'
 
 export interface SearchResultProduct {
   objectID: string
@@ -18,6 +19,8 @@ export interface SearchResultProduct {
   brandName: string | null
   image: string | null
   locale: string
+  gtin?: string | null
+  mpn?: string | null
 }
 
 /**
@@ -40,9 +43,12 @@ export async function searchProducts(query: string, locale: string): Promise<{ s
           comparePrice: product.comparePrice ? Number(product.comparePrice) : null,
           inStock: product.stock > 0,
           categorySlug: product.category.slug,
-          categoryName: product.category.slug,
+          // B-2: use translated name (matches Algolia record) not the slug
+          categoryName: product.category.translations.find((t) => t.locale === (locale as Locale))?.name
+            ?? product.category.translations[0]?.name
+            ?? product.category.slug,
           brandName: product.brand?.name ?? null,
-          image: product.images[0]?.url ?? null,
+          image: product.images[0]?.processedUrl || product.images[0]?.url || null,
           locale,
         })),
       }
@@ -90,9 +96,12 @@ export async function searchProducts(query: string, locale: string): Promise<{ s
           comparePrice: product.comparePrice ? Number(product.comparePrice) : null,
           inStock: product.stock > 0,
           categorySlug: product.category.slug,
-          categoryName: product.category.slug,
+          // B-2: use translated name (matches Algolia record) not the slug
+          categoryName: product.category.translations.find((t) => t.locale === (locale as Locale))?.name
+            ?? product.category.translations[0]?.name
+            ?? product.category.slug,
           brandName: product.brand?.name ?? null,
-          image: product.images[0]?.url ?? null,
+          image: product.images[0]?.processedUrl || product.images[0]?.url || null,
           locale,
         })),
       }
@@ -122,13 +131,15 @@ export async function syncProductIndex(productId: string): Promise<{ success: bo
         comparePrice: true,
         stock: true,
         isActive: true,
+        gtin: true,
+        mpn: true,
         translations: {
           select: { locale: true, name: true, description: true }
         },
         images: {
           orderBy: { sortOrder: 'asc' },
           take: 1,
-          select: { url: true }
+          select: { url: true, processedUrl: true }
         },
         category: {
           select: {
@@ -177,8 +188,10 @@ export async function syncProductIndex(productId: string): Promise<{ success: bo
         categorySlug: product.category.slug,
         categoryName: categoryTrans?.name ?? '',
         brandName: product.brand?.name ?? null,
-        image: product.images[0]?.url ?? null,
+        image: product.images[0]?.processedUrl || product.images[0]?.url || null,
         locale,
+        gtin: product.gtin,
+        mpn: product.mpn,
       }
 
       await client.saveObjects({

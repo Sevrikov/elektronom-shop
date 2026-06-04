@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useRouter, usePathname } from 'next/navigation'
 import {
   Heart, User,
@@ -27,6 +28,7 @@ export default function Header({ workload = 0 }: Props) {
   const t = useTranslations('header')
   const router = useRouter()
   const pathname = usePathname()
+  const isHome = pathname === `/${locale}` || pathname === `/${locale}/` || pathname === '/'
   const headerRef = useRef<HTMLElement>(null)
 
   const otherLocale: Locale = locale === 'uk' ? 'ru' : 'uk'
@@ -66,16 +68,6 @@ export default function Header({ workload = 0 }: Props) {
   function lp(path: string): never {
     return `/${locale}${path}` as never
   }
-
-  const navItems = [
-    { key: 'electric', href: '/catalog/elektrika' },
-    { key: 'tools', href: '/catalog/instrumenty' },
-    { key: 'lighting', href: '/catalog/osvitlennya-led' },
-    { key: 'cable', href: '/catalog/kabel-ta-provid' },
-    { key: 'sockets', href: '/catalog/rozetky-ta-vymykachi' },
-    { key: 'automation', href: '/catalog/avtomatyka' },
-    { key: 'smartHome', href: '/catalog/rozumnyy-dim' },
-  ] as const
 
   return (
     <>
@@ -125,8 +117,10 @@ export default function Header({ workload = 0 }: Props) {
             className="h-9 mx-auto max-w-[1280px] px-4 lg:px-6 flex items-center justify-between text-xs"
             style={{ color: 'var(--color-text-muted)' }}
           >
-            <div className="hidden sm:flex items-center gap-4">
-              {/* Email removed from left side to make room, or can just leave empty if user prefers */}
+            <div className="hidden sm:flex items-center">
+              <a href={`mailto:${contactInfo.email}`} className="hover:text-text-primary transition-colors font-semibold text-[11px] sm:text-xs">
+                {contactInfo.email}
+              </a>
             </div>
             <div className="flex items-center gap-3 ml-auto">
               <button
@@ -160,17 +154,37 @@ export default function Header({ workload = 0 }: Props) {
             {/* Logo */}
             <Link
               href={lp('/')}
-              className="flex items-center shrink-0 group"
+              className="flex items-center shrink-0 group relative overflow-hidden w-36 h-12 sm:w-[180px] sm:h-[64px] rounded-lg"
               id="header-logo"
               aria-label={locale === 'uk' ? 'Electronom — головна' : 'Electronom — главная'}
             >
               {/* Full Logo (Desktop & Mobile) */}
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={isDark ? "/logo/electronom-dark.png" : "/logo/electronom.svg"}
-                alt="Electronom"
-                className="h-12 sm:h-[64px] w-auto select-none"
-              />
+              {isHome ? (
+                // Главная: анимированное видео, но с постером и без авто-предзагрузки
+                <video
+                  key={isDark ? 'dark' : 'light'}
+                  src={isDark ? "/logo/electronom-dark-60fps.webm" : "/logo/electronom-light-60fps.webm"}
+                  poster={isDark ? "/logo/electronom-dark.webp" : "/logo/electronom-light.webp"}
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  preload="none"
+                  className="w-full h-full select-none"
+                  style={{ objectFit: 'contain' }}
+                />
+              ) : (
+                // Остальные страницы: лёгкая статика по теме
+                <Image
+                  src={isDark ? "/logo/electronom-dark.webp" : "/logo/electronom-light.webp"}
+                  alt="Electronom"
+                  width={isDark ? 296 : 295}
+                  height={isDark ? 119 : 117}
+                  priority
+                  sizes="180px"
+                  className="w-full h-full object-contain select-none"
+                />
+              )}
             </Link>
 
             {/* Contact info (moved from topbar) */}
@@ -220,8 +234,8 @@ export default function Header({ workload = 0 }: Props) {
                   </div>
                   {/* Text on top */}
                   <span 
-                    className="relative z-10 w-full text-center text-[9px] font-bold uppercase tracking-widest text-white px-2"
-                    style={{ textShadow: '0px 1px 2px rgba(0,0,0,0.8)' }}
+                    className="relative z-10 w-full text-center text-[9px] font-extrabold uppercase tracking-widest text-slate-600 dark:text-white px-2"
+                    style={{ textShadow: isDark ? '0px 1px 2px rgba(0,0,0,0.8)' : 'none' }}
                   >
                     {locale === 'uk' ? 'Завантаженість' : 'Загруженность'}: {workload}%
                   </span>
@@ -270,36 +284,63 @@ export default function Header({ workload = 0 }: Props) {
           style={{ background: 'var(--color-surface-white)', borderColor: 'var(--color-border)' }}
         >
           <nav
-            className="hidden lg:flex h-12 mx-auto max-w-[1280px] px-4 lg:px-6 items-center gap-6"
+            className="hidden lg:flex h-12 mx-auto max-w-[1280px] px-4 lg:px-6 items-center gap-5 justify-between"
           >
             {/* Catalog toggle button -> Now a Link */}
             <Link
               id="nav-catalog"
               href={lp('/catalog')}
-              className="inline-flex items-center gap-2 h-8 px-3.5 rounded-md text-[13px] font-semibold text-white transition-colors cursor-pointer bg-accent hover:bg-[#4F8EF7]"
+              className="inline-flex items-center gap-2 h-8 px-3.5 rounded-md text-[13px] font-semibold text-white transition-colors cursor-pointer bg-accent hover:bg-[#4F8EF7] shrink-0"
             >
               <LayoutGrid className="size-3.5" strokeWidth={2} />
               {t('catalog')}
             </Link>
 
-            <div className="flex items-center gap-5 flex-1">
-              {navItems.map((item) => (
-                <Link
-                  key={item.key}
-                  href={lp(item.href)}
-                  className="text-sm font-medium py-2 transition-colors text-text-primary hover:text-accent"
-                >
-                  {t(`nav.${item.key}`)}
-                </Link>
-              ))}
-              <Link
-                href={lp('/promotions')}
-                className="ml-auto inline-flex items-center gap-1.5 text-sm font-semibold transition-colors text-accent hover:text-accent-hover"
-              >
-                <Tag className="size-3.5" strokeWidth={1.5} />
-                {t('nav.specials')}
+            {/* Middle Nav Links (Scrollable on small desktops) */}
+            <div className="flex items-center gap-3.5 xl:gap-5 overflow-x-auto no-scrollbar whitespace-nowrap py-1">
+              <Link href={lp('/about')} className="text-[13px] font-medium py-2 transition-colors text-text-primary hover:text-accent">
+                {locale === 'uk' ? 'Про магазин' : 'О магазине'}
+              </Link>
+              <Link href={lp('/delivery')} className="text-[13px] font-medium py-2 transition-colors text-text-primary hover:text-accent">
+                {locale === 'uk' ? 'Доставка' : 'Доставка'}
+              </Link>
+              <Link href={lp('/payment')} className="text-[13px] font-medium py-2 transition-colors text-text-primary hover:text-accent">
+                {locale === 'uk' ? 'Оплата' : 'Оплата'}
+              </Link>
+              <Link href={lp('/warranty')} className="text-[13px] font-medium py-2 transition-colors text-text-primary hover:text-accent">
+                {locale === 'uk' ? 'Гарантія' : 'Гарантия'}
+              </Link>
+              <Link href={lp('/returns')} className="text-[13px] font-medium py-2 transition-colors text-text-primary hover:text-accent">
+                {locale === 'uk' ? 'Повернення' : 'Возврат'}
+              </Link>
+              <Link href={lp('/contacts')} className="text-[13px] font-medium py-2 transition-colors text-text-primary hover:text-accent">
+                {locale === 'uk' ? 'Контакти' : 'Контакты'}
+              </Link>
+              <Link href={lp('/reviews')} className="text-[13px] font-medium py-2 transition-colors text-text-primary hover:text-accent">
+                {locale === 'uk' ? 'Відгуки' : 'Отзывы'}
+              </Link>
+              <Link href={lp('/brands')} className="text-[13px] font-medium py-2 transition-colors text-text-primary hover:text-accent">
+                {locale === 'uk' ? 'Виробники' : 'Производители'}
+              </Link>
+              <Link href={lp('/blog')} className="text-[13px] font-semibold py-2 transition-colors text-accent hover:text-accent-hover">
+                {locale === 'uk' ? 'Блог' : 'Блог'}
+              </Link>
+              <Link href={lp('/calculators')} className="text-[13px] font-medium py-2 transition-colors text-text-primary hover:text-accent">
+                {locale === 'uk' ? 'Калькулятори' : 'Калькуляторы'}
               </Link>
             </div>
+
+            {/* Promotions Link on the right */}
+            <Link
+              href={lp('/promotions')}
+              className="inline-flex items-center gap-1.5 text-[13px] font-semibold transition-colors text-accent hover:text-accent-hover shrink-0 ml-auto"
+            >
+              <Tag className="size-3.5" strokeWidth={1.5} />
+              <span>{locale === 'uk' ? 'Спецпропозиції та акції' : 'Спецпредложения и акции'}</span>
+              <span className="bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full leading-none">
+                2
+              </span>
+            </Link>
           </nav>
         </div>
       </header>

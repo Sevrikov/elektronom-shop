@@ -4,7 +4,6 @@
 // Элемент корзины: фото, название, qty stepper, delete
 // MASTER_CONTEXT v1.2 §2.11
 
-import Image from 'next/image'
 import Link from 'next/link'
 import { Minus, Plus, Trash2, Loader2 } from 'lucide-react'
 import { useState, useTransition } from 'react'

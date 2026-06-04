@@ -1,19 +1,20 @@
 'use client'
 
 import { useState, useTransition, useCallback } from 'react'
+import Image from 'next/image'
 import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 import { useTranslations, useLocale } from 'next-intl'
 import { Search, Check } from 'lucide-react'
-import type { FilterDefinition, ActiveFilters as ActiveFiltersType, Locale } from '@/types'
+import type { FilterDefinition, ActiveFilters as ActiveFiltersType, Locale, BrandFacetItem, AttributeFacetItem } from '@/types'
 import FilterSection from './filter-section'
 import PriceRangeFilter from './price-range-filter'
 
 interface CatalogFiltersProps {
   filters: FilterDefinition[]
   activeFilters: ActiveFiltersType
-  brandCounts: { brand: string; count: number }[]
-  priceRange: { min: number; max: number }
-  attributeCounts: Record<string, { value: string; count: number }[]>
+  brandCounts: BrandFacetItem[]
+  priceRange: { min: number; max: number; availableMin?: number; availableMax?: number; buckets?: number[] | undefined }
+  attributeCounts: Record<string, AttributeFacetItem[]>
 }
 
 export default function CatalogFilters({
@@ -67,34 +68,30 @@ export default function CatalogFilters({
 
   return (
     <div
-      className="rounded-lg overflow-hidden"
-      style={{
-        border: '1px solid var(--color-border)',
-        background: '#fff',
-        opacity: isPending ? 0.6 : 1,
-        transition: 'opacity 200ms',
-      }}
+      className={[
+        'border border-border bg-surface-white rounded-lg overflow-hidden transition-opacity duration-200',
+        isPending ? 'opacity-60' : 'opacity-100',
+      ].join(' ')}
     >
       {/* In stock toggle */}
       <div
-        className="px-4 py-3 flex items-center justify-between cursor-pointer transition-colors hover:bg-[var(--color-surface-alt)]"
-        style={{ borderBottom: '1px solid var(--color-border)' }}
+        className="px-4 py-3 flex items-center justify-between cursor-pointer transition-colors hover:bg-surface-alt border-b border-border"
         onClick={() => applyFilter('inStock', !activeFilters.inStock)}
       >
-        <span className="text-[13px] font-semibold" style={{ color: 'var(--color-text-primary)' }}>
+        <span className="text-[13px] font-semibold text-text-primary">
           {t('inStock')}
         </span>
         <div
-          className="w-9 h-5 rounded-full relative transition-colors cursor-pointer"
-          style={{
-            background: activeFilters.inStock ? 'var(--color-accent)' : 'var(--color-border)',
-          }}
+          className={[
+            'w-9 h-5 rounded-full relative transition-colors cursor-pointer',
+            activeFilters.inStock ? 'bg-accent' : 'bg-border',
+          ].join(' ')}
         >
           <div
-            className="absolute top-0.5 size-4 rounded-full bg-white shadow-sm transition-transform"
-            style={{
-              transform: activeFilters.inStock ? 'translateX(18px)' : 'translateX(2px)',
-            }}
+            className={[
+              'absolute top-0.5 size-4 rounded-full bg-white shadow-sm transition-transform',
+              activeFilters.inStock ? 'translate-x-[18px]' : 'translate-x-[2px]',
+            ].join(' ')}
           />
         </div>
       </div>
@@ -108,10 +105,14 @@ export default function CatalogFilters({
               title={filter.label[locale]}
             >
               <PriceRangeFilter
+                key={`${priceRange.min}-${priceRange.max}-${activeFilters.priceMin ?? ''}-${activeFilters.priceMax ?? ''}`}
                 min={priceRange.min}
                 max={priceRange.max}
+                availableMin={priceRange.availableMin}
+                availableMax={priceRange.availableMax}
                 currentMin={activeFilters.priceMin as number | undefined}
                 currentMax={activeFilters.priceMax as number | undefined}
+                buckets={priceRange.buckets}
                 onChange={(min, max) => {
                   const params = new URLSearchParams(searchParams.toString())
                   if (min > priceRange.min) {
@@ -140,7 +141,14 @@ export default function CatalogFilters({
             <CheckboxFilter
               key={filter.key}
               title={filter.label[locale]}
-              items={brandCounts.map(b => ({ value: b.brand, label: b.brand, count: b.count }))}
+              items={brandCounts.map(b => ({
+                value: b.brand,
+                label: b.label ?? b.brand,
+                count: b.count,
+                disabled: b.disabled,
+                selected: b.selected,
+                logo: b.logo,
+              }))}
               selected={(activeFilters.brand as string[] | undefined) ?? []}
               searchable={filter.searchable ?? false}
               onToggle={(value) => toggleArrayFilter('brand', value)}
@@ -154,12 +162,23 @@ export default function CatalogFilters({
         if (filter.type === 'checkbox') {
           const counts = attributeCounts[filter.key] ?? []
           const items = filter.options
-            ? filter.options.map(opt => ({
-                value: opt,
-                label: opt,
-                count: counts.find(c => c.value === opt)?.count ?? 0,
+            ? filter.options.map(opt => {
+                const c = counts.find(item => item.value === opt)
+                return {
+                  value: opt,
+                  label: opt,
+                  count: c?.count ?? 0,
+                  disabled: c?.disabled,
+                  selected: c?.selected,
+                }
+              })
+            : counts.map(c => ({
+                value: c.value,
+                label: c.value,
+                count: c.count,
+                disabled: c.disabled,
+                selected: c.selected,
               }))
-            : counts.map(c => ({ value: c.value, label: c.value, count: c.count }))
 
           return (
             <CheckboxFilter
@@ -189,18 +208,27 @@ export default function CatalogFilters({
             >
               <div className="flex flex-wrap gap-1.5">
                 {options.map((opt) => {
+                  const c = counts.find(item => item.value === opt)
                   const isActive = selected.includes(opt)
-                  const count = counts.find(c => c.value === opt)?.count
+                  const count = c?.count ?? 0
+                  const isDisabled = c?.disabled ?? (count === 0 && !isActive)
+
                   return (
                     <button
                       key={opt}
-                      onClick={() => toggleArrayFilter(filter.key, opt)}
-                      className="px-3 py-1.5 rounded-md text-[12px] font-medium cursor-pointer transition-all"
-                      style={{
-                        background: isActive ? 'var(--color-accent)' : 'var(--color-surface-alt)',
-                        color: isActive ? '#fff' : 'var(--color-text-primary)',
-                        border: isActive ? '1px solid var(--color-accent)' : '1px solid var(--color-border)',
-                      }}
+                      disabled={isDisabled}
+                      onClick={() => !isDisabled && toggleArrayFilter(filter.key, opt)}
+                      title={isDisabled ? (locale === 'uk' ? 'Недоступно при поточних фільтрах' : 'Недоступно при текущих фильтрах') : undefined}
+                      className={[
+                        'px-3 py-1.5 rounded-md text-[12px] font-medium transition-all border',
+                        isActive
+                          ? isDisabled
+                            ? 'bg-text-muted/50 text-white/70 border-text-muted/50 cursor-not-allowed opacity-50'
+                            : 'bg-accent text-white border-accent cursor-pointer'
+                          : isDisabled
+                            ? 'bg-transparent text-text-muted border-border-strong opacity-40 cursor-not-allowed'
+                            : 'bg-surface-alt text-text-primary border-border hover:border-accent hover:text-accent cursor-pointer',
+                      ].join(' ')}
                     >
                       {opt}{filter.unit ? ` ${filter.unit}` : ''}{count !== undefined ? ` (${count})` : ''}
                     </button>
@@ -223,6 +251,9 @@ interface CheckboxFilterItem {
   value: string
   label: string
   count: number
+  disabled?: boolean | undefined
+  selected?: boolean | undefined
+  logo?: string | null | undefined
 }
 
 interface CheckboxFilterProps {
@@ -248,6 +279,7 @@ function CheckboxFilter({
 }: CheckboxFilterProps) {
   const [search, setSearch] = useState('')
   const [expanded, setExpanded] = useState(false)
+  const locale = useLocale() as Locale
   const VISIBLE_COUNT = 8
 
   const filtered = search
@@ -263,21 +295,15 @@ function CheckboxFilter({
       {searchable && items.length > VISIBLE_COUNT && (
         <div className="relative mb-2">
           <Search
-            className="absolute left-2.5 top-1/2 -translate-y-1/2 size-3.5"
+            className="absolute left-2.5 top-1/2 -translate-y-1/2 size-3.5 text-text-muted"
             strokeWidth={1.5}
-            style={{ color: 'var(--color-text-muted)' }}
           />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder={searchPlaceholder}
-            className="w-full h-8 pl-8 pr-3 rounded-md text-[12px] outline-none transition-colors"
-            style={{
-              border: '1px solid var(--color-border)',
-              background: 'var(--color-surface-alt)',
-              color: 'var(--color-text-primary)',
-            }}
+            className="w-full h-8 pl-8 pr-3 rounded-md text-[12px] outline-none transition-colors border border-border bg-surface-alt text-text-primary"
           />
         </div>
       )}
@@ -286,17 +312,27 @@ function CheckboxFilter({
       <div className="flex flex-col gap-0.5">
         {visible.map((item) => {
           const isChecked = selected.includes(item.value)
+          const isDisabled = item.disabled ?? (item.count === 0 && !isChecked)
           return (
             <label
               key={item.value}
-              className="flex items-center gap-2.5 py-1 cursor-pointer group"
+              title={isDisabled ? (locale === 'uk' ? 'Недоступно при поточних фільтрах' : 'Недоступно при текущих фильтрах') : undefined}
+              className={[
+                'flex items-center gap-2.5 py-1 transition-colors',
+                isDisabled
+                  ? 'cursor-not-allowed text-text-muted opacity-50'
+                  : 'cursor-pointer group text-text-primary',
+              ].join(' ')}
             >
               <div
-                className="size-4 rounded shrink-0 flex items-center justify-center transition-colors"
-                style={{
-                  border: isChecked ? 'none' : '1.5px solid var(--color-border-strong)',
-                  background: isChecked ? 'var(--color-accent)' : 'transparent',
-                }}
+                className={[
+                  'size-4 rounded shrink-0 flex items-center justify-center transition-colors border',
+                  isChecked
+                    ? isDisabled
+                      ? 'bg-text-muted border-text-muted'
+                      : 'bg-accent border-accent'
+                    : 'border-border-strong bg-transparent',
+                ].join(' ')}
               >
                 {isChecked && <Check className="size-3 text-white" strokeWidth={2.5} />}
               </div>
@@ -304,15 +340,43 @@ function CheckboxFilter({
                 type="checkbox"
                 className="sr-only"
                 checked={isChecked}
-                onChange={() => onToggle(item.value)}
+                disabled={isDisabled}
+                onChange={() => !isDisabled && onToggle(item.value)}
               />
-              <span
-                className="flex-1 text-[12px] group-hover:text-[var(--color-accent)] transition-colors"
-                style={{ color: 'var(--color-text-primary)' }}
-              >
+
+              {/* Brand Logo / Fallback */}
+              {item.logo !== undefined && (
+                <div
+                  className={[
+                    'size-[18px] rounded flex items-center justify-center text-[10px] font-bold select-none overflow-hidden shrink-0 border transition-all',
+                    isChecked
+                      ? 'bg-accent/10 border-accent/30 text-accent font-extrabold'
+                      : 'bg-surface-alt border-border text-text-muted',
+                    isDisabled ? 'opacity-40 grayscale' : '',
+                  ].join(' ')}
+                >
+                  {item.logo ? (
+                    <Image
+                      src={item.logo}
+                      alt={item.label}
+                      width={18}
+                      height={18}
+                      className="size-full object-contain"
+                      unoptimized
+                    />
+                  ) : (
+                    <span>{item.label.charAt(0).toUpperCase()}</span>
+                  )}
+                </div>
+              )}
+
+              <span className={[
+                'flex-1 text-[12px] transition-colors',
+                isDisabled ? '' : 'group-hover:text-accent'
+              ].join(' ')}>
                 {item.label}
               </span>
-              <span className="text-[11px]" style={{ color: 'var(--color-text-muted)' }}>
+              <span className="text-[11px] text-text-muted">
                 ({item.count})
               </span>
             </label>
@@ -324,8 +388,7 @@ function CheckboxFilter({
       {hasMore && !search && (
         <button
           onClick={() => setExpanded(!expanded)}
-          className="mt-2 text-[12px] font-medium cursor-pointer transition-colors hover:underline"
-          style={{ color: 'var(--color-accent)' }}
+          className="mt-2 text-[12px] font-medium cursor-pointer transition-colors hover:underline text-accent"
         >
           {expanded ? showLessText : `${showMoreText} (${filtered.length - VISIBLE_COUNT})`}
         </button>

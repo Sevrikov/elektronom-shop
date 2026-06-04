@@ -1,5 +1,7 @@
 import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
+import { env } from '@/lib/env';
+import type { Prisma } from '@/generated/prisma/client';
 import { ASSISTANT_SYSTEM_PROMPT } from './prompts';
 import { calculateDraftOrder, buildComparison } from './draft-order';
 import type {
@@ -49,8 +51,7 @@ const ModelResponseSchema = z.object({
 });
 
 // Helper to extract JSON from Claude's response (supporting markdown backticks, raw JSON, and leading/trailing noise)
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function extractAndParseJson(text: string): any {
+function extractAndParseJson(text: string): Record<string, unknown> | null {
   if (!text) return null;
   let cleanText = text.trim();
 
@@ -62,14 +63,21 @@ function extractAndParseJson(text: string): any {
   }
 
   try {
-    return JSON.parse(cleanText);
+    const result: unknown = JSON.parse(cleanText);
+    if (typeof result === 'object' && result !== null && !Array.isArray(result)) {
+      return result as Record<string, unknown>;
+    }
+    return null;
   } catch (e) {
     console.error('Failed to parse clean text as JSON, trying boundary fallback:', e);
     const firstBrace = cleanText.indexOf('{');
     const lastBrace = cleanText.lastIndexOf('}');
     if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
       try {
-        return JSON.parse(cleanText.substring(firstBrace, lastBrace + 1));
+        const result: unknown = JSON.parse(cleanText.substring(firstBrace, lastBrace + 1));
+        if (typeof result === 'object' && result !== null && !Array.isArray(result)) {
+          return result as Record<string, unknown>;
+        }
       } catch (err) {
         console.error('Failed fallback JSON parsing:', err);
       }
@@ -83,7 +91,7 @@ export async function queryAssistant(
   history: { role: 'user' | 'assistant'; content: string }[],
   locale: string
 ): Promise<AssistantResponse> {
-  const apiKey = process.env.ANTHROPIC_API_KEY;
+  const apiKey = env.ANTHROPIC_API_KEY;
 
   // 1. Fetch real products from Prisma database to use for recommendations and draft orders
   // Smart keyword matching from user query
@@ -92,8 +100,8 @@ export async function queryAssistant(
     .split(/\s+/)
     .filter((k) => k.length > 2);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let searchConditions: any[] = [];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Prisma OR conditions require dynamic structure
+  let searchConditions: Prisma.ProductWhereInput[] = [];
   if (keywords.length > 0) {
     searchConditions = keywords.map((kw) => ({
       OR: [
@@ -285,7 +293,7 @@ export async function queryAssistant(
 
           const sources: AssistantSource[] = [
             {
-              title: '[MVP Prototype] Локальна база технічної документації Elektronom',
+              title: '[MVP Prototype] Локальна база технічної документації Electronom',
               type: 'datasheet',
               snippet: 'Синхронізовані специфікації, інструкції виробника та правила сумісності обладнання.',
             },
@@ -430,8 +438,8 @@ export async function queryAssistant(
     recommended = availableProducts.slice(0, 3);
     responseMessage =
       locale === 'uk'
-        ? `[Демо-режим] Вітаю! Я технічний асистент магазину Elektronom (демо-версія). Чим можу допомогти вам сьогодні? Я вмію розраховувати системи безперебійного живлення, вибирати автоматику, кабелі та сумісні акумулятори.`
-        : `[Демо-режим] Приветствую! Я технический ассистент магазина Elektronom (демо-версия). Чем могу помочь вам сегодня? Я умею рассчитывать системы бесперебойного питания, выбирать автоматику, кабели и совместимые аккумуляторы.`;
+        ? `[Демо-режим] Вітаю! Я технічний асистент магазину Electronom (демо-версія). Чим можу допомогти вам сьогодні? Я вмію розраховувати системи безперебійного живлення, вибирати автоматику, кабелі та сумісні акумулятори.`
+        : `[Демо-режим] Приветствую! Я технический ассистент магазина Electronom (демо-версия). Чем могу помочь вам сегодня? Я умею рассчитывать системы бесперебойного питания, выбирать автоматику, кабели и совместимые аккумуляторы.`;
   }
 
   // Pre-fill a draft order in the response when recommending products to showcase the Live Draft Order Panel

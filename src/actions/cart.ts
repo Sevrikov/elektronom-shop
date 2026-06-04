@@ -18,6 +18,13 @@ const AddToCartSchema = z.object({
   quantity: z.number().int().min(1).max(99),
 })
 
+const AddMultipleToCartSchema = z.array(
+  z.object({
+    productId: z.string().min(1),
+    quantity: z.number().int().min(1).max(999),
+  })
+).max(120)
+
 const RemoveFromCartSchema = z.object({
   productId: z.string().min(1),
 })
@@ -26,6 +33,7 @@ const UpdateQtySchema = z.object({
   productId: z.string().min(1),
   quantity: z.number().int().min(0).max(99),
 })
+
 
 // ─── Типы ─────────────────────────────────────────────────────────────────────
 
@@ -341,6 +349,144 @@ export async function addToCart(
     return { success: false, error: 'Помилка сервера' }
   }
 }
+
+// ─── addMultipleToCart ────────────────────────────────────────────────────────
+
+export async function addMultipleToCart(
+  itemsInput: unknown
+): Promise<{
+  success: boolean
+  addedCount: number
+  skippedItems: {
+    productId: string
+    reason: 'not_found' | 'insufficient_stock'
+    requested: number
+    available?: number
+    sku?: string
+    name?: string
+  }[]
+  error?: string
+}> {
+  const parsed = AddMultipleToCartSchema.safeParse(itemsInput)
+  if (!parsed.success) return { success: false, addedCount: 0, skippedItems: [], error: 'Невалідні дані' }
+
+  const items = parsed.data
+  if (items.length === 0) return { success: true, addedCount: 0, skippedItems: [] }
+
+  try {
+    const productIds = items.map((i) => i.productId)
+    const products = await prisma.product.findMany({
+      where: { id: { in: productIds }, isActive: true },
+      select: {
+        id: true,
+        stock: true,
+        sku: true,
+        translations: {
+          select: { name: true, locale: true },
+        },
+      },
+      take: 120, // limit query according to db rules
+    })
+
+    const session = await auth()
+    const userId = session?.user?.id
+
+    const skippedItems: {
+      productId: string
+      reason: 'not_found' | 'insufficient_stock'
+      requested: number
+      available?: number
+      sku?: string
+      name?: string
+    }[] = []
+    const validItems: { productId: string; quantity: number; stock: number }[] = []
+
+    for (const item of items) {
+      const product = products.find((p) => p.id === item.productId)
+      if (!product) {
+        skippedItems.push({
+          productId: item.productId,
+          reason: 'not_found',
+          requested: item.quantity,
+        })
+        continue
+      }
+      if (product.stock < item.quantity) {
+        const translation = product.translations.find((t) => t.locale === 'uk') || product.translations[0]
+        skippedItems.push({
+          productId: item.productId,
+          reason: 'insufficient_stock',
+          requested: item.quantity,
+          available: product.stock,
+          sku: product.sku,
+          name: translation?.name ?? product.sku,
+        })
+        continue
+      }
+      validItems.push({
+        productId: item.productId,
+        quantity: item.quantity,
+        stock: product.stock,
+      })
+    }
+
+    let addedCount = 0
+
+    if (userId) {
+      await mergeCartIfNeeded(userId)
+      
+      await prisma.$transaction(async (tx) => {
+        for (const item of validItems) {
+          const existing = await tx.cartItem.findUnique({
+            where: {
+              userId_productId: {
+                userId,
+                productId: item.productId,
+              },
+            },
+          })
+
+          if (existing) {
+            const newQty = Math.min(existing.quantity + item.quantity, item.stock, 999)
+            await tx.cartItem.update({
+              where: { id: existing.id },
+              data: { quantity: newQty },
+            })
+          } else {
+            await tx.cartItem.create({
+              data: {
+                userId,
+                productId: item.productId,
+                quantity: item.quantity,
+              },
+            })
+          }
+          addedCount++
+        }
+      })
+    } else {
+      const cookieItems = await readCartCookie()
+      for (const item of validItems) {
+        const existing = cookieItems.find((i) => i.productId === item.productId)
+        if (existing) {
+          const newQty = Math.min(existing.quantity + item.quantity, item.stock, 999)
+          existing.quantity = newQty
+        } else {
+          cookieItems.push({ productId: item.productId, quantity: item.quantity })
+        }
+        addedCount++
+      }
+      await writeCartCookie(cookieItems)
+    }
+
+    revalidateTag('cart', 'max')
+    return { success: true, addedCount, skippedItems }
+  } catch (error) {
+    logger.error('[addMultipleToCart] Failed', { error: String(error) })
+    return { success: false, addedCount: 0, skippedItems: [], error: 'Помилка сервера' }
+  }
+}
+
 
 // ─── removeFromCart ───────────────────────────────────────────────────────────
 

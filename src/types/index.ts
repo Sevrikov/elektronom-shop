@@ -81,21 +81,21 @@ export interface FilterDefinition {
   type: FilterType
   label: Record<Locale, string>
   /** Доступні значення (для checkbox та pill) */
-  options?: string[]
+  options?: string[] | undefined
   /** Чи показувати пошукове поле (для довгих checkbox-списків) */
-  searchable?: boolean
+  searchable?: boolean | undefined
   /** Одиниця виміру: "А", "мм²", "₴" */
-  unit?: string
+  unit?: string | undefined
 }
 
 /** Активні фільтри, зібрані з URL searchParams */
 export interface ActiveFilters {
-  brand?: string[]
-  priceMin?: number
-  priceMax?: number
-  sort?: 'popular' | 'price-asc' | 'price-desc' | 'new' | 'rating'
-  page?: number
-  inStock?: boolean
+  brand?: string[] | undefined
+  priceMin?: number | undefined
+  priceMax?: number | undefined
+  sort?: ('popular' | 'price-asc' | 'price-desc' | 'new' | 'rating') | undefined
+  page?: number | undefined
+  inStock?: boolean | undefined
   /** Динамічні атрибути категорії */
   [key: string]: string[] | number | boolean | string | undefined
 }
@@ -147,3 +147,45 @@ export interface AIConfiguratorRequest {
 
 /** Стан AI-комплектатора */
 export type AIConfiguratorStatus = 'idle' | 'loading' | 'success' | 'error'
+
+// ─── Фасети (Каталог) ────────────────────────────────────────────────────────
+
+export interface FacetOption {
+  value: string
+  label: string
+  count: number
+  selected: boolean
+  disabled: boolean
+  logo?: string | null
+}
+
+export interface CategoryFacets {
+  total: number
+  price: {
+    absoluteMin: number
+    absoluteMax: number
+    availableMin: number
+    availableMax: number
+    selectedMin?: number | undefined
+    selectedMax?: number | undefined
+    buckets: number[]
+  }
+  brands: FacetOption[]
+  attributes: Record<string, FacetOption[]>
+}
+
+export interface BrandFacetItem {
+  brand: string
+  label?: string
+  count: number
+  disabled?: boolean
+  selected?: boolean
+  logo?: string | null
+}
+
+export interface AttributeFacetItem {
+  value: string
+  count: number
+  disabled?: boolean
+  selected?: boolean
+}

@@ -34,10 +34,25 @@ export async function searchProductsFallback(
         {
           sku: { contains: searchTerm, mode: "insensitive" },
         },
+        {
+          mpn: { contains: searchTerm, mode: "insensitive" },
+        },
+        {
+          gtin: { contains: searchTerm, mode: "insensitive" },
+        },
       ],
     },
     select: {
       ...productCardSelect,
+      // B-2: override category to include translations for correct name display
+      category: {
+        select: {
+          slug: true,
+          translations: {
+            select: { locale: true, name: true },
+          },
+        },
+      },
       translations: {
         where: { locale },
         select: { name: true },

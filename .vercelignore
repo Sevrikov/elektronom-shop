@@ -1,0 +1,14 @@
+# Ignore lockfiles and dependencies
+node_modules/
+.next/
+out/
+build/
+
+# Ignore local scratch & development artifacts
+scratch/
+.reversa/
+_reversa_sdd/
+delivery/
+tools/
+*.xlsx
+public/logo/*120fps*.webm

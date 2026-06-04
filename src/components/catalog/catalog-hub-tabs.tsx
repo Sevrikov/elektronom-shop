@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import {
   Wrench, SlidersHorizontal, ArrowRightLeft, Sparkles,
   Zap, Cable, UploadCloud, ChevronDown, ChevronRight,
@@ -29,6 +30,7 @@ const mobileTabs = tabs
 
 export default function CatalogHubTabs({ locale }: CatalogHubTabsProps) {
   const loc = locale as Locale
+  const router = useRouter()
   const [active, setActive] = useState('ai')
   const [aiText, setAiText] = useState('')
   const textareaRef = useRef<HTMLTextAreaElement>(null)
@@ -222,6 +224,11 @@ export default function CatalogHubTabs({ locale }: CatalogHubTabsProps) {
             {/* Bottom row */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mt-3.5">
               <button
+                onClick={() => {
+                  if (aiText.length >= 20) {
+                    router.push(`/${loc}/assistant?prompt=${encodeURIComponent(aiText)}` as never)
+                  }
+                }}
                 className="h-10 px-[18px] rounded-md flex items-center gap-2 text-[13px] font-semibold cursor-pointer transition-opacity hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto justify-center sm:justify-start"
                 style={{ background: '#3B7BD9', color: '#fff' }}
                 disabled={aiText.length < 20}

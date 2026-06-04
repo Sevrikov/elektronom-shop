@@ -1,0 +1,126 @@
+openapi: 3.0.3
+info:
+  title: Elektronom — внутренние HTTP API
+  description: >
+    Документировано Reversa (Writer). Покрывает route handlers приложения.
+    Уверенность 🟢 из кода. Server Actions ('use server') не входят в OpenAPI.
+  version: "0.1.0"
+servers:
+  - url: /
+paths:
+  /api/assistant/chat:
+    post:
+      summary: Сообщение AI-ассистенту
+      description: >
+        Rate limit ~1 запрос / 2с на IP (429). Фильтры prompt-injection (400).
+        История усекается до 10. Регидратация товаров из БД.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [message]
+              properties:
+                message: { type: string, minLength: 1, maxLength: 800 }
+                history:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      role: { type: string, enum: [user, assistant] }
+                      content: { type: string, minLength: 1 }
+                locale: { type: string, enum: [uk, ru] }
+                sessionId: { type: string }
+      responses:
+        "200":
+          description: Ответ ассистента
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: { type: string }
+                  questions: { type: array, items: { type: string } }
+                  products: { type: array, items: { type: object } }
+                  draftOrder: { type: object }
+                  orderComparison: { type: object }
+                  warnings: { type: array, items: { type: string } }
+                  sources: { type: array, items: { type: object } }
+                  sessionId: { type: string }
+                  availabilityCheckedAt: { type: string, format: date-time }
+        "400": { description: Невалидный ввод или попытка prompt-injection }
+        "429": { description: Слишком много запросов (rate limit) }
+        "500": { description: Внутренняя ошибка }
+  /api/admin/upload:
+    post:
+      summary: Загрузка изображения товара (ADMIN)
+      description: requireAdmin. Типы jpeg/png/webp/avif, ≤10МБ.
+      security: [ { sessionAuth: [] } ]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file: { type: string, format: binary }
+      responses:
+        "200":
+          description: Загружено
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  image:
+                    type: object
+                    properties:
+                      provider: { type: string, enum: [CLOUDINARY, LOCAL] }
+                      publicId: { type: string, nullable: true }
+                      url: { type: string }
+                      width: { type: integer, nullable: true }
+                      height: { type: integer, nullable: true }
+                      format: { type: string, nullable: true }
+                      size: { type: integer, nullable: true }
+        "400": { description: Нет файла / неверный тип / превышен размер }
+        "401": { description: UNAUTHORIZED }
+        "403": { description: FORBIDDEN (не ADMIN) }
+        "500": { description: Ошибка загрузки }
+    delete:
+      summary: Удаление изображения (ADMIN)
+      description: >
+        requireAdmin. provider=CLOUDINARY требует publicId; provider=LOCAL —
+        url внутри uploads/ (защита от path traversal).
+      security: [ { sessionAuth: [] } ]
+      parameters:
+        - in: query
+          name: provider
+          required: true
+          schema: { type: string, enum: [CLOUDINARY, LOCAL] }
+        - in: query
+          name: publicId
+          schema: { type: string }
+        - in: query
+          name: url
+          schema: { type: string }
+      responses:
+        "200": { description: Удалено }
+        "400": { description: Невалидные параметры / путь }
+        "403": { description: FORBIDDEN или попытка traversal }
+        "500": { description: Ошибка удаления }
+  /api/auth/{nextauth}:
+    description: NextAuth v5 handlers (вход/выход/коллбэки OAuth). Контракт задаётся next-auth.
+    parameters:
+      - in: path
+        name: nextauth
+        required: true
+        schema: { type: string }
+components:
+  securitySchemes:
+    sessionAuth:
+      type: apiKey
+      in: cookie
+      name: authjs.session-token
+      description: JWT-сессия NextAuth; роль ADMIN требуется для /api/admin/*.

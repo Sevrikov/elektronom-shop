@@ -7,14 +7,13 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { Suspense } from 'react'
 import { setRequestLocale } from 'next-intl/server'
-import { Check, X, Package, Truck, RotateCcw, ShieldCheck } from 'lucide-react'
+import { Check, X, Package, Truck, RotateCcw, ShieldCheck, Clock } from 'lucide-react'
 
 import { isValidLocale } from '@/i18n/request'
 import { getProductBySlug } from '@/queries/products'
 import { prisma } from '@/lib/prisma'
 import { formatPrice, getDiscountPercent, getSiteUrl } from '@/lib/utils'
 import type { Locale } from '@/types'
-import { auth } from '@/lib/auth'
 
 import { ProductGallery } from '@/components/product/product-gallery'
 import { ProductAttributes } from '@/components/product/product-attributes'
@@ -24,6 +23,7 @@ import { ProductReviews } from '@/components/product/product-reviews'
 import { RelatedProductsSection } from '@/components/product/related-products-section'
 import { AddToCartButton } from '@/components/cart/add-to-cart-button'
 import Breadcrumbs from '@/components/layout/breadcrumbs'
+import { ProductArticles } from '@/components/blog/product-articles'
 
 // ─── generateStaticParams — top-1000 товаров ─────────────────────────────────
 
@@ -32,7 +32,7 @@ export async function generateStaticParams() {
     where: { isActive: true },
     select: { slug: true },
     orderBy: { updatedAt: 'desc' },
-    take: 1000,
+    take: 100,
   })
   const locales = ['uk', 'ru'] as const
   return products.flatMap((p) =>
@@ -155,9 +155,6 @@ export default async function ProductPage({
   const product = await getProductBySlug(slug, locale)
   if (!product) notFound()
 
-  const session = await auth()
-  const currentUser = session?.user ? { name: session.user.name ?? '', email: session.user.email ?? '' } : null
-
   const loc = locale as Locale
   const translation = product.translations[0]
   const name = translation?.name ?? product.sku
@@ -191,14 +188,22 @@ export default async function ProductPage({
     { name },
   ]
 
+  const supplierInventory = await prisma.supplierInventory.findUnique({
+    where: { sku: product.sku },
+    select: { stock: true },
+  })
+  const isBackorder = !inStock && supplierInventory !== null && supplierInventory.stock > 0
+
   const stockLabel = inStock
     ? loc === 'ru' ? 'В наличии' : 'В наявності'
-    : loc === 'ru' ? 'Нет в наличии' : 'Немає в наявності'
+    : isBackorder
+      ? loc === 'ru' ? 'Под заказ' : 'Під замовлення'
+      : loc === 'ru' ? 'Нет в наличии' : 'Немає в наявності'
 
   return (
     <>
       {/* JSON-LD */}
-      <ProductSchema product={product} locale={locale} />
+      <ProductSchema product={{ ...product, isBackorder }} locale={locale} />
 
       <div className="max-w-[1280px] mx-auto px-4 lg:px-7 py-5 flex flex-col gap-6">
         {/* Breadcrumbs */}
@@ -236,11 +241,13 @@ export default async function ProductPage({
               <div className="flex items-center gap-4 flex-wrap text-[13px]">
                 <div
                   className={`inline-flex items-center gap-1.5 font-bold ${
-                    inStock ? 'text-success' : 'text-error'
+                    inStock ? 'text-success' : isBackorder ? 'text-accent' : 'text-error'
                   }`}
                 >
                   {inStock ? (
                     <Check className="size-3.5" strokeWidth={2.5} />
+                  ) : isBackorder ? (
+                    <Clock className="size-3.5 text-accent" strokeWidth={2.5} />
                   ) : (
                     <X className="size-3.5" strokeWidth={2.5} />
                   )}
@@ -278,6 +285,7 @@ export default async function ProductPage({
                   variant="full"
                   showQtyStepper={true}
                   stock={product.stock}
+                  disabledText={isBackorder ? (loc === 'ru' ? 'Под заказ' : 'Під замовлення') : undefined}
                 />
               </div>
 
@@ -394,10 +402,12 @@ export default async function ProductPage({
 
             <ProductReviews
               productId={product.id}
-              initialReviews={product.reviews}
+              initialReviews={product.reviews.map((r) => ({
+                ...r,
+                createdAt: r.createdAt instanceof Date ? r.createdAt.toISOString() : String(r.createdAt),
+              }))}
               locale={locale}
               productName={name}
-              currentUser={currentUser}
             />
           </div>
 
@@ -411,6 +421,9 @@ export default async function ProductPage({
             />
           </Suspense>
         </div>
+
+        {/* Dynamic Product Articles */}
+        <ProductArticles productName={name} productSku={product.sku} locale={locale} />
 
         {/* ═══ Related Products Section (Full-Width) ═══ */}
         <Suspense>

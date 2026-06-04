@@ -4,7 +4,7 @@
 
 import { cacheLife, cacheTag } from "next/cache";
 import { prisma } from "@/lib/prisma";
-import { productCardSelect } from "@/queries/products";
+import { productCardSelect, mapProductDecimals } from "@/queries/products";
 import type { Prisma } from "@/generated/prisma/client";
 
 // ─── Все бренды ───────────────────────────────────────────────────────────────
@@ -102,7 +102,7 @@ export async function getBrandProducts(input: BrandProductsInput) {
   ]);
 
   return {
-    products,
+    products: products.map(mapProductDecimals),
     total,
     page,
     pageSize,

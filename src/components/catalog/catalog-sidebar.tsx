@@ -2,39 +2,114 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import {
-  Zap, Plug, Cable, Lightbulb, Power, Server,
-  Wrench, Gauge, Activity, Shield, Link2,
-  Square, Circle, ToggleRight, Repeat, Box,
-  House, Cpu, Bell, Video, Flame, Cog,
-  Droplet, Wind, Thermometer, TrendingUp,
-  BatteryCharging, Battery, ChevronDown, ChevronRight, Minus, ArrowRight,
-} from 'lucide-react'
-import type { LucideIcon } from 'lucide-react'
-import type { SidebarCategory } from '@/lib/constants'
-import { sidebarSubcategories, defaultExpandedSlugs } from '@/lib/catalog-hub-data'
+import { ChevronDown, ChevronRight, ArrowRight } from 'lucide-react'
+import type { CategoryTreeNode } from '@/queries/categories'
 import type { Locale } from '@/types'
-
-const iconMap: Record<string, LucideIcon> = {
-  zap: Zap, plug: Plug, cable: Cable, lightbulb: Lightbulb,
-  power: Power, server: Server, wrench: Wrench,
-  drill: Wrench, gauge: Gauge, activity: Activity,
-  shield: Shield, 'link-2': Link2, square: Square,
-  circle: Circle, 'toggle-right': ToggleRight, repeat: Repeat,
-  box: Box, house: House, cpu: Cpu, bell: Bell, video: Video,
-  flame: Flame, cog: Cog, droplet: Droplet, wind: Wind,
-  thermometer: Thermometer, 'trending-up': TrendingUp,
-  'battery-charging': BatteryCharging, battery: Battery,
-}
+import CategoryIcon from '@/components/ui/category-icon'
 
 interface CatalogSidebarProps {
-  categories: SidebarCategory[]
+  categories: CategoryTreeNode[]
   locale: string
+}
+
+interface CategoryNodeProps {
+  node: CategoryTreeNode
+  depth: number
+  locale: string
+  expanded: Set<string>
+  onToggle: (slug: string) => void
+}
+
+function CategoryNode({ node, depth, locale, expanded, onToggle }: CategoryNodeProps) {
+  const subs = (node.children || [])
+    .filter((sub) => sub.count > 0)
+    .sort((a, b) => b.count - a.count)
+
+  const isExpanded = expanded.has(node.slug)
+  const hasSubs = subs.length > 0
+
+  const handleToggle = (e: React.MouseEvent) => {
+    if (hasSubs) {
+      e.preventDefault()
+      e.stopPropagation()
+      onToggle(node.slug)
+    }
+  }
+
+  const paddingLeft = 16 + depth * 16
+  const fontSize = depth === 0 ? 'text-[13px] font-semibold' : depth === 1 ? 'text-[12px] font-medium' : 'text-[11px]'
+  const textColor = depth === 0 ? 'text-[#1A1F2B]' : 'text-[#6A7280]'
+  const height = depth === 0 ? 'h-9' : 'h-8'
+
+  return (
+    <div>
+      <div
+        className={`w-full flex items-center gap-2 px-4 transition-colors group cursor-pointer ${height}`}
+        style={{ paddingLeft }}
+        onClick={handleToggle}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.background = '#F5F7FA'
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.background = 'transparent'
+        }}
+      >
+        {depth === 0 ? (
+          <CategoryIcon slug={node.slug} className="size-4 shrink-0 transition-transform group-hover:scale-105" />
+        ) : (
+          <span className="text-[#C9D1DC] font-light select-none text-[10px] mr-0.5">└─</span>
+        )}
+        
+        <Link
+          href={`/${locale}/catalog/${node.slug}`}
+          className={`flex-1 text-left truncate transition-colors group-hover:text-[#3B7BD9] ${fontSize} ${textColor}`}
+          onClick={(e) => e.stopPropagation()}
+        >
+          {node.name}
+        </Link>
+
+        <span
+          className="text-[11px] shrink-0 font-medium px-1.5 py-0.5 rounded-md bg-slate-50 dark:bg-slate-900 text-[#9AA3AF] group-hover:text-[#3B7BD9] transition-colors"
+          style={{ fontVariantNumeric: 'tabular-nums' }}
+        >
+          {node.count.toLocaleString('uk-UA')}
+        </span>
+
+        {hasSubs && (
+          <button 
+            onClick={handleToggle}
+            className="p-1 -mr-1 rounded hover:bg-slate-200/50 dark:hover:bg-slate-800 transition-colors"
+          >
+            {isExpanded ? (
+              <ChevronDown className="size-3.5 shrink-0 text-[#9AA3AF]" strokeWidth={2} />
+            ) : (
+              <ChevronRight className="size-3.5 shrink-0 text-[#9AA3AF]" strokeWidth={2} />
+            )}
+          </button>
+        )}
+      </div>
+
+      {hasSubs && isExpanded && (
+        <div className="border-l border-slate-100 dark:border-slate-800 ml-5">
+          {subs.map((sub) => (
+            <CategoryNode
+              key={sub.slug}
+              node={sub}
+              depth={depth + 1}
+              locale={locale}
+              expanded={expanded}
+              onToggle={onToggle}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  )
 }
 
 export default function CatalogSidebar({ categories, locale }: CatalogSidebarProps) {
   const loc = locale as Locale
-  const [expanded, setExpanded] = useState<Set<string>>(new Set(defaultExpandedSlugs))
+  const [expanded, setExpanded] = useState<Set<string>>(new Set())
 
   const toggle = (slug: string) => {
     setExpanded((prev) => {
@@ -44,6 +119,11 @@ export default function CatalogSidebar({ categories, locale }: CatalogSidebarPro
       return next
     })
   }
+
+  // Sort root categories by product count desc (larger first)
+  const sortedRoots = [...categories]
+    .filter((c) => c.count > 0)
+    .sort((a, b) => b.count - a.count)
 
   return (
     <div
@@ -59,107 +139,25 @@ export default function CatalogSidebar({ categories, locale }: CatalogSidebarPro
           className="text-[11px] font-bold tracking-[0.5px] uppercase"
           style={{ color: '#6A7280' }}
         >
-          УСІ КАТЕГОРІЇ
+          {loc === 'uk' ? 'УСІ КАТЕГОРІЇ' : 'ВСЕ КАТЕГОРИИ'}
         </span>
       </div>
 
       {/* Tree */}
       <div
-        className="overflow-y-auto"
+        className="overflow-y-auto py-1"
         style={{ maxHeight: 'calc(100vh - 220px)' }}
       >
-        {categories.map((cat) => {
-          const IconComp = iconMap[cat.icon] ?? Zap
-          const subs = sidebarSubcategories[cat.slug]
-          const isExpanded = expanded.has(cat.slug)
-          const hasSubs = subs && subs.length > 0
-
-          return (
-            <div key={cat.id}>
-              {/* Top-level row */}
-              <button
-                onClick={() => hasSubs ? toggle(cat.slug) : undefined}
-                className="w-full flex items-center gap-2.5 px-4 cursor-pointer transition-colors group"
-                style={{ height: 32, padding: '7px 16px' }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = '#F5F7FA'
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = 'transparent'
-                }}
-              >
-                <IconComp
-                  className="size-4 shrink-0 transition-colors group-hover:text-[#3B7BD9]"
-                  strokeWidth={1.5}
-                  style={{ color: '#6A7280' }}
-                />
-                <Link
-                  href={`/${locale}/catalog/${cat.slug}`}
-                  className="flex-1 text-left text-[13px] font-medium truncate transition-colors group-hover:text-[#3B7BD9]"
-                  style={{ color: '#1A1F2B' }}
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  {cat.name[loc]}
-                </Link>
-                <span
-                  className="text-[11px] shrink-0"
-                  style={{ color: '#9AA3AF', fontVariantNumeric: 'tabular-nums' }}
-                >
-                  {cat.count.toLocaleString('uk-UA')}
-                </span>
-                {hasSubs ? (
-                  isExpanded ? (
-                    <ChevronDown className="size-3 shrink-0" strokeWidth={1.5} style={{ color: '#C9D1DC' }} />
-                  ) : (
-                    <ChevronRight className="size-3 shrink-0" strokeWidth={1.5} style={{ color: '#C9D1DC' }} />
-                  )
-                ) : (
-                  <div className="size-3 shrink-0" />
-                )}
-              </button>
-
-              {/* Subcategories */}
-              {hasSubs && (
-                <div
-                  className="overflow-hidden transition-all duration-150"
-                  style={{
-                    maxHeight: isExpanded ? `${subs.length * 28 + 4}px` : '0px',
-                    opacity: isExpanded ? 1 : 0,
-                  }}
-                >
-                  {subs.map((sub) => (
-                    <Link
-                      key={sub.slug}
-                      href={`/${locale}/catalog/${cat.slug}/${sub.slug}`}
-                      className="flex items-center gap-2 transition-colors group/sub"
-                      style={{ height: 28, paddingLeft: 36, paddingRight: 16 }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.background = '#F5F7FA'
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.background = 'transparent'
-                      }}
-                    >
-                      <Minus className="size-2.5 shrink-0" strokeWidth={1.5} style={{ color: '#C9D1DC' }} />
-                      <span
-                        className="flex-1 text-[12px] truncate transition-colors group-hover/sub:text-[#1A1F2B]"
-                        style={{ color: '#6A7280' }}
-                      >
-                        {sub.name[loc]}
-                      </span>
-                      <span
-                        className="text-[10px] shrink-0"
-                        style={{ color: '#C9D1DC', fontVariantNumeric: 'tabular-nums' }}
-                      >
-                        {sub.count}
-                      </span>
-                    </Link>
-                  ))}
-                </div>
-              )}
-            </div>
-          )
-        })}
+        {sortedRoots.map((cat) => (
+          <CategoryNode
+            key={cat.id}
+            node={cat}
+            depth={0}
+            locale={locale}
+            expanded={expanded}
+            onToggle={toggle}
+          />
+        ))}
       </div>
 
       {/* Bottom link */}
@@ -169,7 +167,7 @@ export default function CatalogSidebar({ categories, locale }: CatalogSidebarPro
           className="flex items-center gap-1 px-4 py-3 text-[13px] font-semibold transition-colors hover:opacity-80"
           style={{ color: '#3B7BD9' }}
         >
-          Усі 34 категорії
+          {loc === 'uk' ? `Усі ${categories.length} категорії` : `Все ${categories.length} категории`}
           <ArrowRight className="size-3.5" strokeWidth={1.5} />
         </Link>
       </div>

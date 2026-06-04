@@ -1,6 +1,5 @@
 'use client'
 
-import Image from 'next/image'
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { ChevronLeft, ChevronRight, ZoomIn, X, ImageIcon } from 'lucide-react'
 import { getTransformedImageUrl } from '@/lib/images'
@@ -9,6 +8,7 @@ import { TransparentImage } from '@/components/shared/transparent-image'
 interface ProductImage {
   id?: string
   url: string
+  processedUrl?: string | null
   alt?: string | null
   sortOrder?: number
   provider?: string

@@ -113,10 +113,31 @@ export function FeaturedCategories({ locale }: FeaturedCategoriesProps) {
   )
 }
 
+import type { CategoryTreeNode } from '@/queries/categories'
+
+function getCategoryIcon(slug: string): LucideIcon {
+  let iconName = 'box'
+  if (slug.includes('masla') || slug.includes('masla-dlya-avto') || slug.includes('motornye')) iconName = 'droplet'
+  else if (slug.includes('zaryadni') || slug.includes('power-bank') || slug.includes('dbzh') || slug.includes('ups')) iconName = 'battery-charging'
+  else if (slug.includes('akumulyator')) iconName = 'battery'
+  else if (slug.includes('henerator') || slug.includes('enerhetyka')) iconName = 'flame'
+  else if (slug.includes('domofon') || slug.includes('sygnaliz') || slug.includes('ajax')) iconName = 'bell'
+  else if (slug.includes('video')) iconName = 'video'
+  else if (slug.includes('merezheve') || slug.includes('router') || slug.includes('starlink')) iconName = 'server'
+  else if (slug.includes('kabel') || slug.includes('provid') || slug.includes('raz-yem') || slug.includes('roz-yem')) iconName = 'cable'
+  else if (slug.includes('instrument')) iconName = 'wrench'
+  else if (slug.includes('rele')) iconName = 'repeat'
+  else if (slug.includes('avtomat') || slug.includes('vymykach')) iconName = 'zap'
+  else if (slug.includes('rozetk')) iconName = 'plug'
+  else if (slug.includes('osvitl') || slug.includes('led') || slug.includes('lampa')) iconName = 'lightbulb'
+  
+  return iconMap[iconName] ?? Box
+}
+
 // ─── Block 5: All Categories 5-col Grid ──────────────────────────────────────
 
 interface AllCategoriesGridProps {
-  categories: SidebarCategory[]
+  categories: CategoryTreeNode[]
   locale: string
 }
 
@@ -137,7 +158,7 @@ export function AllCategoriesGrid({ categories, locale }: AllCategoriesGridProps
 
       <div className="grid grid-cols-3 lg:grid-cols-5 gap-2.5">
         {categories.map((cat) => {
-          const Icon = iconMap[cat.icon] ?? Zap
+          const Icon = getCategoryIcon(cat.slug)
           return (
             <Link
               key={cat.id}
@@ -165,7 +186,7 @@ export function AllCategoriesGrid({ categories, locale }: AllCategoriesGridProps
                 className="text-[12px] font-semibold leading-tight line-clamp-2 transition-colors group-hover:text-[#3B7BD9]"
                 style={{ color: '#1A1F2B' }}
               >
-                {cat.name[loc]}
+                {cat.name}
               </span>
               <span className="text-[11px]" style={{ color: '#6A7280' }}>
                 {cat.count.toLocaleString('uk-UA')} {loc === 'uk' ? 'товарів' : 'товаров'}

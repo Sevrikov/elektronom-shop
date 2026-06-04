@@ -1,0 +1,118 @@
+{
+  "generated_at": "2026-05-30T00:00:00Z",
+  "project_root": "C:/Users/sevri/Сайт/elektronom",
+  "project_name": "Elektronom",
+  "repository": "github.com/Sevrikov/elektronom-shop",
+  "languages": [
+    { "name": "TypeScript", "extensions": [".ts", ".tsx"], "file_count": 148 },
+    { "name": "JavaScript", "extensions": [".mjs", ".js"], "file_count": 2 }
+  ],
+  "primary_language": "TypeScript",
+  "frameworks": [
+    { "name": "Next.js", "version": "16.2.3", "source": "package.json" },
+    { "name": "React", "version": "19.2.4", "source": "package.json" },
+    { "name": "React Compiler", "version": "1.0.0", "source": "package.json" },
+    { "name": "Prisma", "version": "7.8.0", "source": "package.json" },
+    { "name": "NextAuth (Auth.js)", "version": "5.0.0-beta.31", "source": "package.json" },
+    { "name": "next-intl", "version": "4.9.1", "source": "package.json" },
+    { "name": "Tailwind CSS", "version": "4", "source": "package.json" },
+    { "name": "Zustand", "version": "5.0.13", "source": "package.json" },
+    { "name": "Zod", "version": "4.4.3", "source": "package.json" }
+  ],
+  "package_manager": "npm",
+  "entry_points": [
+    { "path": "src/app/layout.tsx", "type": "app_entry_root" },
+    { "path": "src/app/[locale]/layout.tsx", "type": "app_entry_locale" },
+    { "path": "src/app/[locale]/page.tsx", "type": "page_home" },
+    { "path": "instrumentation.ts", "type": "instrumentation" },
+    { "path": "src/i18n/request.ts", "type": "i18n_config" }
+  ],
+  "config_files": [
+    "next.config.ts",
+    "prisma.config.ts",
+    "tsconfig.json",
+    "eslint.config.mjs",
+    "postcss.config.mjs",
+    "components.json",
+    ".env.example"
+  ],
+  "ci_cd": [],
+  "docker": { "dockerfile": null, "compose": null },
+  "deploy": "vercel",
+  "database_hints": [
+    { "path": "prisma/schema.prisma", "type": "prisma_schema" },
+    { "path": "prisma/migrations/", "type": "migrations_dir" },
+    { "path": "prisma/seed.ts", "type": "seed" }
+  ],
+  "database": {
+    "engine": "PostgreSQL",
+    "orm": "Prisma 7 (adapter-pg)",
+    "models": [
+      "User", "Account", "Session", "VerificationToken", "Address",
+      "Category", "CategoryTranslation", "Brand", "Product", "ProductTranslation",
+      "ProductImage", "Review", "WishlistItem", "CartItem", "Order", "OrderItem",
+      "OrderCounter", "TechnicalDocument", "DocumentChunk", "AssistantSession",
+      "AssistantMessage", "SupplierInventory"
+    ],
+    "enums": ["UserRole", "OrderStatus", "PaymentStatus", "PaymentMethod"],
+    "migration_count": 4
+  },
+  "routes": {
+    "pages_count": 21,
+    "groups": ["(shop)", "(account)", "(auth)", "(info)"],
+    "api_routes": [
+      "src/app/api/admin/upload/route.ts",
+      "src/app/api/assistant/chat/route.ts",
+      "src/app/api/auth/[...nextauth]/route.ts"
+    ]
+  },
+  "test_framework": null,
+  "test_file_count": 2,
+  "test_notes": "Нет тест-раннера в package.json. Только ad-hoc tsx-скрипты scripts/test-helpers.ts и scripts/test-jsonb-facets.ts. E2E_TEST_SECRET намекает на существовавший E2E-гарнес.",
+  "integrations": [
+    { "name": "PostgreSQL", "type": "database", "evidence": "DATABASE_URL", "confidence": "confirmed" },
+    { "name": "NextAuth/Auth.js", "type": "auth", "evidence": "AUTH_SECRET, AUTH_URL", "confidence": "confirmed" },
+    { "name": "Google OAuth", "type": "auth_social", "evidence": "GOOGLE_CLIENT_ID/SECRET", "confidence": "confirmed" },
+    { "name": "Facebook OAuth", "type": "auth_social", "evidence": "FACEBOOK_CLIENT_ID/SECRET", "confidence": "confirmed" },
+    { "name": "Algolia", "type": "search", "evidence": "ALGOLIA_ADMIN_KEY, NEXT_PUBLIC_ALGOLIA_*", "confidence": "confirmed" },
+    { "name": "Cloudinary", "type": "media_storage", "evidence": "package cloudinary, lib/storage, lib/images", "confidence": "inferred" },
+    { "name": "Resend", "type": "email", "evidence": "RESEND_API_KEY, RESEND_FROM_EMAIL", "confidence": "confirmed" },
+    { "name": "Payment provider", "type": "payments", "evidence": "PAYMENT_SECRET_KEY, PAYMENT_WEBHOOK_SECRET", "confidence": "inferred" },
+    { "name": "Content Factory", "type": "content_generation", "evidence": "CONTENT_FACTORY_API_URL, CONTENT_FACTORY_TOKEN", "confidence": "confirmed" },
+    { "name": "ASKO supplier", "type": "supplier_feed", "evidence": "actions/get-asko-products, SupplierInventory", "confidence": "inferred" },
+    { "name": "LLM/Embeddings (assistant RAG)", "type": "ai", "evidence": "DocumentChunk, AssistantMessage, api/assistant/chat", "confidence": "gap" }
+  ],
+  "modules": [
+    "catalog", "product", "cart", "checkout", "orders", "auth", "account",
+    "search", "assistant", "admin", "suppliers", "home", "layout-shared-ui", "core-infra"
+  ],
+  "total_files": 156,
+  "loc_src": 68680,
+  "organization_suggestion": {
+    "granularity": "module",
+    "rationale": "Папки верхнего уровня и слои организованы по доменам: components/{catalog,product,cart,...}, actions/{auth,cart,order,...}, queries/{products,orders,...} и route-группы (shop)/(account)/(auth).",
+    "signals": [
+      {
+        "type": "top_level_domain_folders",
+        "evidence": [
+          "src/components/catalog/", "src/components/product/", "src/components/cart/",
+          "src/components/assistant/", "src/components/admin/", "src/components/search/"
+        ]
+      },
+      {
+        "type": "domain_organized_layers",
+        "evidence": [
+          "src/actions/auth.ts", "src/actions/cart.ts", "src/actions/order.ts",
+          "src/queries/products.ts", "src/queries/orders.ts", "src/queries/brands.ts"
+        ]
+      },
+      {
+        "type": "route_groups_by_domain",
+        "evidence": [
+          "src/app/[locale]/(shop)/", "src/app/[locale]/(account)/", "src/app/[locale]/(auth)/"
+        ]
+      }
+    ],
+    "features": []
+  }
+}

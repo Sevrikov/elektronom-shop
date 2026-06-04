@@ -1,0 +1,46 @@
+{
+  "version": "1.0.0",
+  "project": "Elektronom",
+  "user_name": "",
+  "chat_language": "ru",
+  "doc_language": "Русский",
+  "answer_mode": "chat",
+  "doc_level": "completo",
+  "output_folder": "_reversa_sdd",
+  "phase": "revisao",
+  "completed": ["reconhecimento", "escavacao", "interpretacao", "geracao", "revisao"],
+  "pending": [],
+  "engines": ["claude-code"],
+  "agents": [
+    "reversa", "reversa-scout", "reversa-archaeologist", "reversa-detective",
+    "reversa-architect", "reversa-writer", "reversa-reviewer"
+  ],
+  "analysis_complete": true,
+  "checkpoints": {
+    "scout": { "completed_at": "2026-05-30T00:00:00Z" },
+    "archaeologist": { "completed_at": "2026-05-30T00:00:00Z", "modules_analyzed": ["catalog", "product", "cart-checkout-orders", "auth-account", "assistant", "search", "admin", "suppliers", "core-infra"] },
+    "detective": { "completed_at": "2026-05-30T00:00:00Z" },
+    "architect": { "completed_at": "2026-05-30T00:00:00Z" },
+    "writer": { "completed_at": "2026-05-30T00:00:00Z", "units": 9 },
+    "reviewer": {
+      "completed_at": "2026-05-30T00:00:00Z",
+      "specs_reviewed": 9,
+      "cross_review_external": false,
+      "reclassifications": 1,
+      "questions_generated": 10,
+      "overall_confidence": "~80% green",
+      "files": ["_reversa_sdd/confidence-report.md", "_reversa_sdd/gaps.md", "_reversa_sdd/questions.md"]
+    }
+  },
+  "created_files": [
+    ".reversa/state.json", ".reversa/plan.md", ".reversa/config.toml",
+    ".reversa/context/surface.json", ".reversa/context/modules.json",
+    "_reversa_sdd/inventory.md", "_reversa_sdd/dependencies.md", "_reversa_sdd/code-analysis.md", "_reversa_sdd/data-dictionary.md",
+    "_reversa_sdd/flowcharts/*.md (10)", "_reversa_sdd/domain.md", "_reversa_sdd/state-machines.md", "_reversa_sdd/permissions.md",
+    "_reversa_sdd/adrs/0001-0008 (8)", "_reversa_sdd/architecture.md", "_reversa_sdd/c4-context.md", "_reversa_sdd/c4-containers.md", "_reversa_sdd/c4-components.md", "_reversa_sdd/erd-complete.md",
+    "_reversa_sdd/traceability/spec-impact-matrix.md", "_reversa_sdd/traceability/code-spec-matrix.md",
+    "_reversa_sdd/openapi/elektronom-api.yaml", "_reversa_sdd/user-stories/*.md (2)",
+    "_reversa_sdd/<9 modules>/{requirements,design,tasks}.md (27)",
+    "_reversa_sdd/gaps.md", "_reversa_sdd/questions.md", "_reversa_sdd/confidence-report.md"
+  ]
+}

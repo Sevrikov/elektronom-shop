@@ -16,8 +16,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   return {
     title: isUk
-      ? 'Технічний AI-консультант | Elektronom'
-      : 'Технический AI-консультант | Elektronom',
+      ? 'Технічний AI-консультант | Electronom'
+      : 'Технический AI-консультант | Electronom',
     description: isUk
       ? 'Онлайн підбір електрообладнання, розрахунок ДБЖ, перевірка сумісності та залишків.'
       : 'Онлайн подбор электрооборудования, расчет ИБП, проверка совместимости и остатков.',

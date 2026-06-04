@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { getUserOrders } from '@/actions/order'
+import { getUserOrders } from '@/queries/orders'
 import { auth } from '@/lib/auth'
 import { notFound } from 'next/navigation'
 
@@ -23,10 +23,10 @@ export default async function OrdersPage({
   const { locale } = await params
   const uk = locale !== 'ru'
   const session = await auth()
-  if (!session?.user) notFound()
+  if (!session?.user?.id) notFound()
 
-  const response = await getUserOrders()
-  const orders = response.success ? response.orders : []
+  // B-4: use paginated query from queries/orders (single source of truth)
+  const { orders } = await getUserOrders(session.user.id, 1)
 
   return (
     <div>
@@ -88,7 +88,7 @@ export default async function OrdersPage({
                   {(order.items || []).map((item) => {
                     const snap = item.snapshot as { name: string; sku: string; price: number }
                     return (
-                      <div key={item.id} className="flex justify-between items-start gap-4 text-sm">
+                      <div key={item.quantity + String(item.snapshot)} className="flex justify-between items-start gap-4 text-sm">
                         <div className="min-w-0">
                           <p className="font-semibold text-text-primary truncate">{snap?.name ?? 'Товар'}</p>
                           <p className="text-xs text-text-muted mt-0.5">SKU: {snap?.sku ?? ''}</p>

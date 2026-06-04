@@ -7,7 +7,9 @@ import { useTranslations } from 'next-intl'
 export interface ProductImageInput {
   id?: string
   url: string
-  provider: string
+  processedUrl?: string | null
+  originalUrl?: string | null
+  provider: 'LOCAL' | 'CLOUDINARY' | 'EXTERNAL'
   publicId?: string | null
   width?: number | null
   height?: number | null
@@ -53,7 +55,9 @@ export function ImageUploader({ images, onChange }: ImageUploaderProps) {
       const img = data.image
       return {
         url: img.url,
-        provider: img.provider,
+        processedUrl: img.processedUrl || null,
+        originalUrl: img.originalUrl || null,
+        provider: img.provider as 'LOCAL' | 'CLOUDINARY' | 'EXTERNAL',
         publicId: img.publicId,
         width: img.width,
         height: img.height,
@@ -319,7 +323,7 @@ export function ImageUploader({ images, onChange }: ImageUploaderProps) {
 
       {error && (
         <span className="text-[11px] font-semibold text-rose-500 mt-1 block">
-          ❌ {error}
+          {error}
         </span>
       )}
     </div>

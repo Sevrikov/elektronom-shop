@@ -2,7 +2,6 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { isValidLocale } from '@/i18n/request'
-import { sidebarCategories } from '@/lib/constants'
 import { warehouseChips } from '@/lib/catalog-hub-data'
 import type { Locale } from '@/types'
 import Breadcrumbs from '@/components/layout/breadcrumbs'
@@ -12,6 +11,7 @@ import ProjectLists from '@/components/catalog/project-lists'
 import { FeaturedCategories, AllCategoriesGrid, BrandsStrip } from '@/components/catalog/catalog-hub-blocks'
 import PrefooterB2bCta from '@/components/catalog/prefooter-b2b-cta'
 import { Package, Layers, FileText, Truck } from 'lucide-react'
+import { getCategoryTree } from '@/queries/categories'
 
 
 export async function generateMetadata({
@@ -42,6 +42,10 @@ export default async function CatalogPage({
   const t = await getTranslations({ locale, namespace: 'catalog' })
   const loc = locale as Locale
 
+  const dbCategories = await getCategoryTree(loc)
+  // Only show categories that actually contain products
+  const activeCategories = dbCategories.filter(c => c.count > 0)
+
   const breadcrumbs = [
     { name: t('breadcrumbs.home'), url: '/' },
     { name: t('breadcrumbs.catalog') },
@@ -66,7 +70,7 @@ export default async function CatalogPage({
         <div className="flex gap-6 items-start pb-10">
           {/* ───── SIDEBAR 280 ───── */}
           <aside className="hidden lg:block w-[280px] shrink-0 sticky top-[140px] self-start">
-            <CatalogSidebar categories={sidebarCategories} locale={locale} />
+            <CatalogSidebar categories={activeCategories} locale={locale} />
           </aside>
 
           {/* ───── RIGHT COLUMN 976 ───── */}
@@ -140,7 +144,7 @@ export default async function CatalogPage({
             <FeaturedCategories locale={locale} />
 
             {/* Block 5 — All Categories Grid */}
-            <AllCategoriesGrid categories={sidebarCategories} locale={locale} />
+            <AllCategoriesGrid categories={activeCategories} locale={locale} />
 
             {/* Block 6 — Brands Strip */}
             <BrandsStrip locale={locale} />

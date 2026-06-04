@@ -1,12 +1,12 @@
 import type { ContactInfo, NavLink } from '@/types'
 
 export const contactInfo: ContactInfo = {
-  phone: '+380 50 123-45-67',
+  phone: '+380 67 220-67-91',
   viber: '+380672206791',
   email: 'info@elektronom.com.ua',
   address: {
-    uk: 'м. Київ, вул. Промислова 12',
-    ru: 'г. Киев, ул. Промышленная 12',
+    uk: 'м. Київ, вул. Прикладна 10',
+    ru: 'г. Киев, ул. Прикладная 10',
   },
   workingHours: {
     uk: '7:00 - 19:00 (ПН - СБ)',
@@ -14,9 +14,14 @@ export const contactInfo: ContactInfo = {
   },
 }
 
+export const socialLinks = {
+  facebook: 'https://www.facebook.com/electronom',
+  instagram: 'https://www.instagram.com/electronom',
+  telegram: 'https://t.me/electronom',
+}
+
 export const contactPhones = [
-  '+380 50 123-45-67',
-  '+380 67 123-45-67',
+  '+380 67 220-67-91',
 ]
 
 export const navLinks: NavLink[] = [

@@ -1,6 +1,5 @@
 // src/components/product/same-series-products.tsx
 import Link from 'next/link'
-import Image from 'next/image'
 import { ChevronRight, ImageIcon } from 'lucide-react'
 import { getSameSeriesProducts } from '@/queries/products'
 import { formatPrice } from '@/lib/utils'

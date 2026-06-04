@@ -1,9 +1,9 @@
 'use client'
 
 import { useState, useEffect, useRef, useCallback } from 'react'
+import Image from 'next/image'
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
-import Image from 'next/image'
 import {
   ChevronLeft,
   ChevronRight,
@@ -15,7 +15,6 @@ import {
   Battery,
 } from 'lucide-react'
 import { cn, localizedPath } from '@/lib/utils'
-import { TransparentImage } from '@/components/shared/transparent-image'
 
 // Image widths for variants
 const PSIZE = {
@@ -465,19 +464,20 @@ function ProductPhoto({ src, alt, fallback, variant }: ProductPhotoProps) {
   }
 
   // Bounding boxes
-  const heightMultiplier = fallback === 'battery' ? 0.85 : fallback === 'relay' ? 1.0 : 1.05
-  const height = Math.round(width * heightMultiplier)
 
   const heightClass = fallback === 'battery' ? 'battery' : fallback === 'relay' ? 'relay' : 'other'
   const wrapperClass = `eb__photo-wrapper--${variant}-${heightClass}`
 
   return (
     <div className={cn("relative flex items-center justify-center select-none", wrapperClass)}>
-      <TransparentImage
+      <Image
         src={src}
         alt={alt}
+        fill
+        sizes="(max-width: 1024px) 320px, 420px"
         onError={() => setError(true)}
-        className="transition-opacity duration-300 pointer-events-none w-full h-full"
+        className="transition-opacity duration-300 pointer-events-none object-contain"
+        priority
       />
     </div>
   )
@@ -513,7 +513,7 @@ const SLIDES: SlideData[] = [
     translationKey: 'offerJack',
     slug: 'p2952960074-podstavka-pod-mashinu',
     secondaryPath: '/catalog',
-    imageSrc: 'https://images.prom.ua/7138921733_w640_h640_podstavka-pod-mashinu.jpg',
+    imageSrc: '/images/jack_mock.jpg',
     fallback: 'jack',
     bg: 'panel',
     badgeClass: 'eb__badge--offer',
@@ -523,7 +523,7 @@ const SLIDES: SlideData[] = [
     translationKey: 'ats',
     slug: 'p2393369424-avtomaticheskij-pereklyuchatel-avr',
     secondaryPath: '/catalog',
-    imageSrc: 'https://images.prom.ua/6335425546_w640_h640_avtomatichnij-peremikach-avr.jpg',
+    imageSrc: '/images/ats_mock.jpg',
     fallback: 'ats',
     bg: 'circuit',
     badgeClass: 'eb__badge--dark',

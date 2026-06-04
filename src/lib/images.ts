@@ -15,7 +15,7 @@ export function getImageUrl(urlOrPath: string): string {
  * Designed to be safe for both client-side and server-side usage.
  */
 export function getTransformedImageUrl(
-  image: { url: string; provider?: string | null; publicId?: string | null } | string,
+  image: { url: string; provider?: string | null; publicId?: string | null; processedUrl?: string | null } | string,
   options: {
     width?: number
     height?: number
@@ -25,7 +25,8 @@ export function getTransformedImageUrl(
     removeBg?: boolean
   }
 ): string {
-  const url = typeof image === 'string' ? image : image?.url
+  const isProcessed = typeof image !== 'string' && !!image?.processedUrl
+  const url = typeof image === 'string' ? image : (image?.processedUrl || image?.url)
   const provider = typeof image === 'string' ? null : image?.provider
 
   if (!url) return ''
@@ -40,9 +41,10 @@ export function getTransformedImageUrl(
     if (index !== -1) {
       const parts = []
       
-      // Enable AI background removal if env variable is set or option is passed
-      const enableBgRemoval = process.env.NEXT_PUBLIC_CLOUDINARY_BG_REMOVAL === 'true' || options.removeBg
-      if (enableBgRemoval) {
+      // Enable AI background removal if env variable is set or option is passed,
+      // but only if it has not already been processed and the URL doesn't contain it.
+      const enableBgRemoval = !isProcessed && (process.env.NEXT_PUBLIC_CLOUDINARY_BG_REMOVAL === 'true' || options.removeBg)
+      if (enableBgRemoval && !url.includes('e_bgremoval')) {
         parts.push('e_bgremoval')
       }
 

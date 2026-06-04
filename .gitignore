@@ -51,3 +51,8 @@ ga4-key.json
 
 # scratch files
 /scratch/
+
+# python
+__pycache__/
+*.py[cod]
+*$py.class

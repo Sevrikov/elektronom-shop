@@ -15,6 +15,7 @@ interface AddToCartButtonProps {
   style?: React.CSSProperties
   stock?: number
   showQtyStepper?: boolean
+  disabledText?: string | undefined
 }
 
 export function AddToCartButton({
@@ -26,6 +27,7 @@ export function AddToCartButton({
   style,
   stock = 99,
   showQtyStepper = false,
+  disabledText,
 }: AddToCartButtonProps) {
   const t = useTranslations('common')
   const openDrawer = useCartUIStore((s) => s.openDrawer)
@@ -154,7 +156,7 @@ export function AddToCartButton({
             : added
               ? t('added')
               : disabled
-                ? t('outOfStock')
+                ? disabledText || t('outOfStock')
                 : t('addToCart')}
         </span>
       </button>

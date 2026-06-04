@@ -64,7 +64,7 @@ export const projectLists: ProjectListItem[] = [
 
 export const featuredCategories: FeaturedCategory[] = [
   {
-    slug: 'osvitlennya-led', icon: 'lightbulb',
+    slug: 'led-osvitlennya', icon: 'lightbulb',
     name: { uk: 'Освітлення LED', ru: 'Освещение LED' }, count: 3200,
     subcategoryLinks: [
       { slug: 'led-paneli', name: { uk: 'LED-панелі', ru: 'LED-панели' } },
@@ -74,7 +74,7 @@ export const featuredCategories: FeaturedCategory[] = [
     ],
   },
   {
-    slug: 'kabel-ta-provid', icon: 'cable',
+    slug: 'kabeli-droty', icon: 'cable',
     name: { uk: 'Кабель та провід', ru: 'Кабель и провод' }, count: 1850,
     subcategoryLinks: [
       { slug: 'vvgng-ls', name: { uk: 'ВВГнг-LS', ru: 'ВВГнг-LS' } },
@@ -94,7 +94,7 @@ export const featuredCategories: FeaturedCategory[] = [
     ],
   },
   {
-    slug: 'rozetky-ta-vymykachi', icon: 'plug',
+    slug: 'elektroustanovochni-vyroby', icon: 'plug',
     name: { uk: 'Розетки та вимикачі', ru: 'Розетки и выключатели' }, count: 890,
     subcategoryLinks: [
       { slug: 'legrand-valena', name: { uk: 'Legrand Valena', ru: 'Legrand Valena' } },
@@ -114,14 +114,14 @@ export const sidebarSubcategories: Record<string, SubCategory[]> = {
     { slug: '3-polyusni', name: { uk: '3-полюсні', ru: '3-полюсные' }, count: 410 },
     { slug: '4-polyusni', name: { uk: '4-полюсні', ru: '4-полюсные' }, count: 230 },
   ],
-  'kabel-ta-provid': [
+  'kabeli-droty': [
     { slug: 'vvgng-ls', name: { uk: 'ВВГнг-LS', ru: 'ВВГнг-LS' }, count: 640 },
     { slug: 'nym', name: { uk: 'NYM', ru: 'NYM' }, count: 380 },
     { slug: 'shvvp', name: { uk: 'ШВВП', ru: 'ШВВП' }, count: 290 },
     { slug: 'pvs', name: { uk: 'ПВС', ru: 'ПВС' }, count: 310 },
     { slug: 'inshi', name: { uk: 'Інші', ru: 'Другие' }, count: 230 },
   ],
-  'osvitlennya-led': [
+  'led-osvitlennya': [
     { slug: 'led-paneli', name: { uk: 'LED-панелі', ru: 'LED-панели' }, count: 820 },
     { slug: 'liniyni-svitylnyky', name: { uk: 'Лінійні світильники', ru: 'Линейные светильники' }, count: 640 },
     { slug: 'prozhektory', name: { uk: 'Прожектори', ru: 'Прожекторы' }, count: 550 },
@@ -132,7 +132,7 @@ export const sidebarSubcategories: Record<string, SubCategory[]> = {
 }
 
 // Default-expanded slugs
-export const defaultExpandedSlugs = ['avtomatychni-vymykachi', 'kabel-ta-provid', 'osvitlennya-led']
+export const defaultExpandedSlugs = ['avtomatychni-vymykachi', 'kabeli-droty', 'led-osvitlennya']
 
 // ─── Brand pills ─────────────────────────────────────────────────────────────
 

@@ -724,6 +724,25 @@ model Product {
 // После создания таблицы выполнить вручную:
 // CREATE INDEX products_attributes_gin ON products USING GIN (attributes jsonb_path_ops);
 
+// ─── РАСШИРЕНИЕ Product ДЛЯ GOOGLE SHOPPING / MERCHANT CENTER (v1.3, addendum 2026-05-31) ───
+// Модель Product ОФИЦИАЛЬНО расширяется полями ниже. Это санкционированное изменение §6
+// (снимает запрет «поля вне схемы без обновления документа»). Полный стандарт, фид, schema.org
+// и правила — в `MASTER_CONTEXT_v1_3_ADDENDUM_GOOGLE_SHOPPING.md`. Реализация — `TZ_GOOGLE_SHOPPING_2026-05-31.md`.
+//
+//   gtin                  String?            // EAN-13 / UPC / GTIN-14 (штрихкод). @@index([gtin])
+//   mpn                   String?            // Manufacturer Part Number (источник: SupplierInventory.mpn / импорт)
+//   condition             ProductCondition   @default(NEW)   // NEW | USED | REFURBISHED
+//   googleProductCategory String?            // ID/путь Google Product Taxonomy (маппинг из Category)
+//   itemGroupId           String?            // группировка вариантов (цвет/серия). @@index([itemGroupId])
+//   salePrice             Decimal?  @db.Decimal(12, 2)        // акционная цена для sale_price
+//   saleStartsAt          DateTime?
+//   saleEndsAt            DateTime?
+//
+// enum ProductCondition { NEW  USED  REFURBISHED }
+//
+// Правило идентификаторов: для большинства категорий обязателен `gtin` ЛИБО (`mpn` + `brand`).
+// Если ни gtin, ни mpn нет → в фиде `identifier_exists=no`.
+
 model ProductTranslation {
   id          String  @id @default(cuid2())
   productId   String

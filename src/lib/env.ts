@@ -48,6 +48,17 @@ const envSchema = z.object({
   CLOUDINARY_CLOUD_NAME: z.string().optional(),
   CLOUDINARY_API_KEY: z.string().optional(),
   CLOUDINARY_API_SECRET: z.string().optional(),
+
+  // AI assistant (optional — degrades gracefully when absent)
+  ANTHROPIC_API_KEY: z.string().optional(),
+
+  // Content Factory bridge (optional — local dev tool)
+  CONTENT_FACTORY_API_URL: z.string().url().optional(),
+  CONTENT_FACTORY_TOKEN: z.string().optional(),
+
+  // Payment provider identifier (required once payment is enabled)
+  PAYMENT_PROVIDER: z.enum(['liqpay', 'fondy', 'wayforpay', 'monobank', 'portmone']).optional(),
+  PAYMENT_PUBLIC_KEY: z.string().optional(),
 }).refine(
   (data) => {
     const hasAny = !!(data.CLOUDINARY_CLOUD_NAME || data.CLOUDINARY_API_KEY || data.CLOUDINARY_API_SECRET);

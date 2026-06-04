@@ -24,6 +24,7 @@ export interface UploadedImageResult {
   provider: 'CLOUDINARY' | 'LOCAL'
   publicId: string | null
   url: string
+  processedUrl?: string | null
   width: number | null
   height: number | null
   format: string | null
@@ -82,6 +83,7 @@ export async function uploadProductImage(
         folder,
         resource_type: 'image' as const,
         format: format === 'jpeg' ? 'jpg' : format,
+        eager: [{ effect: 'bgremoval' }],
       }
 
       const uploadResult = await new Promise<UploadApiResponse>((resolve, reject) => {
@@ -97,6 +99,7 @@ export async function uploadProductImage(
         provider: 'CLOUDINARY',
         publicId: uploadResult.public_id,
         url: uploadResult.secure_url,
+        processedUrl: uploadResult.eager?.[0]?.secure_url || null,
         width: uploadResult.width || null,
         height: uploadResult.height || null,
         format: uploadResult.format || format,

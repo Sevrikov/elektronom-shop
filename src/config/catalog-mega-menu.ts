@@ -29,13 +29,12 @@ export interface MegaMenuCategoryConfig {
 
 export const megaMenuConfig: MegaMenuCategoryConfig[] = [
   {
-    slug: 'elektrika',
+    slug: 'elektryka',
     popular: [
-      { slug: 'avtomaty', labelUk: 'Автоматичні вимикачі', labelRu: 'Автоматические выключатели', href: '/catalog/avtomaty' },
-      { slug: 'uzo', labelUk: 'УЗО та диф-автомати', labelRu: 'УЗО и диф-автоматы', href: '/catalog/pzv-ta-dyf-avtomaty' },
-      { slug: 'shchyty', labelUk: 'Щити електричні', labelRu: 'Щиты электрические', href: '/catalog/shchyty-elektrychni' },
-      { slug: 'pusk', labelUk: 'Пускова апаратура', labelRu: 'Пусковая аппаратура', href: '/catalog/puskova-aparatura' },
-      { slug: 'rozetky', labelUk: 'Розетки та вимикачі', labelRu: 'Розетки и выключатели', href: '/catalog/rozetky-ta-vymykachi' },
+      { slug: 'avtomaty', labelUk: 'Автоматичні вимикачі', labelRu: 'Автоматические выключатели', href: '/catalog/avtomatychni-vymykachi' },
+      { slug: 'uzo', labelUk: 'УЗО та диф-автомати', labelRu: 'УЗО и диф-автоматы', href: '/catalog/dyferentsialni-avtomatychni-vymykachi-bez-zakhystu-vid-nadstrumu-pzv' },
+      { slug: 'shchyty', labelUk: 'Щити електричні', labelRu: 'Щиты электрические', href: '/catalog/shchytky-modulni-vbudovani-ubox' },
+      { slug: 'rozetky', labelUk: 'Розетки та вимикачі', labelRu: 'Розетки и выключатели', href: '/catalog/elektroustanovochni-vyroby' },
     ],
     promo: {
       titleUk: 'Електрика ABB та Schneider',
@@ -44,16 +43,15 @@ export const megaMenuConfig: MegaMenuCategoryConfig[] = [
       subtitleRu: 'Официальный дистрибьютор. Гарантия и документы.',
       ctaUk: 'Перейти до електрики',
       ctaRu: 'Перейти к электрике',
-      href: '/catalog/elektrika',
+      href: '/catalog/elektryka',
     },
   },
   {
     slug: 'instrumenty',
     popular: [
       { slug: 'dreli', labelUk: 'Дрилі та перфоратори', labelRu: 'Дрели и перфораторы', href: '/catalog/instrumenty' },
-      { slug: 'shlif', labelUk: 'Шліфувальні машини', labelRu: 'Шлифовальные машины', href: '/catalog/instrumenty' },
-      { slug: 'ruchnyy', labelUk: 'Ручний інструмент', labelRu: 'Ручной инструмент', href: '/catalog/instrument-ruchnyy' },
-      { slug: 'elektrynyy', labelUk: 'Електроінструмент', labelRu: 'Электроинструмент', href: '/catalog/instrument-elektrychnyy' },
+      { slug: 'ruchnyy', labelUk: 'Ручний інструмент', labelRu: 'Ручной инструмент', href: '/catalog/stolyarno-slyusarnyy-instrument' },
+      { slug: 'elektrynyy', labelUk: 'Акумуляторний інструмент', labelRu: 'Аккумуляторный инструмент', href: '/catalog/instrument-akumulyatornyy' },
     ],
     promo: {
       titleUk: 'Makita та Bosch',
@@ -66,11 +64,10 @@ export const megaMenuConfig: MegaMenuCategoryConfig[] = [
     },
   },
   {
-    slug: 'osvitlennya-led',
+    slug: 'led-osvitlennya',
     popular: [
-      { slug: 'led-lampy', labelUk: 'LED-лампи', labelRu: 'LED-лампы', href: '/catalog/osvitlennya-led' },
-      { slug: 'svitylnyky', labelUk: 'Світильники', labelRu: 'Светильники', href: '/catalog/osvitlennya-led' },
-      { slug: 'proty', labelUk: 'Прожектори', labelRu: 'Прожекторы', href: '/catalog/osvitlennya-led' },
+      { slug: 'led-lampy', labelUk: 'LED-лампи', labelRu: 'LED-лампы', href: '/catalog/led-osvitlennya' },
+      { slug: 'svitylnyky', labelUk: 'Світильники', labelRu: 'Светильники', href: '/catalog/led-osvitlennya' },
     ],
     promo: {
       titleUk: 'LED-освітлення',
@@ -79,15 +76,15 @@ export const megaMenuConfig: MegaMenuCategoryConfig[] = [
       subtitleRu: 'Экономьте до 80% электроэнергии с LED-решениями.',
       ctaUk: 'Вибрати LED',
       ctaRu: 'Выбрать LED',
-      href: '/catalog/osvitlennya-led',
+      href: '/catalog/led-osvitlennya',
     },
   },
   {
-    slug: 'kabel-ta-provid',
+    slug: 'kabeli-droty',
     popular: [
-      { slug: 'vvg', labelUk: 'Кабель ВВГ', labelRu: 'Кабель ВВГ', href: '/catalog/kabel-ta-provid' },
-      { slug: 'nyy', labelUk: 'Провід NYY', labelRu: 'Провод NYY', href: '/catalog/kabel-ta-provid' },
-      { slug: 'koaksialnyi', labelUk: 'Коаксіальний кабель', labelRu: 'Коаксиальный кабель', href: '/catalog/kabel-ta-provid' },
+      { slug: 'vvg', labelUk: 'Кабель ВВГ', labelRu: 'Кабель ВВГ', href: '/catalog/kabeli-droty' },
+      { slug: 'sylovi', labelUk: 'Силові кабелі', labelRu: 'Силовые кабели', href: '/catalog/sylovi-kabeli' },
+      { slug: 'merezhevyi', labelUk: 'Мережевий кабель', labelRu: 'Сетевой кабель', href: '/catalog/merezhevyy-kabel' },
     ],
     promo: {
       titleUk: 'Кабельна продукція',
@@ -96,14 +93,14 @@ export const megaMenuConfig: MegaMenuCategoryConfig[] = [
       subtitleRu: 'Широкий ассортимент кабелей и проводов от ведущих производителей.',
       ctaUk: 'До кабелів',
       ctaRu: 'К кабелям',
-      href: '/catalog/kabel-ta-provid',
+      href: '/catalog/kabeli-droty',
     },
   },
   {
-    slug: 'rozetky-ta-vymykachi',
+    slug: 'elektroustanovochni-vyroby',
     popular: [
-      { slug: 'rozetky-schuko', labelUk: 'Розетки Schuko', labelRu: 'Розетки Schuko', href: '/catalog/rozetky-ta-vymykachi' },
-      { slug: 'vymykachi-odnoklavishni', labelUk: 'Вимикачі однокл.', labelRu: 'Выключатели одноклав.', href: '/catalog/rozetky-ta-vymykachi' },
+      { slug: 'rozetky-schuko', labelUk: 'Розетки', labelRu: 'Розетки', href: '/catalog/rozetky' },
+      { slug: 'vymykachi', labelUk: 'Вимикачі', labelRu: 'Выключатели', href: '/catalog/vymykachi' },
     ],
     promo: {
       titleUk: 'Розетки та вимикачі',
@@ -112,40 +109,39 @@ export const megaMenuConfig: MegaMenuCategoryConfig[] = [
       subtitleRu: 'Legrand, Schneider, Werkel — вся линейка в одном месте.',
       ctaUk: 'До розеток',
       ctaRu: 'К розеткам',
-      href: '/catalog/rozetky-ta-vymykachi',
+      href: '/catalog/elektroustanovochni-vyroby',
     },
   },
   {
-    slug: 'avtomatyka',
+    slug: 'dzherela-bezperebiynoho-zhyvlennya-dbzh',
     popular: [
-      { slug: 'rele', labelUk: 'Реле проміжні', labelRu: 'Реле промежуточные', href: '/catalog/avtomatyka' },
-      { slug: 'kontaktory', labelUk: 'Контактори', labelRu: 'Контакторы', href: '/catalog/kontaktory' },
-      { slug: 'avr', labelUk: 'АВР / перемикачі', labelRu: 'АВР / переключатели', href: '/catalog/avtomatyka' },
+      { slug: 'ups', labelUk: 'Джерела безперебійного живлення', labelRu: 'Источники бесперебойного питания', href: '/catalog/ups-dzherelo-bezperebiynoho-zhyvlennya' },
+      { slug: 'invertory', labelUk: 'Інвертори', labelRu: 'Инверторы', href: '/catalog/invertory' },
+      { slug: 'router-ups', labelUk: 'Міні ДБЖ для роутера', labelRu: 'Мини ИБП для роутера', href: '/catalog/mini-ups-dlya-routera' },
     ],
     promo: {
       titleUk: 'Автоматика для надійного живлення',
       titleRu: 'Автоматика для надёжного питания',
-      subtitleUk: 'Реле, контактори, АВР від провідних брендів.',
-      subtitleRu: 'Реле, контакторы, АВР от ведущих брендов.',
-      ctaUk: 'До автоматики',
-      ctaRu: 'К автоматике',
-      href: '/catalog/avtomatyka',
+      subtitleUk: 'ДБЖ, інвертори, стабілізатори від провідних брендів.',
+      subtitleRu: 'ИБП, инверторы, стабилизаторы от ведущих брендов.',
+      ctaUk: 'До ДБЖ',
+      ctaRu: 'К ИБП',
+      href: '/catalog/dzherela-bezperebiynoho-zhyvlennya-dbzh',
     },
   },
   {
-    slug: 'rozumnyy-dim',
+    slug: 'rozumnyy-budynok',
     popular: [
-      { slug: 'smart-rozetky', labelUk: 'Розумні розетки', labelRu: 'Умные розетки', href: '/catalog/rozumnyy-dim' },
-      { slug: 'smart-svitlo', labelUk: 'Розумне освітлення', labelRu: 'Умное освещение', href: '/catalog/rozumnyy-dim' },
+      { slug: 'smart-budynok', labelUk: 'Розумний будинок', labelRu: 'Умный дом', href: '/catalog/rozumnyy-budynok' },
     ],
     promo: {
-      titleUk: 'Розумний дім',
+      titleUk: 'Розумний будинок',
       titleRu: 'Умный дом',
       subtitleUk: 'Автоматизуйте свій дім із сучасними рішеннями IoT.',
       subtitleRu: 'Автоматизируйте свой дом с современными IoT-решениями.',
-      ctaUk: 'Розумний дім',
+      ctaUk: 'Розумний будинок',
       ctaRu: 'Умный дом',
-      href: '/catalog/rozumnyy-dim',
+      href: '/catalog/rozumnyy-budynok',
     },
   },
 ]
