@@ -301,9 +301,9 @@ export default async function ProductPage({
                 <div className="flex flex-col gap-1 pt-3 mt-1 border-t border-border">
                   {Object.entries(displayAttrs).slice(0, 8).map(([key, value]) => (
                     <div key={key} className="flex items-end gap-2 text-[13px] py-0.5">
-                      <span className="text-text-muted whitespace-nowrap">{key.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}</span>
+                      <span className="text-text-muted whitespace-nowrap shrink-0">{key.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}</span>
                       <span className="flex-1 border-b border-dotted border-border-strong min-w-[20px]" />
-                      <span className="font-semibold text-text-primary whitespace-nowrap">{String(value)}</span>
+                      <span className="font-semibold text-text-primary text-right break-words min-w-0">{String(value)}</span>
                     </div>
                   ))}
                 </div>
