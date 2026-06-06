@@ -53,6 +53,7 @@ function toNum(v: unknown): number | null {
 export function CompareTable({ products, columns, locale = 'uk' }: CompareTableProps) {
   const [activeKey, setActiveKey] = useState<string>(columns[0]?.key ?? '')
   const [dir, setDir] = useState<'asc' | 'desc'>('asc')
+  const [expandedCell, setExpandedCell] = useState<{ productId: string; colKey: string } | null>(null)
 
   // active column first; the rest keep their priority order
   const orderedColumns = useMemo(() => {
@@ -170,7 +171,7 @@ export function CompareTable({ products, columns, locale = 'uk' }: CompareTableP
                   <span className="text-[10px] leading-tight font-medium line-clamp-2 text-text-primary" title={p.name}>
                     {p.name}
                   </span>
-                  <span className="text-[8px] font-mono text-text-muted mt-0.5 truncate" title={p.sku}>
+                  <span className="text-[9.5px] font-mono text-text-muted leading-tight mt-0.5 truncate select-all" title={p.sku}>
                     {p.sku}
                   </span>
                 </div>
@@ -206,11 +207,21 @@ export function CompareTable({ products, columns, locale = 'uk' }: CompareTableP
                   const t = tone(col.key, p.values[col.key])
                   const val = p.values[col.key]
                   const display = val === null || val === undefined || val === '' ? '—' : String(val)
+                  const isLongText = display.length > 25
+                  const isExpanded = expandedCell?.productId === p.id && expandedCell?.colKey === col.key
+
                   return (
                     <motion.div
                       layout
                       key={p.id}
-                      className={`flex items-center justify-center gap-0.5 px-1.5 border-b border-border last:border-b-0 text-[12px] num text-center ${
+                      onClick={() => {
+                        if (isLongText) {
+                          setExpandedCell(isExpanded ? null : { productId: p.id, colKey: col.key })
+                        }
+                      }}
+                      className={`flex items-center justify-center gap-0.5 px-1.5 border-b border-border last:border-b-0 text-[12px] num text-center relative ${
+                        isLongText ? 'cursor-pointer hover:bg-accent/5 transition-colors' : ''
+                      } ${
                         t === 'best'
                           ? 'bg-success-subtle text-success font-semibold'
                           : t === 'worst'
@@ -219,11 +230,32 @@ export function CompareTable({ products, columns, locale = 'uk' }: CompareTableP
                       }`}
                       style={{ height: ROW_H }}
                     >
-                      <span className="line-clamp-2">
+                      <span className={`line-clamp-2 ${isLongText ? 'border-b border-dashed border-text-muted/40 pb-0.5' : ''}`}>
                         {display}
                         {col.unit && display !== '—' ? ` ${col.unit}` : ''}
                       </span>
                       {t === 'worst' && <ArrowDown className="size-3 shrink-0" strokeWidth={2.5} />}
+
+                      {isExpanded && (
+                        <div
+                          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[100] w-[260px] max-h-[140px] overflow-y-auto p-3 bg-surface-white border-2 border-accent rounded-md shadow-2xl text-left text-[11px] leading-normal text-text-primary cursor-pointer hover:border-accent-strong transition-colors"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            setExpandedCell(null)
+                          }}
+                        >
+                          <div className="font-semibold text-[9px] text-text-muted mb-1 uppercase tracking-wider">
+                            {col.label}
+                          </div>
+                          <div className="font-medium text-text-primary whitespace-pre-wrap select-text">
+                            {display}
+                            {col.unit ? ` ${col.unit}` : ''}
+                          </div>
+                          <div className="text-[8px] text-accent mt-2 text-right">
+                            {locale === 'ru' ? 'Кликните, чтобы закрыть' : 'Клікніть, щоб закрити'}
+                          </div>
+                        </div>
+                      )}
                     </motion.div>
                   )
                 })}

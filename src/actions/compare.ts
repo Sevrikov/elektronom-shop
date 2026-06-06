@@ -33,6 +33,22 @@ const ATTR_METADATA: Record<string, { label: { uk: string; ru: string }; directi
     direction: 'lower',
     unit: 'кг',
   },
+  ves_kh: {
+    label: { uk: 'Маса, кг', ru: 'Масса, кг' },
+    direction: 'lower',
+  },
+  ob_yem_kh: {
+    label: { uk: 'Об\'єм, м³', ru: 'Объем, м³' },
+    direction: 'lower',
+  },
+  kilkist_v_yashchyku_sht: {
+    label: { uk: 'Кількість в упаковці, шт', ru: 'Количество в упаковке, шт' },
+    direction: 'higher',
+  },
+  vidpovidnist_standartam: {
+    label: { uk: 'Відповідність стандартам', ru: 'Соответствие стандартам' },
+    direction: 'text',
+  },
   ip_class: {
     label: { uk: 'Ступінь захисту', ru: 'Степень защиты IP' },
     direction: 'higher',
@@ -65,6 +81,37 @@ const ATTR_METADATA: Record<string, { label: { uk: string; ru: string }; directi
     direction: 'text',
     unit: 'м',
   },
+}
+
+function getColumnPriority(key: string): number {
+  const norm = key.toLowerCase().replace(/[\s_-]+/g, '_')
+  if (norm === 'price') return 0
+  
+  // quantitative characteristics
+  if (
+    norm.includes('ves') || 
+    norm.includes('weight') || 
+    norm.includes('ob_yem') || 
+    norm.includes('obyem') || 
+    norm.includes('volume') ||
+    norm.includes('kilkist') || 
+    norm.includes('qty') ||
+    norm.includes('rating') ||
+    norm.includes('breaking') ||
+    norm.includes('voltage') ||
+    norm.includes('poles') ||
+    norm.includes('current')
+  ) {
+    return 1
+  }
+  
+  // advantages are last
+  if (norm.startsWith('perevaha') || norm.startsWith('advantage')) {
+    return 3
+  }
+  
+  // other text specifications
+  return 2
 }
 
 export async function getCompareData(
@@ -126,20 +173,47 @@ export async function getCompareData(
     }
   }
 
+  // Sort the keys: quantitative specs first, then other specs, then advantages last (numerically sorted)
+  const sortedAttrKeys = Array.from(presentAttrKeys).sort((a, b) => {
+    const prioA = getColumnPriority(a)
+    const prioB = getColumnPriority(b)
+    if (prioA !== prioB) return prioA - prioB
+    
+    const normA = a.toLowerCase().replace(/[\s_-]+/g, '_')
+    const normB = b.toLowerCase().replace(/[\s_-]+/g, '_')
+    if (normA.startsWith('perevaha') && normB.startsWith('perevaha')) {
+      const numA = parseInt(normA.replace('perevaha', '').replace(/[^0-9]/g, '')) || 0
+      const numB = parseInt(normB.replace('perevaha', '').replace(/[^0-9]/g, '')) || 0
+      return numA - numB
+    }
+    
+    return a.localeCompare(b)
+  })
+
   // 3. Build dynamic columns starting with Price
   const priceLabel = locale === 'uk' ? 'Ціна' : 'Цена'
   const columns: CompareColumn[] = [
     { key: 'price', label: priceLabel, direction: 'lower', unit: '₴' },
   ]
 
-  for (const key of presentAttrKeys) {
-    const meta = ATTR_METADATA[key]
+  for (const key of sortedAttrKeys) {
+    const normKey = key.toLowerCase().replace(/[\s_-]+/g, '_')
+    const meta = ATTR_METADATA[normKey]
     if (meta) {
       columns.push({
         key,
         label: meta.label[locale],
         direction: meta.direction,
         ...(meta.unit ? { unit: meta.unit } : {}),
+      })
+    } else if (normKey.startsWith('perevaha')) {
+      const num = normKey.replace('perevaha', '').replace(/[^0-9]/g, '').trim()
+      const labelUk = `Перевага ${num}`
+      const labelRu = `Преимущество ${num}`
+      columns.push({
+        key,
+        label: locale === 'ru' ? labelRu : labelUk,
+        direction: 'text',
       })
     } else {
       // Fallback formatting for unmapped custom attributes
@@ -167,7 +241,7 @@ export async function getCompareData(
       price: Number(p.price),
     }
 
-    for (const key of presentAttrKeys) {
+    for (const key of sortedAttrKeys) {
       values[key] = attrs[key] as string | number | null | undefined
     }
 
