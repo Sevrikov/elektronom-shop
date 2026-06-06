@@ -109,8 +109,18 @@ export async function getCompareData(
   for (const p of dbProducts) {
     const attrs = (p.attributes as Record<string, unknown>) ?? {}
     for (const key of Object.keys(attrs)) {
-      // ignore helper or internal engineering fields like engineeringRole
-      if (key !== 'engineeringRole' && key !== 'qty_breaks' && attrs[key] !== null && attrs[key] !== undefined && attrs[key] !== '') {
+      // ignore helper or internal engineering fields, and ignore Artykul/SKU
+      const norm = key.toLowerCase().replace(/[\s_-]+/g, '')
+      if (
+        key !== 'engineeringRole' &&
+        key !== 'qty_breaks' &&
+        norm !== 'artykul' &&
+        norm !== 'артикул' &&
+        norm !== 'sku' &&
+        attrs[key] !== null &&
+        attrs[key] !== undefined &&
+        attrs[key] !== ''
+      ) {
         presentAttrKeys.add(key)
       }
     }
@@ -164,6 +174,7 @@ export async function getCompareData(
     return {
       id: p.id,
       name,
+      sku: p.sku,
       image: imageUrl,
       values,
     }

@@ -26,6 +26,7 @@ export interface CompareColumn {
 export interface CompareProduct {
   id: string
   name: string
+  sku: string
   image: string | null
   values: Record<string, string | number | null | undefined>
 }
@@ -66,11 +67,30 @@ export function CompareTable({ products, columns, locale = 'uk' }: CompareTableP
       const nums = products
         .map((p) => toNum(p.values[col.key]))
         .filter((n): n is number => n !== null)
-      const numeric = col.direction !== 'text' && new Set(nums).size >= 2
+      const numeric = new Set(nums).size >= 2
+      
+      let direction = col.direction
+      if (direction === 'text') {
+        const keyNorm = col.key.toLowerCase()
+        if (
+          keyNorm.includes('weight') ||
+          keyNorm.includes('ves') ||
+          keyNorm.includes('price') ||
+          keyNorm.includes('ob_yem') ||
+          keyNorm.includes('obyem') ||
+          keyNorm.includes('объем') ||
+          keyNorm.includes('об\'єм')
+        ) {
+          direction = 'lower'
+        } else {
+          direction = 'higher'
+        }
+      }
+
       map.set(col.key, {
         numeric,
-        best: numeric ? (col.direction === 'lower' ? Math.min(...nums) : Math.max(...nums)) : null,
-        worst: numeric ? (col.direction === 'lower' ? Math.max(...nums) : Math.min(...nums)) : null,
+        best: numeric ? (direction === 'lower' ? Math.min(...nums) : Math.max(...nums)) : null,
+        worst: numeric ? (direction === 'lower' ? Math.max(...nums) : Math.min(...nums)) : null,
       })
     }
     return map
@@ -149,6 +169,9 @@ export function CompareTable({ products, columns, locale = 'uk' }: CompareTableP
                 <div className="flex flex-col min-w-0 flex-1 justify-center">
                   <span className="text-[10px] leading-tight font-medium line-clamp-2 text-text-primary" title={p.name}>
                     {p.name}
+                  </span>
+                  <span className="text-[8px] font-mono text-text-muted mt-0.5 truncate" title={p.sku}>
+                    {p.sku}
                   </span>
                 </div>
                 <AddToCartButton
