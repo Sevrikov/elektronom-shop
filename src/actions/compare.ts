@@ -114,6 +114,36 @@ function getColumnPriority(key: string): number {
   return 2
 }
 
+const TRANSLIT_DICT: Record<string, { uk: string; ru: string }> = {
+  kilkist: { uk: 'кількість', ru: 'количество' },
+  kolychestvo: { uk: 'кількість', ru: 'количество' },
+  kolichestvo: { uk: 'кількість', ru: 'количество' },
+  ustanovchykh: { uk: 'установчих', ru: 'установочных' },
+  ustanovochynyh: { uk: 'установчих', ru: 'установочных' },
+  gnizd: { uk: 'гнізд', ru: 'гнезд' },
+  gnezdo: { uk: 'гніздо', ru: 'гнездо' },
+  lynyy: { uk: 'ліній', ru: 'линий' },
+  linii: { uk: 'ліній', ru: 'линий' },
+  linij: { uk: 'ліній', ru: 'линий' },
+  podderzhyvaem: { uk: 'пристроїв, що підтримуються', ru: 'поддерживаемых устройств' },
+  podderzhivaem: { uk: 'пристроїв, що підтримуються', ru: 'поддерживаемых устройств' },
+  podderzhyvaemykh: { uk: 'пристроїв, що підтримуються', ru: 'поддерживаемых устройств' },
+  podderzhivaemykh: { uk: 'пристроїв, що підтримуються', ru: 'поддерживаемых устройств' },
+  ustroystv: { uk: 'пристроїв', ru: 'устройств' },
+  ustroistv: { uk: 'пристроїв', ru: 'устройств' },
+  sht: { uk: 'шт.', ru: 'шт.' },
+  kh: { uk: 'кг', ru: 'кг' },
+  v: { uk: 'в', ru: 'в' },
+  yashchyku: { uk: 'упаковці', ru: 'упаковке' },
+  yashchyka: { uk: 'упаковки', ru: 'упаковки' },
+  yashchike: { uk: 'упаковке', ru: 'упаковке' },
+  ves: { uk: 'маса', ru: 'масса' },
+  ob: { uk: 'об\'єм', ru: 'объем' },
+  yem: { uk: 'об\'єм', ru: 'объем' },
+  vidpovidnist: { uk: 'відповідність', ru: 'соответствие' },
+  standartam: { uk: 'стандартам', ru: 'стандартам' },
+}
+
 export async function getCompareData(
   productIds: string[],
   locale: 'uk' | 'ru' = 'uk'
@@ -173,8 +203,25 @@ export async function getCompareData(
     }
   }
 
+  // Filter the keys to exclude columns where most compared products have no value.
+  // A column is kept only if:
+  // - at least 2 products have a non-empty value (or at least 1 product if only 1 is compared)
+  // - AND the number of products with a value is at least half of the compared products (>= 50%)
+  const filteredAttrKeys = Array.from(presentAttrKeys).filter((key) => {
+    const hasValueCount = dbProducts.filter((p) => {
+      const attrs = (p.attributes as Record<string, unknown>) ?? {}
+      const val = attrs[key]
+      return val !== null && val !== undefined && val !== ''
+    }).length
+
+    const threshold = dbProducts.length / 2
+    return dbProducts.length === 1
+      ? hasValueCount >= 1
+      : (hasValueCount >= 2 && hasValueCount >= threshold)
+  })
+
   // Sort the keys: quantitative specs first, then other specs, then advantages last (numerically sorted)
-  const sortedAttrKeys = Array.from(presentAttrKeys).sort((a, b) => {
+  const sortedAttrKeys = filteredAttrKeys.sort((a, b) => {
     const prioA = getColumnPriority(a)
     const prioB = getColumnPriority(b)
     if (prioA !== prioB) return prioA - prioB
@@ -216,13 +263,23 @@ export async function getCompareData(
         direction: 'text',
       })
     } else {
-      // Fallback formatting for unmapped custom attributes
-      const formattedLabel = key
-        .replace(/_/g, ' ')
-        .replace(/\b\w/g, (char) => char.toUpperCase())
+      // Fallback formatting using transliteration dictionary
+      const words = key.split(/[\s_-]+/)
+      const translatedUk = words.map(w => {
+        const low = w.toLowerCase()
+        return TRANSLIT_DICT[low]?.uk ?? w
+      }).join(' ')
+      const translatedRu = words.map(w => {
+        const low = w.toLowerCase()
+        return TRANSLIT_DICT[low]?.ru ?? w
+      }).join(' ')
+
+      const labelUk = translatedUk.charAt(0).toUpperCase() + translatedUk.slice(1)
+      const labelRu = translatedRu.charAt(0).toUpperCase() + translatedRu.slice(1)
+
       columns.push({
         key,
-        label: formattedLabel,
+        label: locale === 'ru' ? labelRu : labelUk,
         direction: 'text',
       })
     }
