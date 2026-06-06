@@ -5,6 +5,7 @@ import { formatPrice, getDiscountPercent } from '@/lib/utils'
 import { AddToCartButton } from '@/components/cart/add-to-cart-button'
 import { getTransformedImageUrl } from '@/lib/images'
 import { TransparentImage } from '@/components/shared/transparent-image'
+import { CompareButton } from '@/components/compare/compare-button'
 
 // ─── Тип товара из Prisma (tasks 1.9 productCardSelect) ──────────────────────
 
@@ -61,6 +62,17 @@ export default function ProductCard({ product, locale, view = 'grid' }: ProductC
               -{discount}%
             </div>
           )}
+          <CompareButton
+            productId={product.id}
+            slug={product.slug}
+            sku={product.sku}
+            name={name}
+            imageUrl={mainImage ? getTransformedImageUrl(mainImage, { width: 320, height: 320, crop: 'limit' }) : null}
+            price={price}
+            comparePrice={comparePrice}
+            brandName={brandName}
+            categorySlug={product.category.slug}
+          />
           {mainImage ? (
             <TransparentImage
               src={getTransformedImageUrl(mainImage, { width: 320, height: 320, crop: 'limit' })}
@@ -144,6 +156,18 @@ export default function ProductCard({ product, locale, view = 'grid' }: ProductC
             -{discount}%
           </div>
         )}
+
+        <CompareButton
+          productId={product.id}
+          slug={product.slug}
+          sku={product.sku}
+          name={name}
+          imageUrl={mainImage ? getTransformedImageUrl(mainImage, { width: 320, height: 320, crop: 'limit' }) : null}
+          price={price}
+          comparePrice={comparePrice}
+          brandName={brandName}
+          categorySlug={product.category.slug}
+        />
 
         {mainImage ? (
           <TransparentImage

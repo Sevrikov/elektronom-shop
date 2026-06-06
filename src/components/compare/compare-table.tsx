@@ -9,7 +9,9 @@
 
 import { useMemo, useState } from 'react'
 import { motion, LayoutGroup } from 'motion/react'
-import { ArrowDown } from 'lucide-react'
+import { ArrowDown, X } from 'lucide-react'
+import { AddToCartButton } from '@/components/cart/add-to-cart-button'
+import { useCompareStore } from '@/store/compare-store'
 
 export type CompareDirection = 'higher' | 'lower' | 'text'
 
@@ -113,22 +115,48 @@ export function CompareTable({ products, columns, locale = 'uk' }: CompareTableP
       <div className="overflow-x-auto overscroll-x-contain rounded-lg border border-border">
         <div className="flex w-max">
           {/* Sticky product column */}
-          <div className="sticky left-0 z-20 bg-surface-white shrink-0 w-[150px] border-r border-border">
-            <div className="h-12 border-b border-border bg-surface-alt" />
+          <div className="sticky left-0 z-20 bg-surface-white shrink-0 w-[175px] border-r border-border shadow-[2px_0_5px_rgba(0,0,0,0.05)]">
+            <div className="h-12 border-b border-border bg-surface-alt flex items-center px-2.5 text-[10px] font-bold tracking-wider uppercase text-text-muted">
+              Товар
+            </div>
             {sorted.map((p) => (
               <motion.div
                 layout
                 key={p.id}
-                className="flex items-center gap-2 px-2 border-b border-border last:border-b-0"
+                className="flex items-center gap-1.5 px-2 border-b border-border last:border-b-0 bg-surface-white"
                 style={{ height: ROW_H }}
               >
-                {p.image ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={p.image} alt={p.name} className="size-9 object-contain shrink-0" />
-                ) : (
-                  <div className="size-9 rounded bg-surface-alt shrink-0" />
-                )}
-                <span className="text-[11px] leading-tight line-clamp-2 text-text-primary">{p.name}</span>
+                <div className="relative shrink-0 size-8 group/img">
+                  {p.image ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={p.image} alt={p.name} className="size-8 object-contain" />
+                  ) : (
+                    <div className="size-8 rounded bg-surface-alt" />
+                  )}
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault()
+                      e.stopPropagation()
+                      useCompareStore.getState().remove(p.id)
+                    }}
+                    className="absolute -top-1.5 -left-1.5 size-4 rounded-full bg-destructive text-white flex items-center justify-center cursor-pointer hover:bg-red-600 transition-colors shadow-sm"
+                    title="Видалити з порівняння"
+                  >
+                    <X className="size-2.5" strokeWidth={3} />
+                  </button>
+                </div>
+                <div className="flex flex-col min-w-0 flex-1 justify-center">
+                  <span className="text-[10px] leading-tight font-medium line-clamp-2 text-text-primary" title={p.name}>
+                    {p.name}
+                  </span>
+                </div>
+                <AddToCartButton
+                  productId={p.id}
+                  productName={p.name}
+                  variant="icon"
+                  className="size-7 p-1 rounded bg-accent text-white"
+                />
               </motion.div>
             ))}
           </div>

@@ -10,6 +10,7 @@ import Footer from '@/components/layout/footer'
 import MobileNav from '@/components/layout/mobile-nav'
 import { CartDrawer } from '@/components/cart/cart-drawer'
 import { AssistantWidget } from '@/components/assistant/assistant-widget'
+import { CompareDrawer } from '@/components/compare/compare-drawer'
 import { getSiteUrl } from '@/lib/utils'
 import { getCategoryTree } from '@/queries/categories'
 import { getWorkloadCount } from '@/queries/workload'
@@ -131,6 +132,7 @@ export default async function LocaleLayout({
             <Footer />
             <MobileNav />
             <CartDrawer locale={locale} />
+            <CompareDrawer locale={locale as 'uk' | 'ru'} />
             <AssistantWidget locale={locale} />
           </Suspense>
         </NextIntlClientProvider>
