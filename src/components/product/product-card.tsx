@@ -138,16 +138,6 @@ export default function ProductCard({ product, locale, view = 'grid' }: ProductC
         href={`/${locale}/product/${product.slug}`}
         className="relative h-[160px] flex items-center justify-center overflow-hidden bg-surface-alt"
       >
-        {/* Stock badge */}
-        <div
-          className={`absolute top-2 left-2 inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-semibold z-10 ${
-            inStock ? 'bg-success-subtle text-success' : 'bg-destructive/8 text-destructive'
-          }`}
-        >
-          {inStock && <Check className="size-3" strokeWidth={2.5} />}
-          {stockLabel}
-        </div>
-
         {/* Discount badge */}
         {discount > 0 && (
           <div className="absolute top-2 right-2 px-1.5 py-0.5 rounded text-[10px] font-bold text-white z-10 bg-destructive">
@@ -172,9 +162,22 @@ export default function ProductCard({ product, locale, view = 'grid' }: ProductC
 
       {/* Content */}
       <div className="flex flex-col flex-1 p-3 gap-1">
-        <span className="text-[10px] font-semibold tracking-wider uppercase text-text-muted">
-          {brandName}
-        </span>
+        <div className="flex items-center gap-2 flex-wrap min-h-[18px]">
+          {brandName && (
+            <span className="text-[10px] font-semibold tracking-wider uppercase text-text-muted">
+              {brandName}
+            </span>
+          )}
+          {/* Stock badge */}
+          <div
+            className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[9px] font-semibold ${
+              inStock ? 'bg-success-subtle text-success' : 'bg-destructive/8 text-destructive'
+            }`}
+          >
+            {inStock && <Check className="size-2.5" strokeWidth={2.5} />}
+            {stockLabel}
+          </div>
+        </div>
         <Link
           href={`/${locale}/product/${product.slug}`}
           className="text-[13px] font-medium leading-snug line-clamp-2 min-h-[36px] hover:text-accent transition-colors"

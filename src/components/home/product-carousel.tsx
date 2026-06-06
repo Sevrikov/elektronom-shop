@@ -17,14 +17,6 @@ function ProductCard({ product, locale }: { product: DemoProduct; locale: Locale
         className="relative h-[140px] flex items-center justify-center"
         style={{ background: 'var(--color-surface-alt)' }}
       >
-        {/* Stock badge */}
-        <div
-          className="absolute top-2 left-2 inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-semibold"
-          style={{ background: 'var(--color-success-subtle)', color: 'var(--color-success)' }}
-        >
-          <Check className="size-3" strokeWidth={2.5} />
-          В наявності
-        </div>
         {/* Placeholder icon */}
         <div className="size-16 rounded-lg flex items-center justify-center" style={{ background: 'var(--color-surface-raised)' }}>
           <span className="text-2xl font-bold" style={{ color: 'var(--color-border-strong)' }}>
@@ -35,9 +27,19 @@ function ProductCard({ product, locale }: { product: DemoProduct; locale: Locale
 
       {/* Content */}
       <div className="flex flex-col flex-1 p-3 gap-1.5">
-        <span className="text-[10px] font-semibold tracking-wider uppercase" style={{ color: 'var(--color-text-muted)' }}>
-          {product.brand}
-        </span>
+        <div className="flex items-center gap-2 flex-wrap min-h-[18px]">
+          <span className="text-[10px] font-semibold tracking-wider uppercase" style={{ color: 'var(--color-text-muted)' }}>
+            {product.brand}
+          </span>
+          {/* Stock badge */}
+          <div
+            className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[9px] font-semibold"
+            style={{ background: 'var(--color-success-subtle)', color: 'var(--color-success)' }}
+          >
+            <Check className="size-2.5" strokeWidth={2.5} />
+            В наявності
+          </div>
+        </div>
         <p className="text-[13px] font-medium leading-snug line-clamp-2" style={{ color: 'var(--color-text-primary)' }}>
           {product.name[locale]}
         </p>
