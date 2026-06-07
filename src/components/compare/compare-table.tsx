@@ -216,7 +216,7 @@ export function CompareTable({ products, columns, locale = 'uk' }: CompareTableP
                           setExpandedCell(isExpanded ? null : { productId: p.id, colKey: col.key })
                         }
                       }}
-                      className={`flex items-center justify-center gap-0.5 px-1.5 border-b border-border last:border-b-0 text-[12px] num text-center relative ${
+                      className={`flex items-center justify-center gap-0.5 px-1.5 border-b border-border last:border-b-0 text-[12px] num text-center relative h-14 ${
                         isLongText ? 'cursor-pointer hover:bg-accent/5 transition-colors' : ''
                       } ${
                         t === 'best'

@@ -139,9 +139,9 @@ export default function ProductCard({ product, locale, view = 'grid' }: ProductC
                   valStr = translateAttributeValue(value, locale === 'ru' ? 'ru' : 'uk')
                 }
                 return (
-                  <div key={key} className="flex justify-between items-center gap-2">
-                    <span className="text-text-muted font-medium shrink-0">{label}:</span>
-                    <span className="text-text-primary font-semibold truncate max-w-[60%]">{valStr}</span>
+                  <div key={key} className="flex justify-between items-start gap-2 py-0.5">
+                    <span className="text-text-muted font-medium text-left break-words max-w-[60%]">{label}:</span>
+                    <span className="text-text-primary text-right font-semibold break-words max-w-[40%]">{valStr}</span>
                   </div>
                 )
               })}
@@ -293,9 +293,9 @@ export default function ProductCard({ product, locale, view = 'grid' }: ProductC
                 valStr = translateAttributeValue(value, locale === 'ru' ? 'ru' : 'uk')
               }
               return (
-                <div key={key} className="flex justify-between items-start gap-3">
-                  <span className="text-text-muted font-medium shrink-0">{label}:</span>
-                  <span className="text-text-primary text-right font-semibold truncate max-w-[65%]">{valStr}</span>
+                <div key={key} className="flex justify-between items-start gap-2 py-0.5">
+                  <span className="text-text-muted font-medium text-left break-words max-w-[60%]">{label}:</span>
+                  <span className="text-text-primary text-right font-semibold break-words max-w-[40%]">{valStr}</span>
                 </div>
               )
             })}
