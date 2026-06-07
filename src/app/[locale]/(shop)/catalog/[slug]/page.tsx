@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { connection } from 'next/server'
 import { isValidLocale } from '@/i18n/request'
-import { parseCatalogSearchParams, extractAttributeFilters } from '@/lib/catalog-filter-url'
+import { parseCatalogSearchParams, extractAttributeFilters, DEFAULT_PAGE_SIZE } from '@/lib/catalog-filter-url'
 import { getCategoryFilterConfig, QuickLink } from '@/lib/catalog-filter-config'
 import { getCategoryFacets } from '@/queries/categories'
 import { getFilteredProducts } from '@/queries/products'
@@ -21,8 +21,6 @@ import { getSiteUrl } from '@/lib/utils'
 import { AnswerBlock } from '@/components/seo/answer-block'
 import { Suspense } from 'react'
 import DeferredMobileFilterDrawer from '@/components/catalog/deferred-mobile-filter-drawer'
-
-const DEFAULT_PAGE_SIZE = 48
 
 // Check if active filters match exactly one quick link and no other indexable filters
 export function getMatchingQuickLink(

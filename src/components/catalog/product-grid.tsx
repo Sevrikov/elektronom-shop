@@ -53,7 +53,7 @@ export default function ProductGrid({ products, total, currentPage, pageSize }: 
             ))}
           </div>
 
-          {hasMoreLimit && (
+          {currentPage === 1 && hasMoreLimit && (
             <div className="flex justify-center mt-6">
               <button
                 onClick={showMore}

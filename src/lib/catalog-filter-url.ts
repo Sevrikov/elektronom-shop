@@ -4,6 +4,9 @@
 
 import type { ActiveFilters } from '@/types'
 
+export const CATALOG_PAGE_SIZE_OPTIONS = [48, 96, 192] as const
+export const DEFAULT_PAGE_SIZE = 48
+
 /** Keys that are not dynamic attribute filters */
 const RESERVED_KEYS = new Set(['brand', 'priceMin', 'priceMax', 'inStock', 'sort', 'page', 'view', 'limit'])
 
@@ -62,11 +65,13 @@ export function parseCatalogSearchParams(
     if (!isNaN(n) && n > 0) filters.page = n
   }
 
-  // limit — positive integer, must be 48, 96, or 192
+  // limit — positive integer, must be one of CATALOG_PAGE_SIZE_OPTIONS
   const rawLimit = sp['limit']
   if (rawLimit) {
     const n = parseInt(Array.isArray(rawLimit) ? rawLimit[0]! : rawLimit, 10)
-    if (!isNaN(n) && [48, 96, 192].includes(n)) filters.limit = n
+    if (!isNaN(n) && (CATALOG_PAGE_SIZE_OPTIONS as readonly number[]).includes(n)) {
+      filters.limit = n
+    }
   }
 
   // sort — whitelist
@@ -104,7 +109,7 @@ export function buildCatalogHref(pathname: string, filters: ActiveFilters): stri
   if (filters.inStock) params.set('inStock', '1')
   if (filters.sort) params.set('sort', filters.sort)
   if (filters.page && filters.page > 1) params.set('page', String(filters.page))
-  if (filters.limit !== undefined && filters.limit !== 48) params.set('limit', String(filters.limit))
+  if (filters.limit !== undefined && filters.limit !== DEFAULT_PAGE_SIZE) params.set('limit', String(filters.limit))
 
   // Dynamic attributes (everything else)
   for (const [key, value] of Object.entries(filters)) {

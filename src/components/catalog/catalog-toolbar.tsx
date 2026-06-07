@@ -5,6 +5,7 @@ import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import { LayoutGrid, List, SlidersHorizontal, ChevronDown } from 'lucide-react'
 import { useTranslations, useLocale } from 'next-intl'
 import { useUIStore } from '@/store/ui-store'
+import { CATALOG_PAGE_SIZE_OPTIONS, DEFAULT_PAGE_SIZE } from '@/lib/catalog-filter-url'
 
 type SortValue = 'popular' | 'price-asc' | 'price-desc' | 'new' | 'rating'
 
@@ -21,8 +22,6 @@ const SORTS: { value: SortValue; labelKey: string }[] = [
   { value: 'new',        labelKey: 'sort.new' },
 ]
 
-const PAGE_SIZE_OPTIONS = [48, 96, 192] as const
-
 export default function CatalogToolbar({
   total,
   currentSort = 'popular',
@@ -37,10 +36,10 @@ export default function CatalogToolbar({
   const openMobileFilters = useUIStore((s) => s.openMobileFilters)
   const view = searchParams.get('view') === 'list' ? 'list' : 'grid'
 
-  const rawLimit = Number(searchParams.get('limit') || '48')
-  const limit = PAGE_SIZE_OPTIONS.includes(rawLimit as (typeof PAGE_SIZE_OPTIONS)[number])
+  const rawLimit = Number(searchParams.get('limit') || String(DEFAULT_PAGE_SIZE))
+  const limit = (CATALOG_PAGE_SIZE_OPTIONS as readonly number[]).includes(rawLimit)
     ? rawLimit
-    : 48
+    : DEFAULT_PAGE_SIZE
 
   function setLimit(newLimit: number) {
     const params = new URLSearchParams(searchParams.toString())
@@ -86,16 +85,45 @@ export default function CatalogToolbar({
   return (
     <div
       className={[
-        'flex items-center gap-3 mt-3 py-2.5 px-3 rounded-lg bg-surface-white border border-border',
+        'flex flex-col sm:flex-row sm:items-center gap-3 mt-3 py-2.5 px-3 rounded-lg bg-surface-white border border-border',
         'transition-opacity',
         isPending ? 'opacity-60' : '',
       ].join(' ')}
     >
-      {/* Mobile: filter button */}
+      {/* Mobile: filter button + sort switcher in one row */}
+      <div className="flex sm:hidden items-center justify-between w-full gap-2">
+        <button
+          id="mobile-filter-open-btn"
+          onClick={openMobileFilters}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium border border-border text-text-primary hover:border-accent hover:text-accent transition-colors shrink-0"
+        >
+          <SlidersHorizontal className="size-4" />
+          <span>{t('filters.title')}</span>
+          {activeFiltersCount > 0 && (
+            <span className="bg-accent text-white text-[11px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
+              {activeFiltersCount}
+            </span>
+          )}
+        </button>
+
+        <select
+          value={currentSort}
+          onChange={(e) => setSort(e.target.value as SortValue)}
+          className="appearance-none px-2 py-1.5 rounded-md text-sm border border-border bg-surface-white text-text-primary cursor-pointer outline-none"
+        >
+          {SORTS.map((s) => (
+            <option key={s.value} value={s.value}>
+              {t(s.labelKey)}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {/* Tablet: filter button */}
       <button
-        id="mobile-filter-open-btn"
+        id="mobile-filter-open-btn-tablet"
         onClick={openMobileFilters}
-        className="lg:hidden flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium border border-border text-text-primary hover:border-accent hover:text-accent transition-colors shrink-0"
+        className="hidden sm:flex lg:hidden items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium border border-border text-text-primary hover:border-accent hover:text-accent transition-colors shrink-0"
       >
         <SlidersHorizontal className="size-4" />
         <span>{t('filters.title')}</span>
@@ -107,31 +135,35 @@ export default function CatalogToolbar({
       </button>
 
       {/* Found count + Page size selector */}
-      <div className="text-sm text-text-muted shrink-0 hidden sm:flex items-center gap-1.5 select-none">
-        <span>{t('foundCount', { count: total })}</span>
-        <span className="text-border-strong font-normal">/</span>
-        <span className="text-xs text-text-muted">{locale === 'uk' ? 'На сторінку:' : 'На страницу:'}</span>
-        <span className="inline-flex items-center gap-1 font-bold text-xs">
-          {PAGE_SIZE_OPTIONS.map((sz, idx) => (
-            <span key={sz} className="inline-flex items-center gap-1">
-              <button
-                onClick={() => setLimit(sz)}
-                className={[
-                  'cursor-pointer transition-colors',
-                  limit === sz
-                    ? 'text-accent font-extrabold underline decoration-2 underline-offset-4'
-                    : 'text-text-muted hover:text-accent font-medium'
-                ].join(' ')}
-              >
-                {sz}
-              </button>
-              {idx < 2 && <span className="text-border-strong font-normal select-none">|</span>}
-            </span>
-          ))}
-        </span>
+      <div className="text-sm text-text-muted flex items-center justify-between sm:justify-start w-full sm:w-auto gap-2 border-t sm:border-0 pt-2 sm:pt-0 border-border select-none">
+        <div className="flex items-center gap-1.5">
+          <span>{t('foundCount', { count: total })}</span>
+          <span className="hidden sm:inline text-border-strong font-normal">/</span>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <span className="text-xs text-text-muted">{locale === 'uk' ? 'На сторінку:' : 'На страницу:'}</span>
+          <span className="inline-flex items-center gap-1 font-bold text-xs">
+            {CATALOG_PAGE_SIZE_OPTIONS.map((sz, idx) => (
+              <span key={sz} className="inline-flex items-center gap-1">
+                <button
+                  onClick={() => setLimit(sz)}
+                  className={[
+                    'cursor-pointer transition-colors',
+                    limit === sz
+                      ? 'text-accent font-extrabold underline decoration-2 underline-offset-4'
+                      : 'text-text-muted hover:text-accent font-medium'
+                  ].join(' ')}
+                >
+                  {sz}
+                </button>
+                {idx < 2 && <span className="text-border-strong font-normal select-none">|</span>}
+              </span>
+            ))}
+          </span>
+        </div>
       </div>
 
-      <div className="flex-1" />
+      <div className="hidden sm:block flex-1" />
 
       {/* Sort — desktop dropdown-style */}
       <div className="relative hidden sm:block">
@@ -149,19 +181,6 @@ export default function CatalogToolbar({
         </select>
         <ChevronDown className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 size-4 text-text-muted" />
       </div>
-
-      {/* Sort — mobile compact */}
-      <select
-        value={currentSort}
-        onChange={(e) => setSort(e.target.value as SortValue)}
-        className="sm:hidden appearance-none px-2 py-1.5 rounded-md text-sm border border-border bg-surface-white text-text-primary cursor-pointer outline-none"
-      >
-        {SORTS.map((s) => (
-          <option key={s.value} value={s.value}>
-            {t(s.labelKey)}
-          </option>
-        ))}
-      </select>
 
       {/* View switcher — desktop only */}
       <div className="hidden lg:flex items-center gap-1 border border-border rounded-md overflow-hidden">
