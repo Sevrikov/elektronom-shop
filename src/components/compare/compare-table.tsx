@@ -176,7 +176,7 @@ export function CompareTable({ products, columns, locale = 'uk' }: CompareTableP
                   productId={p.id}
                   productName={p.name}
                   variant="icon"
-                  className="size-7 p-1 rounded bg-accent text-white"
+                  className="size-7 p-1 rounded !bg-accent hover:!bg-accent-hover !text-white !border-accent"
                 />
               </motion.div>
             ))}
