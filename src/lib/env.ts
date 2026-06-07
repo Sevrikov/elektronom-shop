@@ -59,6 +59,19 @@ const envSchema = z.object({
   // Payment provider identifier (required once payment is enabled)
   PAYMENT_PROVIDER: z.enum(['liqpay', 'fondy', 'wayforpay', 'monobank', 'portmone']).optional(),
   PAYMENT_PUBLIC_KEY: z.string().optional(),
+
+  // Feature Flags (Alpha 1.2) - optional and default to false
+  alpha12_content_guides_enabled: z.preprocess((val) => val === "true" || val === "1" || val === true, z.boolean()).optional().default(false),
+  alpha12_guide_rag_citations_enabled: z.preprocess((val) => val === "true" || val === "1" || val === true, z.boolean()).optional().default(false),
+  alpha12_seo_answer_blocks_enabled: z.preprocess((val) => val === "true" || val === "1" || val === true, z.boolean()).optional().default(false),
+  alpha12_article_schema_enabled: z.preprocess((val) => val === "true" || val === "1" || val === true, z.boolean()).optional().default(false),
+  alpha12_faq_howto_schema_enabled: z.preprocess((val) => val === "true" || val === "1" || val === true, z.boolean()).optional().default(false),
+  alpha12_trust_entity_enabled: z.preprocess((val) => val === "true" || val === "1" || val === true, z.boolean()).optional().default(false),
+  alpha12_recently_viewed_enabled: z.preprocess((val) => val === "true" || val === "1" || val === true, z.boolean()).optional().default(false),
+  alpha12_co_purchase_recommendations_enabled: z.preprocess((val) => val === "true" || val === "1" || val === true, z.boolean()).optional().default(false),
+  alpha12_ai_recommendations_enabled: z.preprocess((val) => val === "true" || val === "1" || val === true, z.boolean()).optional().default(false),
+  alpha12_bi_dashboard_enabled: z.preprocess((val) => val === "true" || val === "1" || val === true, z.boolean()).optional().default(false),
+  alpha12_ab_experiments_enabled: z.preprocess((val) => val === "true" || val === "1" || val === true, z.boolean()).optional().default(false),
 }).refine(
   (data) => {
     const hasAny = !!(data.CLOUDINARY_CLOUD_NAME || data.CLOUDINARY_API_KEY || data.CLOUDINARY_API_SECRET);
