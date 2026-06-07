@@ -6,6 +6,7 @@ export interface QuickLink {
   /** filter key + value to encode in URL, OR explicit href */
   filter?: { key: string; value: string }
   href?: string
+  imageUrl?: string | null
 }
 
 export interface FilterConfig {

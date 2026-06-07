@@ -13,6 +13,7 @@ import { contactInfo, contactPhones } from '@/lib/constants'
 import type { Locale } from '@/types'
 import { CartButton } from '@/components/cart/cart-button'
 import { SearchBox } from '@/components/search/search-box'
+import { useWishlistStore } from '@/store/wishlist-store'
 
 import { StarfieldBanner } from '@/components/layout/starfield-banner'
 import { Truck, Percent, MessageCircle, Package } from 'lucide-react'
@@ -32,6 +33,13 @@ export default function Header({ workload = 0 }: Props) {
   const headerRef = useRef<HTMLElement>(null)
 
   const otherLocale: Locale = locale === 'uk' ? 'ru' : 'uk'
+
+  const fetchWishlist = useWishlistStore(s => s.fetchWishlist)
+  const wishlistCount = useWishlistStore(s => s.wishlistIds.length)
+
+  useEffect(() => {
+    fetchWishlist()
+  }, [fetchWishlist])
 
   const [isDark, setIsDark] = useState(false)
 
@@ -254,10 +262,17 @@ export default function Header({ workload = 0 }: Props) {
             <div className="flex items-center gap-2">
               <Link
                 href={lp('/wishlist')}
-                className="size-10 rounded-md inline-flex items-center justify-center cursor-pointer transition-colors hover:bg-[var(--color-surface-alt)]"
+                className="relative size-10 rounded-md inline-flex items-center justify-center cursor-pointer transition-colors hover:bg-[var(--color-surface-alt)]"
                 aria-label="Wishlist"
               >
                 <Heart className="size-5" strokeWidth={1.5} style={{ color: 'var(--color-text-primary)' }} />
+                {wishlistCount > 0 && (
+                  <span
+                    className="absolute top-1 right-1 flex items-center justify-center size-4 rounded-full text-[10px] font-bold text-white leading-none bg-accent"
+                  >
+                    {wishlistCount}
+                  </span>
+                )}
               </Link>
               <Link
                 href={lp('/profile')}

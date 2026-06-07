@@ -23,6 +23,7 @@ export function CartButton({ label }: CartButtonProps) {
   // Загрузить количество при маунте, изменении пути и версии корзины
   useEffect(() => {
     void getCartCount().then(setCount)
+    void useCartUIStore.getState().fetchCartProductIds()
   }, [pathname, cartVersion])
 
   return (

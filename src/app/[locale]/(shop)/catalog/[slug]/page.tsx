@@ -7,7 +7,7 @@ import { parseCatalogSearchParams, extractAttributeFilters } from '@/lib/catalog
 import { getCategoryFilterConfig, QuickLink } from '@/lib/catalog-filter-config'
 import { getCategoryFacets } from '@/queries/categories'
 import { getFilteredProducts } from '@/queries/products'
-import { getCategoryBySlug } from '@/queries/categories'
+import { getCategoryBySlug, enrichQuickLinks } from '@/queries/categories'
 import type { Locale, BrandFacetItem, AttributeFacetItem } from '@/types'
 import Breadcrumbs from '@/components/layout/breadcrumbs'
 import CatalogFilters from '@/components/catalog/catalog-filters'
@@ -345,6 +345,7 @@ export default async function CategoryPage({
 
   // ─── Filter config ──────────────────────────────────────────────────────────
   const filterConfig = getCategoryFilterConfig(slug)
+  const quickLinks = await enrichQuickLinks(slug, filterConfig.quickLinks)
 
   // Calculate active filters count directly from activeFilters object without facets
   const activeFiltersCount =
@@ -377,11 +378,11 @@ export default async function CategoryPage({
 
   return (
     <div className="bg-surface-alt min-h-screen">
-      <div className="max-w-[1280px] mx-auto px-4 py-4">
+      <div className="max-w-[1600px] mx-auto px-4 py-4">
         <Breadcrumbs items={breadcrumbs} locale={locale} />
       </div>
 
-      <div className="max-w-[1280px] mx-auto px-4 pb-10">
+      <div className="max-w-[1600px] mx-auto px-4 pb-10">
         {/* H1 + count */}
         <div className="flex items-baseline gap-3 mt-2 mb-3">
           <h1 className="text-2xl font-bold text-text-primary">{displayTitle}</h1>
@@ -390,17 +391,10 @@ export default async function CategoryPage({
           </span>
         </div>
 
-        {/* AEO Direct Answer Block */}
-        <AnswerBlock
-          categorySlug={slug}
-          locale={locale}
-          matchingQuickLink={matchingQuickLink}
-        />
-
         {/* Quick SEO/scenario links (under H1, above products) */}
-        {filterConfig.quickLinks && filterConfig.quickLinks.length > 0 && (
+        {quickLinks.length > 0 && (
           <CategoryQuickLinks
-            links={filterConfig.quickLinks}
+            links={quickLinks}
             locale={locale as Locale}
             activeFilters={activeFilters}
           />
@@ -427,16 +421,6 @@ export default async function CategoryPage({
         <div className="flex gap-6 items-start mt-4">
           {/* Desktop sidebar */}
           <aside className="hidden lg:flex flex-col gap-4 w-[280px] shrink-0 sticky top-[72px] self-start">
-            {/* Category tree */}
-            {(category.children.length > 0 || category.parent) && (
-              <CategoryTreeFilter
-                currentSlug={slug}
-                parent={category.parent ?? null}
-                childCategories={category.children}
-                locale={locale as Locale}
-              />
-            )}
-
             {/* Attribute filters (Deferred under Suspense) */}
             <Suspense fallback={<FiltersSkeleton />}>
               <DeferredFiltersSection
@@ -447,10 +431,29 @@ export default async function CategoryPage({
                 total={total}
               />
             </Suspense>
+
+            {/* Category tree */}
+            {(category.children.length > 0 || category.parent) && (
+              <CategoryTreeFilter
+                currentSlug={slug}
+                parent={category.parent ?? null}
+                childCategories={category.children}
+                locale={locale as Locale}
+              />
+            )}
           </aside>
 
           {/* Product grid */}
           <div className="flex-1 min-w-0">
+            {/* Mobile/Tablet Answer Block */}
+            <div className="catalog-answer-inline mb-4">
+              <AnswerBlock
+                categorySlug={slug}
+                locale={locale}
+                matchingQuickLink={matchingQuickLink}
+                layout="sidebar"
+              />
+            </div>
             <ProductGrid
               products={products}
               total={total}
@@ -458,6 +461,16 @@ export default async function CategoryPage({
               pageSize={PAGE_SIZE}
             />
           </div>
+
+          {/* Desktop Right sidebar (Quick Info) */}
+          <aside className="catalog-answer-sidebar w-[300px] shrink-0 sticky top-[72px] self-start">
+            <AnswerBlock
+              categorySlug={slug}
+              locale={locale}
+              matchingQuickLink={matchingQuickLink}
+              layout="sidebar"
+            />
+          </aside>
         </div>
 
         {/* Category Description Block (AEO / SEO text) */}

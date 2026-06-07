@@ -4,21 +4,47 @@ import { prisma } from "../src/lib/prisma";
 async function main() {
   const rootCategories = await prisma.category.findMany({
     where: { parentId: null, isActive: true },
-    include: {
-      translations: true,
+    select: {
+      id: true,
+      slug: true,
+      translations: {
+        select: {
+          locale: true,
+          name: true,
+        },
+        take: 2,
+      },
       children: {
         where: { isActive: true },
-        include: { translations: true }
-      }
+        select: {
+          id: true,
+          slug: true,
+          translations: {
+            select: {
+              locale: true,
+              name: true,
+            },
+            take: 2,
+          },
+        },
+        orderBy: { sortOrder: "asc" },
+        take: 100,
+      },
+      _count: {
+        select: {
+          products: true,
+        },
+      },
     },
-    orderBy: { sortOrder: "asc" }
+    orderBy: { sortOrder: "asc" },
+    take: 100,
   });
 
   console.log(`Found ${rootCategories.length} root categories in database.`);
   rootCategories.forEach(root => {
     const rootNameUk = root.translations.find(t => t.locale === "uk")?.name || root.slug;
     const rootNameRu = root.translations.find(t => t.locale === "ru")?.name || root.slug;
-    console.log(`\n- ${rootNameUk} (${rootNameRu}) [slug: ${root.slug}, products count: ${root._count ? JSON.stringify(root._count) : "N/A"}]`);
+    console.log(`\n- ${rootNameUk} (${rootNameRu}) [slug: ${root.slug}, products count: ${root._count.products}]`);
     if (root.children.length > 0) {
       console.log("  Subcategories:");
       root.children.forEach(child => {

@@ -38,8 +38,6 @@ interface CompareTableProps {
   locale?: 'uk' | 'ru'
 }
 
-const ROW_H = 56 // px — keeps rows aligned across columns
-
 /** Parse a single comparable number. Lists/ranges ("1,5,2,5", "16/25", "1-2") → null (text). */
 function toNum(v: unknown): number | null {
   if (v === null || v === undefined) return null
@@ -144,8 +142,7 @@ export function CompareTable({ products, columns, locale = 'uk' }: CompareTableP
               <motion.div
                 layout
                 key={p.id}
-                className="flex items-center gap-1.5 px-2 border-b border-border last:border-b-0 bg-surface-white"
-                style={{ height: ROW_H }}
+                className="h-14 flex items-center gap-1.5 px-2 border-b border-border last:border-b-0 bg-surface-white"
               >
                 <div className="relative shrink-0 size-8 group/img">
                   {p.image ? (
@@ -161,10 +158,10 @@ export function CompareTable({ products, columns, locale = 'uk' }: CompareTableP
                       e.stopPropagation()
                       useCompareStore.getState().remove(p.id)
                     }}
-                    className="absolute -top-1.5 -left-1.5 size-4 rounded-full bg-destructive text-white flex items-center justify-center cursor-pointer hover:bg-red-600 transition-colors shadow-sm"
+                    className="absolute -top-1 -left-1 size-3 flex items-center justify-center cursor-pointer text-text-muted hover:text-destructive transition-colors"
                     title="Видалити з порівняння"
                   >
-                    <X className="size-2.5" strokeWidth={3} />
+                    <X className="size-3" strokeWidth={2.5} />
                   </button>
                 </div>
                 <div className="flex flex-col min-w-0 flex-1 justify-center">
@@ -228,7 +225,6 @@ export function CompareTable({ products, columns, locale = 'uk' }: CompareTableP
                             ? 'bg-destructive/8 text-destructive'
                             : 'text-text-primary'
                       }`}
-                      style={{ height: ROW_H }}
                     >
                       <span className={`line-clamp-2 ${isLongText ? 'border-b border-dashed border-text-muted/40 pb-0.5' : ''}`}>
                         {display}

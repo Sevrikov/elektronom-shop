@@ -1,11 +1,11 @@
 'use client'
 
-import { useEffect, useState, useTransition } from 'react'
+import { useEffect, useMemo, useState, useTransition } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
 import { X, Scale } from 'lucide-react'
 import { useCompareStore } from '@/store/compare-store'
-import { getCompareData } from '@/actions/compare'
-import { CompareTable, type CompareProduct, type CompareColumn } from './compare-table'
+import { getCompareData, type CompareGroup } from '@/actions/compare'
+import { CompareTable } from './compare-table'
 
 interface CompareDrawerProps {
   locale: 'uk' | 'ru'
@@ -17,30 +17,31 @@ export function CompareDrawer({ locale }: CompareDrawerProps) {
   const close = useCompareStore((s) => s.close)
   const clear = useCompareStore((s) => s.clear)
 
-  const [data, setData] = useState<{ products: CompareProduct[]; columns: CompareColumn[] } | null>(null)
+  const [data, setData] = useState<{
+    key: string
+    groups: CompareGroup[]
+  } | null>(null)
   const [isPending, startTransition] = useTransition()
 
   // Track the product IDs currently in comparison
-  const productIds = items.map((i) => i.id)
+  const productIds = useMemo(() => items.map((i) => i.id), [items])
   const productIdsKey = productIds.join(',')
+  const visibleData = data?.key === productIdsKey ? data : null
 
   useEffect(() => {
-    if (!isOpen) return
-
-    if (productIds.length === 0) {
-      setData({ products: [], columns: [] })
+    if (!isOpen || productIds.length === 0) {
       return
     }
 
     startTransition(async () => {
       try {
         const result = await getCompareData(productIds, locale)
-        setData(result)
+        setData({ key: productIdsKey, ...result })
       } catch (err) {
         console.error('Failed to load comparison data:', err)
       }
     })
-  }, [productIdsKey, isOpen, locale])
+  }, [productIds, productIdsKey, isOpen, locale])
 
   // Prevent scroll on body when drawer is open
   useEffect(() => {
@@ -126,7 +127,7 @@ export function CompareDrawer({ locale }: CompareDrawerProps) {
                     {locale === 'uk' ? 'Повернутися до покупок' : 'Вернуться к покупкам'}
                   </button>
                 </div>
-              ) : isPending || !data ? (
+              ) : isPending || !visibleData ? (
                 <div className="flex-1 flex flex-col items-center justify-center p-8">
                   <div className="size-8 border-2 border-accent border-t-transparent rounded-full animate-spin mb-4" />
                   <p className="text-xs text-text-muted">
@@ -134,8 +135,40 @@ export function CompareDrawer({ locale }: CompareDrawerProps) {
                   </p>
                 </div>
               ) : (
-                <div className="flex-1 flex flex-col min-h-0">
-                  <CompareTable products={data.products} columns={data.columns} locale={locale} />
+                <div className="flex-1 flex flex-col gap-8 min-h-0">
+                  {visibleData.groups.length === 0 ? (
+                    <div className="flex-1 flex flex-col items-center justify-center text-center p-8">
+                      <div className="size-16 rounded-full bg-surface-alt flex items-center justify-center text-text-muted mb-4 border border-border">
+                        <Scale className="size-8" />
+                      </div>
+                      <h3 className="text-sm font-semibold text-text-primary mb-1">
+                        {locale === 'uk' ? 'Товари не знайдено' : 'Товары не найдены'}
+                      </h3>
+                      <p className="text-xs text-text-muted max-w-xs">
+                        {locale === 'uk'
+                          ? 'Можливо, ці товари вже недоступні або зняті з публікації.'
+                          : 'Возможно, эти товары уже недоступны или сняты с публикации.'}
+                      </p>
+                    </div>
+                  ) : (
+                    visibleData.groups.map((group, index) => (
+                      <div key={group.categoryId} className="flex flex-col gap-3">
+                        <div className="flex items-center gap-3 px-1">
+                          <div className="h-4 w-1 rounded-sm bg-accent shrink-0" />
+                          <h3 className="text-xs font-bold text-text-primary uppercase tracking-wider">
+                            {group.categoryName}
+                          </h3>
+                          <span className="text-[10px] px-2 py-0.5 rounded bg-surface-alt font-medium text-text-muted">
+                            {group.products.length} {locale === 'uk' ? 'шт.' : 'шт.'}
+                          </span>
+                        </div>
+                        <CompareTable products={group.products} columns={group.columns} locale={locale} />
+                        {index < visibleData.groups.length - 1 && (
+                          <div className="my-6 border-b border-dashed border-border-strong w-full shrink-0" />
+                        )}
+                      </div>
+                    ))
+                  )}
                 </div>
               )}
             </div>

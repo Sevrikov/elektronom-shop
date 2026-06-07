@@ -12,7 +12,6 @@ interface AddToCartButtonProps {
   disabled?: boolean
   variant?: 'icon' | 'full'
   className?: string
-  style?: React.CSSProperties
   stock?: number
   showQtyStepper?: boolean
   disabledText?: string | undefined
@@ -24,13 +23,14 @@ export function AddToCartButton({
   disabled = false,
   variant = 'icon',
   className,
-  style,
   stock = 99,
   showQtyStepper = false,
   disabledText,
 }: AddToCartButtonProps) {
   const t = useTranslations('common')
   const openDrawer = useCartUIStore((s) => s.openDrawer)
+  const cartProductIds = useCartUIStore((s) => s.cartProductIds)
+  const isInCart = cartProductIds.includes(productId)
   const [added, setAdded] = useState(false)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const [isPending, startTransition] = useTransition()
@@ -76,16 +76,17 @@ export function AddToCartButton({
         onClick={handleClick}
         disabled={isDisabled}
         aria-label={`${t('addToCart')} ${productName}`}
-        className={`w-9 h-9 rounded-md flex items-center justify-center text-white border-none shrink-0 transition-[background-color] duration-120 ease-in-out ${
+        className={`w-9 h-9 rounded-md flex items-center justify-center shrink-0 transition-[background-color,border-color,color] duration-120 ease-in-out ${
           isDisabled
-            ? 'bg-surface-raised cursor-not-allowed'
+            ? 'bg-surface-raised cursor-not-allowed border border-border text-text-muted'
             : errorMsg
-              ? 'bg-error cursor-pointer'
+              ? 'bg-error border border-error text-white cursor-pointer'
               : added
-                ? 'bg-success cursor-pointer'
-                : 'bg-accent cursor-pointer'
+                ? 'bg-success border border-success text-white cursor-pointer'
+                : isInCart
+                  ? 'bg-accent border border-accent text-white cursor-pointer hover:bg-accent-hover'
+                  : 'bg-transparent border border-accent text-accent hover:bg-accent hover:text-white cursor-pointer'
         } ${className ?? ''}`}
-        style={style}
       >
         {isPending ? (
           <Loader2 className="size-4 animate-spin" />
@@ -94,7 +95,11 @@ export function AddToCartButton({
         ) : added ? (
           <Check className="size-4" strokeWidth={2.5} />
         ) : (
-          <ShoppingCart className="size-[18px]" strokeWidth={1.5} />
+          <ShoppingCart
+            className="size-[18px]"
+            fill={isInCart ? 'currentColor' : 'none'}
+            strokeWidth={1.5}
+          />
         )}
       </button>
     )
@@ -102,7 +107,7 @@ export function AddToCartButton({
 
   // Full button variant (for product page)
   return (
-    <div className="flex items-center gap-3 w-full" style={style}>
+    <div className="flex items-center gap-3 w-full">
       {showQtyStepper && (
         <div className="flex items-center border border-border rounded-lg bg-surface-white h-12 px-1 shrink-0 select-none">
           <button

@@ -7,7 +7,7 @@ import { prisma } from "@/lib/prisma";
 import type { Prisma } from "@/generated/prisma/client";
 import type { ActiveFilters } from "@/types";
 import { getCategorySubtreeIds } from "./categories";
-import { mapFrontendToDbAttributeKey } from "@/lib/attribute-mapper";
+import { mapFrontendToDbAttributeKey, mapFrontendToDbAttributeValue } from "@/lib/attribute-mapper";
 // Legacy re-export kept for backward compatibility
 export { parseSearchParams } from "@/lib/utils";
 export { parseCatalogSearchParams } from "@/lib/catalog-filter-url";
@@ -24,6 +24,7 @@ export const productCardSelect = {
   isActive: true,
   isFeatured: true,
   createdAt: true,
+  attributes: true,
   translations: {
     select: { locale: true, name: true },
   },
@@ -188,7 +189,8 @@ function buildAttributeWhere(
   return entries.map(([key, values]) => {
     const dbKey = mapFrontendToDbAttributeKey(key);
     return {
-      OR: values.flatMap((val) => {
+      OR: values.flatMap((rawVal) => {
+        const val = mapFrontendToDbAttributeValue(key, rawVal);
         const conditions: Prisma.ProductWhereInput[] = [
           {
             attributes: {

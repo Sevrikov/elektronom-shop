@@ -6,6 +6,8 @@ import { AddToCartButton } from '@/components/cart/add-to-cart-button'
 import { getTransformedImageUrl } from '@/lib/images'
 import { TransparentImage } from '@/components/shared/transparent-image'
 import { CompareButton } from '@/components/compare/compare-button'
+import { WishlistButton } from '@/components/wishlist/wishlist-button'
+import { translateAttributeKey, translateAttributeValue, sortAttributeEntries } from '@/lib/translit-translator'
 
 // ─── Тип товара из Prisma (tasks 1.9 productCardSelect) ──────────────────────
 
@@ -23,6 +25,7 @@ export interface PrismaProductCard {
   images: { url: string; processedUrl?: string | null; alt: string | null; sortOrder: number; provider: string; publicId?: string | null }[]
   brand: { slug: string; name: string } | null
   category: { slug: string }
+  attributes: unknown
 }
 
 interface ProductCardProps {
@@ -130,25 +133,39 @@ export default function ProductCard({ product, locale, view = 'grid' }: ProductC
               {formatPrice(price)}
             </p>
           </div>
-          <AddToCartButton
-            productId={product.id}
-            productName={name}
-            disabled={!inStock}
-            variant="full"
-            className="h-9 px-4 text-[13px]"
-          />
+          <div className="flex items-center gap-1.5 w-full mt-2 justify-end">
+            <WishlistButton productId={product.id} />
+            <AddToCartButton
+              productId={product.id}
+              productName={name}
+              disabled={!inStock}
+              variant="full"
+              className="h-9 px-4 text-[13px]"
+            />
+          </div>
         </div>
       </article>
     )
   }
 
   // Grid view (default)
+  const rawEntries = product.attributes &&
+    typeof product.attributes === 'object' &&
+    !Array.isArray(product.attributes)
+    ? Object.entries(product.attributes)
+    : []
+  const filteredEntries = rawEntries.filter(
+    ([key, value]) => value !== null && value !== undefined && value !== '' && key !== 'qty_breaks'
+  )
+  const sortedEntries = sortAttributeEntries(filteredEntries)
+  const displayEntries = sortedEntries.slice(0, 6)
+
   return (
-    <article className="flex flex-col rounded-lg overflow-hidden transition-shadow hover:shadow-md group border border-border bg-surface-white">
+    <article className="relative flex flex-col rounded-lg border border-border bg-surface-white transition-all duration-200 group hover:shadow-lg hover:border-accent/40 hover:z-20">
       {/* Image */}
       <Link
         href={`/${locale}/product/${product.slug}`}
-        className="relative h-[160px] flex items-center justify-center overflow-hidden bg-surface-alt"
+        className="relative h-[140px] flex items-center justify-center overflow-hidden bg-surface-alt rounded-t-lg"
       >
         {/* Discount badge */}
         {discount > 0 && (
@@ -185,7 +202,7 @@ export default function ProductCard({ product, locale, view = 'grid' }: ProductC
       </Link>
 
       {/* Content */}
-      <div className="flex flex-col flex-1 p-3 gap-1">
+      <div className="flex flex-col flex-1 p-2.5 gap-0.5">
         <div className="flex items-center gap-2 flex-wrap min-h-[18px]">
           {brandName && (
             <span className="text-[10px] font-semibold tracking-wider uppercase text-text-muted">
@@ -204,7 +221,7 @@ export default function ProductCard({ product, locale, view = 'grid' }: ProductC
         </div>
         <Link
           href={`/${locale}/product/${product.slug}`}
-          className="text-[13px] font-medium leading-snug line-clamp-2 min-h-[36px] hover:text-accent transition-colors"
+          className="text-[12.5px] font-medium leading-snug line-clamp-2 min-h-[36px] hover:text-accent transition-colors"
         >
           {name}
         </Link>
@@ -228,14 +245,41 @@ export default function ProductCard({ product, locale, view = 'grid' }: ProductC
               {formatPrice(price)}
             </p>
           </div>
-          <AddToCartButton
-            productId={product.id}
-            productName={name}
-            disabled={!inStock}
-            variant="icon"
-          />
+          <div className="flex items-center gap-1.5 shrink-0">
+            <WishlistButton productId={product.id} />
+            <AddToCartButton
+              productId={product.id}
+              productName={name}
+              disabled={!inStock}
+              variant="icon"
+            />
+          </div>
         </div>
       </div>
+
+      {/* Attributes Hover Panel */}
+      {displayEntries.length > 0 && (
+        <div className="absolute -left-[1px] -right-[1px] top-full bg-surface-white border border-t-0 border-border group-hover:border-accent/40 rounded-b-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-30 px-2.5 pb-3 pt-1">
+          <div className="border-t border-border/60 my-1.5" />
+          <div className="flex flex-col gap-1 text-[11px]">
+            {displayEntries.map(([key, value]) => {
+              const label = translateAttributeKey(key, locale === 'ru' ? 'ru' : 'uk')
+              let valStr = ''
+              if (typeof value === 'boolean') {
+                valStr = locale === 'ru' ? (value ? 'Да' : 'Нет') : (value ? 'Так' : 'Ні')
+              } else {
+                valStr = translateAttributeValue(value, locale === 'ru' ? 'ru' : 'uk')
+              }
+              return (
+                <div key={key} className="flex justify-between items-start gap-3">
+                  <span className="text-text-muted font-medium shrink-0">{label}:</span>
+                  <span className="text-text-primary text-right font-semibold truncate max-w-[65%]">{valStr}</span>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      )}
     </article>
   )
 }

@@ -115,20 +115,28 @@ export async function toggleWishlist(
 
 // ─── Get Wishlist ─────────────────────────────────────────────────────────────
 
-export async function getWishlistProductIds(): Promise<string[]> {
+export async function getWishlistSnapshot(): Promise<{ productIds: string[]; isAuthenticated: boolean }> {
   try {
     const session = await auth()
-    if (!session?.user?.id) return []
+    if (!session?.user?.id) {
+      return { productIds: [], isAuthenticated: false }
+    }
 
     const items = await prisma.wishlistItem.findMany({
       where: { userId: session.user.id },
       select: { productId: true },
+      orderBy: { createdAt: 'desc' },
       take: 200,
     })
-    return items.map((i) => i.productId)
+    return { productIds: items.map((i) => i.productId), isAuthenticated: true }
   } catch {
-    return []
+    return { productIds: [], isAuthenticated: false }
   }
+}
+
+export async function getWishlistProductIds(): Promise<string[]> {
+  const snapshot = await getWishlistSnapshot()
+  return snapshot.productIds
 }
 
 // ─── Get Wishlist with Product Data ──────────────────────────────────────────

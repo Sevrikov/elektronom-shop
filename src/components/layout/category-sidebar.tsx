@@ -8,6 +8,7 @@ import type { CategoryTreeNode } from '@/queries/categories'
 import { getPopularForSlug, getPromoForSlug } from '@/config/catalog-mega-menu'
 import { useState } from 'react'
 import CategoryIcon from '@/components/ui/category-icon'
+import CategoryBlueprint from '@/components/layout/category-blueprint'
 
 interface Props {
   categories?: CategoryTreeNode[]
@@ -39,12 +40,11 @@ export default function CategorySidebar({ categories = [] }: Props) {
       />
       
       <aside
-        className={`hidden lg:block w-[280px] shrink-0 sticky top-[140px] self-start ${activeSlug ? 'z-[70]' : 'z-40'}`}
+        className={`hidden lg:block w-[280px] shrink-0 sticky top-[calc(var(--header-height,140px)+24px)] self-start ${activeSlug ? 'z-[70]' : 'z-40'}`}
         onMouseLeave={() => setActiveSlug(null)}
       >
       <div
-        className="rounded-lg overflow-hidden border border-border"
-        style={{ background: 'var(--color-surface-white)' }}
+        className="rounded-lg overflow-hidden border border-border bg-surface-white"
       >
         {/* Title */}
         <div className="px-4 py-3 border-b border-border">
@@ -54,7 +54,7 @@ export default function CategorySidebar({ categories = [] }: Props) {
         </div>
 
         {/* Category list */}
-        <nav className="sidebar-scroll max-h-[calc(100vh-200px)] overflow-y-auto">
+        <nav className="sidebar-scroll max-h-[calc(100vh-var(--header-height,140px)-80px)] overflow-y-auto">
           <ul className="py-1">
             {activeCats.map((cat) => {
               const isActive = activeSlug === cat.slug
@@ -116,7 +116,7 @@ export default function CategorySidebar({ categories = [] }: Props) {
       {/* Flyout Mega Menu */}
       {activeSlug && activeCategory && (
         <div
-          className="absolute left-[280px] top-0 bg-surface-white border border-border shadow-xl rounded-r-lg flex overflow-hidden w-[700px] z-50 max-h-[calc(100vh-140px)]"
+          className="absolute left-[280px] top-0 bg-surface-white border border-border shadow-xl rounded-r-lg flex overflow-hidden w-[700px] z-50 max-h-[calc(100vh-var(--header-height,140px)-32px)]"
         >
           {/* Col 2: Subcategories */}
           <div className="flex-1 min-w-0 overflow-y-auto px-6 py-5">
@@ -143,7 +143,7 @@ export default function CategorySidebar({ categories = [] }: Props) {
                         >
                           <ChevronRight className="size-3 shrink-0 text-border-strong group-hover/sub:text-accent transition-colors" strokeWidth={2.5} />
                           <span>{child.name}</span>
-                          <span className="text-[10px] text-text-muted font-normal ml-0.5" style={{ fontVariantNumeric: 'tabular-nums' }}>
+                          <span className="num text-[10px] text-text-muted font-normal ml-0.5">
                             ({child.count})
                           </span>
                         </Link>
@@ -157,7 +157,7 @@ export default function CategorySidebar({ categories = [] }: Props) {
                               >
                                 <span className="text-slate-300 dark:text-slate-700 select-none">└─</span>
                                 <span>{gc.name}</span>
-                                <span className="text-[9px] text-slate-400 dark:text-slate-500 font-normal ml-0.5" style={{ fontVariantNumeric: 'tabular-nums' }}>
+                                <span className="num text-[9px] text-slate-400 dark:text-slate-500 font-normal ml-0.5">
                                   ({gc.count})
                                 </span>
                               </Link>
@@ -200,9 +200,11 @@ export default function CategorySidebar({ categories = [] }: Props) {
                 {promo.subtitle && (
                   <p className="text-[12px] text-text-muted mb-4">{promo.subtitle}</p>
                 )}
-                {promo.image && (
+                {promo.image ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={promo.image} alt={promo.title} className="w-full h-28 object-contain rounded-md mb-4" />
+                ) : (
+                  <CategoryBlueprint slug={activeCategory.slug} />
                 )}
                 <Link
                   href={lp(promo.href)}

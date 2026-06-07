@@ -5,9 +5,9 @@
 import { cacheLife, cacheTag } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@/generated/prisma/client";
-import { getCategoryFilterConfig } from "@/lib/catalog-filter-config";
+import { getCategoryFilterConfig, type QuickLink } from "@/lib/catalog-filter-config";
 import type { ActiveFilters, CategoryFacets, FacetOption } from "@/types";
-import { mapFrontendToDbAttributeKey, mapDbToFrontendAttributeKey } from "@/lib/attribute-mapper";
+import { mapFrontendToDbAttributeKey, mapDbToFrontendAttributeKey, mapFrontendToDbAttributeValue, mapDbToFrontendAttributeValue } from "@/lib/attribute-mapper";
 
 
 // ─── Все категории ────────────────────────────────────────────────────────────
@@ -244,8 +244,9 @@ function getFilterSqls(activeFilters: ActiveFilters, excludeKey?: string) {
     const values = activeFilters[key];
     if (Array.isArray(values) && values.length > 0) {
       const dbKey = mapFrontendToDbAttributeKey(key);
+      const dbValues = values.map((v) => mapFrontendToDbAttributeValue(key, v));
       fragments.push(
-        Prisma.sql`((jsonb_typeof(p.attributes->${dbKey}) = 'array' AND p.attributes->${dbKey} ?| ${values}) OR (p.attributes->>${dbKey} IN (${Prisma.join(values)})))`
+        Prisma.sql`((jsonb_typeof(p.attributes->${dbKey}) = 'array' AND p.attributes->${dbKey} ?| ${dbValues}) OR (p.attributes->>${dbKey} IN (${Prisma.join(dbValues)})))`
       );
     }
   }
@@ -395,7 +396,7 @@ export async function getCategoryFacets({
     );
 
     let nonActiveAttrCountsResult: { key: string; value: string; count: number }[] = [];
-    let activeAttrCountsResult: { key: string; value: string; count: number }[] = [];
+    const activeAttrCountsResult: { key: string; value: string; count: number }[] = [];
     let allCategoryAttributes: { key: string; value: string }[] = [];
 
     if (allowedDbAttributeKeys.length > 0) {
@@ -481,20 +482,23 @@ export async function getCategoryFacets({
     const attributeCountsMap = new Map<string, number>();
     for (const r of nonActiveAttrCountsResult) {
       const frontendKey = mapDbToFrontendAttributeKey(r.key);
-      attributeCountsMap.set(`${frontendKey}:${r.value}`, r.count);
+      const frontendVal = mapDbToFrontendAttributeValue(frontendKey, r.value);
+      attributeCountsMap.set(`${frontendKey}:${frontendVal}`, r.count);
     }
     for (const r of activeAttrCountsResult) {
       const frontendKey = mapDbToFrontendAttributeKey(r.key);
-      attributeCountsMap.set(`${frontendKey}:${r.value}`, r.count);
+      const frontendVal = mapDbToFrontendAttributeValue(frontendKey, r.value);
+      attributeCountsMap.set(`${frontendKey}:${frontendVal}`, r.count);
     }
 
     const possibleValuesByKey = new Map<string, Set<string>>();
     for (const item of allCategoryAttributes) {
       const frontendKey = mapDbToFrontendAttributeKey(item.key);
+      const frontendVal = mapDbToFrontendAttributeValue(frontendKey, item.value);
       if (!possibleValuesByKey.has(frontendKey)) {
         possibleValuesByKey.set(frontendKey, new Set());
       }
-      possibleValuesByKey.get(frontendKey)!.add(item.value);
+      possibleValuesByKey.get(frontendKey)!.add(frontendVal);
     }
 
     for (const key of activeAttributeKeys) {
@@ -591,4 +595,91 @@ export async function getCategoryFilters(slug: string) {
     attributes,
     attributeCounts,
   };
+}
+
+export async function enrichQuickLinks(
+  categorySlug: string,
+  quickLinks: QuickLink[] | undefined
+): Promise<(QuickLink & { imageUrl?: string | null })[]> {
+  "use cache";
+  cacheLife("hours");
+  cacheTag("categories");
+  cacheTag("products");
+  cacheTag(`category-${categorySlug}-quick-links`);
+
+  if (!quickLinks || quickLinks.length === 0) return [];
+
+  const categoryIds = await getCategorySubtreeIds(categorySlug);
+  if (categoryIds.length === 0) return quickLinks;
+
+  const enriched = await Promise.all(
+    quickLinks.map(async (link) => {
+      if (!link.filter) return link;
+
+      const { key, value } = link.filter;
+      const dbKey = mapFrontendToDbAttributeKey(key);
+      const dbValue = mapFrontendToDbAttributeValue(key, value);
+
+      const where: Prisma.ProductWhereInput = {
+        categoryId: { in: categoryIds },
+        isActive: true,
+        images: {
+          some: {},
+        },
+      };
+
+      if (key === "brand") {
+        where.brand = { slug: value };
+      } else {
+        const conditions: Prisma.ProductWhereInput[] = [
+          { attributes: { path: [dbKey], equals: dbValue } },
+          { attributes: { path: [dbKey], array_contains: dbValue } },
+        ];
+
+        const numValue = Number(dbValue);
+        if (!Number.isNaN(numValue) && dbValue.trim() !== "") {
+          conditions.push(
+            { attributes: { path: [dbKey], equals: numValue } },
+            { attributes: { path: [dbKey], array_contains: numValue } }
+          );
+        }
+
+        if (dbValue === "true" || dbValue === "false") {
+          const boolValue = dbValue === "true";
+          conditions.push(
+            { attributes: { path: [dbKey], equals: boolValue } },
+            { attributes: { path: [dbKey], array_contains: boolValue } }
+          );
+        }
+
+        where.OR = conditions;
+      }
+
+      const product = await prisma.product.findFirst({
+        where,
+        orderBy: [
+          { isFeatured: "desc" },
+          { sortOrder: "asc" },
+          { createdAt: "desc" },
+        ],
+        select: {
+          images: {
+            take: 1,
+            orderBy: { sortOrder: "asc" },
+            select: { url: true, processedUrl: true },
+          },
+        },
+      });
+
+      const imageUrl = product?.images[0]?.processedUrl || product?.images[0]?.url || null;
+      if (!imageUrl) return null;
+
+      return {
+        ...link,
+        imageUrl,
+      };
+    })
+  );
+
+  return enriched.filter((link): link is QuickLink & { imageUrl?: string | null } => link !== null);
 }

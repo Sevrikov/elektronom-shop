@@ -806,4 +806,22 @@
 
 .dark .shadow-md, .dark .shadow-lg {
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3) !important;
-}
+}
+
+.catalog-answer-inline {
+  display: block;
+}
+
+.catalog-answer-sidebar {
+  display: none;
+}
+
+@media (min-width: 1700px) {
+  .catalog-answer-inline {
+    display: none;
+  }
+
+  .catalog-answer-sidebar {
+    display: block;
+  }
+}

@@ -600,3 +600,20 @@ export async function clearCart(): Promise<{ success: boolean }> {
     return { success: false }
   }
 }
+
+export async function getCartProductIds(): Promise<string[]> {
+  const session = await auth()
+  const userId = session?.user?.id
+
+  if (userId) {
+    const items = await prisma.cartItem.findMany({
+      where: { userId },
+      select: { productId: true },
+      take: 100,
+    })
+    return items.map((i) => i.productId)
+  }
+
+  const cookieItems = await readCartCookie()
+  return cookieItems.map((i) => i.productId)
+}

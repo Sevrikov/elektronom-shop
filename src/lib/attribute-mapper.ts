@@ -21,3 +21,24 @@ export function mapFrontendToDbAttributeKey(key: string): string {
 export function mapDbToFrontendAttributeKey(key: string): string {
   return dbToFrontendAttributeMapping[key] ?? key;
 }
+
+export function mapFrontendToDbAttributeValue(key: string, value: string): string {
+  const normKey = key.toLowerCase();
+  if (normKey === "poles" || normKey === "kolychestvo_polyusov") {
+    // Convert '2P' to '2', leave other values as-is
+    return value.toUpperCase().replace("P", "");
+  }
+  return value;
+}
+
+export function mapDbToFrontendAttributeValue(key: string, value: string): string {
+  const normKey = key.toLowerCase();
+  if (normKey === "poles" || normKey === "kolychestvo_polyusov") {
+    // Convert '2' to '2P', leave other values as-is
+    const clean = value.toUpperCase().replace("P", "");
+    if (["1", "2", "3", "4"].includes(clean)) {
+      return `${clean}P`;
+    }
+  }
+  return value;
+}

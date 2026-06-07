@@ -6,53 +6,10 @@ interface ProductAttributesProps {
   locale?: string
 }
 
-// Словарь читаемых названий атрибутов (uk)
-const ATTR_LABELS_UK: Record<string, string> = {
-  poles: 'Кількість полюсів',
-  rating_a: 'Номінальний струм, А',
-  breaking_ka: 'Відключна здатність, кА',
-  voltage_v: 'Номінальна напруга, В',
-  curve: 'Характеристика спрацювання',
-  color: 'Колір',
-  size: 'Розмір',
-  weight_kg: 'Маса, кг',
-  material: 'Матеріал',
-  ip_class: 'Ступінь захисту IP',
-  power_w: 'Потужність, Вт',
-  frequency_hz: 'Частота, Гц',
-  phase: 'Кількість фаз',
-  mounting: 'Спосіб монтажу',
-  cross_section_mm2: 'Переріз, мм²',
-  length_m: 'Довжина, м',
-  qty_breaks: 'Оптові ціни',
-}
-
-const ATTR_LABELS_RU: Record<string, string> = {
-  poles: 'Количество полюсов',
-  rating_a: 'Номинальный ток, А',
-  breaking_ka: 'Отключающая способность, кА',
-  voltage_v: 'Номинальное напряжение, В',
-  curve: 'Характеристика срабатывания',
-  color: 'Цвет',
-  size: 'Размер',
-  weight_kg: 'Масса, кг',
-  material: 'Материал',
-  ip_class: 'Степень защиты IP',
-  power_w: 'Мощность, Вт',
-  frequency_hz: 'Частота, Гц',
-  phase: 'Количество фаз',
-  mounting: 'Способ монтажа',
-  cross_section_mm2: 'Сечение, мм²',
-  length_m: 'Длина, м',
-  qty_breaks: 'Оптовые цены',
-}
+import { translateAttributeKey, translateAttributeValue } from '@/lib/translit-translator'
 
 function getLabel(key: string, locale?: string): string {
-  const dict = locale === 'ru' ? ATTR_LABELS_RU : ATTR_LABELS_UK
-  if (dict[key]) return dict[key]
-  return key
-    .replace(/_/g, ' ')
-    .replace(/\b\w/g, (char) => char.toUpperCase())
+  return translateAttributeKey(key, locale === 'ru' ? 'ru' : 'uk')
 }
 
 function formatValue(key: string, value: unknown, locale?: string): string {
@@ -69,7 +26,7 @@ function formatValue(key: string, value: unknown, locale?: string): string {
     return value ? 'Так' : 'Ні'
   }
   if (value === null || value === undefined) return '—'
-  return String(value)
+  return translateAttributeValue(value, locale === 'ru' ? 'ru' : 'uk')
 }
 
 export function ProductAttributes({ attributes, locale }: ProductAttributesProps) {
