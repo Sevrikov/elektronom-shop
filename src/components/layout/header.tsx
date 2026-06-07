@@ -252,7 +252,7 @@ export default function Header({ workload = 0 }: Props) {
             </div>
 
             {/* Search */}
-            <div className="hidden md:flex flex-1 max-w-[480px] ml-auto mr-4 justify-end">
+            <div className="hidden md:flex flex-1 max-w-[640px] ml-6 mr-4">
               <div className="w-full">
                 <SearchBox />
               </div>

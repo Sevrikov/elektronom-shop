@@ -21,6 +21,8 @@ const SORTS: { value: SortValue; labelKey: string }[] = [
   { value: 'new',        labelKey: 'sort.new' },
 ]
 
+const PAGE_SIZE_OPTIONS = [48, 96, 192] as const
+
 export default function CatalogToolbar({
   total,
   currentSort = 'popular',
@@ -35,7 +37,10 @@ export default function CatalogToolbar({
   const openMobileFilters = useUIStore((s) => s.openMobileFilters)
   const view = searchParams.get('view') === 'list' ? 'list' : 'grid'
 
-  const limit = Number(searchParams.get('limit') || '48')
+  const rawLimit = Number(searchParams.get('limit') || '48')
+  const limit = PAGE_SIZE_OPTIONS.includes(rawLimit as (typeof PAGE_SIZE_OPTIONS)[number])
+    ? rawLimit
+    : 48
 
   function setLimit(newLimit: number) {
     const params = new URLSearchParams(searchParams.toString())
@@ -107,7 +112,7 @@ export default function CatalogToolbar({
         <span className="text-border-strong font-normal">/</span>
         <span className="text-xs text-text-muted">{locale === 'uk' ? 'На сторінку:' : 'На страницу:'}</span>
         <span className="inline-flex items-center gap-1 font-bold text-xs">
-          {[48, 96, 192].map((sz, idx) => (
+          {PAGE_SIZE_OPTIONS.map((sz, idx) => (
             <span key={sz} className="inline-flex items-center gap-1">
               <button
                 onClick={() => setLimit(sz)}

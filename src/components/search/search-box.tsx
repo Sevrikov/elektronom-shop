@@ -58,7 +58,7 @@ export function SearchBox() {
   }
 
   return (
-    <div ref={containerRef} className="relative flex-1 max-w-xl">
+    <div ref={containerRef} className="relative flex-1 w-full">
       <form
         onSubmit={handleSubmit}
         className="flex h-12 items-center gap-3 rounded-md px-4 border border-border-strong bg-white focus-within:border-accent transition-colors"

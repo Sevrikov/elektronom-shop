@@ -24,12 +24,11 @@ export default function ProductGrid({ products, total, currentPage, pageSize }: 
   const totalPages = Math.ceil(total / pageSize)
   const view = searchParams.get('view') === 'list' ? 'list' : 'grid'
 
-  const currentLimit = Number(searchParams.get('limit') || '48')
+  const currentLimit = pageSize
   const hasMoreLimit = currentLimit < 192 && products.length < total
 
   function showMore() {
-    let nextLimit = 96
-    if (currentLimit === 96) nextLimit = 192
+    const nextLimit = currentLimit < 96 ? 96 : 192
 
     const params = new URLSearchParams(searchParams.toString())
     params.set('limit', String(nextLimit))
@@ -60,7 +59,7 @@ export default function ProductGrid({ products, total, currentPage, pageSize }: 
                 onClick={showMore}
                 className="w-full sm:w-auto min-w-[200px] px-6 py-2.5 rounded-lg border border-accent text-accent hover:bg-accent hover:text-white transition-colors font-bold text-sm cursor-pointer select-none"
               >
-                {locale === 'uk' ? 'Показати ще' : 'Показать еще'}
+                {t('showMore')}
               </button>
             </div>
           )}
