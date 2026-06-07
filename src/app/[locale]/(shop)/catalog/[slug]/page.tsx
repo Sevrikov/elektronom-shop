@@ -445,48 +445,60 @@ export default async function CategoryPage({
 
           {/* Product grid */}
           <div className="flex-1 min-w-0">
-            {/* Mobile/Tablet Answer Block */}
-            <div className="catalog-answer-inline mb-4">
-              <AnswerBlock
-                categorySlug={slug}
-                locale={locale}
-                matchingQuickLink={matchingQuickLink}
-                layout="sidebar"
-              />
-            </div>
             <ProductGrid
               products={products}
               total={total}
               currentPage={activeFilters.page ?? 1}
               pageSize={PAGE_SIZE}
             />
+
+            {/* Laptop/Tablet/Mobile: Answer Block + Description + Articles (shown only on screens < 1700px) */}
+            <div className="catalog-answer-inline mt-10 flex flex-col gap-8">
+              <AnswerBlock
+                categorySlug={slug}
+                locale={locale}
+                matchingQuickLink={matchingQuickLink}
+                layout="sidebar"
+              />
+
+              {category.translations[0]?.description && (
+                <section className="p-6 bg-surface-white border border-border rounded-2xl text-text-muted">
+                  <h2 className="text-xl font-bold text-text-primary mb-3">
+                    {locale === 'uk' ? `Про категорію ${categoryName}` : `О категории ${categoryName}`}
+                  </h2>
+                  <div className="text-sm leading-relaxed whitespace-pre-line">
+                    {category.translations[0].description}
+                  </div>
+                </section>
+              )}
+
+              <CategoryArticles categorySlug={slug} locale={locale} layout="grid" />
+            </div>
           </div>
 
-          {/* Desktop Right sidebar (Quick Info) */}
-          <aside className="catalog-answer-sidebar w-[300px] shrink-0 sticky top-[72px] self-start">
+          {/* Desktop Right sidebar (Quick Info + Description + Articles) */}
+          <aside className="catalog-answer-sidebar w-[300px] shrink-0 sticky top-[72px] self-start flex flex-col gap-6 max-h-[calc(100vh-100px)] overflow-y-auto pr-1 sidebar-scroll">
             <AnswerBlock
               categorySlug={slug}
               locale={locale}
               matchingQuickLink={matchingQuickLink}
               layout="sidebar"
             />
+
+            {category.translations[0]?.description && (
+              <section className="p-5 bg-surface-white border border-border rounded-2xl text-text-muted">
+                <h2 className="text-sm font-bold text-text-primary mb-2">
+                  {locale === 'uk' ? `Про категорію ${categoryName}` : `О категории ${categoryName}`}
+                </h2>
+                <div className="text-[12px] leading-relaxed whitespace-pre-line">
+                  {category.translations[0].description}
+                </div>
+              </section>
+            )}
+
+            <CategoryArticles categorySlug={slug} locale={locale} layout="sidebar" />
           </aside>
         </div>
-
-        {/* Category Description Block (AEO / SEO text) */}
-        {category.translations[0]?.description && (
-          <section className="mt-10 p-6 bg-surface-white border border-border rounded-2xl max-w-none text-text-muted">
-            <h2 className="text-xl font-bold text-text-primary mb-3">
-              {locale === 'uk' ? `Про категорію ${categoryName}` : `О категории ${categoryName}`}
-            </h2>
-            <div className="text-sm leading-relaxed whitespace-pre-line">
-              {category.translations[0].description}
-            </div>
-          </section>
-        )}
-
-        {/* Dynamic Category Articles */}
-        <CategoryArticles categorySlug={slug} locale={locale} />
       </div>
     </div>
   )

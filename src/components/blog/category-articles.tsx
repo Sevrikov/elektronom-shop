@@ -9,15 +9,70 @@ import { BookOpen, Calendar, Clock, ArrowRight } from 'lucide-react'
 interface CategoryArticlesProps {
   categorySlug: string
   locale: string
+  layout?: 'grid' | 'sidebar'
 }
 
-export function CategoryArticles({ categorySlug, locale }: CategoryArticlesProps) {
+export function CategoryArticles({ categorySlug, locale, layout = 'grid' }: CategoryArticlesProps) {
   const articles = getArticlesForCategory(categorySlug)
   if (articles.length === 0) return null
 
   const isUk = locale === 'uk'
   const titleText = isUk ? 'Корисні статті та огляди' : 'Полезные статьи и обзоры'
   const readText = isUk ? 'читати' : 'читать'
+
+  if (layout === 'sidebar') {
+    return (
+      <section className="bg-surface-white border border-border rounded-2xl p-5 text-text-muted">
+        <div className="flex items-center justify-between mb-4 pb-2 border-b border-border">
+          <div className="flex items-center gap-2">
+            <BookOpen className="size-4 text-accent" />
+            <h2 className="text-sm font-bold text-text-primary">
+              {titleText}
+            </h2>
+          </div>
+          <Link 
+            href={`/${locale}/blog` as never}
+            className="text-[11px] font-semibold text-accent hover:text-accent-hover transition-colors flex items-center gap-0.5 group shrink-0"
+          >
+            <span>{isUk ? 'Всі' : 'Все'}</span>
+            <ArrowRight className="size-3 group-hover:translate-x-0.5 transition-transform" />
+          </Link>
+        </div>
+
+        <div className="flex flex-col gap-3.5">
+          {articles.map((art) => (
+            <article 
+              key={art.slug}
+              className="group flex gap-3 hover:bg-surface-alt/40 transition-colors rounded-lg p-1.5 -mx-1.5"
+            >
+              {/* Thumbnail */}
+              <div className="relative size-12 rounded bg-surface-alt shrink-0 overflow-hidden">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img 
+                  src={art.image} 
+                  alt={art.title[locale as 'uk' | 'ru']}
+                  className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500"
+                />
+              </div>
+
+              {/* Info */}
+              <div className="flex-1 min-w-0 flex flex-col justify-center">
+                <h3 className="font-extrabold text-[12px] text-text-primary leading-snug line-clamp-2 group-hover:text-accent transition-colors">
+                  <Link href={`/${locale}/blog/${art.slug}` as never}>
+                    {art.title[locale as 'uk' | 'ru']}
+                  </Link>
+                </h3>
+                <span className="text-[10px] text-text-muted mt-1 flex items-center gap-1">
+                  <Calendar className="size-2.5" />
+                  {art.date}
+                </span>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+    )
+  }
 
   return (
     <section className="mt-12 pt-10 border-t border-border">
