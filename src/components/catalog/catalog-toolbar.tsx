@@ -3,7 +3,7 @@
 import { useTransition } from 'react'
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import { LayoutGrid, List, SlidersHorizontal, ChevronDown } from 'lucide-react'
-import { useTranslations } from 'next-intl'
+import { useTranslations, useLocale } from 'next-intl'
 import { useUIStore } from '@/store/ui-store'
 
 type SortValue = 'popular' | 'price-asc' | 'price-desc' | 'new' | 'rating'
@@ -27,12 +27,29 @@ export default function CatalogToolbar({
   activeFiltersCount,
 }: CatalogToolbarProps) {
   const t = useTranslations('catalog')
+  const locale = useLocale()
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const [isPending, startTransition] = useTransition()
   const openMobileFilters = useUIStore((s) => s.openMobileFilters)
   const view = searchParams.get('view') === 'list' ? 'list' : 'grid'
+
+  const limit = Number(searchParams.get('limit') || '48')
+
+  function setLimit(newLimit: number) {
+    const params = new URLSearchParams(searchParams.toString())
+    if (newLimit === 48) {
+      params.delete('limit')
+    } else {
+      params.set('limit', String(newLimit))
+    }
+    params.delete('page')
+    const qs = params.toString()
+    startTransition(() => {
+      router.replace(`${pathname}${qs ? `?${qs}` : ''}` as never, { scroll: false })
+    })
+  }
 
   function setView(newView: 'grid' | 'list') {
     const params = new URLSearchParams(searchParams.toString())
@@ -84,10 +101,30 @@ export default function CatalogToolbar({
         )}
       </button>
 
-      {/* Found count */}
-      <span className="text-sm text-text-muted shrink-0 hidden sm:block">
-        {t('foundCount', { count: total })}
-      </span>
+      {/* Found count + Page size selector */}
+      <div className="text-sm text-text-muted shrink-0 hidden sm:flex items-center gap-1.5 select-none">
+        <span>{t('foundCount', { count: total })}</span>
+        <span className="text-border-strong font-normal">/</span>
+        <span className="text-xs text-text-muted">{locale === 'uk' ? 'На сторінку:' : 'На страницу:'}</span>
+        <span className="inline-flex items-center gap-1 font-bold text-xs">
+          {[48, 96, 192].map((sz, idx) => (
+            <span key={sz} className="inline-flex items-center gap-1">
+              <button
+                onClick={() => setLimit(sz)}
+                className={[
+                  'cursor-pointer transition-colors',
+                  limit === sz
+                    ? 'text-accent font-extrabold underline decoration-2 underline-offset-4'
+                    : 'text-text-muted hover:text-accent font-medium'
+                ].join(' ')}
+              >
+                {sz}
+              </button>
+              {idx < 2 && <span className="text-border-strong font-normal select-none">|</span>}
+            </span>
+          ))}
+        </span>
+      </div>
 
       <div className="flex-1" />
 

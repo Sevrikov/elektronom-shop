@@ -95,6 +95,7 @@ export interface ActiveFilters {
   priceMax?: number | undefined
   sort?: ('popular' | 'price-asc' | 'price-desc' | 'new' | 'rating') | undefined
   page?: number | undefined
+  limit?: number | undefined
   inStock?: boolean | undefined
   /** Динамічні атрибути категорії */
   [key: string]: string[] | number | boolean | string | undefined

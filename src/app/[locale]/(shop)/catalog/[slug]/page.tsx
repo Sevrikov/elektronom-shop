@@ -22,7 +22,7 @@ import { AnswerBlock } from '@/components/seo/answer-block'
 import { Suspense } from 'react'
 import DeferredMobileFilterDrawer from '@/components/catalog/deferred-mobile-filter-drawer'
 
-const PAGE_SIZE = 24
+const DEFAULT_PAGE_SIZE = 48
 
 // Check if active filters match exactly one quick link and no other indexable filters
 export function getMatchingQuickLink(
@@ -328,6 +328,7 @@ export default async function CategoryPage({
   // ─── Parse URL ──────────────────────────────────────────────────────────────
   const activeFilters = parseCatalogSearchParams(sp)
   const attributeFilters = extractAttributeFilters(activeFilters)
+  const pageSize = activeFilters.limit ?? DEFAULT_PAGE_SIZE
 
   // ─── Fetch fast grid data immediately ────────────────────────────────────────
   const { products, total } = await getFilteredProducts({
@@ -338,7 +339,7 @@ export default async function CategoryPage({
     inStock: activeFilters.inStock,
     sort: activeFilters.sort,
     page: activeFilters.page,
-    pageSize: PAGE_SIZE,
+    pageSize,
     attributes: attributeFilters,
     locale,
   })
@@ -449,7 +450,7 @@ export default async function CategoryPage({
               products={products}
               total={total}
               currentPage={activeFilters.page ?? 1}
-              pageSize={PAGE_SIZE}
+              pageSize={pageSize}
             />
 
             {/* Laptop/Tablet/Mobile: Answer Block + Description + Articles (shown only on screens < 1700px) */}

@@ -5,7 +5,7 @@
 import type { ActiveFilters } from '@/types'
 
 /** Keys that are not dynamic attribute filters */
-const RESERVED_KEYS = new Set(['brand', 'priceMin', 'priceMax', 'inStock', 'sort', 'page', 'view'])
+const RESERVED_KEYS = new Set(['brand', 'priceMin', 'priceMax', 'inStock', 'sort', 'page', 'view', 'limit'])
 
 const VALID_SORTS = ['popular', 'price-asc', 'price-desc', 'new', 'rating'] as const
 type SortValue = (typeof VALID_SORTS)[number]
@@ -62,6 +62,13 @@ export function parseCatalogSearchParams(
     if (!isNaN(n) && n > 0) filters.page = n
   }
 
+  // limit — positive integer, must be 48, 96, or 192
+  const rawLimit = sp['limit']
+  if (rawLimit) {
+    const n = parseInt(Array.isArray(rawLimit) ? rawLimit[0]! : rawLimit, 10)
+    if (!isNaN(n) && [48, 96, 192].includes(n)) filters.limit = n
+  }
+
   // sort — whitelist
   const rawSort = sp['sort']
   const sortVal = Array.isArray(rawSort) ? rawSort[0] : rawSort
@@ -90,13 +97,14 @@ export function parseCatalogSearchParams(
 export function buildCatalogHref(pathname: string, filters: ActiveFilters): string {
   const params = new URLSearchParams()
 
-  // Stable order: brand, priceMin, priceMax, inStock, sort, page, then attributes
+  // Stable order: brand, priceMin, priceMax, inStock, sort, page, limit, then attributes
   if (filters.brand?.length) params.set('brand', filters.brand.join(','))
   if (filters.priceMin !== undefined) params.set('priceMin', String(filters.priceMin))
   if (filters.priceMax !== undefined) params.set('priceMax', String(filters.priceMax))
   if (filters.inStock) params.set('inStock', '1')
   if (filters.sort) params.set('sort', filters.sort)
   if (filters.page && filters.page > 1) params.set('page', String(filters.page))
+  if (filters.limit !== undefined && filters.limit !== 48) params.set('limit', String(filters.limit))
 
   // Dynamic attributes (everything else)
   for (const [key, value] of Object.entries(filters)) {
