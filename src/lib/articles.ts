@@ -9,6 +9,8 @@ export interface Article {
   image: string
   readTime: { uk: string; ru: string }
   date: string
+  dateModified?: string
+  type?: 'BlogPosting' | 'TechArticle'
   categoryKeywords: string[]
   productKeywords: string[]
 }

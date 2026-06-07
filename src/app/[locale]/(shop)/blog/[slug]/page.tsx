@@ -12,8 +12,11 @@ import { prisma } from '@/lib/prisma'
 import { productCardSelect, mapProductDecimals } from '@/queries/products'
 import ProductCard from '@/components/product/product-card'
 import Breadcrumbs from '@/components/layout/breadcrumbs'
-import { Calendar, Clock, ArrowLeft, BookOpen, Sparkles } from 'lucide-react'
+import { Calendar, Clock, ArrowLeft, Sparkles } from 'lucide-react'
 import type { Locale } from '@/types'
+import { isFeatureEnabled } from '@/lib/features'
+import { getSiteUrl } from '@/lib/utils'
+import { ArticleSchema } from '@/components/seo/article-schema'
 
 export async function generateStaticParams() {
   const locales = ['uk', 'ru'] as const
@@ -256,8 +259,23 @@ export default async function ArticleDetailPage({
 
   const relatedProducts = rawProducts.map(mapProductDecimals)
 
+  const schemaUrl = `${getSiteUrl()}/${locale}/blog/${slug}`
+  const schemaImage = art.image.startsWith('http') ? art.image : `${getSiteUrl()}${art.image}`
+
   return (
     <div className="max-w-[960px] mx-auto px-4 py-6">
+      {isFeatureEnabled('alpha12_article_schema_enabled') && (
+        <ArticleSchema
+          title={art.title[locale as 'uk' | 'ru']}
+          description={art.summary[locale as 'uk' | 'ru']}
+          url={schemaUrl}
+          image={schemaImage}
+          datePublished={art.date}
+          dateModified={art.dateModified}
+          locale={locale as 'uk' | 'ru'}
+          type={art.type}
+        />
+      )}
       <Breadcrumbs items={breadcrumbs} locale={locale} />
 
       {/* Back button */}
