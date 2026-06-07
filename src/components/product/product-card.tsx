@@ -52,6 +52,17 @@ export default function ProductCard({ product, locale, view = 'grid' }: ProductC
 
   const brandName = product.brand?.name ?? ''
 
+  const rawEntries = product.attributes &&
+    typeof product.attributes === 'object' &&
+    !Array.isArray(product.attributes)
+    ? Object.entries(product.attributes)
+    : []
+  const filteredEntries = rawEntries.filter(
+    ([key, value]) => value !== null && value !== undefined && value !== '' && key !== 'qty_breaks'
+  )
+  const sortedEntries = sortAttributeEntries(filteredEntries)
+  const displayEntries = sortedEntries.slice(0, 6)
+
   if (view === 'list') {
     return (
       <article className="flex gap-4 rounded-lg p-4 transition-shadow hover:shadow-md group border border-border bg-surface-white">
@@ -115,6 +126,27 @@ export default function ProductCard({ product, locale, view = 'grid' }: ProductC
             {inStock && <Check className="size-3" strokeWidth={2.5} />}
             {stockLabel}
           </div>
+
+          {/* Attributes List */}
+          {displayEntries.length > 0 && (
+            <div className="mt-3 grid grid-cols-2 gap-x-6 gap-y-1.5 text-[11px] border-t border-border/60 pt-2.5 max-w-[480px]">
+              {displayEntries.map(([key, value]) => {
+                const label = translateAttributeKey(key, locale === 'ru' ? 'ru' : 'uk')
+                let valStr = ''
+                if (typeof value === 'boolean') {
+                  valStr = locale === 'ru' ? (value ? 'Да' : 'Нет') : (value ? 'Так' : 'Ні')
+                } else {
+                  valStr = translateAttributeValue(value, locale === 'ru' ? 'ru' : 'uk')
+                }
+                return (
+                  <div key={key} className="flex justify-between items-center gap-2">
+                    <span className="text-text-muted font-medium shrink-0">{label}:</span>
+                    <span className="text-text-primary font-semibold truncate max-w-[60%]">{valStr}</span>
+                  </div>
+                )
+              })}
+            </div>
+          )}
         </div>
 
         {/* Price + cart */}
@@ -149,16 +181,6 @@ export default function ProductCard({ product, locale, view = 'grid' }: ProductC
   }
 
   // Grid view (default)
-  const rawEntries = product.attributes &&
-    typeof product.attributes === 'object' &&
-    !Array.isArray(product.attributes)
-    ? Object.entries(product.attributes)
-    : []
-  const filteredEntries = rawEntries.filter(
-    ([key, value]) => value !== null && value !== undefined && value !== '' && key !== 'qty_breaks'
-  )
-  const sortedEntries = sortAttributeEntries(filteredEntries)
-  const displayEntries = sortedEntries.slice(0, 6)
 
   return (
     <article className="relative flex flex-col rounded-lg border border-border bg-surface-white transition-all duration-200 group hover:shadow-lg hover:border-accent/40 hover:z-20">

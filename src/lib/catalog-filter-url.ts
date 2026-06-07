@@ -5,7 +5,7 @@
 import type { ActiveFilters } from '@/types'
 
 /** Keys that are not dynamic attribute filters */
-const RESERVED_KEYS = new Set(['brand', 'priceMin', 'priceMax', 'inStock', 'sort', 'page'])
+const RESERVED_KEYS = new Set(['brand', 'priceMin', 'priceMax', 'inStock', 'sort', 'page', 'view'])
 
 const VALID_SORTS = ['popular', 'price-asc', 'price-desc', 'new', 'rating'] as const
 type SortValue = (typeof VALID_SORTS)[number]
