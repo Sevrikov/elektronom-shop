@@ -53,7 +53,7 @@ export default async function SearchPage({ params, searchParams }: PageProps) {
 
   return (
     <div className="min-h-[calc(100vh-200px)] bg-surface-alt py-6 lg:py-8">
-      <div className="max-w-[1280px] mx-auto px-4 lg:px-20">
+      <div className="max-w-[1600px] mx-auto px-4 lg:px-6">
         <Breadcrumbs items={breadcrumbs} locale={locale} />
 
         <h1 className="text-2xl font-bold text-text-primary mt-4 mb-6">

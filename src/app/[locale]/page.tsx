@@ -84,7 +84,7 @@ export default async function HomePage({
   const categories = await getCategoryTree(loc)
 
   return (
-    <div className="mx-auto max-w-[1280px] px-4 lg:px-6 py-6">
+    <div className="mx-auto max-w-[1600px] px-4 lg:px-6 py-6">
       <div className="flex gap-6">
         <CategorySidebar categories={categories} />
         <div className="flex-1 min-w-0 flex flex-col gap-6">

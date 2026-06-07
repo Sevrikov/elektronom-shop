@@ -35,7 +35,7 @@ export default function PrefooterB2bCta() {
       className="w-full"
       style={{ background: '#EEF2F7' }}
     >
-      <div className="max-w-[1280px] mx-auto px-4 py-12 flex flex-col lg:flex-row gap-12">
+      <div className="max-w-[1600px] mx-auto px-4 lg:px-6 py-12 flex flex-col lg:flex-row gap-12">
         {/* Left */}
         <div className="flex-1">
           <h2

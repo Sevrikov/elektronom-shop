@@ -60,7 +60,7 @@ export default async function CatalogPage({
 
   return (
     <>
-      <div className="max-w-[1280px] mx-auto px-4">
+      <div className="max-w-[1600px] mx-auto px-4 lg:px-6">
         {/* Breadcrumbs */}
         <div className="h-10 flex items-center">
           <Breadcrumbs items={breadcrumbs} locale={locale} />
