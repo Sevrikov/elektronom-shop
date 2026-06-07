@@ -79,7 +79,7 @@ export function CatalogMegaMenuClient({ categories, isOpen, onClose }: Props) {
         className="hidden lg:flex fixed left-0 right-0 z-50 bg-surface-white border-b border-border shadow-lg overflow-hidden"
         style={{ top: 'var(--header-height, 220px)', maxHeight: 'calc(100vh - var(--header-height, 220px) - 16px)' }}
       >
-        <div className="mx-auto max-w-[1280px] w-full flex">
+        <div className="mx-auto max-w-[1600px] w-full flex">
 
           {/* Col 1: Top-level categories */}
           <div className="w-[300px] shrink-0 border-r border-border overflow-y-auto py-3">

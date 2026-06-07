@@ -45,7 +45,7 @@ export default function Footer() {
 
   return (
     <footer style={{ background: 'var(--color-footer-bg)', color: 'var(--color-footer-text)' }} className="pt-12 pb-6 px-4 lg:px-20">
-      <div className="mx-auto max-w-[1280px]">
+      <div className="mx-auto max-w-[1600px]">
         {/* 4-column grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {columns.map((col) => (

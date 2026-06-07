@@ -122,7 +122,7 @@ export default function Header({ workload = 0 }: Props) {
           style={{ background: 'var(--color-surface-alt)', borderColor: 'var(--color-border)' }}
         >
           <div
-            className="h-9 mx-auto max-w-[1280px] px-4 lg:px-6 flex items-center justify-between text-xs"
+            className="h-9 mx-auto max-w-[1600px] px-4 lg:px-6 flex items-center justify-between text-xs"
             style={{ color: 'var(--color-text-muted)' }}
           >
             <div className="hidden sm:flex items-center">
@@ -158,7 +158,7 @@ export default function Header({ workload = 0 }: Props) {
           className="border-b"
           style={{ background: 'var(--color-surface-white)', borderColor: 'var(--color-border)' }}
         >
-          <div className="h-[76px] mx-auto max-w-[1280px] px-4 lg:px-6 flex items-center gap-6">
+          <div className="h-[76px] mx-auto max-w-[1600px] px-4 lg:px-6 flex items-center gap-6">
             {/* Logo */}
             <Link
               href={lp('/')}
@@ -252,7 +252,7 @@ export default function Header({ workload = 0 }: Props) {
             </div>
 
             {/* Search */}
-            <div className="hidden md:flex flex-1 max-w-[640px] ml-6 mr-4">
+            <div className="hidden md:flex flex-1 max-w-[800px] ml-6 mr-4">
               <div className="w-full">
                 <SearchBox />
               </div>
@@ -299,7 +299,7 @@ export default function Header({ workload = 0 }: Props) {
           style={{ background: 'var(--color-surface-white)', borderColor: 'var(--color-border)' }}
         >
           <nav
-            className="hidden lg:flex h-12 mx-auto max-w-[1280px] px-4 lg:px-6 items-center gap-5 justify-between"
+            className="hidden lg:flex h-12 mx-auto max-w-[1600px] px-4 lg:px-6 items-center gap-5 justify-between"
           >
             {/* Catalog toggle button -> Now a Link */}
             <Link
