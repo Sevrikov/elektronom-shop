@@ -179,7 +179,7 @@ export default function Header({ workload = 0 }: Props) {
                   playsInline
                   preload="none"
                   className="w-full h-full select-none"
-                  style={{ objectFit: 'contain' }}
+                  style={{ objectFit: 'contain', objectPosition: 'left' }}
                 />
               ) : (
                 // Остальные страницы: лёгкая статика по теме
@@ -190,7 +190,7 @@ export default function Header({ workload = 0 }: Props) {
                   height={isDark ? 119 : 117}
                   priority
                   sizes="180px"
-                  className="w-full h-full object-contain select-none"
+                  className="w-full h-full object-contain object-left select-none"
                 />
               )}
             </Link>
