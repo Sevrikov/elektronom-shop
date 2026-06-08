@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma'
 import { getSiteUrl } from '@/lib/utils'
 import { articles } from '@/lib/articles'
 import { categoryFilterConfig } from '@/lib/catalog-filter-config'
+import { isFeatureEnabled } from '@/lib/features'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = getSiteUrl()
@@ -114,8 +115,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
 
     // Static articles (Blog)
+    const enabledArticles = articles.filter(
+      (art) => !art.isGuide || isFeatureEnabled('alpha12_content_guides_enabled')
+    )
+
     for (const locale of locales) {
-      for (const article of articles) {
+      for (const article of enabledArticles) {
         sitemapEntries.push({
           url: `${baseUrl}/${locale}/blog/${article.slug}`,
           lastModified: new Date(article.date),
