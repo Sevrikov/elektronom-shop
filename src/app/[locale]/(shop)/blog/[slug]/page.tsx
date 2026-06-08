@@ -17,10 +17,14 @@ import type { Locale } from '@/types'
 import { isFeatureEnabled } from '@/lib/features'
 import { getSiteUrl } from '@/lib/utils'
 import { ArticleSchema } from '@/components/seo/article-schema'
+import { FAQSchema } from '@/components/seo/faq-schema'
 
 export async function generateStaticParams() {
   const locales = ['uk', 'ru'] as const
-  return articles.flatMap((art) =>
+  const enabledArticles = articles.filter(
+    (art) => !art.isGuide || isFeatureEnabled('alpha12_content_guides_enabled')
+  )
+  return enabledArticles.flatMap((art) =>
     locales.map((locale) => ({ locale, slug: art.slug }))
   )
 }
@@ -36,11 +40,20 @@ export async function generateMetadata({
   const art = articles.find((a) => a.slug === slug)
   if (!art) return {}
 
+  if (art.isGuide && !isFeatureEnabled('alpha12_content_guides_enabled')) {
+    return {}
+  }
+
+  const baseUrl = getSiteUrl()
   return {
     title: `${art.title[locale as 'uk' | 'ru']} | Блог Electronom`,
     description: art.summary[locale as 'uk' | 'ru'],
     alternates: {
-      canonical: `/${locale}/blog/${slug}`,
+      canonical: `${baseUrl}/${locale}/blog/${slug}`,
+      languages: {
+        uk: `${baseUrl}/uk/blog/${slug}`,
+        ru: `${baseUrl}/ru/blog/${slug}`,
+      },
     },
   }
 }
@@ -200,6 +213,241 @@ const articleContents: Record<string, { uk: string; ru: string }> = {
       <h3>2. Аккумуляторная линейка — выгода единого стандарта</h3>
       <p>Современный тренд — покупка инструментов одной линейки, где один и тот же аккумулятор (например, 18V LXT у Makita или 18V XR у DeWALT) подходит к шуруповерту, болгарке, лобзику и перфоратору. Это позволяет экономить до 50% стоимости на покупке каркасов инструмента без АКБ.</p>
     `
+  },
+  'yak-vybraty-avtomatych-vymykach-po-strumu': {
+    uk: `
+      <div class="bg-surface-alt p-5 rounded-2xl border border-border mb-6">
+        <p><strong>Швидка відповідь:</strong> Для вибору автоматичного вимикача підберіть його номінальний струм відповідно до перетину мідного кабелю проводки: 10А для 1.5 мм² та 16А для 2.5 мм². Кількість полюсів обирайте за кількістю фаз мережі: 1P або 2P для однофазної мережі, 3P або 4P для трифазної. Для стандартних домашніх приладів використовуйте характеристику відключення C.</p>
+      </div>
+
+      <div class="my-6 p-4 bg-surface-white border border-border rounded-xl">
+        <p class="font-semibold mb-2">Зміст керівництва:</p>
+        <ul class="list-disc pl-5 space-y-1">
+          <li><a href="#nominal" class="text-accent hover:underline">Вибір номінального струму по перетину кабелю</a></li>
+          <li><a href="#poles" class="text-accent hover:underline">Кількість полюсів (1P, 2P, 3P, 4P)</a></li>
+          <li><a href="#curves" class="text-accent hover:underline">Характеристика відключення (B, C, D)</a></li>
+          <li><a href="#table" class="text-accent hover:underline">Зведена таблиця підбору характеристик</a></li>
+          <li><a href="#compatibility" class="text-accent hover:underline">Сумісність: що підійде, а що ні</a></li>
+          <li><a href="#mistakes" class="text-accent hover:underline">Типові помилки під час монтажу та вибору</a></li>
+        </ul>
+      </div>
+
+      <h2 id="nominal" class="text-xl font-bold mt-8 mb-4">Який номінальний струм обрати для захисту кабелю?</h2>
+      <p class="mb-4">Головне правило електробезпеки: автоматичний вимикач захищає саме кабель від перегріву та займання, а не побутові прилади. Номінальний струм автомата повинен бути меншим за максимальний струм, який здатний витримати провідник. Для мідного кабелю стандартні номінали автоматичних вимикачів становлять: 10А для лінії освітлення з перетином жил 1.5 мм², 16А для розеткових груп з перетином жил 2.5 мм², та 25А або 32А для потужних споживачів (плити, котли), підключених кабелем 4 мм² або 6 мм² відповідно.</p>
+
+      <h2 id="poles" class="text-xl font-bold mt-8 mb-4">Скільки полюсів має бути у вимикача: 1P, 2P, 3P чи 4P?</h2>
+      <p class="mb-4">Кількість полюсів автоматичного вимикача визначає число ліній проводки, які він може одночасно контролювати та захищати. Однополюсні (1P) автомати застосовуються для індивідуального захисту фазних провідників окремих груп споживачів в однофазній мережі 220В. Двополюсні (2P) автомати розривають і фазу, і нуль, що необхідно для загального вводу в однофазну квартиру. Триполюсні (3P) вимикачі захищають трифазні лінії (380В) для живлення двигунів або підключення приватних будинків. Чотириполюсні (4P) автомати служать для комутації трьох фаз та нульового провідника на ввідних трифазних щитах.</p>
+
+      <h2 id="curves" class="text-xl font-bold mt-8 mb-4">Час-струмова характеристика автоматичного вимикача: B, C чи D?</h2>
+      <p class="mb-4">Характеристика відключення визначає поріг та швидкість миттєвого спрацьовування електромагнітного розчеплювача автоматичного вимикача при виникненні пускових струмів. Автомати з характеристикою B мають високу чутливість (спрацьовують при струмі у 3–5 разів вище номіналу) і захищають лінії освітлення або довгі кабельні мережі. Характеристика C є універсальною (поріг спрацьовування 5–10 номіналів) і використовується для побутових розеток і приладів із помірними пусковими струмами. Моделі з характеристикою D мають низьку чутливість (поріг спрацьовування 10–20 номіналів) та розраховані на промислові лінії із пусковими двигунами.</p>
+
+      <h2 id="table" class="text-xl font-bold mt-8 mb-4">Таблиця вибору за технічними параметрами</h2>
+      <div class="overflow-x-auto my-6">
+        <table class="min-w-full border-collapse border border-border text-sm text-left">
+          <thead>
+            <tr class="bg-surface-alt">
+              <th class="border border-border p-3 font-semibold text-text-primary">Параметр вибору</th>
+              <th class="border border-border p-3 font-semibold text-text-primary">Технічні значення</th>
+              <th class="border border-border p-3 font-semibold text-text-primary">Рекомендована сфера застосування</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="border border-border p-3 font-semibold text-text-primary">Номінальний струм, А</td>
+              <td class="border border-border p-3">10А, 16А, 25А, 32А, 40А</td>
+              <td class="border border-border p-3">Струм підбирається строго под переріз захищуваної мідної жили провідника.</td>
+            </tr>
+            <tr>
+              <td class="border border-border p-3 font-semibold text-text-primary">Кількість полюсів</td>
+              <td class="border border-border p-3">1P, 2P, 3P, 4P</td>
+              <td class="border border-border p-3">1P/2P для однофазних споживачів; 3P/4P для захисту трифазних мереж та обладнання.</td>
+            </tr>
+            <tr>
+              <td class="border border-border p-3 font-semibold text-text-primary">Характеристика відкл.</td>
+              <td class="border border-border p-3">B, C, D</td>
+              <td class="border border-border p-3">B — освітлення; C — домашні розетки, холодильники; D — верстати з великими двигунами.</td>
+            </tr>
+            <tr>
+              <td class="border border-border p-3 font-semibold text-text-primary">Відключна здатність, кА</td>
+              <td class="border border-border p-3">4.5 кА, 6 кА, 10 кА</td>
+              <td class="border border-border p-3">4.5 кА — старі будинки; 6 кА — сучасний стандарт для житла; 10 кА — промислові об'єкти та щитові.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2 id="compatibility" class="text-xl font-bold mt-8 mb-4">Сумісність обладнання: що підійде, а що ні?</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-6">
+        <div class="p-4 bg-success-subtle/20 border border-success-subtle rounded-xl">
+          <p class="font-bold text-success mb-2">Підійде:</p>
+          <ul class="list-disc pl-5 space-y-1 text-sm text-text-primary">
+            <li>Встановлення автоматичного вимикача номіналом 16А на розетки з мідним кабелем перерізом 2.5 мм².</li>
+            <li>Використання ввідного двополюсного автомата (2P) для одночасного вимикання фази та нуля на вході в квартиру.</li>
+            <li>Застосування автоматів з характеристикою B для ліній світлодіодного освітлення з низьким пусковим струмом.</li>
+          </ul>
+        </div>
+        <div class="p-4 bg-destructive/5 border border-destructive/20 rounded-xl">
+          <p class="font-bold text-destructive mb-2">Не підійде:</p>
+          <ul class="list-disc pl-5 space-y-1 text-sm text-text-primary">
+            <li>Монтаж автомата 25А на кабель перерізом 1.5 мм² — провідник почне плавитися без спрацьовування автомата.</li>
+            <li>Встановлення однополюсного автомата (1P) на нульовий дріт без одночасного розриву фазного провідника.</li>
+            <li>Застосування автоматів з характеристикою D для звичайних розеток у дитячій кімнаті або спальні.</li>
+          </ul>
+        </div>
+      </div>
+
+      <h2 id="mistakes" class="text-xl font-bold mt-8 mb-4">Типові помилки при виборі та монтажі</h2>
+      <p class="mb-4">Найбільш поширеною помилкою є завищення номіналу вимикача з метою запобігання хибним спрацьовуванням при високих навантаженнях, що повністю позбавляє кабель захисту від тривалих перевантажень. Друга помилка — затискання в одну клему автомата жил різного перетину або матеріалу (наприклад, міді та алюмінію), що викликає окислення, нагрів та руйнування контакту. Третя помилка — нехтування перевіркою відключної здатності приладу: встановлення дешевих вимикачів на 4.5 кА у ввідних щитах сучасних багатоповерхівок з високими очікуваними струмами короткого замикання.</p>
+
+      <h2 id="faq" class="text-xl font-bold mt-8 mb-4">Часті запитання (FAQ)</h2>
+      <div class="space-y-4 my-6">
+        <div class="p-4 bg-surface-alt border border-border rounded-xl">
+          <p class="font-bold mb-1">Який автомат потрібен для розеток?</p>
+          <p class="text-sm">Для стандартних розеток у квартирі чи будинку використовується мідний кабель перетином 2.5 мм² та автоматичний вимикач номіналом 16А з характеристикою C.</p>
+        </div>
+        <div class="p-4 bg-surface-alt border border-border rounded-xl">
+          <p class="font-bold mb-1">Що захищає автоматичний вимикач?</p>
+          <p class="text-sm">Автоматичний вимикач захищає виключно електричний кабель від перевантаження та короткого замикання, запобігаючи перегріванню та займанню ізоляції.</p>
+        </div>
+        <div class="p-4 bg-surface-alt border border-border rounded-xl">
+          <p class="font-bold mb-1">У чому різниця між характеристиками B та C?</p>
+          <p class="text-sm">Характеристика B більш чутлива (спрацьовує при пускових струмах у 3-5 разів вище номіналу) і застосовується для ліній освітлення. Характеристика C (спрацьовування при 5-10 номіналів) є універсальною для побутової техніки та розеток.</p>
+        </div>
+      </div>
+    `,
+    ru: `
+      <div class="bg-surface-alt p-5 rounded-2xl border border-border mb-6">
+        <p><strong>Быстрый ответ:</strong> Для выбора автоматического выключателя подберите его номинальный ток в соответствии с сечением медного кабеля проводки: 10А для 1.5 мм² и 16А для 2.5 мм². Количество полюсов выбирайте по числу фаз сети: 1P или 2P для однофазной сети, 3P или 4P для трехфазной. Для большинства домашних приборов используйте характеристику отключения C.</p>
+      </div>
+
+      <div class="my-6 p-4 bg-surface-white border border-border rounded-xl">
+        <p class="font-semibold mb-2">Содержание руководства:</p>
+        <ul class="list-disc pl-5 space-y-1">
+          <li><a href="#nominal" class="text-accent hover:underline">Выбор номинального тока по сечению кабеля</a></li>
+          <li><a href="#poles" class="text-accent hover:underline">Количество полюсов (1P, 2P, 3P, 4P)</a></li>
+          <li><a href="#curves" class="text-accent hover:underline">Характеристика отключения (B, C, D)</a></li>
+          <li><a href="#table" class="text-accent hover:underline">Сводная таблица подбора характеристик</a></li>
+          <li><a href="#compatibility" class="text-accent hover:underline">Совместимость: что подойдет, а что нет</a></li>
+          <li><a href="#mistakes" class="text-accent hover:underline">Типичные ошибки при монтаже и выборе</a></li>
+        </ul>
+      </div>
+
+      <h2 id="nominal" class="text-xl font-bold mt-8 mb-4">Какой номинальный ток выбрать для защиты кабеля?</h2>
+      <p class="mb-4">Главное правило электробезопасности: автоматический выключатель защищает именно кабель от перегрева и возгорания, а не бытовые приборы. Номинальный ток автомата должен быть меньше максимального тока, который способен выдерживать проводник. Для медного кабеля стандартные номиналы автоматических выключателей составляют: 10А для линии освещения с сечением жил 1.5 мм², 16А для розеточных групп с сечением жил 2.5 мм², и 25А либо 32А для мощных потребителей (плиты, котлы), подключенных кабелем 4 мм² или 6 мм² соответственно.</p>
+
+      <h2 id="poles" class="text-xl font-bold mt-8 mb-4">Сколько полюсов должно быть у выключателя: 1P, 2P, 3P или 4P?</h2>
+      <p class="mb-4">Количество полюсов автоматического выключателя определяет число линий проводки, которые он может одновременно контролировать и защищать. Однополюсные (1P) автоматы применяются для индивидуальной защиты фазных проводников отдельных групп потребителей в однофазной сети 220В. Двухполюсные (2P) автоматы разрывают и фазу, и ноль, что необходимо для общего ввода в однофазную квартиру. Трехполюсные (3P) выключатели защищают трехфазные линии (380В) для питания двигателей или подключения частных домов. Четырехполюсные (4P) автоматы служат для коммутации трех фаз и главного нулевого проводника на вводных трехфазных щитах.</p>
+
+      <h2 id="curves" class="text-xl font-bold mt-8 mb-4">Время-токовая характеристика автоматического выключателя: B, C или D?</h2>
+      <p class="mb-4">Характеристика отключения определяет порог и скорость мгновенного срабатывания электромагнитного расцепителя автоматического выключателя при возникновении пусковых токов. Автоматы с характеристикой B имеют высокую чувствительность (срабатывают при токе в 3–5 раз выше номинала) и защищают линии освещения или длинные кабельные сети. Характеристика C является универсальной (порог срабатывания 5–10 номиналов) и используется для бытовых розеток и приборов с умеренными пусковыми токами. Модели с характеристикой D имеют низкую чувствительность (порог срабатывания 10–20 номиналов) и рассчитаны на промышленные линии с пусковыми двигателями.</p>
+
+      <h2 id="table" class="text-xl font-bold mt-8 mb-4">Таблица выбора по техническим параметрам</h2>
+      <div class="overflow-x-auto my-6">
+        <table class="min-w-full border-collapse border border-border text-sm text-left">
+          <thead>
+            <tr class="bg-surface-alt">
+              <th class="border border-border p-3 font-semibold text-text-primary">Параметр выбора</th>
+              <th class="border border-border p-3 font-semibold text-text-primary">Технические значения</th>
+              <th class="border border-border p-3 font-semibold text-text-primary">Рекомендованная сфера применения</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="border border-border p-3 font-semibold text-text-primary">Номинальный ток, А</td>
+              <td class="border border-border p-3">10А, 16А, 25А, 32А, 40А</td>
+              <td class="border border-border p-3">Ток подбирается строго под сечение защищаемой медной жилы проводника.</td>
+            </tr>
+            <tr>
+              <td class="border border-border p-3 font-semibold text-text-primary">Кол-во полюсов</td>
+              <td class="border border-border p-3">1P, 2P, 3P, 4P</td>
+              <td class="border border-border p-3">1P/2P для однофазных потребителей; 3P/4P для защиты трехфазных сетей и оборудования.</td>
+            </tr>
+            <tr>
+              <td class="border border-border p-3 font-semibold text-text-primary">Характеристика откл.</td>
+              <td class="border border-border p-3">B, C, D</td>
+              <td class="border border-border p-3">B — освещение; C — домашние розетки, холодильники; D — станки с крупными двигателями.</td>
+            </tr>
+            <tr>
+              <td class="border border-border p-3 font-semibold text-text-primary">Откл. способность, кА</td>
+              <td class="border border-border p-3">4.5 кА, 6 кА, 10 кА</td>
+              <td class="border border-border p-3">4.5 кА — старые дома; 6 кА — современный стандарт для жилья; 10 кА — промышленные объекты и вводные щиты.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2 id="compatibility" class="text-xl font-bold mt-8 mb-4">Совместимость оборудования: что подойдет, а что нет?</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-6">
+        <div class="p-4 bg-success-subtle/20 border border-success-subtle rounded-xl">
+          <p class="font-bold text-success mb-2">Подойдет:</p>
+          <ul class="list-disc pl-5 space-y-1 text-sm text-text-primary">
+            <li>Установка автоматического выключателя номиналом 16А на розетки с медным кабелем сечением 2.5 мм².</li>
+            <li>Использование вводного двухполюсного автомата (2P) для одновременного отключения фазы и нуля на входе в квартиру.</li>
+            <li>Применение автоматов с характеристикой B для линий светодиодного освещения с низким пусковым током.</li>
+          </ul>
+        </div>
+        <div class="p-4 bg-destructive/5 border border-destructive/20 rounded-xl">
+          <p class="font-bold text-destructive mb-2">Не подойдет:</p>
+          <ul class="list-disc pl-5 space-y-1 text-sm text-text-primary">
+            <li>Монтаж автомата 25А на кабель сечением 1.5 мм² — проводник начнет плавиться без срабатывания автомата.</li>
+            <li>Установка однополюсного автомата (1P) на нулевой провод без одновременного разрыва фазного проводника.</li>
+            <li>Применение автоматов с характеристикой D для стандартных розеток в детской комнате или спальне.</li>
+          </ul>
+        </div>
+      </div>
+
+      <h2 id="mistakes" class="text-xl font-bold mt-8 mb-4">Типичные ошибки при выборе и монтаже</h2>
+      <p class="mb-4">Наиболее распространенной ошибкой является завышение номинала выключателя для предотвращения ложных срабатываний при высоких нагрузках, что полностью лишает кабель защиты от длительных перегрузок. Вторая ошибка — зажатие в одну клемму автомата жил разного сечения или материала (например, меди и алюминия), что вызывает окисление, нагрев и последующее разрушение контакта. Третья ошибка — пренебрежение пооверкой отключающей способности прибора: установка дешевых выключателей на 4.5 кА во вводных щитах современных многоэтажек с высокими ожидаемыми токами короткого замыкания.</p>
+
+      <h2 id="faq" class="text-xl font-bold mt-8 mb-4">Часто задаваемые вопросы (FAQ)</h2>
+      <div class="space-y-4 my-6">
+        <div class="p-4 bg-surface-alt border border-border rounded-xl">
+          <p class="font-bold mb-1">Какой автомат нужен для розеток?</p>
+          <p class="text-sm">Для стандартных розеток в квартире или доме используется медный кабель сечением 2.5 мм² и автоматический выключатель номиналом 16А с характеристикой C.</p>
+        </div>
+        <div class="p-4 bg-surface-alt border border-border rounded-xl">
+          <p class="font-bold mb-1">Что защищает автоматический выключатель?</p>
+          <p class="text-sm">Автоматический выключатель защищает исключительно электрический кабель от перегрузки и короткого замыкания, предотвращая перегрев и возгорание изоляции.</p>
+        </div>
+        <div class="p-4 bg-surface-alt border border-border rounded-xl">
+          <p class="font-bold mb-1">В чем разница между характеристиками B и C?</p>
+          <p class="text-sm">Характеристика B более чувствительна (срабатывает при пусковых токах в 3-5 раз выше номинала) и применяется для линий освещения. Характеристика C (срабатывание при 5-10 номиналов) является универсальной для бытовой техники и розеток.</p>
+        </div>
+      </div>
+    `
+  }
+}
+
+const guideFaqItems: Record<string, Record<string, Array<{ question: string; answer: string }>>> = {
+  'yak-vybraty-avtomatych-vymykach-po-strumu': {
+    uk: [
+      {
+        question: 'Який автомат потрібен для розеток?',
+        answer: 'Для стандартних розеток у квартирі чи будинку використовується мідний кабель перетином 2.5 мм² та автоматичний вимикач номіналом 16А з характеристикою C.'
+      },
+      {
+        question: 'Що захищає автоматичний вимикач?',
+        answer: 'Автоматичний вимикач захищає виключно електричний кабель від перевантаження та короткого замикання, запобігаючи перегріванню та займанню ізоляції.'
+      },
+      {
+        question: 'У чому різниця між характеристиками B та C?',
+        answer: 'Характеристика B більш чутлива (спрацьовує при пускових струмах у 3-5 разів вище номіналу) і застосовується для ліній освітлення. Характеристика C (спрацьовування при 5-10 номіналів) є універсальною для побутової техніки та розеток.'
+      }
+    ],
+    ru: [
+      {
+        question: 'Какой автомат нужен для розеток?',
+        answer: 'Для стандартных розеток в квартире или доме используется медный кабель сечением 2.5 мм² и автоматический выключатель номиналом 16А с характеристикой C.'
+      },
+      {
+        question: 'Что защищает автоматический выключатель?',
+        answer: 'Автоматический выключатель защищает исключительно электрический кабель от перегрузки и короткого замыкания, предотвращая перегрев и возгорание изоляции.'
+      },
+      {
+        question: 'В чем разница между характеристиками B и C?',
+        answer: 'Характеристика B более чувствительна (срабатывает при пусковых токах в 3-5 раз выше номинала) и применяется для линий освещения. Характеристика C (срабатывание при 5-10 номиналов) является универсальной для бытовой техники и розеток.'
+      }
+    ]
   }
 }
 
@@ -216,6 +464,11 @@ export default async function ArticleDetailPage({
 
   const art = articles.find((a) => a.slug === slug)
   if (!art) notFound()
+
+  // Gating content guides based on feature flag
+  if (art.isGuide && !isFeatureEnabled('alpha12_content_guides_enabled')) {
+    notFound()
+  }
 
   const content = articleContents[slug] ?? { uk: '<p>Стаття знаходиться в процесі написання...</p>', ru: '<p>Статья находится в процессе написания...</p>' }
 
@@ -275,6 +528,9 @@ export default async function ArticleDetailPage({
           locale={locale as 'uk' | 'ru'}
           type={art.type}
         />
+      )}
+      {isFeatureEnabled('alpha12_faq_howto_schema_enabled') && guideFaqItems[slug]?.[locale] && (
+        <FAQSchema items={guideFaqItems[slug][locale]} />
       )}
       <Breadcrumbs items={breadcrumbs} locale={locale} />
 

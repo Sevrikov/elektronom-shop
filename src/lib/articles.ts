@@ -13,6 +13,7 @@ export interface Article {
   type?: 'BlogPosting' | 'TechArticle'
   categoryKeywords: string[]
   productKeywords: string[]
+  isGuide?: boolean
 }
 
 export const articles: Article[] = [
@@ -95,6 +96,23 @@ export const articles: Article[] = [
     date: '2026-05-25',
     categoryKeywords: ['instrumenty', 'instrument-ruchnyy', 'instrument-elektrychnyy'],
     productKeywords: ['bosch', 'makita', 'dewalt', 'dryl', 'shurupovert', 'дрель', 'ключ', 'перфоратор']
+  },
+  {
+    slug: 'yak-vybraty-avtomatych-vymykach-po-strumu',
+    title: {
+      uk: 'Як вибрати автоматичний вимикач по струму, полюсах та характеристиці',
+      ru: 'Как выбрать автоматический выключатель по току, полюсам и характеристике'
+    },
+    summary: {
+      uk: 'Для вибору автоматичного вимикача підберіть його номінальний струм відповідно до перетину мідного кабелю проводки: 10А для 1.5 мм² та 16А для 2.5 мм². Кількість полюсів обирайте за кількістю фаз мережі: 1P або 2P для однофазної мережі, 3P або 4P для трифазної. Для стандартних домашніх приладів використовуйте характеристику відключення C.',
+      ru: 'Для выбора автоматического выключателя подберите его номинальный ток в соответствии с сечением медного кабеля проводки: 10А для 1.5 мм² и 16А для 2.5 мм². Количество полюсов выбирайте по числу фаз сети: 1P или 2P для однофазной сети, 3P или 4P для трехфазной. Для большинства домашних приборов используйте характеристику отключения C.'
+    },
+    image: 'https://images.unsplash.com/photo-1621905252507-b354bc25edac?auto=format&fit=crop&w=600&q=80',
+    readTime: { uk: '8 хв', ru: '8 мин' },
+    date: '2026-06-08',
+    categoryKeywords: ['avtomatychni-vymykachi', 'elektrika', 'electrika', 'schyty-elektrychni'],
+    productKeywords: ['avtomat', 'vymykach', 'sh202', 'hager', 'abb', 'eaton', 'schneider'],
+    isGuide: true
   }
 ]
 
