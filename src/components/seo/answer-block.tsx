@@ -5,6 +5,7 @@
 import { Sparkles } from 'lucide-react'
 import { getDirectAnswer } from '@/lib/direct-answers'
 import { QuickLink } from '@/lib/catalog-filter-config'
+import { isFeatureEnabled } from '@/lib/features'
 
 interface AnswerBlockProps {
   categorySlug: string
@@ -14,6 +15,8 @@ interface AnswerBlockProps {
 }
 
 export function AnswerBlock({ categorySlug, locale, matchingQuickLink, layout = 'default' }: AnswerBlockProps) {
+  if (!isFeatureEnabled('alpha12_seo_answer_blocks_enabled')) return null
+
   const data = getDirectAnswer(categorySlug, matchingQuickLink)
   if (!data) return null
 
