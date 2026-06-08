@@ -1,7 +1,7 @@
 // src/components/seo/article-schema.tsx
 // Server Component — JSON-LD Article/BlogPosting schema.org
 
-import { safeJsonLd } from '@/lib/utils'
+import { safeJsonLd, getSiteUrl } from '@/lib/utils'
 
 interface ArticleSchemaProps {
   title: string
@@ -43,7 +43,7 @@ export function ArticleSchema({
       'name': 'Electronom',
       'logo': {
         '@type': 'ImageObject',
-        'url': 'https://elektronom.com.ua/electronom.png',
+        'url': `${getSiteUrl()}/electronom.png`,
       },
     },
   }

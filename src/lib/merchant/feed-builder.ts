@@ -2,6 +2,7 @@ import { prisma } from '@/lib/prisma';
 import { getProductTaxonomyCategory } from './taxonomy';
 import { FeedItemSchema } from '../validations/product-feed';
 import type { FeedItem } from '../validations/product-feed';
+import { getSiteUrl } from '@/lib/utils';
 
 /**
  * Generator function that fetches active products in batches and yields validated feed items.
@@ -88,9 +89,10 @@ export async function* generateFeedItems(locale: 'uk' | 'ru', batchSize = 100): 
         .replace(/<[^>]*>/g, '') // remove HTML tags
         .trim();
 
-      const link = `https://elektronom.com.ua/${locale}/product/${product.slug}`;
+      const baseUrl = getSiteUrl();
+      const link = `${baseUrl}/${locale}/product/${product.slug}`;
       
-      const mainImage = product.images[0]?.url || 'https://elektronom.com.ua/images/placeholder.jpg';
+      const mainImage = product.images[0]?.url || `${baseUrl}/images/placeholder.jpg`;
       const additionalImages = product.images.slice(1).map((img) => img.url);
 
       let availability: 'in_stock' | 'out_of_stock' | 'backorder' = 'out_of_stock';
@@ -165,6 +167,7 @@ export async function* generateFeedItems(locale: 'uk' | 'ru', batchSize = 100): 
  * Builds the final XML feed string from an array of validated feed items.
  */
 export function buildXmlFeed(items: FeedItem[], locale: 'uk' | 'ru'): string {
+  const baseUrl = getSiteUrl();
   const esc = (str: string | null | undefined): string => {
     if (!str) return '';
     return str
@@ -179,7 +182,7 @@ export function buildXmlFeed(items: FeedItem[], locale: 'uk' | 'ru'): string {
   xml += `<rss xmlns:g="http://base.google.com/ns/1.0" version="2.0">\n`;
   xml += `  <channel>\n`;
   xml += `    <title>${esc(locale === 'uk' ? 'Electronom' : 'Electronom')}</title>\n`;
-  xml += `    <link>https://elektronom.com.ua</link>\n`;
+  xml += `    <link>${baseUrl}</link>\n`;
   xml += `    <description>${esc(locale === 'uk' ? 'Electronom - інтернет-магазин електроніки та електротехніки' : 'Electronom - интернет-магазин электроники и электротехники')}</description>\n`;
 
   for (const item of items) {

@@ -98,8 +98,8 @@ export default async function LocaleLayout({
               '@context': 'https://schema.org',
               '@type': 'Organization',
               'name': 'Electronom',
-              'url': 'https://elektronom.com.ua',
-              'logo': 'https://elektronom.com.ua/electronom.png',
+              'url': getSiteUrl(),
+              'logo': `${getSiteUrl()}/electronom.png`,
               'contactPoint': {
                 '@type': 'ContactPoint',
                 'telephone': contactInfo.phone.replace(/[^\d+]/g, ''),
