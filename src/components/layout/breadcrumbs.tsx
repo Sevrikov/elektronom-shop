@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { ChevronRight } from 'lucide-react'
 import type { BreadcrumbItem } from '@/types'
-import { getSiteUrl, localizedPath } from '@/lib/utils'
+import { getSiteUrl, localizedPath, safeJsonLd } from '@/lib/utils'
 
 interface BreadcrumbsProps {
   items: BreadcrumbItem[]
@@ -29,7 +29,7 @@ export default function Breadcrumbs({ items, locale }: BreadcrumbsProps) {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLd) }}
       />
       <nav aria-label="Breadcrumb" className="mb-4">
         <ol className="flex items-center gap-1.5 flex-wrap text-[13px]">

@@ -1,6 +1,8 @@
 // src/components/seo/article-schema.tsx
 // Server Component — JSON-LD Article/BlogPosting schema.org
 
+import { safeJsonLd } from '@/lib/utils'
+
 interface ArticleSchemaProps {
   title: string
   description: string
@@ -49,7 +51,7 @@ export function ArticleSchema({
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+      dangerouslySetInnerHTML={{ __html: safeJsonLd(schema) }}
     />
   )
 }

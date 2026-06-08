@@ -188,3 +188,11 @@ export function localizedPath(locale: string, path: string): string {
   return `/${locale}${finalPath}`;
 }
 
+// ─── JSON-LD Safe Stringification ─────────────────────────────────────────────
+
+export function safeJsonLd(obj: unknown): string {
+  return JSON.stringify(obj)
+    .replace(/</g, '\\u003c')
+    .replace(/>/g, '\\u003e')
+    .replace(/&/g, '\\u0026');
+}

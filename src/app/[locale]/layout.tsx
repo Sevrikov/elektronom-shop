@@ -11,7 +11,7 @@ import MobileNav from '@/components/layout/mobile-nav'
 import { CartDrawer } from '@/components/cart/cart-drawer'
 import { AssistantWidget } from '@/components/assistant/assistant-widget'
 import { CompareDrawer } from '@/components/compare/compare-drawer'
-import { getSiteUrl } from '@/lib/utils'
+import { getSiteUrl, safeJsonLd } from '@/lib/utils'
 import { getCategoryTree } from '@/queries/categories'
 import { getWorkloadCount } from '@/queries/workload'
 import { contactInfo, socialLinks } from '@/lib/constants'
@@ -94,7 +94,7 @@ export default async function LocaleLayout({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
+            __html: safeJsonLd({
               '@context': 'https://schema.org',
               '@type': 'Organization',
               'name': 'Electronom',

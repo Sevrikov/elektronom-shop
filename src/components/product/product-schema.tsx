@@ -1,7 +1,7 @@
 // components/product/product-schema.tsx
 // Server Component — JSON-LD Product schema.org
 
-import { getSiteUrl } from '@/lib/utils'
+import { getSiteUrl, safeJsonLd } from '@/lib/utils'
 
 interface ProductSchemaProps {
   product: {
@@ -180,7 +180,7 @@ export function ProductSchema({ product, locale }: ProductSchemaProps) {
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+      dangerouslySetInnerHTML={{ __html: safeJsonLd(schema) }}
     />
   )
 }
