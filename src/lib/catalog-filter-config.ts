@@ -167,7 +167,16 @@ export const categoryFilterConfig: Record<string, FilterConfig> = {
   },
 }
 
+export const categorySlugAliases: Record<string, string> = {
+  'elektroustanovochni-vyroby': 'rozetky-ta-vymykachi',
+  'kabeli-droty': 'kabel-ta-provid',
+  'led-osvitlennya': 'osvitlennya-led',
+  'akumulyatorni-batareyi': 'akumulyatory',
+}
+
 /** Get config for a category slug, falling back to default */
 export function getCategoryFilterConfig(slug: string): FilterConfig {
-  return categoryFilterConfig[slug] ?? defaultFilterConfig
+  const resolvedSlug = categorySlugAliases[slug] ?? slug
+  return categoryFilterConfig[resolvedSlug] ?? defaultFilterConfig
 }
+

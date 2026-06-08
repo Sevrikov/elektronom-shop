@@ -163,15 +163,19 @@ export const directAnswers: Record<string, DirectAnswerData> = {
   },
 }
 
+import { categorySlugAliases } from './catalog-filter-config'
+
 /** Get matching Direct Answer based on category and current whitelisted active filter */
 export function getDirectAnswer(
   categorySlug: string,
   matchingQuickLink?: QuickLink | null
 ): DirectAnswerData | null {
+  const resolvedSlug = categorySlugAliases[categorySlug] ?? categorySlug
   if (matchingQuickLink?.filter) {
-    const key = `${categorySlug}-${matchingQuickLink.filter.key}-${matchingQuickLink.filter.value}`
+    const key = `${resolvedSlug}-${matchingQuickLink.filter.key}-${matchingQuickLink.filter.value}`
     if (directAnswers[key]) return directAnswers[key]!
   }
 
-  return directAnswers[categorySlug] ?? null
+  return directAnswers[resolvedSlug] ?? null
 }
+
