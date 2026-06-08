@@ -1,4 +1,4 @@
-﻿import type { Locale } from "@/types";
+import type { Locale } from "@/types";
 
 export interface CatalogNode {
   id: string;
@@ -322,7 +322,7 @@ export const catalogTree: CatalogNode[] = [
   },
   {
     id: "batteries",
-    slug: "akkumulyatory",
+    slug: "akumulyatorni-batareyi",
     name: { uk: "Акумуляторні батареї", ru: "Аккумуляторные батареи" },
     image: "/images/categories/batteries.png",
     productCount: 65,

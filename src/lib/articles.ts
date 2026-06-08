@@ -46,7 +46,7 @@ export const articles: Article[] = [
     image: 'https://images.unsplash.com/photo-1558346490-a72e53ae2d4f?auto=format&fit=crop&w=600&q=80',
     readTime: { uk: '8 хв', ru: '8 мин' },
     date: '2026-05-14',
-    categoryKeywords: ['kabel-ta-provid', 'elektrika', 'electrika'],
+    categoryKeywords: ['kabeli-droty', 'elektrika', 'electrika'],
     productKeywords: ['vvg', 'kabel', 'provid', 'провод', 'кабель', 'ввг']
   },
   {
@@ -62,7 +62,7 @@ export const articles: Article[] = [
     image: 'https://images.unsplash.com/photo-1565814329452-e1efa11c5b89?auto=format&fit=crop&w=600&q=80',
     readTime: { uk: '5 хв', ru: '5 мин' },
     date: '2026-05-18',
-    categoryKeywords: ['osvitlennya-led', 'lighting'],
+    categoryKeywords: ['led-osvitlennya', 'lighting'],
     productKeywords: ['led', 'panel', 'світильник', 'светодиод', 'philips', 'iek']
   },
   {
@@ -72,13 +72,13 @@ export const articles: Article[] = [
       ru: 'ИБП для роутера и котла отопления: что нужно знать'
     },
     summary: {
-      uk: 'Розрахунок ємності акумулятора LiFePO4 та потужності інвертора для тривалої автономної роботи.',
+      uk: 'Розрахунок ємності акумулятора LiFePO4 та потужності інвертора для тривалої автономної работы.',
       ru: 'Расчет емкости аккумулятора LiFePO4 и мощности инвертора для длительной автономной работы.'
     },
     image: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=600&q=80',
     readTime: { uk: '7 хв', ru: '7 мин' },
     date: '2026-05-22',
-    categoryKeywords: ['dbzh', 'akumulyatory', 'rozumnyy-dim', 'heaters', 'stabilizatory'],
+    categoryKeywords: ['dbzh', 'akumulyatorni-batareyi', 'rozumnyy-dim', 'heaters', 'stabilizatory'],
     productKeywords: ['lifepo4', 'trinix', 'ats', 'kraft', 'акумулятор', 'аккумулятор', 'бп', 'дбж', 'ибп']
   },
   {

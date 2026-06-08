@@ -43,9 +43,9 @@ export interface SidebarCategory {
 
 export const sidebarCategories: SidebarCategory[] = [
   { id: 'breakers', slug: 'avtomatychni-vymykachi', name: { uk: 'Автоматичні вимикачі', ru: 'Автоматические выключатели' }, icon: 'zap', count: 1240 },
-  { id: 'sockets', slug: 'rozetky-ta-vymykachi', name: { uk: 'Розетки та вимикачі', ru: 'Розетки и выключатели' }, icon: 'plug', count: 890 },
-  { id: 'cables', slug: 'kabel-ta-provid', name: { uk: 'Кабель та провід', ru: 'Кабель и провод' }, icon: 'cable', count: 1850 },
-  { id: 'led', slug: 'osvitlennya-led', name: { uk: 'Освітлення LED', ru: 'Освещение LED' }, icon: 'lightbulb', count: 3200 },
+  { id: 'sockets', slug: 'elektroustanovochni-vyroby', name: { uk: 'Розетки та вимикачі', ru: 'Розетки и выключатели' }, icon: 'plug', count: 890 },
+  { id: 'cables', slug: 'kabeli-droty', name: { uk: 'Кабель та провід', ru: 'Кабель и провод' }, icon: 'cable', count: 1850 },
+  { id: 'led', slug: 'led-osvitlennya', name: { uk: 'Освітлення LED', ru: 'Освещение LED' }, icon: 'lightbulb', count: 3200 },
   { id: 'starters', slug: 'puskova-aparatura', name: { uk: 'Пускова апаратура', ru: 'Пусковая аппаратура' }, icon: 'power', count: 560 },
   { id: 'panels', slug: 'shchyty-elektrychni', name: { uk: 'Щити електричні', ru: 'Щиты электрические' }, icon: 'server', count: 380 },
   { id: 'hand-tools', slug: 'instrument-ruchnyy', name: { uk: 'Інструмент ручний', ru: 'Инструмент ручной' }, icon: 'wrench', count: 720 },
@@ -71,7 +71,7 @@ export const sidebarCategories: SidebarCategory[] = [
   { id: 'heaters', slug: 'obigrivachi', name: { uk: 'Обігрівачі', ru: 'Обогреватели' }, icon: 'thermometer', count: 180 },
   { id: 'stabilizers', slug: 'stabilizatory', name: { uk: 'Стабілізатори', ru: 'Стабилизаторы' }, icon: 'trending-up', count: 90 },
   { id: 'ups', slug: 'dbzh', name: { uk: 'ДБЖ', ru: 'ИБП' }, icon: 'battery-charging', count: 140 },
-  { id: 'batteries', slug: 'akumulyatory', name: { uk: 'Акумулятори', ru: 'Аккумуляторы' }, icon: 'battery', count: 220 },
+  { id: 'batteries', slug: 'akumulyatorni-batareyi', name: { uk: 'Акумулятори', ru: 'Аккумуляторы' }, icon: 'battery', count: 220 },
 ]
 
 /** Demo products for Concept 6 v2 */
