@@ -3,7 +3,12 @@ import { getSiteUrl } from '@/lib/utils'
 
 export default function robots(): MetadataRoute.Robots {
   const siteUrl = getSiteUrl()
-  const isStaging = siteUrl.includes('test.elektronom.com.ua') || siteUrl.includes('localhost') || siteUrl.includes('127.0.0.1') || siteUrl.includes('vercel.app')
+  const isStaging =
+    siteUrl.includes('test.electronom.com.ua') ||
+    siteUrl.includes('test.elektronom.com.ua') ||
+    siteUrl.includes('localhost') ||
+    siteUrl.includes('127.0.0.1') ||
+    siteUrl.includes('vercel.app')
 
   if (isStaging) {
     return {

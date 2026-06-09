@@ -4,19 +4,19 @@ Electronom is a premium Ukrainian electrical engineering e-commerce platform off
 
 ## Core Categories
 
-- **[Circuit Breakers (Автоматичні вимикачі)](https://elektronom.com.ua/uk/catalog/avtomatychni-vymykachi)**
+- **[Circuit Breakers (Автоматичні вимикачі)](https://electronom.com.ua/uk/catalog/avtomatychni-vymykachi)**
   - Subcategories: Single-pole, two-pole, three-pole, differential breakers.
   - Featured Brands: Hager, ABB, Schneider Electric, Eaton.
-- **[Sockets & Switches (Розетки та вимикачі)](https://elektronom.com.ua/uk/catalog/rozetky-ta-vymykachi)**
+- **[Sockets & Switches (Розетки та вимикачі)](https://electronom.com.ua/uk/catalog/rozetky-ta-vymykachi)**
   - Featured Brands: Legrand, Schneider Electric, Werkel.
-- **[Cables & Wires (Кабель та провід)](https://elektronom.com.ua/uk/catalog/kabel-ta-provid)**
+- **[Cables & Wires (Кабель та провід)](https://electronom.com.ua/uk/catalog/kabel-ta-provid)**
   - Types: VVGng, VVGng-LS, PVS.
-- **[LED Lighting (Освітлення LED)](https://elektronom.com.ua/uk/catalog/osvitlennya-led)**
+- **[LED Lighting (Освітлення LED)](https://electronom.com.ua/uk/catalog/osvitlennya-led)**
   - Types: LED panels, lamps, LED strips.
-- **[Batteries (Акумулятори)](https://elektronom.com.ua/uk/catalog/akumulyatory)**
+- **[Batteries (Акумулятори)](https://electronom.com.ua/uk/catalog/akumulyatory)**
   - Technologies: AGM, GEL, LiFePO4 (high cycle endurance).
 
 ## Support & Guides
 
-- **[Knowledge Hub & Blog](https://elektronom.com.ua/uk/blog)**: Professional selection guides (breaker ratings, cable sizing tables, UPS backup battery sizing).
-- **[Delivery & Payment](https://elektronom.com.ua/uk/delivery)**: Nationwide shipping in Ukraine via Nova Poshta.
+- **[Knowledge Hub & Blog](https://electronom.com.ua/uk/blog)**: Professional selection guides (breaker ratings, cable sizing tables, UPS backup battery sizing).
+- **[Delivery & Payment](https://electronom.com.ua/uk/delivery)**: Nationwide shipping in Ukraine via Nova Poshta.

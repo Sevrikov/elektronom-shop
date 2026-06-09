@@ -162,10 +162,10 @@ export function getSiteUrl(): string {
     if (vercelUrl) {
       return vercelUrl.startsWith("http") ? vercelUrl : `https://${vercelUrl}`;
     }
-    return "https://elektronom.com.ua";
+    return "https://electronom.com.ua";
   }
 
-  return envUrl || "https://elektronom.com.ua";
+  return envUrl || "https://electronom.com.ua";
 }
 
 export function localizedPath(locale: string, path: string): string {
