@@ -847,5 +847,41 @@
       "upgradePanelSizeOverflow": "Замініть щит на більший за розміром (з резервом модулів).",
       "upgradePanelSizeLowReserve": "Рекомендуємо обрати щит більшої місткості для майбутнього розширення (20%+ резерву)."
     }
+  },
+  "pdp": {
+    "qtyBreaks": {
+      "fromQty": "ВІД, ШТ",
+      "pricePerUnit": "ЦІНА ЗА ШТ",
+      "discount": "ЗНИЖКА"
+    },
+    "breadcrumbs": {
+      "home": "Головна",
+      "catalog": "Каталог"
+    },
+    "meta": {
+      "productCode": "Код товару",
+      "inStock": "В наявності",
+      "backorder": "Під замовлення",
+      "outOfStock": "Немає в наявності",
+      "supplierStock": "В наявності у постачальника: {qty} шт",
+      "lastSync": "Оновлено: {time}"
+    },
+    "trust": {
+      "deliveryTitle": "Доставимо в будь-який куточок України",
+      "deliveryDesc": "Нова пошта, кур'єр, самовивіз",
+      "returnTitle": "14 днів обмін/повернення",
+      "returnDesc": "гарантія задоволення",
+      "warrantyTitle": "12 місяців гарантія",
+      "warrantyDesc": "від виробника",
+      "paymentTitle": "Оплата на рахунок (з ПДВ)",
+      "paymentDesc": "для юридичних осіб"
+    },
+    "description": "Опис продукту",
+    "relatedProducts": "Супутні товари",
+    "sameSeries": {
+      "title": "Інші товари тієї ж серії",
+      "all": "Всі",
+      "viewAll": "Всі товари"
+    }
   }
 }

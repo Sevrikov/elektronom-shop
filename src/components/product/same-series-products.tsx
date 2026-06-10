@@ -5,6 +5,7 @@ import { getSameSeriesProducts } from '@/queries/products'
 import { formatPrice } from '@/lib/utils'
 import { AddToCartButton } from '@/components/cart/add-to-cart-button'
 import { TransparentImage } from '@/components/shared/transparent-image'
+import { getTranslations } from 'next-intl/server'
 
 interface SameSeriesProductsProps {
   productId: string
@@ -32,10 +33,10 @@ export async function SameSeriesProducts({
 
   if (products.length === 0) return null
 
-  const loc = locale === 'ru' ? 'ru' : 'uk'
-  const title = loc === 'ru' ? 'Другие товары этой серии' : 'Інші товари тієї ж серії'
-  const allText = loc === 'ru' ? 'Все' : 'Всі'
-  const viewAllText = loc === 'ru' ? 'Все товары' : 'Всі товари'
+  const t = await getTranslations({ locale, namespace: 'pdp' })
+  const title = t('sameSeries.title')
+  const allText = t('sameSeries.all')
+  const viewAllText = t('sameSeries.viewAll')
 
   // We display up to 4 items in the list, and show "All" if we fetched 5 items
   const displayProducts = products.slice(0, 4)
@@ -64,9 +65,7 @@ export async function SameSeriesProducts({
           const price = Number(p.price.toString())
           const image = p.images[0]?.url ?? null
           const inStock = p.stock > 0
-          const stockText = inStock
-            ? loc === 'ru' ? 'В наличии' : 'В наявності'
-            : loc === 'ru' ? 'Нет в наличии' : 'Немає в наявності'
+          const stockText = inStock ? t('meta.inStock') : t('meta.outOfStock')
 
           return (
             <div
@@ -98,7 +97,7 @@ export async function SameSeriesProducts({
                   {name}
                 </Link>
                 <div className="flex items-center gap-2 mt-1 text-[11px] text-text-muted">
-                  <span>Код: {p.sku}</span>
+                  <span>{t('meta.productCode')}: {p.sku}</span>
                   <span className={`font-semibold ${inStock ? 'text-success' : 'text-error'}`}>
                     {stockText}
                   </span>

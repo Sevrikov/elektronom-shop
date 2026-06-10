@@ -1,6 +1,7 @@
 import { getSimilarProducts } from '@/queries/products'
 import ProductCard from '@/components/product/product-card'
 import type { Locale } from '@/types'
+import { getTranslations } from 'next-intl/server'
 
 interface RelatedProductsSectionProps {
   categoryId: string
@@ -18,8 +19,8 @@ export async function RelatedProductsSection({
 
   if (products.length === 0) return null
 
-  const loc = locale === 'ru' ? 'ru' : 'uk'
-  const title = loc === 'ru' ? 'Сопутствующие товары' : 'Супутні товари'
+  const t = await getTranslations({ locale, namespace: 'pdp' })
+  const title = t('relatedProducts')
 
   return (
     <section className="mt-8 border-t border-border pt-8">

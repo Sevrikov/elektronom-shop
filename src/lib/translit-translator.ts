@@ -156,6 +156,7 @@ const ATTR_LABELS_UK: Record<string, string> = {
   dielektrychna_mitsnist: 'Діелектрична міцність',
   typ_kontaktov: 'Тип контактів',
   kolychestvo_kontaktov: 'Кількість контактів',
+  krayina_vyrobnyk: 'Країна виробник',
 }
 
 const ATTR_LABELS_RU: Record<string, string> = {
@@ -203,6 +204,7 @@ const ATTR_LABELS_RU: Record<string, string> = {
   dielektrychna_mitsnist: 'Диэлектрическая прочность',
   typ_kontaktov: 'Тип контактов',
   kolychestvo_kontaktov: 'Количество контактов',
+  krayina_vyrobnyk: 'Страна производитель',
 }
 
 export function translateAttributeKey(key: string, locale: 'uk' | 'ru'): string {
@@ -276,6 +278,7 @@ const KEY_PRIORITY = [
   'typ_vyrobu',
   'komplektatsiya_vyrobu',
   'typ_montazhu',
+  'krayina_vyrobnyk',
   
   // Electrical Ratings
   'nominalnyi_strum_a',

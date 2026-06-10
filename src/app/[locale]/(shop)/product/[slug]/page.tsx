@@ -6,7 +6,7 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { Suspense } from 'react'
-import { setRequestLocale } from 'next-intl/server'
+import { setRequestLocale, getTranslations } from 'next-intl/server'
 import { Check, X, Package, Truck, RotateCcw, ShieldCheck, Clock } from 'lucide-react'
 
 import { isValidLocale } from '@/i18n/request'
@@ -90,47 +90,43 @@ export async function generateMetadata({
 function QtyBreaksTable({
   basePrice,
   breaks,
-  locale,
+  t,
 }: {
   basePrice: number
   breaks: { min: number; discount: number }[]
-  locale: string
+  t: any
 }) {
   if (breaks.length === 0) return null
-  const uk = locale !== 'ru'
 
   return (
-    <div
-      className="rounded-lg overflow-hidden text-sm"
-      style={{ border: '1px solid var(--color-border)' }}
-    >
+    <div className="rounded-lg overflow-hidden text-sm border border-border">
       <table className="w-full">
         <thead>
-          <tr style={{ background: 'var(--color-surface-alt)', borderBottom: '1px solid var(--color-border)' }}>
-            <th className="px-3 py-2 text-left font-semibold" style={{ color: 'var(--color-text-muted)', fontSize: 11 }}>
-              {uk ? 'ВІД, ШТ' : 'ОТ, ШТ'}
+          <tr className="bg-surface-alt border-b border-border">
+            <th className="px-3 py-2 text-left font-semibold text-text-muted text-[11px]">
+              {t('qtyBreaks.fromQty')}
             </th>
-            <th className="px-3 py-2 text-left font-semibold" style={{ color: 'var(--color-text-muted)', fontSize: 11 }}>
-              {uk ? 'ЦІНА ЗА ШТ' : 'ЦЕНА ЗА ШТ'}
+            <th className="px-3 py-2 text-left font-semibold text-text-muted text-[11px]">
+              {t('qtyBreaks.pricePerUnit')}
             </th>
-            <th className="px-3 py-2 text-left font-semibold" style={{ color: 'var(--color-text-muted)', fontSize: 11 }}>
-              {uk ? 'ЗНИЖКА' : 'СКИДКА'}
+            <th className="px-3 py-2 text-left font-semibold text-text-muted text-[11px]">
+              {t('qtyBreaks.discount')}
             </th>
           </tr>
         </thead>
         <tbody>
-          <tr style={{ borderBottom: '1px solid var(--color-border)' }}>
+          <tr className="border-b border-border">
             <td className="px-3 py-2 num">1</td>
             <td className="px-3 py-2 num font-semibold">{formatPrice(basePrice)}</td>
-            <td className="px-3 py-2" style={{ color: 'var(--color-text-muted)' }}>—</td>
+            <td className="px-3 py-2 text-text-muted">—</td>
           </tr>
           {breaks.map((tier) => (
-            <tr key={tier.min} style={{ borderBottom: '1px solid var(--color-border)' }}>
+            <tr key={tier.min} className="border-b border-border last:border-b-0">
               <td className="px-3 py-2 num">{tier.min}+</td>
               <td className="px-3 py-2 num font-semibold">
                 {formatPrice(basePrice * (1 - tier.discount / 100))}
               </td>
-              <td className="px-3 py-2 font-semibold" style={{ color: 'var(--color-success)' }}>
+              <td className="px-3 py-2 font-semibold text-success">
                 −{tier.discount}%
               </td>
             </tr>
@@ -180,9 +176,11 @@ export default async function ProductPage({
     Object.entries(attrs).filter(([k]) => k !== 'qty_breaks')
   )
 
+  const t = await getTranslations({ locale, namespace: 'pdp' })
+
   const breadcrumbs = [
-    { name: loc === 'ru' ? 'Главная' : 'Головна', url: '/' },
-    { name: loc === 'ru' ? 'Каталог' : 'Каталог', url: '/catalog' },
+    { name: t('breadcrumbs.home'), url: '/' },
+    { name: t('breadcrumbs.catalog'), url: '/catalog' },
     ...(categoryName
       ? [{ name: categoryName, url: `/catalog/${categorySlug}` }]
       : []),
@@ -191,15 +189,15 @@ export default async function ProductPage({
 
   const supplierInventory = await prisma.supplierInventory.findUnique({
     where: { sku: product.sku },
-    select: { stock: true },
+    select: { stock: true, updatedAt: true },
   })
   const isBackorder = !inStock && supplierInventory !== null && supplierInventory.stock > 0
 
   const stockLabel = inStock
-    ? loc === 'ru' ? 'В наличии' : 'В наявності'
+    ? t('meta.inStock')
     : isBackorder
-      ? loc === 'ru' ? 'Под заказ' : 'Під замовлення'
-      : loc === 'ru' ? 'Нет в наличии' : 'Немає в наявності'
+      ? t('meta.backorder')
+      : t('meta.outOfStock')
 
   return (
     <>
@@ -240,22 +238,40 @@ export default async function ProductPage({
 
               {/* Meta row: stock + SKU */}
               <div className="flex items-center gap-4 flex-wrap text-[13px]">
-                <div
-                  className={`inline-flex items-center gap-1.5 font-bold ${
-                    inStock ? 'text-success' : isBackorder ? 'text-accent' : 'text-error'
-                  }`}
-                >
-                  {inStock ? (
-                    <Check className="size-3.5" strokeWidth={2.5} />
-                  ) : isBackorder ? (
-                    <Clock className="size-3.5 text-accent" strokeWidth={2.5} />
-                  ) : (
-                    <X className="size-3.5" strokeWidth={2.5} />
+                <div className="flex flex-col gap-1">
+                  <div
+                    className={`inline-flex items-center gap-1.5 font-bold ${
+                      inStock ? 'text-success' : isBackorder ? 'text-accent' : 'text-error'
+                    }`}
+                  >
+                    {inStock ? (
+                      <Check className="size-3.5" strokeWidth={2.5} />
+                    ) : isBackorder ? (
+                      <Clock className="size-3.5 text-accent" strokeWidth={2.5} />
+                    ) : (
+                      <X className="size-3.5" strokeWidth={2.5} />
+                    )}
+                    {stockLabel}
+                  </div>
+                  {supplierInventory && (
+                    <div className="flex items-center gap-1 text-[11px] text-text-muted mt-0.5">
+                      <Clock className="size-3" />
+                      <span>
+                        {t('meta.lastSync', {
+                          time: new Date(supplierInventory.updatedAt).toLocaleString(locale === 'ru' ? 'ru-RU' : 'uk-UA', {
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          }),
+                        })}
+                      </span>
+                    </div>
                   )}
-                  {stockLabel}
                 </div>
-                <span className="text-text-muted">
-                  {loc === 'ru' ? 'Код товару' : 'Код товару'}:{' '}
+                <span className="text-text-muted self-start">
+                  {t('meta.productCode')}:{' '}
                   <span className="font-semibold text-text-primary">{product.sku}</span>
                 </span>
               </div>
@@ -286,14 +302,14 @@ export default async function ProductPage({
                   variant="full"
                   showQtyStepper={true}
                   stock={product.stock}
-                  disabledText={isBackorder ? (loc === 'ru' ? 'Под заказ' : 'Під замовлення') : undefined}
+                  disabledText={isBackorder ? t('meta.backorder') : undefined}
                 />
               </div>
 
               {/* Qty breaks */}
               {qtyBreaks.length > 0 && (
                 <div className="mt-1">
-                  <QtyBreaksTable basePrice={price} breaks={qtyBreaks} locale={locale} />
+                  <QtyBreaksTable basePrice={price} breaks={qtyBreaks} t={t} />
                 </div>
               )}
 
@@ -324,10 +340,10 @@ export default async function ProductPage({
                   </div>
                   <div>
                     <p className="text-[13px] font-bold text-text-primary">
-                      {loc === 'ru' ? 'Доставим в любой уголок Украины' : 'Доставимо в будь-який куточок України'}
+                      {t('trust.deliveryTitle')}
                     </p>
                     <p className="text-[11px] text-text-muted mt-0.5">
-                      {loc === 'ru' ? 'Новая почта, курьер, самовывоз' : 'Нова пошта, кур\'єр, самовивіз'}
+                      {t('trust.deliveryDesc')}
                     </p>
                   </div>
                 </div>
@@ -340,10 +356,10 @@ export default async function ProductPage({
                   </div>
                   <div>
                     <p className="text-[13px] font-bold text-text-primary">
-                      {loc === 'ru' ? '14 дней обмен/возврат' : '14 днів обмін/повернення'}
+                      {t('trust.returnTitle')}
                     </p>
                     <p className="text-[11px] text-text-muted mt-0.5">
-                      {loc === 'ru' ? 'гарантия удовлетворения' : 'гарантія задоволення'}
+                      {t('trust.returnDesc')}
                     </p>
                   </div>
                 </div>
@@ -356,10 +372,10 @@ export default async function ProductPage({
                   </div>
                   <div>
                     <p className="text-[13px] font-bold text-text-primary">
-                      {loc === 'ru' ? '12 месяцев гарантия' : '12 місяців гарантія'}
+                      {t('trust.warrantyTitle')}
                     </p>
                     <p className="text-[11px] text-text-muted mt-0.5">
-                      {loc === 'ru' ? 'от производителя' : 'від виробника'}
+                      {t('trust.warrantyDesc')}
                     </p>
                   </div>
                 </div>
@@ -372,10 +388,10 @@ export default async function ProductPage({
                   </div>
                   <div>
                     <p className="text-[13px] font-bold text-accent">
-                      {loc === 'ru' ? 'Оплата на счёт (с НДС)' : 'Оплата на рахунок (з ПДВ)'}
+                      {t('trust.paymentTitle')}
                     </p>
                     <p className="text-[11px] text-text-muted mt-0.5">
-                      {loc === 'ru' ? 'для юридических лиц' : 'для юридичних осіб'}
+                      {t('trust.paymentDesc')}
                     </p>
                   </div>
                 </div>
@@ -396,7 +412,7 @@ export default async function ProductPage({
             {description && (
               <section className="bg-surface-white border border-border rounded-2xl p-5 shadow-sm">
                 <h2 className="text-[22px] font-extrabold tracking-tight mb-4 text-text-primary">
-                  {loc === 'ru' ? 'Описание продукта' : 'Опис продукту'}
+                  {t('description')}
                 </h2>
                 <div
                   className="prose prose-sm max-w-none text-sm leading-relaxed text-text-primary"
@@ -435,7 +451,7 @@ export default async function ProductPage({
           <RelatedProductsSection
             categoryId={product.category?.id ?? ''}
             excludeId={product.id}
-            locale={loc}
+            locale={locale as Locale}
           />
         </Suspense>
       </div>
