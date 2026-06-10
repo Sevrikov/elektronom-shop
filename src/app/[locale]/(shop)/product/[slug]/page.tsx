@@ -5,6 +5,7 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Suspense } from 'react'
 import { setRequestLocale, getTranslations } from 'next-intl/server'
 import { Check, X, Package, Truck, RotateCcw, ShieldCheck, Clock } from 'lucide-react'
@@ -94,7 +95,7 @@ function QtyBreaksTable({
 }: {
   basePrice: number
   breaks: { min: number; discount: number }[]
-  t: any
+  t: (key: string) => string
 }) {
   if (breaks.length === 0) return null
 
@@ -152,7 +153,6 @@ export default async function ProductPage({
   const product = await getProductBySlug(slug, locale)
   if (!product) notFound()
 
-  const loc = locale as Locale
   const translation = product.translations[0]
   const name = translation?.name ?? product.sku
   const description = translation?.description
@@ -194,7 +194,7 @@ export default async function ProductPage({
   const isBackorder = !inStock && supplierInventory !== null && supplierInventory.stock > 0
 
   const stockLabel = inStock
-    ? t('meta.inStock')
+    ? t('meta.inStockQty', { qty: product.stock })
     : isBackorder
       ? t('meta.backorder')
       : t('meta.outOfStock')
@@ -226,7 +226,18 @@ export default async function ProductPage({
             <div className="flex flex-col gap-3 min-w-0">
               {/* Brand row */}
               {product.brand && (
-                <div className="flex items-center justify-between px-3.5 py-3 border border-border rounded-xl bg-surface-alt">
+                <div className="flex items-center gap-3 px-3.5 py-3 border border-border rounded-xl bg-surface-alt">
+                  {product.brand.logo && (
+                    <div className="size-10 shrink-0 flex items-center justify-center border border-border rounded-lg p-1 bg-white">
+                      <Image
+                        src={product.brand.logo}
+                        alt={product.brand.name}
+                        width={32}
+                        height={32}
+                        className="object-contain max-h-8"
+                      />
+                    </div>
+                  )}
                   <Link
                     href={`/${locale}/brands/${product.brand.slug}` as never}
                     className="text-sm font-extrabold tracking-tight hover:underline text-accent"
@@ -253,6 +264,11 @@ export default async function ProductPage({
                     )}
                     {stockLabel}
                   </div>
+                  {isBackorder && supplierInventory && (
+                    <div className="text-[11px] text-text-muted font-medium">
+                      {t('meta.supplierStock', { qty: supplierInventory.stock })}
+                    </div>
+                  )}
                   {supplierInventory && (
                     <div className="flex items-center gap-1 text-[11px] text-text-muted mt-0.5">
                       <Clock className="size-3" />

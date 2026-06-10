@@ -861,6 +861,7 @@
     "meta": {
       "productCode": "Код товару",
       "inStock": "В наявності",
+      "inStockQty": "В наявності: {qty} шт",
       "backorder": "Під замовлення",
       "outOfStock": "Немає в наявності",
       "supplierStock": "В наявності у постачальника: {qty} шт",
