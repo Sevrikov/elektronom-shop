@@ -7,7 +7,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { Suspense } from 'react'
 import { setRequestLocale, getTranslations } from 'next-intl/server'
-import { Check, X, Package, Truck, RotateCcw, ShieldCheck, Clock } from 'lucide-react'
+import { Check, X, Package, Truck, RotateCcw, ShieldCheck, Clock, Store } from 'lucide-react'
 
 import { isValidLocale } from '@/i18n/request'
 import { getProductBySlug } from '@/queries/products'
@@ -370,17 +370,32 @@ export default async function ProductPage({
             {/* ── Col 3: Trust Sidebar ── */}
             <div className="flex flex-col gap-2.5">
               <div className="border border-border rounded-xl p-3 bg-surface-white">
-                <div className="flex items-start gap-2">
-                  <div className="size-7 rounded-full bg-accent-subtle text-accent flex items-center justify-center shrink-0 mt-0.5">
+                <div className="flex items-center gap-2 mb-2.5">
+                  <div className="size-7 rounded-full bg-accent-subtle text-accent flex items-center justify-center shrink-0">
                     <Truck className="size-3.5" strokeWidth={2} />
                   </div>
-                  <div>
-                    <p className="text-[13px] font-bold text-text-primary">
-                      {t('trust.deliveryTitle')}
-                    </p>
-                    <p className="text-[11px] text-text-muted mt-0.5">
-                      {t('trust.deliveryDesc')}
-                    </p>
+                  <p className="text-[13px] font-bold text-text-primary">
+                    {t('trust.deliveryTitle')}
+                  </p>
+                </div>
+                {/* Carriers — replace brand marks with /logos/operators/*.svg when available */}
+                <div className="flex flex-col gap-1.5">
+                  <div className="flex items-center gap-2.5">
+                    <span className="shrink-0 w-12 h-6 rounded bg-[#da291c] text-white text-[9px] font-extrabold flex items-center justify-center">НП</span>
+                    <span className="flex-1 text-[12px] font-semibold text-text-primary">{t('delivery.novaPoshta')}</span>
+                    <span className="text-[11px] text-text-muted whitespace-nowrap">{t('delivery.timeNp')}</span>
+                  </div>
+                  <div className="flex items-center gap-2.5">
+                    <span className="shrink-0 w-12 h-6 rounded bg-[#ffd200] text-[#1a1a1a] text-[9px] font-extrabold flex items-center justify-center">УП</span>
+                    <span className="flex-1 text-[12px] font-semibold text-text-primary">{t('delivery.ukrposhta')}</span>
+                    <span className="text-[11px] text-text-muted whitespace-nowrap">{t('delivery.timeUp')}</span>
+                  </div>
+                  <div className="flex items-center gap-2.5">
+                    <span className="shrink-0 w-12 h-6 rounded bg-surface-alt text-text-muted flex items-center justify-center">
+                      <Store className="size-3.5" strokeWidth={2} />
+                    </span>
+                    <span className="flex-1 text-[12px] font-semibold text-text-primary">{t('delivery.pickup')}</span>
+                    <span className="text-[11px] font-semibold text-success whitespace-nowrap">{t('delivery.pickupFree')}</span>
                   </div>
                 </div>
               </div>
