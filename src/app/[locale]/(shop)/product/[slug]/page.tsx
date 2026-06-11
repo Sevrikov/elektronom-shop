@@ -26,6 +26,7 @@ import { RelatedProductsSection } from '@/components/product/related-products-se
 import { AddToCartButton } from '@/components/cart/add-to-cart-button'
 import Breadcrumbs from '@/components/layout/breadcrumbs'
 import { ProductArticles } from '@/components/blog/product-articles'
+import { ProductTabsNav } from '@/components/product/product-tabs-nav'
 
 // ─── generateStaticParams — top-1000 товаров ─────────────────────────────────
 
@@ -208,10 +209,11 @@ export default async function ProductPage({
         {/* Breadcrumbs */}
         <Breadcrumbs items={breadcrumbs} locale={locale} />
 
-        {/* Product Title — above card like mockup */}
-        <h1 className="text-[26px] font-extrabold leading-tight tracking-tight text-text-primary -mb-2">
-          {name}
-        </h1>
+        <ProductTabsNav
+          hasAbout={!!description}
+          hasSpecs={Object.keys(displayAttrs).length > 0}
+          reviewCount={product.reviews.length}
+        />
 
         {/* ═══ HERO CARD — 3 columns ═══ */}
         <div className="bg-surface-white border border-border rounded-2xl p-5 shadow-sm">
@@ -224,6 +226,62 @@ export default async function ProductPage({
 
             {/* ── Col 2: Product Info ── */}
             <div className="flex flex-col gap-3 min-w-0">
+              {/* Product Title inside Card */}
+              <h1 className="text-2xl font-extrabold leading-tight tracking-tight text-text-primary">
+                {name}
+              </h1>
+
+              {/* Stars + Reviews Count Link */}
+              <div className="flex items-center gap-1.5 -mt-1 text-sm font-semibold">
+                <div className="flex items-center text-amber-500">
+                  {[1, 2, 3, 4, 5].map((star) => {
+                    const avgRating = product.reviews.length > 0
+                      ? product.reviews.reduce((acc, r) => acc + r.rating, 0) / product.reviews.length
+                      : 0
+                    const isFilled = star <= Math.round(avgRating)
+                    return (
+                      <svg
+                        key={star}
+                        className={`size-4 ${isFilled ? 'fill-current' : 'text-border fill-surface-white'}`}
+                        viewBox="0 0 20 20"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                      </svg>
+                    )
+                  })}
+                </div>
+                <a
+                  href="#reviews"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    const target = document.getElementById('reviews')
+                    if (target) {
+                      const headerHeight = parseInt(
+                        getComputedStyle(document.documentElement).getPropertyValue('--header-height') || '120'
+                      )
+                      const targetPosition = target.getBoundingClientRect().top + window.scrollY - headerHeight - 48 - 12
+                      window.scrollTo({
+                        top: targetPosition,
+                        behavior: 'smooth'
+                      })
+                      window.history.pushState(null, '', '#reviews')
+                    }
+                  }}
+                  className="text-accent hover:underline text-xs"
+                >
+                  {product.reviews.length > 0 ? (
+                    locale === 'ru'
+                      ? `${product.reviews.length} отзывов`
+                      : `${product.reviews.length} відгуків`
+                  ) : (
+                    locale === 'ru'
+                      ? 'Оставить отзыв'
+                      : 'Залишити відгук'
+                  )}
+                </a>
+              </div>
+
               {/* Brand row */}
               {product.brand && (
                 <div className="flex items-center gap-3 px-3.5 py-3 border border-border rounded-xl bg-surface-alt">
@@ -419,14 +477,16 @@ export default async function ProductPage({
 
         {/* ═══ CHARACTERISTICS — full width ═══ */}
         {Object.keys(displayAttrs).length > 0 && (
-          <ProductAttributes attributes={displayAttrs} locale={locale} />
+          <section id="specs" className="scroll-mt-[120px]">
+            <ProductAttributes attributes={displayAttrs} locale={locale} />
+          </section>
         )}
 
         {/* ═══ BOTTOM — 2 columns ═══ */}
         <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_540px] gap-5 items-start">
           <div className="flex flex-col gap-6">
             {description && (
-              <section className="bg-surface-white border border-border rounded-2xl p-5 shadow-sm">
+              <section id="about" className="scroll-mt-[120px] bg-surface-white border border-border rounded-2xl p-5 shadow-sm">
                 <h2 className="text-[22px] font-extrabold tracking-tight mb-4 text-text-primary">
                   {t('description')}
                 </h2>
@@ -437,15 +497,17 @@ export default async function ProductPage({
               </section>
             )}
 
-            <ProductReviews
-              productId={product.id}
-              initialReviews={product.reviews.map((r) => ({
-                ...r,
-                createdAt: r.createdAt instanceof Date ? r.createdAt.toISOString() : String(r.createdAt),
-              }))}
-              locale={locale}
-              productName={name}
-            />
+            <section id="reviews" className="scroll-mt-[120px]">
+              <ProductReviews
+                productId={product.id}
+                initialReviews={product.reviews.map((r) => ({
+                  ...r,
+                  createdAt: r.createdAt instanceof Date ? r.createdAt.toISOString() : String(r.createdAt),
+                }))}
+                locale={locale}
+                productName={name}
+              />
+            </section>
           </div>
 
           <Suspense>
