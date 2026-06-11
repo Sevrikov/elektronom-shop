@@ -83,17 +83,15 @@ export function ProductTabsNav({ hasAbout, hasSpecs, reviewCount, hasCoPurchase 
                     setActiveTab(s.id)
                   }
                 }}
-                className={`inline-flex items-center h-full border-b-2 text-sm font-bold transition-all duration-200 cursor-pointer ${
-                  isActive
+                className={`inline-flex items-center h-full border-b-2 text-sm font-bold transition-all duration-200 cursor-pointer ${isActive
                     ? 'border-accent text-accent'
                     : 'border-transparent text-text-muted hover:text-accent'
-                }`}
+                  }`}
               >
                 <span>{t(`tabs.${s.id}`)}</span>
                 {s.id === 'reviews' && reviewCount > 0 && (
-                  <span className={`ml-1.5 px-1.5 py-0.5 text-[10px] font-bold rounded-full transition-colors ${
-                    isActive ? 'bg-accent/10 text-accent' : 'bg-surface-alt text-text-muted'
-                  }`}>
+                  <span className={`ml-1.5 px-1.5 py-0.5 text-[10px] font-bold rounded-full transition-colors ${isActive ? 'bg-accent/10 text-accent' : 'bg-surface-alt text-text-muted'
+                    }`}>
                     {reviewCount}
                   </span>
                 )}

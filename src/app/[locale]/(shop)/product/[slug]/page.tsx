@@ -202,12 +202,12 @@ export default async function ProductPage({
 
   const hasCoPurchase = product.category
     ? (await prisma.product.count({
-        where: {
-          categoryId: product.category.id,
-          isActive: true,
-          id: { not: product.id },
-        },
-      })) > 0
+      where: {
+        categoryId: product.category.id,
+        isActive: true,
+        id: { not: product.id },
+      },
+    })) > 0
     : false
 
   return (
@@ -290,9 +290,8 @@ export default async function ProductPage({
               <div className="flex items-center gap-4 flex-wrap text-[13px]">
                 <div className="flex flex-col gap-1">
                   <div
-                    className={`inline-flex items-center gap-1.5 font-bold ${
-                      inStock ? 'text-success' : isBackorder ? 'text-accent' : 'text-error'
-                    }`}
+                    className={`inline-flex items-center gap-1.5 font-bold ${inStock ? 'text-success' : isBackorder ? 'text-accent' : 'text-error'
+                      }`}
                   >
                     {inStock ? (
                       <Check className="size-3.5" strokeWidth={2.5} />
@@ -491,19 +490,20 @@ export default async function ProductPage({
             </section>
           </div>
 
-          <Suspense>
-            <SameSeriesProducts
-              productId={product.id}
-              categoryId={product.category?.id ?? ''}
-              brandId={product.brandId}
-              attributes={product.attributes as Record<string, unknown>}
-              locale={locale}
-            />
-          </Suspense>
-        </div>
+          <div className="flex flex-col gap-5">
+            <Suspense>
+              <SameSeriesProducts
+                productId={product.id}
+                categoryId={product.category?.id ?? ''}
+                brandId={product.brandId}
+                attributes={product.attributes as Record<string, unknown>}
+                locale={locale}
+              />
+            </Suspense>
 
-        {/* Dynamic Product Articles */}
-        <ProductArticles productName={name} productSku={product.sku} locale={locale} />
+            <ProductArticles productName={name} productSku={product.sku} locale={locale} />
+          </div>
+        </div>
 
         {/* ═══ Related Products Section (Full-Width) ═══ */}
         <Suspense>

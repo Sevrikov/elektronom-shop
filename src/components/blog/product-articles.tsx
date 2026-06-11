@@ -21,7 +21,7 @@ export function ProductArticles({ productName, productSku, locale }: ProductArti
   const readText = isUk ? 'читати статтю' : 'читать статью'
 
   return (
-    <section className="bg-surface-white border border-border rounded-2xl p-5 shadow-sm mt-6">
+    <section className="bg-surface-white border border-border rounded-2xl p-5 shadow-sm">
       <div className="flex items-center gap-2.5 mb-5 border-b border-border pb-3">
         <div className="size-8 rounded-lg bg-accent-subtle text-accent flex items-center justify-center shrink-0">
           <BookOpen className="size-4" />
@@ -31,7 +31,7 @@ export function ProductArticles({ productName, productSku, locale }: ProductArti
         </h2>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+      <div className="flex flex-col gap-4">
         {articles.slice(0, 2).map((art) => (
           <div 
             key={art.slug}
