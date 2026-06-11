@@ -95,7 +95,7 @@ export function CompareButton({
     <button
       type="button"
       onClick={handleToggle}
-      className="absolute top-2 left-2 z-20 flex items-center justify-center size-8 rounded-full border border-accent text-accent bg-white/95 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:bg-accent hover:text-white cursor-pointer"
+      className="absolute top-2 left-2 z-20 flex items-center justify-center size-8 rounded-full border border-accent text-accent bg-surface-white shadow-sm opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:bg-accent hover:text-white cursor-pointer"
       title="Додати до порівняння"
     >
       <Scale className="size-4" />

@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { Check } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import type { Locale } from '@/types'
 import { formatPrice, getDiscountPercent } from '@/lib/utils'
 import { AddToCartButton } from '@/components/cart/add-to-cart-button'
@@ -35,6 +36,8 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ product, locale, view = 'grid' }: ProductCardProps) {
+  const t = useTranslations('productCard')
+
   const name = product.translations.find(t => t.locale === locale)?.name
     ?? product.translations[0]?.name
     ?? product.sku
@@ -43,13 +46,10 @@ export default function ProductCard({ product, locale, view = 'grid' }: ProductC
   const comparePrice = product.comparePrice ? Number(product.comparePrice.toString()) : null
 
   const inStock = product.stock > 0
+  const stockLabel = inStock ? t('inStock') : t('outOfStock')
+
   const discount = getDiscountPercent(price, comparePrice)
   const mainImage = product.images[0]
-
-  const stockLabel = locale === 'uk'
-    ? (inStock ? 'В наявності' : 'Немає')
-    : (inStock ? 'В наличии' : 'Нет')
-
   const brandName = product.brand?.name ?? ''
 
   const rawEntries = product.attributes &&
@@ -65,14 +65,14 @@ export default function ProductCard({ product, locale, view = 'grid' }: ProductC
 
   if (view === 'list') {
     return (
-      <article className="flex gap-4 rounded-lg p-4 transition-shadow hover:shadow-md group border border-border bg-surface-white">
+      <article className="flex gap-4 rounded-lg p-4 transition-shadow hover:shadow-md group border border-border bg-surface-white [&_button.absolute]:max-lg:opacity-100">
         {/* Image */}
         <Link
           href={`/${locale}/product/${product.slug}`}
-          className="relative shrink-0 w-[140px] h-[140px] rounded-md flex items-center justify-center overflow-hidden bg-surface-alt"
+          className="relative shrink-0 w-[140px] h-[140px] rounded-md flex items-center justify-center overflow-hidden bg-surface-alt border border-border/10"
         >
           {discount > 0 && (
-            <div className="absolute top-1.5 right-1.5 px-1.5 py-0.5 rounded text-[10px] font-bold text-white z-10 bg-destructive">
+            <div className="absolute top-1.5 right-1.5 px-1.5 py-0.5 rounded text-[10px] font-bold text-white z-10 bg-destructive select-none">
               -{discount}%
             </div>
           )}
@@ -103,29 +103,35 @@ export default function ProductCard({ product, locale, view = 'grid' }: ProductC
         </Link>
 
         {/* Info */}
-        <div className="flex flex-col flex-1 min-w-0 gap-1">
-          <span className="text-[10px] font-semibold tracking-wider uppercase text-text-muted">
+        <div className="flex flex-col flex-1 min-w-0 gap-0.5">
+          <span className="text-[10px] font-bold tracking-wider uppercase text-text-muted">
             {brandName}
           </span>
+
+          {/* Stock line */}
+          <div
+            className={`inline-flex items-center gap-1.5 text-[11.5px] font-bold py-0.5 ${
+              inStock ? 'text-success' : 'text-error'
+            }`}
+          >
+            {inStock ? (
+              <Check className="size-3" strokeWidth={3} />
+            ) : (
+              <span className="size-1.5 rounded-full bg-error" />
+            )}
+            <span>{stockLabel}</span>
+          </div>
+
           <Link
             href={`/${locale}/product/${product.slug}`}
-            className="text-[13px] font-medium leading-snug line-clamp-2 hover:text-accent transition-colors"
+            className="text-[13.5px] font-semibold leading-snug line-clamp-2 hover:text-accent transition-colors mt-0.5 text-text-primary"
           >
             {name}
           </Link>
-          <span className="text-[11px] font-mono text-text-muted">
-            {product.sku}
-          </span>
 
-          {/* Stock badge */}
-          <div
-            className={`inline-flex items-center gap-1 w-fit px-2 py-0.5 rounded text-[10px] font-semibold mt-1 ${
-              inStock ? 'bg-success-subtle text-success' : 'bg-destructive/8 text-destructive'
-            }`}
-          >
-            {inStock && <Check className="size-3" strokeWidth={2.5} />}
-            {stockLabel}
-          </div>
+          <span className="text-[10.5px] font-mono text-text-muted mt-0.5">
+            {t('sku')}: {product.sku}
+          </span>
 
           {/* Attributes List */}
           {displayEntries.length > 0 && (
@@ -134,7 +140,7 @@ export default function ProductCard({ product, locale, view = 'grid' }: ProductC
                 const label = translateAttributeKey(key, locale === 'ru' ? 'ru' : 'uk')
                 let valStr = ''
                 if (typeof value === 'boolean') {
-                  valStr = locale === 'ru' ? (value ? 'Да' : 'Нет') : (value ? 'Так' : 'Ні')
+                  valStr = value ? t('yes') : t('no')
                 } else {
                   valStr = translateAttributeValue(value, locale === 'ru' ? 'ru' : 'uk')
                 }
@@ -150,29 +156,35 @@ export default function ProductCard({ product, locale, view = 'grid' }: ProductC
         </div>
 
         {/* Price + cart */}
-        <div className="flex flex-col items-end justify-between shrink-0 ml-4">
-          <div className="text-right">
+        <div className="flex flex-col items-end justify-between shrink-0 ml-4 min-w-[145px]">
+          <div className="text-right flex flex-col gap-0.5">
             {comparePrice && comparePrice > price && (
-              <p className="text-[12px] line-through num text-text-muted">
-                {formatPrice(comparePrice)}
-              </p>
+              <>
+                <span className="text-[12px] line-through num text-text-muted">
+                  {formatPrice(comparePrice)}
+                </span>
+                <span className="text-[11px] font-semibold text-success bg-success-subtle px-1.5 py-0.5 rounded leading-none inline-block">
+                  {t('savings', { amount: formatPrice(comparePrice - price) })}
+                </span>
+              </>
             )}
-            <p
-              className={`text-lg font-bold num ${
+            <span
+              className={`text-xl font-extrabold num leading-tight ${
                 discount > 0 ? 'text-destructive' : 'text-text-primary'
               }`}
             >
               {formatPrice(price)}
-            </p>
+            </span>
           </div>
-          <div className="flex items-center gap-1.5 w-full mt-2 justify-end">
-            <WishlistButton productId={product.id} />
+          <div className="flex items-center gap-1.5 w-full mt-3 justify-end">
+            <WishlistButton productId={product.id} className="size-9" />
             <AddToCartButton
               productId={product.id}
               productName={name}
               disabled={!inStock}
               variant="full"
-              className="h-9 px-4 text-[13px]"
+              text={t('buy')}
+              className="h-9 px-4 text-xs font-bold font-sans rounded-lg"
             />
           </div>
         </div>
@@ -183,19 +195,12 @@ export default function ProductCard({ product, locale, view = 'grid' }: ProductC
   // Grid view (default)
 
   return (
-    <article className="relative flex flex-col rounded-lg border border-border bg-surface-white transition-all duration-200 group hover:shadow-lg hover:border-accent/40 hover:z-20">
+    <article className="relative flex flex-col rounded-xl border border-border bg-surface-white transition-all duration-200 group hover:shadow-lg hover:border-accent/40 hover:z-20 [&_button.absolute]:max-lg:opacity-100">
       {/* Image */}
       <Link
         href={`/${locale}/product/${product.slug}`}
-        className="relative h-[140px] flex items-center justify-center overflow-hidden bg-surface-alt rounded-t-lg"
+        className="relative w-full aspect-square flex items-center justify-center overflow-hidden bg-surface-alt rounded-t-xl"
       >
-        {/* Discount badge */}
-        {discount > 0 && (
-          <div className="absolute top-2 right-2 px-1.5 py-0.5 rounded text-[10px] font-bold text-white z-10 bg-destructive">
-            -{discount}%
-          </div>
-        )}
-
         <CompareButton
           productId={product.id}
           slug={product.slug}
@@ -207,6 +212,24 @@ export default function ProductCard({ product, locale, view = 'grid' }: ProductC
           brandName={brandName}
           categorySlug={product.category.slug}
         />
+
+        <WishlistButton
+          productId={product.id}
+          className="absolute top-2 right-2 z-20 bg-surface-white border border-border hover:border-destructive hover:text-destructive rounded-full w-8 h-8 flex items-center justify-center p-0 shadow-sm opacity-0 group-hover:opacity-100 max-lg:opacity-100 transition-opacity duration-200"
+        />
+
+        {/* Badges aligned below top actions */}
+        {product.isFeatured && (
+          <div className="absolute top-[44px] left-2 z-10 px-1.5 py-0.5 rounded text-[9px] font-extrabold uppercase tracking-wider text-white bg-warning shadow-sm select-none">
+            {t('hit')}
+          </div>
+        )}
+
+        {discount > 0 && (
+          <div className="absolute top-[44px] right-2 z-10 px-1.5 py-0.5 rounded text-[9px] font-extrabold text-white bg-destructive shadow-sm select-none">
+            -{discount}%
+          </div>
+        )}
 
         {mainImage ? (
           <TransparentImage
@@ -224,62 +247,100 @@ export default function ProductCard({ product, locale, view = 'grid' }: ProductC
       </Link>
 
       {/* Content */}
-      <div className="flex flex-col flex-1 p-2.5 gap-0.5">
-        <div className="flex items-center gap-2 flex-wrap min-h-[18px]">
+      <div className="flex flex-col flex-1 p-3 gap-1">
+        {/* Brand + Stock Line */}
+        <div className="flex flex-col gap-0.5">
           {brandName && (
-            <span className="text-[10px] font-semibold tracking-wider uppercase text-text-muted">
+            <span className="text-[10px] font-bold tracking-wider uppercase text-text-muted">
               {brandName}
             </span>
           )}
-          {/* Stock badge */}
+          {/* Stock line */}
           <div
-            className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[9px] font-semibold ${
-              inStock ? 'bg-success-subtle text-success' : 'bg-destructive/8 text-destructive'
+            className={`inline-flex items-center gap-1.5 text-[11.5px] font-bold py-0.5 ${
+              inStock ? 'text-success' : 'text-error'
             }`}
           >
-            {inStock && <Check className="size-2.5" strokeWidth={2.5} />}
-            {stockLabel}
+            {inStock ? (
+              <Check className="size-3" strokeWidth={3} />
+            ) : (
+              <span className="size-1.5 rounded-full bg-error" />
+            )}
+            <span>{stockLabel}</span>
           </div>
         </div>
+
+        {/* Title */}
         <Link
           href={`/${locale}/product/${product.slug}`}
-          className="text-[12.5px] font-medium leading-snug line-clamp-2 min-h-[36px] hover:text-accent transition-colors"
+          className="text-[13px] font-semibold leading-snug line-clamp-2 min-h-[38px] text-text-primary hover:text-accent transition-colors mt-0.5"
         >
           {name}
         </Link>
-        <span className="text-[11px] font-mono text-text-muted">
-          {product.sku}
+
+        <span className="text-[10px] font-mono text-text-muted -mt-0.5">
+          {t('sku')}: {product.sku}
         </span>
 
-        {/* Price + cart */}
-        <div className="mt-auto pt-2 flex items-end justify-between">
-          <div>
-            {comparePrice && comparePrice > price && (
-              <p className="text-[11px] line-through num text-text-muted">
-                {formatPrice(comparePrice)}
-              </p>
-            )}
-            <p
-              className={`text-lg font-bold num ${
-                discount > 0 ? 'text-destructive' : 'text-text-primary'
-              }`}
-            >
-              {formatPrice(price)}
-            </p>
+        {/* Top 2-3 specifications inline immediately */}
+        {displayEntries.length > 0 && (
+          <div className="mt-1.5 flex flex-col gap-0.5 text-[11px] border-t border-border/30 pt-2 pb-1">
+            {displayEntries.slice(0, 3).map(([key, value]) => {
+              const label = translateAttributeKey(key, locale === 'ru' ? 'ru' : 'uk')
+              let valStr = ''
+              if (typeof value === 'boolean') {
+                valStr = value ? t('yes') : t('no')
+              } else {
+                valStr = translateAttributeValue(value, locale === 'ru' ? 'ru' : 'uk')
+              }
+              return (
+                <div key={key} className="flex justify-between items-start gap-2 py-0.5">
+                  <span className="text-text-muted font-medium text-left truncate max-w-[60%]">{label}:</span>
+                  <span className="text-text-primary text-right font-semibold truncate max-w-[40%]">{valStr}</span>
+                </div>
+              )
+            })}
           </div>
-          <div className="flex items-center gap-1.5 shrink-0">
-            <WishlistButton productId={product.id} />
+        )}
+
+        {/* Price + cart */}
+        <div className="mt-auto pt-2 flex flex-col gap-1 border-t border-border/20">
+          <div className="flex items-baseline justify-between flex-wrap gap-x-2">
+            <div className="flex flex-col">
+              {comparePrice && comparePrice > price && (
+                <span className="text-[11px] line-through num text-text-muted leading-tight">
+                  {formatPrice(comparePrice)}
+                </span>
+              )}
+              <span
+                className={`text-lg font-extrabold num leading-none ${
+                  discount > 0 ? 'text-destructive' : 'text-text-primary'
+                }`}
+              >
+                {formatPrice(price)}
+              </span>
+            </div>
+            {comparePrice && comparePrice > price && (
+              <span className="text-[10px] font-bold text-success bg-success-subtle px-1.5 py-0.5 rounded leading-none inline-block">
+                {t('savings', { amount: formatPrice(comparePrice - price) })}
+              </span>
+            )}
+          </div>
+
+          <div className="mt-2 w-full">
             <AddToCartButton
               productId={product.id}
               productName={name}
               disabled={!inStock}
-              variant="icon"
+              variant="full"
+              text={t('buy')}
+              className="h-9 px-4 text-xs font-bold font-sans rounded-lg w-full flex items-center justify-center gap-1.5"
             />
           </div>
         </div>
       </div>
 
-      {/* Attributes Hover Panel */}
+      {/* Attributes Hover Panel (expanded specs on desktop hover) */}
       {displayEntries.length > 0 && (
         <div className="absolute -left-[1px] -right-[1px] top-full bg-surface-white border border-t-0 border-border group-hover:border-accent/40 rounded-b-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-30 px-2.5 pb-3 pt-1">
           <div className="border-t border-border/60 my-1.5" />
@@ -288,7 +349,7 @@ export default function ProductCard({ product, locale, view = 'grid' }: ProductC
               const label = translateAttributeKey(key, locale === 'ru' ? 'ru' : 'uk')
               let valStr = ''
               if (typeof value === 'boolean') {
-                valStr = locale === 'ru' ? (value ? 'Да' : 'Нет') : (value ? 'Так' : 'Ні')
+                valStr = value ? t('yes') : t('no')
               } else {
                 valStr = translateAttributeValue(value, locale === 'ru' ? 'ru' : 'uk')
               }
@@ -305,4 +366,3 @@ export default function ProductCard({ product, locale, view = 'grid' }: ProductC
     </article>
   )
 }
-
