@@ -7,7 +7,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { Suspense } from 'react'
 import { setRequestLocale, getTranslations } from 'next-intl/server'
-import { Check, X, Package, Truck, RotateCcw, ShieldCheck, Clock, Store } from 'lucide-react'
+import { Check, X, Package, Truck, RotateCcw, ShieldCheck, Clock } from 'lucide-react'
 
 import { isValidLocale } from '@/i18n/request'
 import { getProductBySlug } from '@/queries/products'
@@ -23,6 +23,7 @@ import { SameSeriesProducts } from '@/components/product/same-series-products'
 import { ProductReviews } from '@/components/product/product-reviews'
 import { RelatedProductsSection } from '@/components/product/related-products-section'
 import { ProductBuyBox } from '@/components/product/product-buy-box'
+import { ExpressDelivery } from '@/components/product/express-delivery'
 import Breadcrumbs from '@/components/layout/breadcrumbs'
 import { ProductArticles } from '@/components/blog/product-articles'
 import { ProductTabsNav } from '@/components/product/product-tabs-nav'
@@ -378,26 +379,7 @@ export default async function ProductPage({
                     {t('trust.deliveryTitle')}
                   </p>
                 </div>
-                {/* Carriers — replace brand marks with /logos/operators/*.svg when available */}
-                <div className="flex flex-col gap-1.5">
-                  <div className="flex items-center gap-2.5">
-                    <span className="shrink-0 w-12 h-6 rounded bg-[#da291c] text-white text-[9px] font-extrabold flex items-center justify-center">НП</span>
-                    <span className="flex-1 text-[12px] font-semibold text-text-primary">{t('delivery.novaPoshta')}</span>
-                    <span className="text-[11px] text-text-muted whitespace-nowrap">{t('delivery.timeNp')}</span>
-                  </div>
-                  <div className="flex items-center gap-2.5">
-                    <span className="shrink-0 w-12 h-6 rounded bg-[#ffd200] text-[#1a1a1a] text-[9px] font-extrabold flex items-center justify-center">УП</span>
-                    <span className="flex-1 text-[12px] font-semibold text-text-primary">{t('delivery.ukrposhta')}</span>
-                    <span className="text-[11px] text-text-muted whitespace-nowrap">{t('delivery.timeUp')}</span>
-                  </div>
-                  <div className="flex items-center gap-2.5">
-                    <span className="shrink-0 w-12 h-6 rounded bg-surface-alt text-text-muted flex items-center justify-center">
-                      <Store className="size-3.5" strokeWidth={2} />
-                    </span>
-                    <span className="flex-1 text-[12px] font-semibold text-text-primary">{t('delivery.pickup')}</span>
-                    <span className="text-[11px] font-semibold text-success whitespace-nowrap">{t('delivery.pickupFree')}</span>
-                  </div>
-                </div>
+                <ExpressDelivery productId={product.id} />
               </div>
 
               <div className="border border-border rounded-xl p-3 bg-surface-white">

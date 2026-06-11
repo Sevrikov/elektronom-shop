@@ -926,6 +926,15 @@
       "timeNp": "1-3 дня",
       "timeUp": "3-5 дней",
       "pickupFree": "бесплатно"
+    },
+    "express": {
+      "city": "Город",
+      "branch": "№ отделения",
+      "name": "Имя и фамилия",
+      "cta": "Моментальный заказ",
+      "fillRequired": "Заполните город и имя",
+      "phoneInvalid": "Телефон в формате +380XXXXXXXXX",
+      "success": "Заказ {number} принят, менеджер перезвонит"
     }
   },
   "productCard": {
