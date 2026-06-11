@@ -5,7 +5,6 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import Image from 'next/image'
 import { Suspense } from 'react'
 import { setRequestLocale, getTranslations } from 'next-intl/server'
 import { Check, X, Package, Truck, RotateCcw, ShieldCheck, Clock } from 'lucide-react'
@@ -287,7 +286,8 @@ export default async function ProductPage({
                 <div className="flex items-center gap-3 px-3.5 py-3 border border-border rounded-xl bg-surface-alt">
                   {product.brand.logo && (
                     <div className="size-10 shrink-0 flex items-center justify-center border border-border rounded-lg p-1 bg-white">
-                      <Image
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
                         src={product.brand.logo}
                         alt={product.brand.name}
                         width={32}
