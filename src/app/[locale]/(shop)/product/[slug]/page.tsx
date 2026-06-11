@@ -200,6 +200,16 @@ export default async function ProductPage({
       ? t('meta.backorder')
       : t('meta.outOfStock')
 
+  const hasCoPurchase = product.category
+    ? (await prisma.product.count({
+        where: {
+          categoryId: product.category.id,
+          isActive: true,
+          id: { not: product.id },
+        },
+      })) > 0
+    : false
+
   return (
     <>
       {/* JSON-LD */}
@@ -213,6 +223,7 @@ export default async function ProductPage({
           hasAbout={!!description}
           hasSpecs={Object.keys(displayAttrs).length > 0}
           reviewCount={product.reviews.length}
+          hasCoPurchase={hasCoPurchase}
         />
 
         {/* ═══ HERO CARD — 3 columns ═══ */}

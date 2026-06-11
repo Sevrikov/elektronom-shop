@@ -889,7 +889,7 @@
       "paymentDesc": "для юридических лиц"
     },
     "description": "Описание продукта",
-    "relatedProducts": "Сопутствующие товары",
+    "relatedProducts": "С этим товаром также покупают",
     "sameSeries": {
       "title": "Другие товары этой серии",
       "all": "Все",
@@ -898,7 +898,8 @@
     "tabs": {
       "about": "О товаре",
       "specs": "Характеристики",
-      "reviews": "Отзывы"
+      "reviews": "Отзывы",
+      "co-purchase": "С этим покупают"
     }
   },
   "productCard": {

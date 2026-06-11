@@ -14,8 +14,8 @@ export async function RelatedProductsSection({
   excludeId,
   locale,
 }: RelatedProductsSectionProps) {
-  // Fetch 4 related products
-  const products = await getSimilarProducts(categoryId, excludeId, locale, 4)
+  // Fetch 5 related products
+  const products = await getSimilarProducts(categoryId, excludeId, locale, 5)
 
   if (products.length === 0) return null
 
@@ -23,17 +23,17 @@ export async function RelatedProductsSection({
   const title = t('relatedProducts')
 
   return (
-    <section className="mt-8 border-t border-border pt-8">
-      <div className="flex items-center justify-between mb-5">
+    <section id="co-purchase" className="scroll-mt-[120px] mt-8 border-t border-border pt-8">
+      <div className="flex items-center justify-between mb-4">
         <h2 className="text-[20px] font-extrabold text-text-primary tracking-tight">
           {title}
         </h2>
       </div>
       
-      {/* 4 Cards Grid - responsive */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+      {/* 5 Compact Cards Grid */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
         {products.map((product) => (
-          <ProductCard key={product.id} product={product} locale={locale} />
+          <ProductCard key={product.id} product={product} locale={locale} isCompact={true} />
         ))}
       </div>
     </section>

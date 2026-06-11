@@ -33,9 +33,10 @@ interface ProductCardProps {
   product: PrismaProductCard
   locale: Locale
   view?: 'grid' | 'list'
+  isCompact?: boolean
 }
 
-export default function ProductCard({ product, locale, view = 'grid' }: ProductCardProps) {
+export default function ProductCard({ product, locale, view = 'grid', isCompact = false }: ProductCardProps) {
   const t = useTranslations('productCard')
 
   const name = product.translations.find(t => t.locale === locale)?.name
@@ -51,6 +52,85 @@ export default function ProductCard({ product, locale, view = 'grid' }: ProductC
   const discount = getDiscountPercent(price, comparePrice)
   const mainImage = product.images[0]
   const brandName = product.brand?.name ?? ''
+
+  if (isCompact) {
+    return (
+      <article className="relative flex flex-col rounded-lg border border-border bg-surface-white transition-all duration-200 group hover:shadow-md hover:border-accent/40">
+        {/* Image */}
+        <Link
+          href={`/${locale}/product/${product.slug}`}
+          className="relative w-full aspect-square flex items-center justify-center overflow-hidden bg-surface-alt rounded-t-lg"
+        >
+          {discount > 0 && (
+            <div className="absolute top-1.5 right-1.5 z-10 px-1 py-0.5 rounded text-[8px] font-extrabold text-white bg-destructive shadow-xs select-none">
+              -{discount}%
+            </div>
+          )}
+
+          {mainImage ? (
+            <TransparentImage
+              src={getTransformedImageUrl(mainImage, { width: 200, height: 200, crop: 'limit' })}
+              alt={mainImage.alt ?? name}
+              className="p-2"
+            />
+          ) : (
+            <div className="size-10 rounded-lg flex items-center justify-center bg-surface-raised">
+              <span className="text-lg font-bold text-border-strong">
+                {brandName.charAt(0)}
+              </span>
+            </div>
+          )}
+        </Link>
+
+        {/* Content */}
+        <div className="flex flex-col flex-1 p-2 gap-1 justify-between">
+          <div className="flex flex-col gap-0.5">
+            {brandName && (
+              <span className="text-[9px] font-bold tracking-wider uppercase text-text-muted">
+                {brandName}
+              </span>
+            )}
+            
+            {/* Title */}
+            <Link
+              href={`/${locale}/product/${product.slug}`}
+              className="text-[12px] font-semibold leading-snug line-clamp-2 min-h-[32px] text-text-primary hover:text-accent transition-colors mt-0.5"
+            >
+              {name}
+            </Link>
+          </div>
+
+          <div className="pt-1 flex flex-col gap-1.5 mt-auto border-t border-border/10">
+            <div className="flex items-baseline justify-between flex-wrap gap-x-1">
+              <div className="flex flex-col">
+                {comparePrice && comparePrice > price && (
+                  <span className="text-[10px] line-through num text-text-muted leading-tight">
+                    {formatPrice(comparePrice)}
+                  </span>
+                )}
+                <span
+                  className={`text-sm font-extrabold num leading-none ${
+                    discount > 0 ? 'text-destructive' : 'text-text-primary'
+                  }`}
+                >
+                  {formatPrice(price)}
+                </span>
+              </div>
+            </div>
+
+            <AddToCartButton
+              productId={product.id}
+              productName={name}
+              disabled={!inStock}
+              variant="full"
+              text={t('buy')}
+              className="h-8 px-2 text-[11px] font-bold font-sans rounded-md w-full flex items-center justify-center gap-1"
+            />
+          </div>
+        </div>
+      </article>
+    )
+  }
 
   const rawEntries = product.attributes &&
     typeof product.attributes === 'object' &&

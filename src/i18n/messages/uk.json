@@ -878,7 +878,7 @@
       "paymentDesc": "для юридичних осіб"
     },
     "description": "Опис продукту",
-    "relatedProducts": "Супутні товари",
+    "relatedProducts": "Разом з цим товаром купують",
     "sameSeries": {
       "title": "Інші товари тієї ж серії",
       "all": "Всі",
@@ -887,7 +887,8 @@
     "tabs": {
       "about": "Про товар",
       "specs": "Характеристики",
-      "reviews": "Відгуки"
+      "reviews": "Відгуки",
+      "co-purchase": "Купують разом"
     }
   },
   "productCard": {

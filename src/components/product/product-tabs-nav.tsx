@@ -7,9 +7,10 @@ interface ProductTabsNavProps {
   hasAbout: boolean
   hasSpecs: boolean
   reviewCount: number
+  hasCoPurchase?: boolean
 }
 
-export function ProductTabsNav({ hasAbout, hasSpecs, reviewCount }: ProductTabsNavProps) {
+export function ProductTabsNav({ hasAbout, hasSpecs, reviewCount, hasCoPurchase = true }: ProductTabsNavProps) {
   const t = useTranslations('pdp')
   const [activeTab, setActiveTab] = useState<string>(() => {
     if (hasSpecs) return 'specs'
@@ -20,8 +21,9 @@ export function ProductTabsNav({ hasAbout, hasSpecs, reviewCount }: ProductTabsN
   const sections = useMemo(() => [
     { id: 'specs', visible: hasSpecs },
     { id: 'about', visible: hasAbout },
-    { id: 'reviews', visible: true }
-  ].filter(s => s.visible) as { id: 'specs' | 'about' | 'reviews'; visible: boolean }[], [hasSpecs, hasAbout])
+    { id: 'reviews', visible: true },
+    { id: 'co-purchase', visible: hasCoPurchase }
+  ].filter(s => s.visible) as { id: 'specs' | 'about' | 'reviews' | 'co-purchase'; visible: boolean }[], [hasSpecs, hasAbout, hasCoPurchase])
 
   useEffect(() => {
     if (sections.length === 0) return
