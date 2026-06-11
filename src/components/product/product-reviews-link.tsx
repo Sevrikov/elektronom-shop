@@ -70,11 +70,11 @@ export function ProductReviewsLink({
     : '0.0'
 
   return (
-    <div className="flex items-center py-1">
+    <div className="flex items-center gap-3 py-1 flex-wrap select-none">
       <a
         href="#reviews"
         onClick={handleScrollToReviews}
-        className="inline-flex items-center gap-2.5 px-3 py-1.5 bg-surface-white border border-border rounded-full shadow-xs hover:border-accent hover:bg-surface-alt transition-all duration-200 select-none group"
+        className="inline-flex items-center gap-2.5 px-3 py-1.5 bg-surface-white border border-border rounded-full shadow-xs hover:border-accent hover:bg-surface-alt transition-all duration-200 group"
       >
         {/* Rating score number */}
         <span className="font-extrabold text-text-primary text-[13px] font-mono leading-none tracking-tight">
@@ -93,9 +93,20 @@ export function ProductReviewsLink({
 
         {/* Reviews text label */}
         <span className="text-[12px] font-bold text-text-muted group-hover:text-accent transition-colors underline decoration-dotted decoration-text-muted/40 group-hover:decoration-accent/60 leading-none">
-          {reviewCount > 0 ? tReviews : tLeaveReview}
+          {tReviews}
         </span>
       </a>
+
+      {/* Write a review text link if there are no reviews yet */}
+      {reviewCount === 0 && (
+        <a
+          href="#reviews"
+          onClick={handleScrollToReviews}
+          className="text-xs font-bold text-accent hover:text-accent-hover transition-colors underline decoration-dotted decoration-accent/40 hover:decoration-accent-hover/60"
+        >
+          {tLeaveReview}
+        </a>
+      )}
     </div>
   )
 }
