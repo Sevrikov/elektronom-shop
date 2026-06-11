@@ -215,7 +215,7 @@ export default async function ProductPage({
       {/* JSON-LD */}
       <ProductSchema product={{ ...product, isBackorder }} locale={locale} />
 
-      <div className="max-w-[1600px] mx-auto px-4 lg:px-6 py-5 flex flex-col gap-6">
+      <div className="max-w-[1600px] mx-auto px-4 lg:px-6 py-5 flex flex-col gap-4">
         {/* Breadcrumbs */}
         <Breadcrumbs items={breadcrumbs} locale={locale} />
 
