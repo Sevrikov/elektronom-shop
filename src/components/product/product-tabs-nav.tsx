@@ -57,7 +57,7 @@ export function ProductTabsNav({ hasAbout, hasSpecs, reviewCount, hasCoPurchase 
   if (sections.length === 0) return null
 
   return (
-    <div className="sticky top-[var(--header-height,120px)] z-30 bg-surface-white border-b border-border shadow-sm w-full transition-all duration-200 -mx-4 lg:-mx-6 px-4 lg:px-6">
+    <div className="sticky top-[var(--header-height,120px)] z-30 bg-surface-white border border-border rounded-2xl shadow-sm w-full transition-all duration-200 px-4 lg:px-6">
       <div className="max-w-[1600px] mx-auto">
         <nav className="flex items-center gap-6 overflow-x-auto whitespace-nowrap no-scrollbar h-12">
           {sections.map((s) => {
