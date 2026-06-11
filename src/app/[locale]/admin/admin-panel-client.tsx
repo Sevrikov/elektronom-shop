@@ -23,6 +23,7 @@ import {
   Sliders,
   FileUp,
   Layers,
+  Bell,
 } from 'lucide-react'
 import {
   getProductsAdmin,
@@ -43,6 +44,20 @@ import {
   type OrderItemSnapshot,
 } from '@/actions/admin'
 import { AdminProductsTab } from '@/components/admin/products/admin-products-tab'
+import { markReminderDone } from '@/actions/reminder'
+
+interface AdminReminderItem {
+  id: string
+  type: string
+  productId: string
+  productName: string
+  productSku: string
+  contact: string
+  customerName: string | null
+  note: string | null
+  status: string
+  createdAt: string
+}
 
 interface AdminPanelClientProps {
   initialStats: {
@@ -53,6 +68,7 @@ interface AdminPanelClientProps {
   initialRecentOrders: AdminOrderItem[]
   initialCategories: AdminCategoryItem[]
   initialBrands: AdminBrandItem[]
+  initialReminders: AdminReminderItem[]
   locale: string
 }
 
@@ -61,6 +77,7 @@ export default function AdminPanelClient({
   initialRecentOrders,
   initialCategories,
   initialBrands,
+  initialReminders,
   locale,
 }: AdminPanelClientProps) {
   const uk = locale !== 'ru'
@@ -68,11 +85,12 @@ export default function AdminPanelClient({
   const [isPending, startTransition] = useTransition()
 
   // Tabs
-  const [activeTab, setActiveTab] = useState<'overview' | 'products' | 'characteristics' | 'categories_brands' | 'import' | 'collections' | 'orders' | 'deleted' | 'reviews'>('overview')
+  const [activeTab, setActiveTab] = useState<'overview' | 'products' | 'characteristics' | 'categories_brands' | 'import' | 'collections' | 'orders' | 'deleted' | 'reviews' | 'reminders'>('overview')
 
   // Stats & States
   const [stats, setStats] = useState(initialStats)
   const [recentOrders, setRecentOrders] = useState<AdminOrderItem[]>(initialRecentOrders)
+  const [reminders, setReminders] = useState<AdminReminderItem[]>(initialReminders)
   const [categories, setCategories] = useState<AdminCategoryItem[]>(initialCategories)
   const [brands, setBrands] = useState<AdminBrandItem[]>(initialBrands)
 
@@ -566,6 +584,7 @@ export default function AdminPanelClient({
             { id: 'orders', label: uk ? 'Замовлення' : 'Заказы', icon: ShoppingCart },
             { id: 'deleted', label: uk ? 'Видалені товари' : 'Удаленные товары', icon: Trash2 },
             { id: 'reviews', label: uk ? 'Відгуки' : 'Отзывы', icon: MessageSquare },
+            { id: 'reminders', label: uk ? 'Нагадування' : 'Напоминания', icon: Bell },
           ] as const).map((tab) => {
             const Icon = tab.icon
             const active = activeTab === tab.id
@@ -581,6 +600,11 @@ export default function AdminPanelClient({
               >
                 <Icon className="size-4" />
                 {tab.label}
+                {tab.id === 'reminders' && reminders.length > 0 && (
+                  <span className="ml-1 min-w-5 h-5 px-1.5 rounded-full bg-error text-white text-[11px] font-bold flex items-center justify-center">
+                    {reminders.length}
+                  </span>
+                )}
               </button>
             )
           })}
@@ -592,6 +616,62 @@ export default function AdminPanelClient({
             <div className="bg-white/80 p-4 rounded-full shadow-lg border border-slate-100">
               <Loader2 className="size-8 text-accent animate-spin" />
             </div>
+          </div>
+        )}
+
+        {/* REMINDERS TAB */}
+        {activeTab === 'reminders' && (
+          <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+            {reminders.length === 0 ? (
+              <div className="p-8 text-center text-slate-500">
+                {uk ? 'Немає нових заявок' : 'Нет новых заявок'}
+              </div>
+            ) : (
+              <div className="divide-y divide-slate-100">
+                {reminders.map((r) => (
+                  <div key={r.id} className="flex items-start gap-4 p-4 hover:bg-slate-50">
+                    <span
+                      className={`mt-0.5 shrink-0 px-2 py-1 rounded-md text-[11px] font-bold ${
+                        r.type === 'back_in_stock'
+                          ? 'bg-amber-100 text-amber-700'
+                          : 'bg-blue-100 text-blue-700'
+                      }`}
+                    >
+                      {r.type === 'back_in_stock'
+                        ? (uk ? 'Поява' : 'Поступление')
+                        : (uk ? 'Нагадати' : 'Напомнить')}
+                    </span>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-slate-900 text-sm line-clamp-1">{r.productName}</p>
+                      <p className="text-xs text-slate-500 font-mono">{r.productSku}</p>
+                      <p className="text-sm text-slate-700 mt-1">
+                        <span className="font-bold">{uk ? 'Контакт: ' : 'Контакт: '}</span>
+                        {r.contact}
+                        {r.customerName ? ` · ${r.customerName}` : ''}
+                      </p>
+                      {r.note && <p className="text-xs text-slate-500 mt-0.5">{r.note}</p>}
+                      <p className="text-[11px] text-slate-400 mt-1">
+                        {new Date(r.createdAt).toLocaleString(loc === 'ru' ? 'ru-RU' : 'uk-UA')}
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        startTransition(async () => {
+                          const res = await markReminderDone(r.id)
+                          if (res.success) setReminders((prev) => prev.filter((x) => x.id !== r.id))
+                        })
+                      }
+                      disabled={isPending}
+                      className="shrink-0 inline-flex items-center gap-1.5 px-3 py-2 rounded-md bg-success text-white text-sm font-semibold hover:opacity-90 disabled:opacity-50 cursor-pointer"
+                    >
+                      <CheckCircle className="size-4" />
+                      {uk ? 'Виконано' : 'Выполнено'}
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
 

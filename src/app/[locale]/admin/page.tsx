@@ -33,7 +33,7 @@ export default async function AdminDashboardPage({
   }
 
   // Fetch quick dashboard stats & metadata from database (Select only, no direct queries without limit)
-  const [totalOrders, totalUsers, totalProducts, recentOrders, categories, brands] = await Promise.all([
+  const [totalOrders, totalUsers, totalProducts, recentOrders, categories, brands, reminderRequests] = await Promise.all([
     prisma.order.count(),
     prisma.user.count(),
     prisma.product.count(),
@@ -85,6 +85,11 @@ export default async function AdminDashboardPage({
         isActive: true,
       },
     }),
+    prisma.reminderRequest.findMany({
+      where: { status: 'pending' },
+      orderBy: { createdAt: 'desc' },
+      take: 100,
+    }),
   ])
 
   const initialStats = {
@@ -103,12 +108,18 @@ export default async function AdminDashboardPage({
     })),
   }))
 
+  const initialReminders = reminderRequests.map((r) => ({
+    ...r,
+    createdAt: r.createdAt.toISOString(),
+  }))
+
   return (
     <AdminPanelClient
       initialStats={initialStats}
       initialRecentOrders={parsedRecentOrders}
       initialCategories={categories}
       initialBrands={brands}
+      initialReminders={initialReminders}
       locale={locale}
     />
   )
