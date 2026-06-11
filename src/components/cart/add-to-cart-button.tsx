@@ -16,6 +16,8 @@ interface AddToCartButtonProps {
   showQtyStepper?: boolean
   disabledText?: string | undefined
   text?: string
+  /** Controlled quantity. When provided, overrides the internal stepper state. */
+  quantity?: number
 }
 
 export function AddToCartButton({
@@ -28,6 +30,7 @@ export function AddToCartButton({
   showQtyStepper = false,
   disabledText,
   text,
+  quantity: controlledQuantity,
 }: AddToCartButtonProps) {
   const t = useTranslations('common')
   const openDrawer = useCartUIStore((s) => s.openDrawer)
@@ -36,7 +39,8 @@ export function AddToCartButton({
   const [added, setAdded] = useState(false)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const [isPending, startTransition] = useTransition()
-  const [quantity, setQuantity] = useState(1)
+  const [internalQuantity, setInternalQuantity] = useState(1)
+  const quantity = controlledQuantity ?? internalQuantity
 
   function handleClick() {
     if (disabled || isPending || added || errorMsg) return
@@ -54,7 +58,7 @@ export function AddToCartButton({
         useCartUIStore.getState().triggerCartUpdate()
         setTimeout(() => {
           setAdded(false)
-          setQuantity(1)
+          setInternalQuantity(1)
         }, 2000)
       }
     })
@@ -64,12 +68,12 @@ export function AddToCartButton({
 
   const handleDecrement = (e: React.MouseEvent) => {
     e.stopPropagation()
-    setQuantity((prev) => Math.max(1, prev - 1))
+    setInternalQuantity((prev) => Math.max(1, prev - 1))
   }
 
   const handleIncrement = (e: React.MouseEvent) => {
     e.stopPropagation()
-    setQuantity((prev) => Math.min(stock, prev + 1))
+    setInternalQuantity((prev) => Math.min(stock, prev + 1))
   }
 
   if (variant === 'icon') {

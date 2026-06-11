@@ -889,6 +889,11 @@
       "specs": "Характеристики",
       "reviews": "Відгуки",
       "co-purchase": "Купують разом"
+    },
+    "buyBox": {
+      "sum": "Сума",
+      "decrease": "Зменшити",
+      "increase": "Збільшити"
     }
   },
   "productCard": {

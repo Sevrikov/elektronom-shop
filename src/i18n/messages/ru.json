@@ -900,6 +900,11 @@
       "specs": "Характеристики",
       "reviews": "Отзывы",
       "co-purchase": "С этим покупают"
+    },
+    "buyBox": {
+      "sum": "Сумма",
+      "decrease": "Уменьшить",
+      "increase": "Увеличить"
     }
   },
   "productCard": {

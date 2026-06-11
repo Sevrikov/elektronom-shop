@@ -22,7 +22,7 @@ import { ProductSchema } from '@/components/product/product-schema'
 import { SameSeriesProducts } from '@/components/product/same-series-products'
 import { ProductReviews } from '@/components/product/product-reviews'
 import { RelatedProductsSection } from '@/components/product/related-products-section'
-import { AddToCartButton } from '@/components/cart/add-to-cart-button'
+import { ProductBuyBox } from '@/components/product/product-buy-box'
 import Breadcrumbs from '@/components/layout/breadcrumbs'
 import { ProductArticles } from '@/components/blog/product-articles'
 import { ProductTabsNav } from '@/components/product/product-tabs-nav'
@@ -330,35 +330,18 @@ export default async function ProductPage({
                 </span>
               </div>
 
-              {/* Price block */}
-              <div className="flex items-end gap-3.5 mt-1">
-                <span className="text-[38px] font-extrabold tracking-tight leading-none num text-text-primary">
-                  {formatPrice(price)}
-                </span>
-                {comparePrice && comparePrice > price && (
-                  <>
-                    <span className="text-base line-through num text-text-muted pb-1">
-                      {formatPrice(comparePrice)}
-                    </span>
-                    <span className="text-xs font-bold text-success pb-1.5">
-                      −{discount}%
-                    </span>
-                  </>
-                )}
-              </div>
-
-              {/* CTA row */}
-              <div className="flex items-center gap-2 flex-wrap mt-1">
-                <AddToCartButton
-                  productId={product.id}
-                  productName={name}
-                  disabled={!inStock}
-                  variant="full"
-                  showQtyStepper={true}
-                  stock={product.stock}
-                  disabledText={isBackorder ? t('meta.backorder') : undefined}
-                />
-              </div>
+              {/* Price + quantity + live sum + CTA */}
+              <ProductBuyBox
+                productId={product.id}
+                productName={name}
+                price={price}
+                comparePrice={comparePrice}
+                discount={discount}
+                stock={product.stock}
+                inStock={inStock}
+                isBackorder={isBackorder}
+                backorderLabel={t('meta.backorder')}
+              />
 
               {/* Qty breaks */}
               {qtyBreaks.length > 0 && (
