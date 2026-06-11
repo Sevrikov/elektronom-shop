@@ -905,6 +905,19 @@
       "sum": "Сумма",
       "decrease": "Уменьшить",
       "increase": "Увеличить"
+    },
+    "reminder": {
+      "purchaseCta": "Напомнить о покупке",
+      "backInStockCta": "Сообщить о поступлении",
+      "contactPlaceholder": "Телефон, Telegram или Viber",
+      "namePlaceholder": "Ваше имя (необязательно)",
+      "notePlaceholder": "Когда напомнить / комментарий (необязательно)",
+      "submit": "Отправить",
+      "close": "Закрыть",
+      "contactRequired": "Укажите контакт",
+      "error": "Произошла ошибка, попробуйте снова",
+      "thanksPurchase": "Спасибо! Менеджер напомнит вам о покупке.",
+      "thanksBackInStock": "Спасибо! Мы сообщим, как только товар появится."
     }
   },
   "productCard": {

@@ -894,6 +894,19 @@
       "sum": "Сума",
       "decrease": "Зменшити",
       "increase": "Збільшити"
+    },
+    "reminder": {
+      "purchaseCta": "Нагадати про покупку",
+      "backInStockCta": "Повідомити про появу",
+      "contactPlaceholder": "Телефон, Telegram або Viber",
+      "namePlaceholder": "Ваше ім'я (необов'язково)",
+      "notePlaceholder": "Коли нагадати / коментар (необов'язково)",
+      "submit": "Надіслати",
+      "close": "Закрити",
+      "contactRequired": "Вкажіть контакт",
+      "error": "Сталася помилка, спробуйте ще раз",
+      "thanksPurchase": "Дякуємо! Менеджер нагадає вам про покупку.",
+      "thanksBackInStock": "Дякуємо! Ми повідомимо, щойно товар з'явиться."
     }
   },
   "productCard": {

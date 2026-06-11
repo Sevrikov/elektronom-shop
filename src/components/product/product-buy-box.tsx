@@ -5,29 +5,28 @@ import { useTranslations } from 'next-intl'
 import { Minus, Plus } from 'lucide-react'
 import { formatPrice } from '@/lib/utils'
 import { AddToCartButton } from '@/components/cart/add-to-cart-button'
+import { ReminderRequestButton } from '@/components/product/reminder-request-button'
 
 interface ProductBuyBoxProps {
   productId: string
   productName: string
+  productSku: string
   price: number
   comparePrice: number | null
   discount: number
   stock: number
   inStock: boolean
-  isBackorder: boolean
-  backorderLabel?: string
 }
 
 export function ProductBuyBox({
   productId,
   productName,
+  productSku,
   price,
   comparePrice,
   discount,
   stock,
   inStock,
-  isBackorder,
-  backorderLabel,
 }: ProductBuyBoxProps) {
   const t = useTranslations('pdp')
   const max = Math.max(1, stock)
@@ -90,15 +89,36 @@ export function ProductBuyBox({
       </div>
 
       {/* CTA */}
-      <AddToCartButton
-        productId={productId}
-        productName={productName}
-        disabled={!inStock}
-        variant="full"
-        quantity={qty}
-        stock={stock}
-        disabledText={isBackorder ? backorderLabel : undefined}
-      />
+      {inStock ? (
+        <div className="flex flex-col sm:flex-row gap-2">
+          <div className="sm:flex-1">
+            <AddToCartButton
+              productId={productId}
+              productName={productName}
+              variant="full"
+              quantity={qty}
+              stock={stock}
+            />
+          </div>
+          <ReminderRequestButton
+            type="purchase"
+            productId={productId}
+            productName={productName}
+            productSku={productSku}
+            variant="secondary"
+            className="sm:shrink-0"
+          />
+        </div>
+      ) : (
+        <ReminderRequestButton
+          type="back_in_stock"
+          productId={productId}
+          productName={productName}
+          productSku={productSku}
+          variant="primary"
+          className="w-full"
+        />
+      )}
     </div>
   )
 }

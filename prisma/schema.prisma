@@ -478,3 +478,21 @@ model SupplierInventory {
   @@index([sku])
   @@map("supplier_inventory")
 }
+
+/// Customer-submitted request for a manager to follow up:
+/// 'purchase' = remind me to buy (in stock), 'back_in_stock' = notify when available.
+model ReminderRequest {
+  id           String   @id @default(cuid(2))
+  type         String   @default("purchase") // 'purchase' | 'back_in_stock'
+  productId    String
+  productName  String
+  productSku   String
+  contact      String
+  customerName String?
+  note         String?
+  status       String   @default("pending") // 'pending' | 'done'
+  createdAt    DateTime @default(now())
+
+  @@index([status, createdAt])
+  @@map("reminder_requests")
+}

@@ -334,13 +334,12 @@ export default async function ProductPage({
               <ProductBuyBox
                 productId={product.id}
                 productName={name}
+                productSku={product.sku}
                 price={price}
                 comparePrice={comparePrice}
                 discount={discount}
                 stock={product.stock}
                 inStock={inStock}
-                isBackorder={isBackorder}
-                backorderLabel={t('meta.backorder')}
               />
 
               {/* Qty breaks */}
