@@ -58,3 +58,6 @@ ga4-key.json
 __pycache__/
 *.py[cod]
 *$py.class
+
+# excel export files
+export-products-*.xlsx
