@@ -10,11 +10,27 @@ export function normalizeTiers(breaks: WholesaleTier[]): WholesaleTier[] {
     .sort((a, b) => a.min - b.min)
 }
 
-/** Highest applicable wholesale discount (%) for a quantity (0 if none applies). */
+/**
+ * Wholesale discount (%) for a quantity — flexible model: linear interpolation
+ * between the points (1, 0%) and the tier points, so intermediate quantities get
+ * a real proportional discount (no fake step). Capped at the last tier's discount.
+ */
 export function discountForQty(qty: number, tiers: WholesaleTier[]): number {
-  let d = 0
-  for (const tier of tiers) {
-    if (qty >= tier.min && tier.discount > d) d = tier.discount
+  if (tiers.length === 0 || qty <= 1) return 0
+  const sorted = [...tiers].sort((a, b) => a.min - b.min)
+  const points = [{ min: 1, discount: 0 }, ...sorted]
+  const last = points[points.length - 1]
+  if (!last) return 0
+  if (qty >= last.min) return last.discount
+
+  for (let i = 1; i < points.length; i++) {
+    const prev = points[i - 1]
+    const cur = points[i]
+    if (!prev || !cur) continue
+    if (qty < cur.min) {
+      const ratio = (qty - prev.min) / (cur.min - prev.min)
+      return Math.round(prev.discount + (cur.discount - prev.discount) * ratio)
+    }
   }
-  return d
+  return last.discount
 }

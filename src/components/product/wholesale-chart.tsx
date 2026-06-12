@@ -3,8 +3,8 @@
 import { discountForQty, normalizeTiers, type WholesaleTier } from '@/lib/wholesale'
 
 /**
- * Tiny wholesale sparkline. Draws the REAL step function (flat between tiers,
- * jumps at thresholds) — no fictional smoothing. The marker sits at the actual
+ * Tiny wholesale sparkline. Draws the REAL interpolated discount line (straight
+ * segments through the actual tier points). The marker sits at the actual
  * discount for the current quantity.
  */
 export function WholesaleChart({ breaks, qty }: { breaks: WholesaleTier[]; qty: number }) {
@@ -28,13 +28,12 @@ export function WholesaleChart({ breaks, qty }: { breaks: WholesaleTier[]; qty: 
   const yOf = (d: number) => padTop + innerH - (innerH * d) / maxDiscount
   const baseY = padTop + innerH
 
-  // Staircase: real discount per quantity, built point-by-point (no interpolation)
+  // Real polyline: straight segments through the actual points = the interpolated discount
   let line = `M ${xOf(1)} ${yOf(0)}`
   for (let i = 1; i < points.length; i++) {
-    const prev = points[i - 1]
     const cur = points[i]
-    if (!prev || !cur) continue
-    line += ` L ${xOf(cur.min)} ${yOf(prev.discount)} L ${xOf(cur.min)} ${yOf(cur.discount)}`
+    if (!cur) continue
+    line += ` L ${xOf(cur.min)} ${yOf(cur.discount)}`
   }
   const area = `${line} L ${xOf(maxQ)} ${baseY} L ${xOf(1)} ${baseY} Z`
 
