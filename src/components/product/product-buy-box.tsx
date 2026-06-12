@@ -81,14 +81,11 @@ export function ProductBuyBox({
                 </span>
               )}
             </div>
+
+            {tiers.length > 0 && <WholesaleChart breaks={breaks} qty={qty} />}
           </>
         )}
       </div>
-
-      {/* Interactive wholesale chart */}
-      {inStock && tiers.length > 0 && (
-        <WholesaleChart breaks={breaks} qty={qty} onSelectQty={(q) => setQty(Math.min(max, Math.max(1, q)))} title={t('qtyBreaks.title')} />
-      )}
 
       {/* CTA */}
       {inStock ? (
