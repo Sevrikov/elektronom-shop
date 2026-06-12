@@ -33,7 +33,7 @@ export default async function AdminDashboardPage({
   }
 
   // Fetch quick dashboard stats & metadata from database (Select only, no direct queries without limit)
-  const [totalOrders, totalUsers, totalProducts, recentOrders, categories, brands, reminderRequests] = await Promise.all([
+  const [totalOrders, totalUsers, totalProducts, recentOrders, categories, brands, reminderRequests, wholesaleRules] = await Promise.all([
     prisma.order.count(),
     prisma.user.count(),
     prisma.product.count(),
@@ -90,6 +90,7 @@ export default async function AdminDashboardPage({
       orderBy: { createdAt: 'desc' },
       take: 100,
     }),
+    prisma.wholesaleRule.findMany({ orderBy: { createdAt: 'desc' }, take: 200 }),
   ])
 
   const initialStats = {
@@ -113,6 +114,15 @@ export default async function AdminDashboardPage({
     createdAt: r.createdAt.toISOString(),
   }))
 
+  const initialWholesaleRules = wholesaleRules.map((r) => ({
+    id: r.id,
+    brandId: r.brandId,
+    categoryId: r.categoryId,
+    maxDiscount: r.maxDiscount,
+    tiers: Array.isArray(r.tiers) ? (r.tiers as { min: number; discount: number }[]) : [],
+    isActive: r.isActive,
+  }))
+
   return (
     <AdminPanelClient
       initialStats={initialStats}
@@ -120,6 +130,7 @@ export default async function AdminDashboardPage({
       initialCategories={categories}
       initialBrands={brands}
       initialReminders={initialReminders}
+      initialWholesaleRules={initialWholesaleRules}
       locale={locale}
     />
   )

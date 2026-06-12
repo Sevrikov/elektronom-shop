@@ -24,6 +24,7 @@ import {
   FileUp,
   Layers,
   Bell,
+  Percent,
 } from 'lucide-react'
 import {
   getProductsAdmin,
@@ -45,6 +46,7 @@ import {
 } from '@/actions/admin'
 import { AdminProductsTab } from '@/components/admin/products/admin-products-tab'
 import { markReminderDone } from '@/actions/reminder'
+import { WholesaleTab, type WholesaleRuleItem } from '@/components/admin/wholesale/wholesale-tab'
 
 interface AdminReminderItem {
   id: string
@@ -69,6 +71,7 @@ interface AdminPanelClientProps {
   initialCategories: AdminCategoryItem[]
   initialBrands: AdminBrandItem[]
   initialReminders: AdminReminderItem[]
+  initialWholesaleRules: WholesaleRuleItem[]
   locale: string
 }
 
@@ -78,6 +81,7 @@ export default function AdminPanelClient({
   initialCategories,
   initialBrands,
   initialReminders,
+  initialWholesaleRules,
   locale,
 }: AdminPanelClientProps) {
   const uk = locale !== 'ru'
@@ -85,7 +89,7 @@ export default function AdminPanelClient({
   const [isPending, startTransition] = useTransition()
 
   // Tabs
-  const [activeTab, setActiveTab] = useState<'overview' | 'products' | 'characteristics' | 'categories_brands' | 'import' | 'collections' | 'orders' | 'deleted' | 'reviews' | 'reminders'>('overview')
+  const [activeTab, setActiveTab] = useState<'overview' | 'products' | 'characteristics' | 'categories_brands' | 'import' | 'collections' | 'orders' | 'deleted' | 'reviews' | 'reminders' | 'wholesale'>('overview')
 
   // Stats & States
   const [stats, setStats] = useState(initialStats)
@@ -585,6 +589,7 @@ export default function AdminPanelClient({
             { id: 'deleted', label: uk ? 'Видалені товари' : 'Удаленные товары', icon: Trash2 },
             { id: 'reviews', label: uk ? 'Відгуки' : 'Отзывы', icon: MessageSquare },
             { id: 'reminders', label: uk ? 'Нагадування' : 'Напоминания', icon: Bell },
+            { id: 'wholesale', label: 'Опт', icon: Percent },
           ] as const).map((tab) => {
             const Icon = tab.icon
             const active = activeTab === tab.id
@@ -673,6 +678,19 @@ export default function AdminPanelClient({
               </div>
             )}
           </div>
+        )}
+
+        {/* WHOLESALE TAB */}
+        {activeTab === 'wholesale' && (
+          <WholesaleTab
+            brands={initialBrands.map((b) => ({ id: b.id, name: b.name }))}
+            categories={initialCategories.map((c) => ({
+              id: c.id,
+              name: c.translations.find((t) => t.locale === loc)?.name ?? c.translations[0]?.name ?? c.slug,
+            }))}
+            initialRules={initialWholesaleRules}
+            uk={uk}
+          />
         )}
 
         {/* ──────────────────────────────────────────────────────── */}
