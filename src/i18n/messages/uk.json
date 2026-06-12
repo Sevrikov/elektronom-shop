@@ -852,7 +852,10 @@
     "qtyBreaks": {
       "fromQty": "ВІД, ШТ",
       "pricePerUnit": "ЦІНА ЗА ШТ",
-      "discount": "ЗНИЖКА"
+      "discount": "ЗНИЖКА",
+      "title": "Оптові ціни",
+      "upTo": "до",
+      "unit": "шт"
     },
     "breadcrumbs": {
       "home": "Головна",
@@ -893,7 +896,8 @@
     "buyBox": {
       "sum": "Сума",
       "decrease": "Зменшити",
-      "increase": "Збільшити"
+      "increase": "Збільшити",
+      "opt": "опт"
     },
     "reminder": {
       "purchaseCta": "Нагадати про покупку",

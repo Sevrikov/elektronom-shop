@@ -341,6 +341,7 @@ export default async function ProductPage({
                 discount={discount}
                 stock={product.stock}
                 inStock={inStock}
+                breaks={qtyBreaks}
               />
 
               {/* Qty breaks */}
