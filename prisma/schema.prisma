@@ -496,3 +496,20 @@ model ReminderRequest {
   @@index([status, createdAt])
   @@map("reminder_requests")
 }
+
+/// Wholesale (опт) discount rule: quantity tiers scoped to a brand and/or category.
+/// Resolution priority: per-product attributes.qty_breaks > brand rule > category rule.
+model WholesaleRule {
+  id          String   @id @default(cuid(2))
+  brandId     String?
+  categoryId  String?
+  maxDiscount Int      @default(0) // ceiling %, informational
+  tiers       Json     // [{ "min": number, "discount": number }]
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([brandId])
+  @@index([categoryId])
+  @@map("wholesale_rules")
+}

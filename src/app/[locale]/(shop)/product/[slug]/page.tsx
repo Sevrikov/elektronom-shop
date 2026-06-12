@@ -11,6 +11,7 @@ import { Check, X, Package, Truck, RotateCcw, ShieldCheck, Clock } from 'lucide-
 
 import { isValidLocale } from '@/i18n/request'
 import { getProductBySlug } from '@/queries/products'
+import { resolveWholesaleTiers } from '@/queries/wholesale'
 import { prisma } from '@/lib/prisma'
 import { formatPrice, getDiscountPercent, getSiteUrl } from '@/lib/utils'
 import type { Locale } from '@/types'
@@ -170,9 +171,11 @@ export default async function ProductPage({
 
   // Parse qty_breaks from JSONB attributes
   const attrs = product.attributes as Record<string, unknown>
-  const qtyBreaks = Array.isArray(attrs['qty_breaks'])
-    ? (attrs['qty_breaks'] as { min: number; discount: number }[])
-    : []
+  const wholesaleTiers = await resolveWholesaleTiers({
+    brandId: product.brandId,
+    categoryId: product.category?.id ?? null,
+    attributes: product.attributes,
+  })
   // Remove qty_breaks from displayed attributes
   const displayAttrs = Object.fromEntries(
     Object.entries(attrs).filter(([k]) => k !== 'qty_breaks')
@@ -341,13 +344,13 @@ export default async function ProductPage({
                 discount={discount}
                 stock={product.stock}
                 inStock={inStock}
-                breaks={qtyBreaks}
+                breaks={wholesaleTiers}
               />
 
               {/* Qty breaks */}
-              {qtyBreaks.length > 0 && (
+              {wholesaleTiers.length > 0 && (
                 <div className="mt-1">
-                  <QtyBreaksTable basePrice={price} breaks={qtyBreaks} t={t} />
+                  <QtyBreaksTable basePrice={price} breaks={wholesaleTiers} t={t} />
                 </div>
               )}
 
