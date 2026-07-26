@@ -120,6 +120,13 @@ const TRANSLIT_WORDS: Record<string, { uk: string; ru: string }> = {
 }
 
 const ATTR_LABELS_UK: Record<string, string> = {
+  typ_montazha: 'Тип монтажу',
+  chastota_toka: 'Частота струму',
+  ratedcurrenta: 'Номінальний струм, А',
+  nomynaln_y_tok: 'Номінальний струм',
+  engineeringrole: 'Роль',
+  uslovyya_yspolzovanyya: 'Умови використання',
+  kilkist_v_yashchyku_up: 'Кількість в упаковці',
   poles: 'Кількість полюсів',
   rating_a: 'Номінальний струм, А',
   breaking_ka: 'Відключна здатність, кА',
@@ -170,9 +177,6 @@ const ATTR_LABELS_UK: Record<string, string> = {
   kommutatsyonnaya_yznosostoykost: 'Комутаційна зносостійкість, циклів',
   znosostiykist_elektrychna_tsykliv: 'Електрична зносостійкість, циклів',
   znosostiykist_mekhanichna_tsykliv: 'Механічна зносостійкість, циклів',
-  kilkist_v_upakovtsi_sht: 'Кількість в упаковці, шт.',
-  kilkist_v_yashchyku_sht: 'Кількість в упаковці, шт',
-  kilkist_v_yashchyku_up: 'Кількість в упаковці up',
   dielektrychna_mitsnist: 'Діелектрична міцність',
   typ_kontaktov: 'Тип контактів',
   kolychestvo_kontaktov: 'Кількість контактів',
@@ -180,6 +184,13 @@ const ATTR_LABELS_UK: Record<string, string> = {
 }
 
 const ATTR_LABELS_RU: Record<string, string> = {
+  typ_montazha: 'Тип монтажа',
+  chastota_toka: 'Частота тока',
+  ratedcurrenta: 'Номинальный ток, А',
+  nomynaln_y_tok: 'Номинальный ток',
+  engineeringrole: 'Роль',
+  uslovyya_yspolzovanyya: 'Условия использования',
+  kilkist_v_yashchyku_up: 'Количество в упаковке',
   poles: 'Количество полюсов',
   rating_a: 'Номинальный ток, А',
   breaking_ka: 'Отключающая способность, кА',
@@ -230,9 +241,6 @@ const ATTR_LABELS_RU: Record<string, string> = {
   kommutatsyonnaya_yznosostoykost: 'Коммутационная износостойкость, циклов',
   znosostiykist_elektrychna_tsykliv: 'Электрическая износостойкость, циклов',
   znosostiykist_mekhanichna_tsykliv: 'Механическая износостойкость, циклов',
-  kilkist_v_upakovtsi_sht: 'Количество в упаковке, шт.',
-  kilkist_v_yashchyku_sht: 'Количество в упаковке, шт',
-  kilkist_v_yashchyku_up: 'Количество в упаковке up',
   dielektrychna_mitsnist: 'Диэлектрическая прочность',
   typ_kontaktov: 'Тип контактов',
   kolychestvo_kontaktov: 'Количество контактов',
