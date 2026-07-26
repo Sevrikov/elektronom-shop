@@ -151,24 +151,24 @@ export function ProductGallery({ images, productName, locale }: ProductGalleryPr
           )}
         </div>
 
-        {/* Expanded & Multi-row Wrapped Thumbnail Grid */}
+        {/* 3 Thumbnails per Row Grid (Extra Large) */}
         {images.length > 1 && (
-          <div className="flex flex-wrap gap-3 pt-1">
+          <div className="grid grid-cols-3 gap-3 pt-1.5">
             {images.map((img, index) => (
               <button
                 key={img.id ?? index}
                 onClick={() => setActiveIndex(index)}
                 aria-label={`Фото ${index + 1}`}
-                className={`relative shrink-0 rounded-xl overflow-hidden transition-all w-20 h-20 sm:w-[92px] sm:h-[92px] bg-surface-alt border cursor-pointer ${
+                className={`relative aspect-square rounded-xl overflow-hidden transition-all bg-surface-alt border cursor-pointer ${
                   index === activeIndex
                     ? 'border-2 border-accent shadow-md ring-2 ring-accent/20 scale-[1.02]'
                     : 'border-border hover:border-border-strong hover:shadow-sm'
                 }`}
               >
                 <TransparentImage
-                  src={getTransformedImageUrl(img, { width: 300, height: 300, crop: 'fill' })}
+                  src={getTransformedImageUrl(img, { width: 400, height: 400, crop: 'fill' })}
                   alt={img.alt ?? `${productName} ${index + 1}`}
-                  className="p-1.5"
+                  className="p-2"
                 />
               </button>
             ))}
