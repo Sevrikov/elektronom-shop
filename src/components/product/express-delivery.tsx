@@ -152,6 +152,21 @@ export function ExpressDelivery({ productId }: { productId: string }) {
             </div>
           </div>
 
+          {/* Electronic Receipt (ПРРО) & Warranty Date */}
+          <div className="flex items-start gap-2 pt-2 border-t border-border/60">
+            <span className="shrink-0 size-2 rounded-full bg-accent mt-1.5" />
+            <div className="flex flex-col leading-snug">
+              <span className="font-bold text-text-primary">
+                {isRu ? 'Электронный чек (ПРРО) & Гарантия:' : 'Електронний чек (ПРРО) & Гарантія:'}
+              </span>
+              <span className="text-text-muted mt-0.5">
+                {isRu
+                  ? 'Программный фискальный чек автоматически отправляется в Viber, Telegram или на E-mail сразу после забора посылки. Дата чека активирует и подтверждает официальный гарантийный период.'
+                  : 'Програмний фіскальний чек автоматично надсилається у Viber, Telegram або на E-mail одразу після отримання посилки. Дата чека активує та підтверджує офіційний гарантійний термін.'}
+              </span>
+            </div>
+          </div>
+
           {/* 14-day return & Nova Poshta Easy Return */}
           <div className="flex items-start gap-2 pt-2 border-t border-border/60">
             <span className="shrink-0 size-2 rounded-full bg-success mt-1.5" />
