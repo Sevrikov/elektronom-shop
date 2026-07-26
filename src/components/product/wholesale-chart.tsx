@@ -5,7 +5,7 @@ import { discountForQty, normalizeTiers, type WholesaleTier } from '@/lib/wholes
 
 /**
  * Interactive wholesale sparkline chart with ruler scale, active quantity tracking,
- * +🚚 0₴ free shipping indicator, and a prominent right-side red discount badge.
+ * +🚚 0₴ free shipping indicator, and a right-side red discount badge (shown only when discount > 0).
  */
 export function WholesaleChart({
   breaks,
@@ -28,12 +28,12 @@ export function WholesaleChart({
   const maxQ = lastTier.min
   const maxDiscount = lastTier.discount
 
-  const W = 175
-  const H = 72
-  const padLeft = 14
-  const padRight = 10
-  const padTop = 20
-  const padBottom = 20
+  const W = 145
+  const H = 64
+  const padLeft = 12
+  const padRight = 8
+  const padTop = 18
+  const padBottom = 18
 
   const innerW = W - padLeft - padRight
   const innerH = H - padTop - padBottom
@@ -58,10 +58,8 @@ export function WholesaleChart({
   const currentTotal = unitPrice * qty
   const hasFreeDelivery = currentTotal >= 1500
 
-  const displayDiscount = curDiscount > 0 ? curDiscount : maxDiscount
-
   return (
-    <div className="flex items-center gap-2.5 shrink-0 select-none">
+    <div className="flex items-center gap-2 shrink-0 select-none">
       <svg
         viewBox={`0 0 ${W} ${H}`}
         width={W}
@@ -78,7 +76,7 @@ export function WholesaleChart({
         </defs>
 
         {/* Top Y-axis Label: Знижка % / Скидка % */}
-        <text x={padLeft - 4} y={11} fontSize="9.5" fontWeight="700" fill="var(--color-text-muted)" textAnchor="start">
+        <text x={padLeft - 4} y={10} fontSize="9" fontWeight="700" fill="var(--color-text-muted)" textAnchor="start">
           {yAxisLabel}
         </text>
 
@@ -97,9 +95,9 @@ export function WholesaleChart({
           return (
             <g key={p.min}>
               {/* Tick line on ruler */}
-              <line x1={px} y1={baseY} x2={px} y2={baseY + 4} stroke="var(--color-text-muted)" strokeWidth="1" />
+              <line x1={px} y1={baseY} x2={px} y2={baseY + 3} stroke="var(--color-text-muted)" strokeWidth="1" />
               {/* Quantity number under tick */}
-              <text x={px} y={baseY + 14} fontSize="8.5" fontWeight="700" fill="var(--color-text-muted)" textAnchor="middle">
+              <text x={px} y={baseY + 12} fontSize="8" fontWeight="700" fill="var(--color-text-muted)" textAnchor="middle">
                 {p.min}
               </text>
               {/* Breakpoint dot on line */}
@@ -115,9 +113,9 @@ export function WholesaleChart({
 
         {/* Free Shipping Badge +🚚 0₴ when currentTotal >= 1500 */}
         {hasFreeDelivery && (
-          <g transform={`translate(${Math.min(W - padRight - 20, Math.max(padLeft + 20, curX))}, ${Math.max(10, curY - 15)})`}>
-            <rect x="-22" y="-10" width="44" height="13" rx="3.5" fill="#16a34a" />
-            <text x="0" y="0" fontSize="8.5" fontWeight="900" fill="#ffffff" textAnchor="middle">
+          <g transform={`translate(${Math.min(W - padRight - 18, Math.max(padLeft + 18, curX))}, ${Math.max(8, curY - 14)})`}>
+            <rect x="-20" y="-9" width="40" height="12" rx="3" fill="#16a34a" />
+            <text x="0" y="0" fontSize="8" fontWeight="900" fill="#ffffff" textAnchor="middle">
               +🚚 0₴
             </text>
           </g>
@@ -127,15 +125,17 @@ export function WholesaleChart({
         <circle cx={curX} cy={curY} r="3.5" fill={hasFreeDelivery ? '#16a34a' : '#ef4444'} stroke="#ffffff" strokeWidth="1.5" />
       </svg>
 
-      {/* Red Discount Plashka to the Right of the Chart */}
-      <div className="flex flex-col items-center justify-center bg-red-500/10 border-2 border-red-500/30 px-3 py-1.5 rounded-xl shrink-0 shadow-xs">
-        <span className="text-[10px] font-extrabold text-text-muted uppercase tracking-tight leading-none">
-          {isRu ? 'Скидка' : 'Знижка'}
-        </span>
-        <span className="text-[20px] font-black text-red-500 num leading-tight mt-0.5">
-          −{displayDiscount}%
-        </span>
-      </div>
+      {/* Red Discount Plashka to the Right of the Chart - ONLY SHOWN WHEN curDiscount > 0 */}
+      {curDiscount > 0 && (
+        <div className="flex flex-col items-center justify-center bg-red-500/10 border-2 border-red-500/30 px-2.5 py-1 rounded-xl shrink-0 shadow-xs animate-in fade-in zoom-in-95 duration-150">
+          <span className="text-[9.5px] font-extrabold text-text-muted uppercase tracking-tight leading-none">
+            {isRu ? 'Скидка' : 'Знижка'}
+          </span>
+          <span className="text-[18px] font-black text-red-500 num leading-tight mt-0.5">
+            −{curDiscount}%
+          </span>
+        </div>
+      )}
     </div>
   )
 }
