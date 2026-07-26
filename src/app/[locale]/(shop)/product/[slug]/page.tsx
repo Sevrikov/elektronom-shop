@@ -33,20 +33,6 @@ import { ProductReviewsLink } from '@/components/product/product-reviews-link'
 export const revalidate = 0
 export const dynamic = 'force-dynamic'
 
-// ─── generateStaticParams — top-100 товаров ─────────────────────────────────
-
-export async function generateStaticParams() {
-  const products = await prisma.product.findMany({
-    where: { isActive: true },
-    select: { slug: true },
-    orderBy: { updatedAt: 'desc' },
-    take: 100,
-  })
-  const locales = ['uk', 'ru'] as const
-  return products.flatMap((p) =>
-    locales.map((locale) => ({ locale, slug: p.slug }))
-  )
-}
 
 // ─── generateMetadata ─────────────────────────────────────────────────────────
 
