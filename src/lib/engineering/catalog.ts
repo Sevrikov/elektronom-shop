@@ -8,9 +8,19 @@ export async function getEngineeringCatalogProducts(locale: EngineeringLocale): 
   cacheTag('products')
   cacheTag('engineering-catalog')
 
+  const engineeringRoles = [
+    'breaker', 'rcd', 'voltage_relay', 'cable', 'panel',
+    'meter', 'busbar', 'ats', 'terminal', 'spd',
+  ]
+
   const products = await prisma.product.findMany({
     where: {
       isActive: true,
+      // Only products enriched with an engineering role participate in the calculator
+      // (see scripts/enrich-engineering-attributes.ts)
+      OR: engineeringRoles.map((role) => ({
+        attributes: { path: ['engineeringRole'], equals: role },
+      })),
     },
     select: {
       id: true,
@@ -41,7 +51,7 @@ export async function getEngineeringCatalogProducts(locale: EngineeringLocale): 
       { sortOrder: 'asc' },
       { createdAt: 'desc' },
     ],
-    take: 120,
+    take: 600,
   })
 
   return products.map((product) => ({

@@ -386,6 +386,13 @@ export function EngineeringWorkspace({ locale, products }: EngineeringWorkspaceP
         </aside>
       </section>
 
+      {/* Drawing canvas — the primary working surface */}
+      <EngineeringDrawingDesigner
+        locale={locale}
+        products={products}
+        initialGraph={drawingInitialGraph}
+      />
+
       {/* Main Workspace Layout */}
       <section className="grid gap-5 xl:grid-cols-[340px_minmax(0,1fr)_420px]">
         {/* Left Column: Settings and Custom Loads */}
@@ -566,12 +573,6 @@ export function EngineeringWorkspace({ locale, products }: EngineeringWorkspaceP
               )}
             </div>
           </section>
-
-          <EngineeringDrawingDesigner
-            locale={locale}
-            products={products}
-            initialGraph={drawingInitialGraph}
-          />
 
           {/* Scheme View */}
           <section className="rounded-lg border border-border bg-surface-white p-4 shadow-sm">

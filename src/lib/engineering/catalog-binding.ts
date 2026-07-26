@@ -55,13 +55,29 @@ export function passesQualityGate(product: EngineeringCatalogProduct): { passes:
   }
 }
 
+/** Catalog role expected for each node type; node types absent here are never auto-matched */
+const NODE_TYPE_EXPECTED_ROLE: Partial<Record<EngineeringNode['type'], string>> = {
+  mcb: 'breaker',
+  main_breaker: 'breaker',
+  rcd: 'rcd',
+  cable_line: 'cable',
+  distribution_panel: 'panel',
+  voltage_relay: 'voltage_relay',
+  ats: 'ats',
+  terminal: 'terminal',
+  meter: 'meter',
+  busbar_n: 'busbar',
+  busbar_pe: 'busbar',
+  surge_protection: 'spd',
+}
+
 /**
  * Calculates a compatibility score (0 - 100) between an EngineeringNode and an EngineeringCatalogProduct.
  * Returns 0 if they are structurally incompatible.
  */
 export function scoreProductCompatibility(node: EngineeringNode, product: EngineeringCatalogProduct): { score: number; reasons: string[] } {
   const reasons: string[] = []
-  
+
   // First verify it passes the quality gate
   const gateResult = passesQualityGate(product)
   if (!gateResult.passes) {
@@ -69,6 +85,17 @@ export function scoreProductCompatibility(node: EngineeringNode, product: Engine
   }
 
   const role = product.attributes.engineeringRole as string
+
+  // Generic role guard: without it, node types that have no refinement branch
+  // below (busbar, meter, …) would accept ANY product passing the gate.
+  const expectedRole = NODE_TYPE_EXPECTED_ROLE[node.type]
+  if (!expectedRole) {
+    return { score: 0, reasons: ['node_type_not_matchable'] }
+  }
+  if (role !== expectedRole) {
+    return { score: 0, reasons: ['role_mismatch'] }
+  }
+
   let score = 50 // Base score for correct role matching
 
   // Helper to safely parse numbers

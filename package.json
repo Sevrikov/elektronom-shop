@@ -10,6 +10,7 @@
     "test": "tsx scripts/test-helpers.ts",
     "test:jsonb": "tsx scripts/test-jsonb-facets.ts",
     "test:engineering": "tsx scripts/test-engineering.ts",
+    "test:verilog": "tsx scripts/test-verilog.ts && tsx scripts/test-verilog-edge-cases.ts",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:push": "prisma db push",

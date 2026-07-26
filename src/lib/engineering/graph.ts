@@ -52,9 +52,14 @@ export interface EngineeringNode {
     strandType?: 'solid' | 'stranded' | 'flexible'
     requiresFerrule?: boolean
     modules?: number
+    /** Distribution-panel enclosure material (affects thermal dissipation) */
+    boxMaterial?: 'plastic' | 'metal'
     [key: string]: unknown
   }
 }
+
+/** How a wire end is terminated before entering a device */
+export type EngineeringTermination = 'direct' | 'twist' | 'ferrule' | 'lug' | 'clamp'
 
 export interface EngineeringEdge {
   id: string
@@ -62,6 +67,10 @@ export interface EngineeringEdge {
   target: string
   type?: 'power' | 'control' | 'earth' | 'neutral' | 'signal' | 'bus' | 'dc'
   conductor?: EngineeringConnectionKind
+  /** Termination at the source end (e.g. ferrule when a flexible wire enters a breaker) */
+  sourceTermination?: EngineeringTermination
+  /** Termination at the target end */
+  targetTermination?: EngineeringTermination
 }
 
 export type EngineeringConnectionKind = 'L' | 'N' | 'PE' | 'PEN' | 'DC+' | 'DC-' | 'signal' | 'bus'
