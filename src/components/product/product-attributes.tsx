@@ -6,7 +6,7 @@ interface ProductAttributesProps {
   locale?: string
 }
 
-import { translateAttributeKey, translateAttributeValue } from '@/lib/translit-translator'
+import { sortAttributeEntries, translateAttributeKey, translateAttributeValue } from '@/lib/translit-translator'
 
 function getLabel(key: string, locale?: string): string {
   return translateAttributeKey(key, locale === 'ru' ? 'ru' : 'uk')
@@ -25,13 +25,15 @@ function formatValue(key: string, value: unknown, locale?: string): string {
     if (locale === 'ru') return value ? 'Да' : 'Нет'
     return value ? 'Так' : 'Ні'
   }
-  if (value === null || value === undefined) return '—'
   return translateAttributeValue(value, locale === 'ru' ? 'ru' : 'uk')
 }
 
 export function ProductAttributes({ attributes, locale }: ProductAttributesProps) {
-  // Фильтруем только технические характеристики (исключаем рекламные переваги и непустые значения)
-  const entries = Object.entries(attributes).filter(
+  // 1. Сначала сортируем по приоритету и удаляем дубликаты
+  const sortedEntries = sortAttributeEntries(Object.entries(attributes))
+
+  // 2. Фильтруем только технические характеристики (исключаем рекламные переваги и непустые значения)
+  const entries = sortedEntries.filter(
     ([key, value]) =>
       !key.toLowerCase().includes('perevaha') &&
       value !== null &&
