@@ -1,8 +1,8 @@
 'use client'
 
 import { useState, useTransition } from 'react'
-import { useTranslations } from 'next-intl'
-import { Store, ChevronDown, Check } from 'lucide-react'
+import { useTranslations, useLocale } from 'next-intl'
+import { Store, ChevronDown, Check, Truck } from 'lucide-react'
 import { createExpressOrder } from '@/actions/express-order'
 
 type Method = 'nova_poshta' | 'ukrposhta' | 'pickup'
@@ -27,6 +27,9 @@ function Mark({ mark }: { mark: 'np' | 'up' | 'store' }) {
 
 export function ExpressDelivery({ productId }: { productId: string }) {
   const t = useTranslations('pdp')
+  const locale = useLocale()
+  const isRu = locale === 'ru'
+
   const [openMethod, setOpenMethod] = useState<Method | null>(null)
   const [city, setCity] = useState('')
   const [branch, setBranch] = useState('')
@@ -119,6 +122,23 @@ export function ExpressDelivery({ productId }: { productId: string }) {
           )}
         </div>
       ))}
+
+      {/* Delivery terms badge & free shipping threshold */}
+      <div className="mt-2.5 pt-2.5 border-t border-border flex flex-col gap-1">
+        <div className="flex items-center gap-1.5 text-[11.5px] font-extrabold text-success bg-success-subtle/30 px-2 py-1 rounded-md">
+          <Truck className="size-3.5 text-success shrink-0" strokeWidth={2.5} />
+          <span>
+            {isRu
+              ? 'Бесплатная доставка от 1 500 грн'
+              : 'Безкоштовна доставка від 1 500 грн'}
+          </span>
+        </div>
+        <p className="text-[10.5px] text-text-muted leading-tight px-0.5">
+          {isRu
+            ? 'Отправка в день заказа при оформлении до 15:00. Наложенный платёж или онлайн-оплата.'
+            : 'Відправка в день замовлення при оформленні до 15:00. Післяплата або онлайн-оплата.'}
+        </p>
+      </div>
     </div>
   )
 }
