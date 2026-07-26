@@ -181,6 +181,10 @@ const ATTR_LABELS_UK: Record<string, string> = {
   typ_kontaktov: 'Тип контактів',
   kolychestvo_kontaktov: 'Кількість контактів',
   krayina_vyrobnyk: 'Країна виробник',
+  tsvet: 'Колір',
+  kolir: 'Колір',
+  materyal_yzhotovlenyya: 'Матеріал виготовлення',
+  material_izgotovleniya: 'Матеріал виготовлення',
 }
 
 const ATTR_LABELS_RU: Record<string, string> = {
@@ -245,6 +249,10 @@ const ATTR_LABELS_RU: Record<string, string> = {
   typ_kontaktov: 'Тип контактов',
   kolychestvo_kontaktov: 'Количество контактов',
   krayina_vyrobnyk: 'Страна производитель',
+  tsvet: 'Цвет',
+  kolir: 'Цвет',
+  materyal_yzhotovlenyya: 'Материал изготовления',
+  material_izgotovleniya: 'Материал изготовления',
 }
 
 export function translateAttributeKey(key: string, locale: 'uk' | 'ru'): string {
