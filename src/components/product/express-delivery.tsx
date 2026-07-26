@@ -5,23 +5,88 @@ import { useTranslations, useLocale } from 'next-intl'
 import { Store, ChevronDown, Check, Truck } from 'lucide-react'
 import { createExpressOrder } from '@/actions/express-order'
 
-type Method = 'nova_poshta' | 'ukrposhta' | 'pickup'
+type Method = 'nova_poshta' | 'ukrposhta' | 'rozetka' | 'pickup'
 
-const carriers: { method: Method; mark: 'np' | 'up' | 'store'; nameKey: string; timeKey: string; free?: boolean }[] = [
-  { method: 'nova_poshta', mark: 'np', nameKey: 'delivery.novaPoshta', timeKey: 'delivery.timeNp' },
-  { method: 'ukrposhta', mark: 'up', nameKey: 'delivery.ukrposhta', timeKey: 'delivery.timeUp' },
-  { method: 'pickup', mark: 'store', nameKey: 'delivery.pickup', timeKey: 'delivery.pickupFree', free: true },
+interface CarrierItem {
+  method: Method
+  mark: 'np' | 'up' | 'rozetka' | 'store'
+  labelRu: string
+  labelUk: string
+  timeRu: string
+  timeUk: string
+  free?: boolean
+}
+
+const carriers: CarrierItem[] = [
+  {
+    method: 'nova_poshta',
+    mark: 'np',
+    labelRu: 'Новая Почта',
+    labelUk: 'Нова Пошта',
+    timeRu: '1-3 дня',
+    timeUk: '1-3 дні',
+  },
+  {
+    method: 'ukrposhta',
+    mark: 'up',
+    labelRu: 'Укрпочта',
+    labelUk: 'Укрпошта',
+    timeRu: '3-5 дней',
+    timeUk: '3-5 днів',
+  },
+  {
+    method: 'rozetka',
+    mark: 'rozetka',
+    labelRu: 'Точки выдачи Rozetka',
+    labelUk: 'Точки видачі Rozetka',
+    timeRu: '2-4 дня',
+    timeUk: '2-4 дні',
+  },
+  {
+    method: 'pickup',
+    mark: 'store',
+    labelRu: 'Самовывоз',
+    labelUk: 'Самовивіз',
+    timeRu: 'бесплатно',
+    timeUk: 'безкоштовно',
+    free: true,
+  },
 ]
 
-function Mark({ mark }: { mark: 'np' | 'up' | 'store' }) {
-  if (mark === 'np')
-    return <span className="shrink-0 w-12 h-6 rounded bg-[#da291c] text-white text-[9px] font-extrabold flex items-center justify-center">НП</span>
-  if (mark === 'up')
-    return <span className="shrink-0 w-12 h-6 rounded bg-[#ffd200] text-[#1a1a1a] text-[9px] font-extrabold flex items-center justify-center">УП</span>
+function Mark({ mark }: { mark: 'np' | 'up' | 'rozetka' | 'store' }) {
+  if (mark === 'np') {
+    return (
+      <div className="shrink-0 w-12 h-6 rounded bg-[#da291c] text-white text-[10px] font-black flex items-center justify-center tracking-tight shadow-2xs border border-[#b81d12]">
+        <span className="relative flex items-center gap-0.5">
+          НП
+          <span className="text-[7px] leading-none opacity-90">▲</span>
+        </span>
+      </div>
+    )
+  }
+
+  if (mark === 'up') {
+    return (
+      <div className="shrink-0 w-12 h-6 rounded bg-[#ffc200] text-[#002b66] text-[10px] font-black flex items-center justify-center gap-0.5 tracking-tight shadow-2xs border border-[#e0ab00]">
+        <span>УП</span>
+        <span className="size-1.5 rounded-full bg-[#002b66]" />
+      </div>
+    )
+  }
+
+  if (mark === 'rozetka') {
+    return (
+      <div className="shrink-0 w-12 h-6 rounded bg-[#00a046] text-white text-[10px] font-black flex items-center justify-center gap-0.5 tracking-tight shadow-2xs border border-[#008238]">
+        <span className="text-[11px] leading-none font-bold">:)</span>
+        <span className="text-[9.5px]">RZ</span>
+      </div>
+    )
+  }
+
   return (
-    <span className="shrink-0 w-12 h-6 rounded bg-surface-alt text-text-muted flex items-center justify-center">
-      <Store className="size-3.5" strokeWidth={2} />
-    </span>
+    <div className="shrink-0 w-12 h-6 rounded bg-surface-alt text-text-primary flex items-center justify-center border border-border">
+      <Store className="size-3.5 text-accent" strokeWidth={2.2} />
+    </div>
   )
 }
 
@@ -92,10 +157,10 @@ export function ExpressDelivery({ productId }: { productId: string }) {
           >
             <Mark mark={c.mark} />
             <span className="flex-1 text-left text-[12px] font-semibold text-text-primary group-hover:text-accent transition-colors">
-              {t(c.nameKey)}
+              {isRu ? c.labelRu : c.labelUk}
             </span>
             <span className={`text-[11px] whitespace-nowrap ${c.free ? 'text-success font-semibold' : 'text-text-muted'}`}>
-              {t(c.timeKey)}
+              {isRu ? c.timeRu : c.timeUk}
             </span>
             <ChevronDown
               className={`size-3.5 text-text-muted transition-transform ${openMethod === c.method ? 'rotate-180' : ''}`}
@@ -106,7 +171,18 @@ export function ExpressDelivery({ productId }: { productId: string }) {
             <form onSubmit={(e) => submit(e, c.method)} className="flex flex-col gap-2 mt-2 mb-1.5">
               <input value={city} onChange={(e) => setCity(e.target.value)} placeholder={t('express.city')} className={inputCls} />
               {c.method !== 'pickup' && (
-                <input value={branch} onChange={(e) => setBranch(e.target.value)} placeholder={t('express.branch')} className={inputCls} />
+                <input
+                  value={branch}
+                  onChange={(e) => setBranch(e.target.value)}
+                  placeholder={
+                    c.method === 'rozetka'
+                      ? isRu
+                        ? '№ или адрес точки выдачи Rozetka'
+                        : '№ або адреса точки видачі Rozetka'
+                      : t('express.branch')
+                  }
+                  className={inputCls}
+                />
               )}
               <input value={name} onChange={(e) => setName(e.target.value)} placeholder={t('express.name')} className={inputCls} />
               <input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+380XXXXXXXXX" inputMode="tel" className={inputCls} />

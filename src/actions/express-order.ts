@@ -7,7 +7,7 @@ import { logger } from '@/lib/logger'
 const ExpressOrderSchema = z.object({
   productId: z.string().min(1),
   quantity: z.number().int().min(1).max(999),
-  deliveryMethod: z.enum(['nova_poshta', 'ukrposhta', 'pickup']),
+  deliveryMethod: z.enum(['nova_poshta', 'ukrposhta', 'rozetka', 'pickup']),
   city: z.string().min(1).max(120),
   branch: z.string().max(120).optional(),
   name: z.string().min(1).max(120),
