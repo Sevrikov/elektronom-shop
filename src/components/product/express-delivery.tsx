@@ -123,21 +123,65 @@ export function ExpressDelivery({ productId }: { productId: string }) {
         </div>
       ))}
 
-      {/* Delivery terms badge & free shipping threshold */}
-      <div className="mt-2.5 pt-2.5 border-t border-border flex flex-col gap-1">
-        <div className="flex items-center gap-1.5 text-[11.5px] font-extrabold text-success bg-success-subtle/30 px-2 py-1 rounded-md">
-          <Truck className="size-3.5 text-success shrink-0" strokeWidth={2.5} />
+      {/* Detailed Delivery Terms & Buyer Guarantees */}
+      <div className="mt-3 pt-3 border-t border-border flex flex-col gap-2">
+        {/* Free Shipping Badge */}
+        <div className="flex items-center gap-2 text-[12px] font-extrabold text-success bg-success-subtle/40 px-2.5 py-1.5 rounded-lg border border-success/20">
+          <Truck className="size-4 text-success shrink-0" strokeWidth={2.5} />
           <span>
             {isRu
-              ? 'Бесплатная доставка от 1 500 грн'
-              : 'Безкоштовна доставка від 1 500 грн'}
+              ? 'Бесплатная доставка при заказе от 1 500 грн'
+              : 'Безкоштовна доставка при замовленні від 1 500 грн'}
           </span>
         </div>
-        <p className="text-[10.5px] text-text-muted leading-tight px-0.5">
-          {isRu
-            ? 'Отправка в день заказа при оформлении до 15:00. Наложенный платёж или онлайн-оплата.'
-            : 'Відправка в день замовлення при оформленні до 15:00. Післяплата або онлайн-оплата.'}
-        </p>
+
+        {/* Detailed Inspection & Guarantee Info Box */}
+        <div className="flex flex-col gap-2 text-[11px] text-text-primary bg-surface-alt/70 p-2.5 rounded-xl border border-border">
+          {/* Inspection before payment */}
+          <div className="flex items-start gap-2">
+            <span className="shrink-0 size-2 rounded-full bg-accent mt-1.5" />
+            <div className="flex flex-col leading-snug">
+              <span className="font-bold text-text-primary">
+                {isRu ? 'Осмотр перед покупкой & Право отказа:' : 'Огляд перед покупкою & Право відмови:'}
+              </span>
+              <span className="text-text-muted mt-0.5">
+                {isRu
+                  ? 'Вы принимаете решение о покупке только после личного осмотра и проверки качества товара при получении. Есть полное право отказаться на месте без каких-либо обязательств.'
+                  : 'Ви приймаєте рішення про покупку тільки після особистого огляду та перевірки якості товару при отриманні. Є повне право відмовитися на місці без будь-яких зобовʼязань.'}
+              </span>
+            </div>
+          </div>
+
+          {/* 14-day return & Nova Poshta Easy Return */}
+          <div className="flex items-start gap-2 pt-2 border-t border-border/60">
+            <span className="shrink-0 size-2 rounded-full bg-success mt-1.5" />
+            <div className="flex flex-col leading-snug">
+              <span className="font-bold text-text-primary">
+                {isRu ? '14 дней гарантированный возврат & «Легкий возврат»:' : '14 днів гарантоване повернення & «Легке повернення»:'}
+              </span>
+              <span className="text-text-muted mt-0.5">
+                {isRu
+                  ? 'Гарантированный возврат денег или обмен в течение 14 дней. Бесплатный удобный сервис «Легкий возврат» в приложении Новой Почты.'
+                  : 'Гарантоване повернення коштів або обмін протягом 14 днів. Безкоштовний зручний сервіс «Легке повернення» у додатку Нової Пошти.'}
+              </span>
+            </div>
+          </div>
+
+          {/* Warranty obligations */}
+          <div className="flex items-start gap-2 pt-2 border-t border-border/60">
+            <span className="shrink-0 size-2 rounded-full bg-accent mt-1.5" />
+            <div className="flex flex-col leading-snug">
+              <span className="font-bold text-text-primary">
+                {isRu ? 'Официальная гарантия соблюдается:' : 'Офіційна гарантія дотримується:'}
+              </span>
+              <span className="text-text-muted mt-0.5">
+                {isRu
+                  ? 'Все гарантийные обязательства производителя строго выполняются с предоставлением полного сервисного сопровождения.'
+                  : 'Усі гарантійні зобовʼязання виробника суворо виконуються з наданням повного сервісного супроводу.'}
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   )
