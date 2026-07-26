@@ -5,7 +5,7 @@ import { discountForQty, normalizeTiers, type WholesaleTier } from '@/lib/wholes
 
 /**
  * Interactive wholesale sparkline chart with ruler scale, active quantity tracking,
- * localized discount indicators, and +🚚 0₴ free shipping trigger.
+ * +🚚 0₴ free shipping indicator, and a prominent right-side red discount badge.
  */
 export function WholesaleChart({
   breaks,
@@ -28,11 +28,11 @@ export function WholesaleChart({
   const maxQ = lastTier.min
   const maxDiscount = lastTier.discount
 
-  const W = 200
+  const W = 175
   const H = 72
-  const padLeft = 16
-  const padRight = 20
-  const padTop = 22
+  const padLeft = 14
+  const padRight = 10
+  const padTop = 20
   const padBottom = 20
 
   const innerW = W - padLeft - padRight
@@ -58,8 +58,10 @@ export function WholesaleChart({
   const currentTotal = unitPrice * qty
   const hasFreeDelivery = currentTotal >= 1500
 
+  const displayDiscount = curDiscount > 0 ? curDiscount : maxDiscount
+
   return (
-    <div className="flex flex-col items-start gap-0.5 shrink-0 select-none">
+    <div className="flex items-center gap-2.5 shrink-0 select-none">
       <svg
         viewBox={`0 0 ${W} ${H}`}
         width={W}
@@ -78,11 +80,6 @@ export function WholesaleChart({
         {/* Top Y-axis Label: Знижка % / Скидка % */}
         <text x={padLeft - 4} y={11} fontSize="9.5" fontWeight="700" fill="var(--color-text-muted)" textAnchor="start">
           {yAxisLabel}
-        </text>
-
-        {/* Max Discount Label (Top Right) -> RED & LARGER */}
-        <text x={W - padRight + 4} y={11} fontSize="11" fontWeight="900" fill="#ef4444" textAnchor="end">
-          −{maxDiscount}%
         </text>
 
         {/* Gradient fill area under line */}
@@ -117,30 +114,28 @@ export function WholesaleChart({
         <line x1={curX} y1={baseY} x2={curX} y2={curY} stroke="#ef4444" strokeWidth="1" strokeDasharray="2 2" opacity="0.8" />
 
         {/* Free Shipping Badge +🚚 0₴ when currentTotal >= 1500 */}
-        {hasFreeDelivery ? (
-          <g transform={`translate(${Math.min(W - padRight - 22, Math.max(padLeft + 22, curX))}, ${Math.max(10, curY - 17)})`}>
+        {hasFreeDelivery && (
+          <g transform={`translate(${Math.min(W - padRight - 20, Math.max(padLeft + 20, curX))}, ${Math.max(10, curY - 15)})`}>
             <rect x="-22" y="-10" width="44" height="13" rx="3.5" fill="#16a34a" />
             <text x="0" y="0" fontSize="8.5" fontWeight="900" fill="#ffffff" textAnchor="middle">
               +🚚 0₴
             </text>
           </g>
-        ) : (
-          /* Dynamic Discount % Label above Active Red Dot */
-          <text
-            x={curX}
-            y={Math.max(12, curY - 6)}
-            fontSize="9.5"
-            fontWeight="800"
-            fill="#ef4444"
-            textAnchor="middle"
-          >
-            {curDiscount > 0 ? `−${curDiscount}%` : '0%'}
-          </text>
         )}
 
-        {/* Active Selection RED Dot */}
-        <circle cx={curX} cy={curY} r="3.5" fill={hasFreeDelivery ? "#16a34a" : "#ef4444"} stroke="#ffffff" strokeWidth="1.5" />
+        {/* Active Selection RED/GREEN Dot */}
+        <circle cx={curX} cy={curY} r="3.5" fill={hasFreeDelivery ? '#16a34a' : '#ef4444'} stroke="#ffffff" strokeWidth="1.5" />
       </svg>
+
+      {/* Red Discount Plashka to the Right of the Chart */}
+      <div className="flex flex-col items-center justify-center bg-red-500/10 border-2 border-red-500/30 px-3 py-1.5 rounded-xl shrink-0 shadow-xs">
+        <span className="text-[10px] font-extrabold text-text-muted uppercase tracking-tight leading-none">
+          {isRu ? 'Скидка' : 'Знижка'}
+        </span>
+        <span className="text-[20px] font-black text-red-500 num leading-tight mt-0.5">
+          −{displayDiscount}%
+        </span>
+      </div>
     </div>
   )
 }
