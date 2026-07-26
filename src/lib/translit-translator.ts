@@ -19,15 +19,23 @@ const TRANSLIT_WORDS: Record<string, { uk: string; ru: string }> = {
   ustroistv: { uk: 'пристроїв', ru: 'устройств' },
   sht: { uk: 'шт.', ru: 'шт.' },
   kh: { uk: 'кг', ru: 'кг' },
+  kg: { uk: 'кг', ru: 'кг' },
   v: { uk: 'в', ru: 'в' },
   yashchyku: { uk: 'упаковці', ru: 'упаковке' },
   yashchyka: { uk: 'упаковки', ru: 'упаковки' },
   yashchike: { uk: 'упаковке', ru: 'упаковке' },
-  ves: { uk: 'маса', ru: 'масса' },
+  ves: { uk: 'вага', ru: 'вес' },
   ob: { uk: 'об\'єм', ru: 'объем' },
   yem: { uk: 'об\'єм', ru: 'объем' },
   vidpovidnist: { uk: 'відповідність', ru: 'соответствие' },
   standartam: { uk: 'стандартам', ru: 'стандартам' },
+  standard: { uk: 'стандарт', ru: 'стандарт' },
+  standart: { uk: 'стандарт', ru: 'стандарт' },
+  curve: { uk: 'характеристика', ru: 'характеристика' },
+  poles: { uk: 'полюси', ru: 'полюсы' },
+  artykul: { uk: 'артикул', ru: 'артикул' },
+  artikul: { uk: 'артикул', ru: 'артикул' },
+  perevaha: { uk: 'перевага', ru: 'преимущество' },
   fokusnoe: { uk: 'фокусна', ru: 'фокусное' },
   rasstoyanye: { uk: 'відстань', ru: 'расстояние' },
   rasstoyanie: { uk: 'відстань', ru: 'расстояние' },
@@ -116,10 +124,22 @@ const ATTR_LABELS_UK: Record<string, string> = {
   rating_a: 'Номінальний струм, А',
   breaking_ka: 'Відключна здатність, кА',
   voltage_v: 'Номінальна напруга, В',
-  curve: 'Характеристика спрацювання',
+  curve: 'Характеристика відключення',
   color: 'Колір',
   size: 'Розмір',
-  weight_kg: 'Маса, кг',
+  weight_kg: 'Вага, кг',
+  ves_kh: 'Вага, кг',
+  ves_kg: 'Вага, кг',
+  ves: 'Вага, кг',
+  ob_yem_kh: 'Об\'єм, м³',
+  ob_yem: 'Об\'єм, м³',
+  artykul: 'Артикул',
+  artikul: 'Артикул',
+  standard: 'Стандарт',
+  standart: 'Стандарт',
+  perevaha_1: 'Перевага 1',
+  perevaha_2: 'Перевага 2',
+  perevaha_3: 'Перевага 3',
   material: 'Матеріал',
   ip_class: 'Ступінь захисту IP',
   power_w: 'Потужність, Вт',
@@ -164,10 +184,22 @@ const ATTR_LABELS_RU: Record<string, string> = {
   rating_a: 'Номинальный ток, А',
   breaking_ka: 'Отключающая способность, кА',
   voltage_v: 'Номинальное напряжение, В',
-  curve: 'Характеристика срабатывания',
+  curve: 'Характеристика отключения',
   color: 'Цвет',
   size: 'Размер',
-  weight_kg: 'Масса, кг',
+  weight_kg: 'Вес, кг',
+  ves_kh: 'Вес, кг',
+  ves_kg: 'Вес, кг',
+  ves: 'Вес, кг',
+  ob_yem_kh: 'Объем, м³',
+  ob_yem: 'Объем, м³',
+  artykul: 'Артикул',
+  artikul: 'Артикул',
+  standard: 'Стандарт',
+  standart: 'Стандарт',
+  perevaha_1: 'Преимущество 1',
+  perevaha_2: 'Преимущество 2',
+  perevaha_3: 'Преимущество 3',
   material: 'Материал',
   ip_class: 'Степень защиты IP',
   power_w: 'Мощность, Вт',
@@ -208,8 +240,11 @@ const ATTR_LABELS_RU: Record<string, string> = {
 }
 
 export function translateAttributeKey(key: string, locale: 'uk' | 'ru'): string {
-  // 1. Check direct overrides
+  const normKey = key.toLowerCase().trim().replace(/[\s-]+/g, '_')
   const dict = locale === 'ru' ? ATTR_LABELS_RU : ATTR_LABELS_UK
+  
+  // 1. Direct match on normalized key or raw key
+  if (dict[normKey]) return dict[normKey]
   if (dict[key]) return dict[key]
 
   // 2. Otherwise split key into words, translate each word if found in dictionary
@@ -219,7 +254,6 @@ export function translateAttributeKey(key: string, locale: 'uk' | 'ru'): string 
     if (TRANSLIT_WORDS[norm]) {
       return TRANSLIT_WORDS[norm][locale]
     }
-    // Fallback: capitalize if it was capitalized, otherwise keep
     if (w && w.charAt(0) === w.charAt(0).toUpperCase()) {
       return w.charAt(0).toUpperCase() + w.slice(1)
     }
@@ -237,11 +271,9 @@ export function translateAttributeValue(value: unknown, locale: 'uk' | 'ru'): st
   if (value === null || value === undefined) return '—'
   const str = String(value)
   
-  // If value matches a word in TRANSLIT_WORDS, translate it
   const norm = str.trim().toLowerCase()
   if (TRANSLIT_WORDS[norm]) {
     const translated = TRANSLIT_WORDS[norm][locale]
-    // Capitalize if the original was capitalized
     const trimmed = str.trim()
     if (trimmed && trimmed.charAt(0) === trimmed.charAt(0).toUpperCase()) {
       return translated.charAt(0).toUpperCase() + translated.slice(1)
@@ -249,7 +281,6 @@ export function translateAttributeValue(value: unknown, locale: 'uk' | 'ru'): st
     return translated
   }
 
-  // Handle multi-word values (e.g. "Belyi plastik")
   if (str.includes(' ') || str.includes('_') || str.includes('-')) {
     const words = str.split(/[\s_-]+/)
     let allTranslated = true
@@ -274,13 +305,10 @@ export function translateAttributeValue(value: unknown, locale: 'uk' | 'ru'): st
 }
 
 const KEY_PRIORITY = [
-  // General & Type
   'typ_vyrobu',
   'komplektatsiya_vyrobu',
   'typ_montazhu',
   'krayina_vyrobnyk',
-  
-  // Electrical Ratings
   'nominalnyi_strum_a',
   'nominalna_robocha_napruha_ue_v',
   'nominalna_napruha_v',
@@ -289,28 +317,27 @@ const KEY_PRIORITY = [
   'skorist',
   'klichestvo_polusov',
   'kilkist_polusiv',
+  'poles',
+  'curve',
+  'standard',
+  'artykul',
+  'ves_kh',
+  'ves',
+  'ob_yem_kh',
   'kharakterystyka_spratsyovuvannya',
   'vremya_tokov_e_kharakterystyky',
   'nomynalnaia_otkluchaiushchaia_sposobnost_ka',
-  
-  // Contacts & Poles
   'kolychestvo_kontaktov',
   'typ_kontaktov',
   'kontakty',
-  
-  // Color & Aesthetic
   'kolir',
   'tsvet',
   'pidsvichuvannya',
   'podsvetka',
-  
-  // Protection & Materials
   'stupin_zakhystu',
   'stepen_zashchyt',
   'stepen_zashchyt_ip',
   'ip_class',
-  
-  // Other physical properties
   'material',
   'srezae',
   'poperechnyi_pereriz_provoda_mm',
@@ -318,8 +345,6 @@ const KEY_PRIORITY = [
   'temperatura',
   'vaga',
   'razmery',
-  
-  // Low priority
   'kilkist_v_upakovtsi_sht',
   'kilkist_v_yashchyku_sht',
   'kilkist_v_yashchyku_up',
@@ -351,4 +376,3 @@ export function sortAttributeEntries(entries: [string, unknown][]): [string, unk
     return keyA.localeCompare(keyB)
   })
 }
-

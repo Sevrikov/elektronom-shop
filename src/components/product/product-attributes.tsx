@@ -54,10 +54,10 @@ export function ProductAttributes({ attributes, locale }: ProductAttributesProps
                 key={key}
                 className="bg-surface-white odd:bg-surface-alt border-b border-border last:border-b-0"
               >
-                <td className="px-4 py-2.5 font-medium w-1/2 text-text-muted">
+                <td className="px-4 py-2.5 font-medium w-1/3 text-text-muted break-words">
                   {getLabel(key, locale)}
                 </td>
-                <td className="px-4 py-2.5 num text-text-primary">
+                <td className="px-4 py-2.5 num text-text-primary w-2/3 break-words">
                   {formatValue(key, value, locale)}
                 </td>
               </tr>

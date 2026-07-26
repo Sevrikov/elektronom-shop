@@ -356,18 +356,21 @@ export default async function ProductPage({
 
               {/* Inline key specs — dotted rows like mockup */}
               {Object.keys(displayAttrs).length > 0 && (
-                <div className="flex flex-col gap-1 pt-3 mt-1 border-t border-border">
-                  {Object.entries(displayAttrs).slice(0, 8).map(([key, value]) => (
-                    <div key={key} className="flex items-end gap-2 text-[13px] py-0.5">
-                      <span className="text-text-muted whitespace-nowrap shrink-0">
-                        {translateAttributeKey(key, locale === 'ru' ? 'ru' : 'uk')}
-                      </span>
-                      <span className="flex-1 border-b border-dotted border-border-strong min-w-[20px]" />
-                      <span className="font-semibold text-text-primary text-right break-words min-w-0">
-                        {translateAttributeValue(value, locale === 'ru' ? 'ru' : 'uk')}
-                      </span>
-                    </div>
-                  ))}
+                <div className="flex flex-col gap-1 pt-3 mt-1 border-t border-border overflow-hidden">
+                  {Object.entries(displayAttrs)
+                    .filter(([k, v]) => !k.toLowerCase().includes('perevaha') && String(v).length <= 60)
+                    .slice(0, 8)
+                    .map(([key, value]) => (
+                      <div key={key} className="flex items-end gap-2 text-[13px] py-0.5 max-w-full">
+                        <span className="text-text-muted whitespace-nowrap shrink-0 max-w-[50%] truncate">
+                          {translateAttributeKey(key, locale === 'ru' ? 'ru' : 'uk')}
+                        </span>
+                        <span className="flex-1 border-b border-dotted border-border-strong min-w-[10px]" />
+                        <span className="font-semibold text-text-primary text-right break-words max-w-[50%] min-w-0">
+                          {translateAttributeValue(value, locale === 'ru' ? 'ru' : 'uk')}
+                        </span>
+                      </div>
+                    ))}
                 </div>
               )}
             </div>
