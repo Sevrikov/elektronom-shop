@@ -30,9 +30,6 @@ import { ProductArticles } from '@/components/blog/product-articles'
 import { ProductTabsNav } from '@/components/product/product-tabs-nav'
 import { ProductReviewsLink } from '@/components/product/product-reviews-link'
 
-export const revalidate = 0
-export const dynamic = 'force-dynamic'
-
 // ─── generateStaticParams — top-100 товаров ─────────────────────────────────
 
 export async function generateStaticParams() {
