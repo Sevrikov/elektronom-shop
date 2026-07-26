@@ -3,8 +3,9 @@
  */
 export function getImageUrl(urlOrPath: string): string {
   if (!urlOrPath) return ''
-  if (urlOrPath.startsWith('http://') || urlOrPath.startsWith('https://')) {
-    return urlOrPath
+  const activeCloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || 'bzzecoeb'
+  if (urlOrPath.includes('res.cloudinary.com/')) {
+    return urlOrPath.replace(/res\.cloudinary\.com\/[^\/]+\//, `res.cloudinary.com/${activeCloudName}/`)
   }
   return urlOrPath
 }
@@ -26,10 +27,16 @@ export function getTransformedImageUrl(
   }
 ): string {
   const isProcessed = typeof image !== 'string' && !!image?.processedUrl
-  const url = typeof image === 'string' ? image : (image?.processedUrl || image?.url)
+  let url = typeof image === 'string' ? image : (image?.processedUrl || image?.url)
   const provider = typeof image === 'string' ? null : image?.provider
 
   if (!url) return ''
+
+  // Fix legacy Cloudinary cloud_name (dpfye2xce -> bzzecoeb)
+  const activeCloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || 'bzzecoeb'
+  if (url.includes('res.cloudinary.com/')) {
+    url = url.replace(/res\.cloudinary\.com\/[^\/]+\//, `res.cloudinary.com/${activeCloudName}/`)
+  }
 
   // Check if it's Cloudinary, either via provider or URL domain
   const isCloudinary = provider === 'CLOUDINARY' || url.includes('res.cloudinary.com')
