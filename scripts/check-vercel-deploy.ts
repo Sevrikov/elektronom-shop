@@ -4,10 +4,9 @@ async function main() {
   const res = await fetch(url)
   const text = await res.text()
   
-  console.log('Includes "Кількість полюсів":', text.includes('Кількість полюсів'))
-  console.log('Includes "Характеристика відключення":', text.includes('Характеристика відключення'))
-  console.log('Includes "Вага, кг":', text.includes('Вага, кг'))
-  console.log('Includes "Perevaha":', text.includes('Perevaha'))
+  console.log('Includes "Тип монтажу":', text.includes('Тип монтажу'))
+  console.log('Includes "Частота струму":', text.includes('Частота струму'))
+  console.log('Includes "Роль":', text.includes('Роль'))
 }
 
 main()
