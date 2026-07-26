@@ -49,7 +49,7 @@ export function ProductBuyBox({
 
   return (
     <div className="flex flex-col gap-3 mt-1">
-      {/* Price + quantity + live sum */}
+      {/* Price + quantity + live sum + chart + Nova Poshta 0 UAH trigger */}
       <div className="flex items-center gap-x-5 gap-y-2 flex-wrap">
         <div className="flex items-end gap-3.5">
           <span className="text-[38px] font-extrabold tracking-tight leading-none num text-text-primary">
@@ -101,6 +101,28 @@ export function ProductBuyBox({
             </div>
 
             {tiers.length > 0 && <WholesaleChart breaks={breaks} qty={qty} unitPrice={unitPrice} />}
+
+            {/* Large Red Auto / Nova Poshta 0 UAH badge triggered at 1500 UAH */}
+            {sum >= 1500 && (
+              <div className="flex items-center gap-2.5 bg-[#da291c]/10 border-2 border-[#da291c]/40 px-3 py-1.5 rounded-xl shrink-0 animate-in fade-in zoom-in-95 duration-200 shadow-sm">
+                <div className="relative flex items-center justify-center size-9 rounded-lg bg-[#da291c] text-white shrink-0 shadow-xs">
+                  <Truck className="size-5 text-white" strokeWidth={2.2} />
+                  <span className="absolute -bottom-1 -right-1 bg-white text-[#da291c] text-[8px] font-black px-1 rounded border border-[#da291c] leading-tight">
+                    НП
+                  </span>
+                </div>
+
+                <div className="flex flex-col leading-tight">
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-[15px] font-black text-[#da291c] num leading-none">0 ₴</span>
+                    <span className="text-[10px] font-extrabold text-[#da291c] uppercase">{isRu ? 'Доставка' : 'Доставка'}</span>
+                  </div>
+                  <span className="text-[9.5px] font-bold text-text-muted mt-0.5">
+                    {isRu ? 'Новая Почта' : 'Нова Пошта'}
+                  </span>
+                </div>
+              </div>
+            )}
           </>
         )}
       </div>
