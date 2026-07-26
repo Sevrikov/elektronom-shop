@@ -92,9 +92,9 @@ export function ProductGallery({ images, productName, locale }: ProductGalleryPr
 
   return (
     <>
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-3.5 h-full">
         {/* Main image */}
-        <div className="relative overflow-hidden rounded-lg bg-surface-alt border border-border aspect-square group">
+        <div className="relative overflow-hidden rounded-xl bg-surface-alt border border-border aspect-square group">
           {activeImage ? (
             <>
               <div
@@ -151,22 +151,24 @@ export function ProductGallery({ images, productName, locale }: ProductGalleryPr
           )}
         </div>
 
-        {/* Thumbnail strip */}
+        {/* Expanded Thumbnail Strip */}
         {images.length > 1 && (
-          <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent">
+          <div className="flex gap-2.5 overflow-x-auto pb-1.5 scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent">
             {images.map((img, index) => (
               <button
                 key={img.id ?? index}
                 onClick={() => setActiveIndex(index)}
                 aria-label={`Фото ${index + 1}`}
-                className={`relative shrink-0 rounded-lg overflow-hidden transition-all w-16 h-16 bg-surface-alt border cursor-pointer ${
-                  index === activeIndex ? 'border-2 border-accent shadow-sm' : 'border-border hover:border-border-strong'
+                className={`relative shrink-0 rounded-xl overflow-hidden transition-all w-20 h-20 sm:w-[84px] sm:h-[84px] bg-surface-alt border cursor-pointer ${
+                  index === activeIndex
+                    ? 'border-2 border-accent shadow-md ring-2 ring-accent/20'
+                    : 'border-border hover:border-border-strong hover:shadow-sm'
                 }`}
               >
                 <TransparentImage
-                  src={getTransformedImageUrl(img, { width: 150, height: 150, crop: 'fill' })}
+                  src={getTransformedImageUrl(img, { width: 250, height: 250, crop: 'fill' })}
                   alt={img.alt ?? `${productName} ${index + 1}`}
-                  className="p-1"
+                  className="p-1.5"
                 />
               </button>
             ))}
@@ -240,4 +242,3 @@ export function ProductGallery({ images, productName, locale }: ProductGalleryPr
     </>
   )
 }
-
