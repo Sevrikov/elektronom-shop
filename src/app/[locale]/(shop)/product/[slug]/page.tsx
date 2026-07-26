@@ -167,7 +167,8 @@ export default async function ProductPage({
   // Remove qty_breaks from displayed attributes and sort by priority
   const displayAttrs = Object.fromEntries(
     sortAttributeEntries(
-      Object.entries(attrs).filter(([k]) => k !== 'qty_breaks')
+      Object.entries(attrs).filter(([k]) => k !== 'qty_breaks'),
+      locale === 'ru' ? 'ru' : 'uk'
     )
   )
 

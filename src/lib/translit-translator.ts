@@ -389,8 +389,27 @@ const KEY_PRIORITY = [
   'qty_breaks',
 ]
 
-export function sortAttributeEntries(entries: [string, unknown][]): [string, unknown][] {
-  return [...entries].sort(([keyA], [keyB]) => {
+export function sortAttributeEntries(
+  entries: [string, unknown][],
+  locale: 'uk' | 'ru' = 'uk'
+): [string, unknown][] {
+  // 1. Filter out marketing and internal system keys
+  const filtered = entries.filter(([key]) => {
+    const k = key.toLowerCase().trim()
+    if (
+      k.startsWith('perevaha_') ||
+      k.includes('perevaha') ||
+      k === 'qty_breaks' ||
+      k === 'engineeringrole' ||
+      k === 'role'
+    ) {
+      return false
+    }
+    return true
+  })
+
+  // 2. Sort by KEY_PRIORITY
+  const sorted = [...filtered].sort(([keyA], [keyB]) => {
     const cleanKeyA = keyA.toLowerCase().trim()
     const cleanKeyB = keyB.toLowerCase().trim()
 
@@ -398,10 +417,10 @@ export function sortAttributeEntries(entries: [string, unknown][]): [string, unk
     let indexB = KEY_PRIORITY.indexOf(cleanKeyB)
 
     if (indexA === -1) {
-      indexA = KEY_PRIORITY.findIndex(pk => cleanKeyA.includes(pk))
+      indexA = KEY_PRIORITY.findIndex((pk) => cleanKeyA.includes(pk))
     }
     if (indexB === -1) {
-      indexB = KEY_PRIORITY.findIndex(pk => cleanKeyB.includes(pk))
+      indexB = KEY_PRIORITY.findIndex((pk) => cleanKeyB.includes(pk))
     }
 
     const valA = indexA === -1 ? 999 : indexA
@@ -413,4 +432,50 @@ export function sortAttributeEntries(entries: [string, unknown][]): [string, unk
 
     return keyA.localeCompare(keyB)
   })
+
+  // 3. Concept deduplication (merge technical synonyms like Nominal Current 4A vs 4)
+  const conceptMap: Record<string, string> = {
+    nominalnyy_robochyy_strum_ie_a: 'current',
+    nominalnyi_strum_a: 'current',
+    ratedcurrenta: 'current',
+    nomynaln_y_tok: 'current',
+    nominalna_robocha_napruha_ue_v: 'voltage',
+    nomynalnoe_rabochee_napryazhenye_po_peremennomu_toku: 'voltage',
+    nominalna_napruha_v: 'voltage',
+    napruga: 'voltage',
+    kolychestvo_polyusov: 'poles',
+    kilkist_polusiv: 'poles',
+    poles: 'poles',
+    vidpovidnist_standartam: 'standard',
+    standard: 'standard',
+    standart: 'standard',
+    kharakterystyka_vidklyuchennya: 'curve',
+    kharakterystyka_spratsyovuvannya: 'curve',
+    curve: 'curve',
+  }
+
+  const seenConcepts = new Set<string>()
+  const seenLabels = new Set<string>()
+  const result: [string, unknown][] = []
+
+  for (const [key, val] of sorted) {
+    const normKey = key.toLowerCase().trim().replace(/[\s-]+/g, '_')
+    const label = translateAttributeKey(key, locale)
+    const normLabel = label.toLowerCase().trim()
+
+    // Deduplicate concept synonyms
+    const concept = conceptMap[normKey]
+    if (concept) {
+      if (seenConcepts.has(concept)) continue
+      seenConcepts.add(concept)
+    }
+
+    // Deduplicate identical translated labels
+    if (seenLabels.has(normLabel)) continue
+    seenLabels.add(normLabel)
+
+    result.push([key, val])
+  }
+
+  return result
 }

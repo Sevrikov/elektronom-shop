@@ -30,7 +30,7 @@ function formatValue(key: string, value: unknown, locale?: string): string {
 
 export function ProductAttributes({ attributes, locale }: ProductAttributesProps) {
   // 1. Сначала сортируем по приоритету и удаляем дубликаты
-  const sortedEntries = sortAttributeEntries(Object.entries(attributes))
+  const sortedEntries = sortAttributeEntries(Object.entries(attributes), locale === 'ru' ? 'ru' : 'uk')
 
   // 2. Фильтруем только технические характеристики (исключаем рекламные переваги и непустые значения)
   const entries = sortedEntries.filter(
