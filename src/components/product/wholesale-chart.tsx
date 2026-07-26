@@ -5,9 +5,17 @@ import { discountForQty, normalizeTiers, type WholesaleTier } from '@/lib/wholes
 
 /**
  * Interactive wholesale sparkline chart with ruler scale, active quantity tracking,
- * and localized discount indicators.
+ * localized discount indicators, and +🚚 0₴ free shipping trigger.
  */
-export function WholesaleChart({ breaks, qty }: { breaks: WholesaleTier[]; qty: number }) {
+export function WholesaleChart({
+  breaks,
+  qty,
+  unitPrice = 0,
+}: {
+  breaks: WholesaleTier[]
+  qty: number
+  unitPrice?: number
+}) {
   const locale = useLocale()
   const isRu = locale === 'ru'
   const yAxisLabel = isRu ? 'Скидка %' : 'Знижка %'
@@ -46,6 +54,9 @@ export function WholesaleChart({ breaks, qty }: { breaks: WholesaleTier[]; qty: 
   const curDiscount = discountForQty(qty, tiers)
   const curX = xOf(qty)
   const curY = yOf(curDiscount)
+
+  const currentTotal = unitPrice * qty
+  const hasFreeDelivery = currentTotal >= 1500
 
   return (
     <div className="flex flex-col items-start gap-0.5 shrink-0 select-none">
@@ -105,20 +116,30 @@ export function WholesaleChart({ breaks, qty }: { breaks: WholesaleTier[]; qty: 
         {/* Active Selection vertical line */}
         <line x1={curX} y1={baseY} x2={curX} y2={curY} stroke="#ef4444" strokeWidth="1" strokeDasharray="2 2" opacity="0.8" />
 
-        {/* Dynamic Discount % Label above Active Red Dot */}
-        <text
-          x={curX}
-          y={Math.max(12, curY - 6)}
-          fontSize="9.5"
-          fontWeight="800"
-          fill="#ef4444"
-          textAnchor="middle"
-        >
-          {curDiscount > 0 ? `−${curDiscount}%` : '0%'}
-        </text>
+        {/* Free Shipping Badge +🚚 0₴ when currentTotal >= 1500 */}
+        {hasFreeDelivery ? (
+          <g transform={`translate(${Math.min(W - padRight - 22, Math.max(padLeft + 22, curX))}, ${Math.max(10, curY - 17)})`}>
+            <rect x="-22" y="-10" width="44" height="13" rx="3.5" fill="#16a34a" />
+            <text x="0" y="0" fontSize="8.5" fontWeight="900" fill="#ffffff" textAnchor="middle">
+              +🚚 0₴
+            </text>
+          </g>
+        ) : (
+          /* Dynamic Discount % Label above Active Red Dot */
+          <text
+            x={curX}
+            y={Math.max(12, curY - 6)}
+            fontSize="9.5"
+            fontWeight="800"
+            fill="#ef4444"
+            textAnchor="middle"
+          >
+            {curDiscount > 0 ? `−${curDiscount}%` : '0%'}
+          </text>
+        )}
 
         {/* Active Selection RED Dot */}
-        <circle cx={curX} cy={curY} r="3.5" fill="#ef4444" stroke="#ffffff" strokeWidth="1.5" />
+        <circle cx={curX} cy={curY} r="3.5" fill={hasFreeDelivery ? "#16a34a" : "#ef4444"} stroke="#ffffff" strokeWidth="1.5" />
       </svg>
     </div>
   )

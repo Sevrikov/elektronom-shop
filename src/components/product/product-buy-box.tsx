@@ -1,8 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { useTranslations } from 'next-intl'
-import { Minus, Plus } from 'lucide-react'
+import { useTranslations, useLocale } from 'next-intl'
+import { Minus, Plus, Truck } from 'lucide-react'
 import { formatPrice } from '@/lib/utils'
 import { discountForQty, normalizeTiers, type WholesaleTier } from '@/lib/wholesale'
 import { AddToCartButton } from '@/components/cart/add-to-cart-button'
@@ -33,6 +33,9 @@ export function ProductBuyBox({
   breaks,
 }: ProductBuyBoxProps) {
   const t = useTranslations('pdp')
+  const locale = useLocale()
+  const isRu = locale === 'ru'
+
   const max = Math.max(1, stock)
   const [qty, setQty] = useState(1)
 
@@ -80,9 +83,24 @@ export function ProductBuyBox({
                   {formatPrice(unitPrice)}/{t('qtyBreaks.unit')} · {t('buyBox.opt')} −{wholesaleDiscount}%
                 </span>
               )}
+
+              {/* Free delivery indicator connected to sum & 1500 UAH threshold */}
+              <div className="mt-1">
+                {sum >= 1500 ? (
+                  <span className="inline-flex items-center gap-1 text-[10.5px] font-extrabold text-success bg-success-subtle px-2 py-0.5 rounded border border-success/30">
+                    <Truck className="size-3 text-success shrink-0" strokeWidth={2.5} />
+                    + 🚚 0 ₴ {isRu ? 'Доставка' : 'Доставка'}
+                  </span>
+                ) : (
+                  <span className="text-[10px] font-medium text-text-muted block">
+                    {isRu ? 'До 🚚 0 ₴ ещё ' : 'До 🚚 0 ₴ ще '}
+                    <strong className="text-success font-extrabold num">{formatPrice(1500 - sum)}</strong>
+                  </span>
+                )}
+              </div>
             </div>
 
-            {tiers.length > 0 && <WholesaleChart breaks={breaks} qty={qty} />}
+            {tiers.length > 0 && <WholesaleChart breaks={breaks} qty={qty} unitPrice={unitPrice} />}
           </>
         )}
       </div>

@@ -125,14 +125,26 @@ export function ExpressDelivery({ productId }: { productId: string }) {
 
       {/* Detailed Delivery Terms & Buyer Guarantees */}
       <div className="mt-3 pt-3 border-t border-border flex flex-col gap-2">
-        {/* Free Shipping Badge */}
-        <div className="flex items-center gap-2 text-[12px] font-extrabold text-success bg-success-subtle/40 px-2.5 py-1.5 rounded-lg border border-success/20">
-          <Truck className="size-4 text-success shrink-0" strokeWidth={2.5} />
-          <span>
-            {isRu
-              ? 'Бесплатная доставка при заказе от 1 500 грн'
-              : 'Безкоштовна доставка при замовленні від 1 500 грн'}
-          </span>
+        {/* Free Shipping Badge with Separated Large 1 500 ₴ Zone */}
+        <div className="flex items-center justify-between gap-2.5 text-success bg-success-subtle/40 p-2.5 rounded-xl border border-success/20">
+          <div className="flex items-center gap-2.5">
+            <div className="size-7 rounded-full bg-success/15 text-success flex items-center justify-center shrink-0">
+              <Truck className="size-4 text-success" strokeWidth={2.5} />
+            </div>
+            <div className="flex flex-col text-[12px] font-extrabold leading-tight text-success">
+              <span>{isRu ? 'Бесплатная доставка' : 'Безкоштовна доставка'}</span>
+              <span className="text-[10.5px] text-text-muted font-semibold">
+                {isRu ? 'при заказе от' : 'при замовленні від'}
+              </span>
+            </div>
+          </div>
+
+          {/* Separated right zone with large number */}
+          <div className="shrink-0 pl-3 border-l border-success/25 flex flex-col items-end justify-center">
+            <span className="text-[17px] font-black text-success tracking-tight leading-none num">
+              1 500 ₴
+            </span>
+          </div>
         </div>
 
         {/* Detailed Inspection & Guarantee Info Box */}
