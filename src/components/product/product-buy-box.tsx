@@ -49,10 +49,10 @@ export function ProductBuyBox({
 
   return (
     <div className="flex flex-col gap-2.5 mt-1">
-      {/* Dense 1-row layout: Price + stepper + live sum + chart + Nova Poshta 0 UAH trigger */}
+      {/* 1-row layout with STABLE FIXED WIDTHS for price & sum so chart position never shifts */}
       <div className="flex items-center gap-x-2.5 gap-y-1.5 flex-wrap sm:flex-nowrap">
-        {/* Main Price */}
-        <div className="flex items-end gap-1.5 shrink-0">
+        {/* Main Unit Price */}
+        <div className="flex items-end gap-1.5 shrink-0 min-w-[100px]">
           <span className="text-[28px] xl:text-[32px] font-extrabold tracking-tight leading-none num text-text-primary">
             {formatPrice(price)}
           </span>
@@ -77,12 +77,12 @@ export function ProductBuyBox({
               </button>
             </div>
 
-            {/* Live Sum & Free Delivery progress */}
-            <div className="flex flex-col leading-tight shrink-0">
+            {/* Live Sum & Free Delivery progress - FIXED WIDTH to prevent shifting chart */}
+            <div className="flex flex-col leading-tight shrink-0 w-[120px]">
               <span className="text-[10px] font-medium uppercase tracking-wide text-text-muted">{t('buyBox.sum')}</span>
-              <span className="text-[16px] font-extrabold num leading-none text-text-primary">{formatPrice(sum)}</span>
+              <span className="text-[15px] xl:text-[16px] font-extrabold num leading-none text-text-primary truncate">{formatPrice(sum)}</span>
               {wholesaleDiscount > 0 && (
-                <span className="text-[9.5px] font-semibold text-success mt-0.5 num">
+                <span className="text-[9px] font-semibold text-success mt-0.5 num truncate">
                   {formatPrice(unitPrice)}/{t('qtyBreaks.unit')} · −{wholesaleDiscount}%
                 </span>
               )}
@@ -90,12 +90,12 @@ export function ProductBuyBox({
               {/* Free delivery indicator connected to sum & 1500 UAH threshold */}
               <div className="mt-0.5">
                 {sum >= 1500 ? (
-                  <span className="inline-flex items-center gap-1 text-[9.5px] font-extrabold text-success bg-success-subtle px-1.5 py-0.5 rounded border border-success/30">
+                  <span className="inline-flex items-center gap-1 text-[9px] font-extrabold text-success bg-success-subtle px-1.5 py-0.5 rounded border border-success/30">
                     <Truck className="size-2.5 text-success shrink-0" strokeWidth={2.5} />
                     + 🚚 0 ₴
                   </span>
                 ) : (
-                  <span className="text-[9px] font-medium text-text-muted block">
+                  <span className="text-[8.5px] font-medium text-text-muted block truncate">
                     {isRu ? 'До 🚚 0 ₴ ещё ' : 'До 🚚 0 ₴ ще '}
                     <strong className="text-success font-extrabold num">{formatPrice(1500 - sum)}</strong>
                   </span>
@@ -103,7 +103,7 @@ export function ProductBuyBox({
               </div>
             </div>
 
-            {/* Sparkline chart */}
+            {/* Sparkline chart - Position is now strictly stable! */}
             {tiers.length > 0 && <WholesaleChart breaks={breaks} qty={qty} unitPrice={unitPrice} />}
 
             {/* Compact Red Nova Poshta 0 UAH badge triggered at 1500 UAH */}

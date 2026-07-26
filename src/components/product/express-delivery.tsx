@@ -56,35 +56,43 @@ const carriers: CarrierItem[] = [
 function Mark({ mark }: { mark: 'np' | 'up' | 'rozetka' | 'store' }) {
   if (mark === 'np') {
     return (
-      <div className="shrink-0 w-12 h-6 rounded bg-[#da291c] text-white text-[10px] font-black flex items-center justify-center tracking-tight shadow-2xs border border-[#b81d12]">
-        <span className="relative flex items-center gap-0.5">
-          НП
-          <span className="text-[7px] leading-none opacity-90">▲</span>
-        </span>
+      <div className="shrink-0 w-12 h-6.5 rounded-md bg-[#da291c] flex items-center justify-center border border-[#b81d12] shadow-2xs">
+        {/* Nova Poshta Official Box & Arrow Brand Symbol */}
+        <svg viewBox="0 0 40 40" className="w-7 h-5 text-white fill-current">
+          <path d="M20 4L7 11.5v17L20 36l13-7.5v-17L20 4zm0 4.2l8.8 5.1-3.8 2.2-5-2.9-5 2.9-3.8-2.2L20 8.2zm-9 6.8l3.6 2.1v7.9l-3.6-2.1V15zm10.8 10l-4.8 2.8v-7.9l4.8-2.8v7.9zm.6-10l3.6-2.1v7.9l-3.6 2.1V15z" />
+        </svg>
       </div>
     )
   }
 
   if (mark === 'up') {
     return (
-      <div className="shrink-0 w-12 h-6 rounded bg-[#ffc200] text-[#002b66] text-[10px] font-black flex items-center justify-center gap-0.5 tracking-tight shadow-2xs border border-[#e0ab00]">
-        <span>УП</span>
-        <span className="size-1.5 rounded-full bg-[#002b66]" />
+      <div className="shrink-0 w-12 h-6.5 rounded-md bg-[#ffc200] flex items-center justify-center border border-[#e0ab00] shadow-2xs">
+        {/* Ukrposhta Official Postal Horn Logo Symbol */}
+        <svg viewBox="0 0 32 32" className="w-6 h-5 text-[#002b66] fill-current">
+          <path d="M12 8c-4.4 0-8 3.6-8 8s3.6 8 8 8 8-3.6 8-8-3.6-8-8-8zm0 12c-2.2 0-4-1.8-4-4s1.8-4 4-4 4 1.8 4 4-1.8 4-4 4zm14-10h-3v4h3c1.1 0 2 .9 2 2s-.9 2-2 2h-3v4h3c3.3 0 6-2.7 6-6s-2.7-6-6-6z" />
+          <circle cx="12" cy="16" r="2" />
+        </svg>
       </div>
     )
   }
 
   if (mark === 'rozetka') {
     return (
-      <div className="shrink-0 w-12 h-6 rounded bg-[#00a046] text-white text-[10px] font-black flex items-center justify-center gap-0.5 tracking-tight shadow-2xs border border-[#008238]">
-        <span className="text-[11px] leading-none font-bold">:)</span>
-        <span className="text-[9.5px]">RZ</span>
+      <div className="shrink-0 w-12 h-6.5 rounded-md bg-[#00a046] flex items-center justify-center border border-[#008238] shadow-2xs">
+        {/* Rozetka Official Green Smile Logo */}
+        <svg viewBox="0 0 36 36" className="w-5 h-5 text-white fill-current">
+          <circle cx="18" cy="18" r="14" fill="none" stroke="currentColor" strokeWidth="2.8" />
+          <circle cx="13" cy="14" r="2" />
+          <circle cx="23" cy="14" r="2" />
+          <path d="M11 20.5c2 3.8 5.5 5 7 5s5-1.2 7-5" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" />
+        </svg>
       </div>
     )
   }
 
   return (
-    <div className="shrink-0 w-12 h-6 rounded bg-surface-alt text-text-primary flex items-center justify-center border border-border">
+    <div className="shrink-0 w-12 h-6.5 rounded-md bg-surface-alt text-text-primary flex items-center justify-center border border-border">
       <Store className="size-3.5 text-accent" strokeWidth={2.2} />
     </div>
   )
