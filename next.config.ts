@@ -6,6 +6,7 @@ const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts')
 const nextConfig: NextConfig = {
   // ✅ React Compiler — стабилен в Next.js 16
   reactCompiler: true,
+  cacheComponents: true,
 
   images: {
     formats: ['image/avif', 'image/webp'],
