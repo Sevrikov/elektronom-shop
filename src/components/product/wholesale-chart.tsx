@@ -1,13 +1,17 @@
 'use client'
 
+import { useLocale } from 'next-intl'
 import { discountForQty, normalizeTiers, type WholesaleTier } from '@/lib/wholesale'
 
 /**
- * Tiny wholesale sparkline. Draws the REAL interpolated discount line (straight
- * segments through the actual tier points). The marker sits at the actual
- * discount for the current quantity.
+ * Interactive wholesale sparkline chart with ruler scale, active quantity tracking,
+ * and localized discount indicators.
  */
 export function WholesaleChart({ breaks, qty }: { breaks: WholesaleTier[]; qty: number }) {
+  const locale = useLocale()
+  const isRu = locale === 'ru'
+  const yAxisLabel = isRu ? 'Скидка %' : 'Знижка %'
+
   const tiers = normalizeTiers(breaks)
   const lastTier = tiers[tiers.length - 1]
   if (!lastTier) return null
@@ -16,19 +20,21 @@ export function WholesaleChart({ breaks, qty }: { breaks: WholesaleTier[]; qty: 
   const maxQ = lastTier.min
   const maxDiscount = lastTier.discount
 
-  const W = 152
-  const H = 44
-  const padX = 7
-  const padTop = 10
-  const padBottom = 6
-  const innerW = W - padX * 2
+  const W = 200
+  const H = 72
+  const padLeft = 16
+  const padRight = 20
+  const padTop = 22
+  const padBottom = 20
+
+  const innerW = W - padLeft - padRight
   const innerH = H - padTop - padBottom
 
-  const xOf = (q: number) => padX + (innerW * (Math.min(Math.max(q, 1), maxQ) - 1)) / Math.max(1, maxQ - 1)
+  const xOf = (q: number) => padLeft + (innerW * (Math.min(Math.max(q, 1), maxQ) - 1)) / Math.max(1, maxQ - 1)
   const yOf = (d: number) => padTop + innerH - (innerH * d) / maxDiscount
   const baseY = padTop + innerH
 
-  // Real polyline: straight segments through the actual points = the interpolated discount
+  // Real polyline: straight segments through the actual tier points
   let line = `M ${xOf(1)} ${yOf(0)}`
   for (let i = 1; i < points.length; i++) {
     const cur = points[i]
@@ -42,38 +48,78 @@ export function WholesaleChart({ breaks, qty }: { breaks: WholesaleTier[]; qty: 
   const curY = yOf(curDiscount)
 
   return (
-    <svg
-      viewBox={`0 0 ${W} ${H}`}
-      width={W}
-      height={H}
-      className="shrink-0"
-      role="img"
-      aria-label={`опт до -${maxDiscount}%`}
-    >
-      <defs>
-        <linearGradient id="wsSpark" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="var(--color-accent)" stopOpacity="0.18" />
-          <stop offset="100%" stopColor="var(--color-accent)" stopOpacity="0" />
-        </linearGradient>
-      </defs>
+    <div className="flex flex-col items-start gap-0.5 shrink-0 select-none">
+      <svg
+        viewBox={`0 0 ${W} ${H}`}
+        width={W}
+        height={H}
+        className="shrink-0 overflow-visible"
+        role="img"
+        aria-label={`${yAxisLabel} до -${maxDiscount}%`}
+      >
+        <defs>
+          <linearGradient id="wsSpark" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="var(--color-accent)" stopOpacity="0.22" />
+            <stop offset="100%" stopColor="var(--color-accent)" stopOpacity="0" />
+          </linearGradient>
+        </defs>
 
-      <path d={area} fill="url(#wsSpark)" />
-      <path d={line} fill="none" stroke="var(--color-accent)" strokeWidth="1.75" strokeLinejoin="round" strokeLinecap="round" />
+        {/* Top Y-axis Label: Знижка % / Скидка % */}
+        <text x={padLeft - 4} y={11} fontSize="9.5" fontWeight="700" fill="var(--color-text-muted)" textAnchor="start">
+          {yAxisLabel}
+        </text>
 
-      {/* tier breakpoints */}
-      {points.map((p) =>
-        p.discount > 0 ? (
-          <circle key={p.min} cx={xOf(p.min)} cy={yOf(p.discount)} r="1.5" fill="var(--color-accent)" />
-        ) : null,
-      )}
+        {/* Max Discount Label (Top Right) -> RED & LARGER */}
+        <text x={W - padRight + 4} y={11} fontSize="11" fontWeight="900" fill="#ef4444" textAnchor="end">
+          −{maxDiscount}%
+        </text>
 
-      {/* current quantity (real level) */}
-      <line x1={curX} y1={baseY} x2={curX} y2={curY} stroke="var(--color-accent)" strokeWidth="0.75" strokeDasharray="2 2" opacity="0.45" />
-      <circle cx={curX} cy={curY} r="2.6" fill="var(--color-accent)" stroke="var(--color-surface-white)" strokeWidth="1.25" />
+        {/* Gradient fill area under line */}
+        <path d={area} fill="url(#wsSpark)" />
 
-      <text x={W - padX} y={padTop - 2} textAnchor="end" fontSize="7" fontWeight="800" fill="var(--color-accent)" opacity="0.65">
-        −{maxDiscount}%
-      </text>
-    </svg>
+        {/* Main discount line */}
+        <path d={line} fill="none" stroke="var(--color-accent)" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
+
+        {/* Ruler Base Line (X Axis) */}
+        <line x1={padLeft} y1={baseY} x2={padLeft + innerW} y2={baseY} stroke="var(--color-border-strong)" strokeWidth="1" />
+
+        {/* Ruler Ticks and Quantity Labels along X Axis */}
+        {points.map((p) => {
+          const px = xOf(p.min)
+          return (
+            <g key={p.min}>
+              {/* Tick line on ruler */}
+              <line x1={px} y1={baseY} x2={px} y2={baseY + 4} stroke="var(--color-text-muted)" strokeWidth="1" />
+              {/* Quantity number under tick */}
+              <text x={px} y={baseY + 14} fontSize="8.5" fontWeight="700" fill="var(--color-text-muted)" textAnchor="middle">
+                {p.min}
+              </text>
+              {/* Breakpoint dot on line */}
+              {p.discount > 0 && (
+                <circle cx={px} cy={yOf(p.discount)} r="2" fill="var(--color-accent)" />
+              )}
+            </g>
+          )
+        })}
+
+        {/* Active Selection vertical line */}
+        <line x1={curX} y1={baseY} x2={curX} y2={curY} stroke="#ef4444" strokeWidth="1" strokeDasharray="2 2" opacity="0.8" />
+
+        {/* Dynamic Discount % Label above Active Red Dot */}
+        <text
+          x={curX}
+          y={Math.max(12, curY - 6)}
+          fontSize="9.5"
+          fontWeight="800"
+          fill="#ef4444"
+          textAnchor="middle"
+        >
+          {curDiscount > 0 ? `−${curDiscount}%` : '0%'}
+        </text>
+
+        {/* Active Selection RED Dot */}
+        <circle cx={curX} cy={curY} r="3.5" fill="#ef4444" stroke="#ffffff" strokeWidth="1.5" />
+      </svg>
+    </div>
   )
 }
