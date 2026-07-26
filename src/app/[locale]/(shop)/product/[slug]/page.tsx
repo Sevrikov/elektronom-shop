@@ -432,26 +432,12 @@ export default async function ProductPage({
           </div>
         </div>
 
-        {/* ═══ CHARACTERISTICS — full width ═══ */}
-        {Object.keys(displayAttrs).length > 0 && (
-          <section id="specs" className="scroll-mt-[120px]">
-            <ProductAttributes attributes={displayAttrs} locale={locale} />
-          </section>
-        )}
-
-        {/* ═══ BOTTOM — 2 columns ═══ */}
-        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_540px] gap-5 items-start">
+        {/* ═══ MAINCONTENT — 2 columns: Characteristics (Left) & Description + Series (Right) ═══ */}
+        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] gap-5 items-start">
+          {/* Left Column: Characteristics (in 2 columns inside) + Reviews */}
           <div className="flex flex-col gap-6">
-            {description && (
-              <section id="about" className="scroll-mt-[120px] bg-surface-white border border-border rounded-2xl p-5 shadow-sm">
-                <h2 className="text-[22px] font-extrabold tracking-tight mb-4 text-text-primary">
-                  {t('description')}
-                </h2>
-                <div
-                  className="prose prose-sm max-w-none text-sm leading-relaxed text-text-primary"
-                  dangerouslySetInnerHTML={{ __html: description }}
-                />
-              </section>
+            {Object.keys(displayAttrs).length > 0 && (
+              <ProductAttributes attributes={displayAttrs} locale={locale} />
             )}
 
             <section id="reviews" className="scroll-mt-[120px]">
@@ -467,7 +453,20 @@ export default async function ProductPage({
             </section>
           </div>
 
+          {/* Right Column: Description + Same Series + Articles */}
           <div className="flex flex-col gap-5">
+            {description && (
+              <section id="about" className="scroll-mt-[120px] bg-surface-white border border-border rounded-2xl p-5 shadow-sm">
+                <h2 className="text-[22px] font-extrabold tracking-tight mb-4 text-text-primary">
+                  {t('description')}
+                </h2>
+                <div
+                  className="prose prose-sm max-w-none text-sm leading-relaxed text-text-primary"
+                  dangerouslySetInnerHTML={{ __html: description }}
+                />
+              </section>
+            )}
+
             <Suspense>
               <SameSeriesProducts
                 productId={product.id}
