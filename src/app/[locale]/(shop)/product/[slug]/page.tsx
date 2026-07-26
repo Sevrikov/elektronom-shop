@@ -32,6 +32,7 @@ import { ProductReviewsLink } from '@/components/product/product-reviews-link'
 
 export const revalidate = 0
 export const dynamic = 'force-dynamic'
+export const fetchCache = 'force-no-store'
 
 
 // ─── generateMetadata ─────────────────────────────────────────────────────────
