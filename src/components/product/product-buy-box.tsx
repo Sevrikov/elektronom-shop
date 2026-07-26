@@ -48,11 +48,11 @@ export function ProductBuyBox({
     'w-6 h-6 rounded flex items-center justify-center text-text-primary hover:bg-surface-alt active:bg-surface-raised transition-colors disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer'
 
   return (
-    <div className="flex flex-col gap-2.5 mt-1">
-      {/* 1-row layout with STABLE FIXED WIDTHS for price & sum so chart position never shifts */}
-      <div className="flex items-center gap-x-2.5 gap-y-1.5 flex-wrap sm:flex-nowrap">
+    <div className="flex flex-col gap-2 mt-1">
+      {/* 1-row layout with STABLE FIXED HEIGHTS & MINIMAL GAPS */}
+      <div className="flex items-center gap-x-1.5 gap-y-1 flex-wrap sm:flex-nowrap">
         {/* Main Unit Price */}
-        <div className="flex items-end gap-1.5 shrink-0 min-w-[100px]">
+        <div className="flex items-end gap-1 shrink-0 min-w-[95px]">
           <span className="text-[28px] xl:text-[32px] font-extrabold tracking-tight leading-none num text-text-primary">
             {formatPrice(price)}
           </span>
@@ -77,20 +77,28 @@ export function ProductBuyBox({
               </button>
             </div>
 
-            {/* Live Sum & Free Delivery progress - FIXED WIDTH to prevent shifting chart */}
-            <div className="flex flex-col leading-tight shrink-0 w-[120px]">
+            {/* Live Sum & Free Delivery progress - FIXED WIDTH + RESERVED HEIGHT (no vertical jitter) */}
+            <div className="flex flex-col leading-tight shrink-0 w-[112px]">
               <span className="text-[10px] font-medium uppercase tracking-wide text-text-muted">{t('buyBox.sum')}</span>
               <span className="text-[15px] xl:text-[16px] font-extrabold num leading-none text-text-primary truncate">{formatPrice(sum)}</span>
-              {wholesaleDiscount > 0 && (
-                <span className="text-[9px] font-semibold text-success mt-0.5 num truncate">
-                  {formatPrice(unitPrice)}/{t('qtyBreaks.unit')} · −{wholesaleDiscount}%
-                </span>
-              )}
 
-              {/* Free delivery indicator connected to sum & 1500 UAH threshold */}
-              <div className="mt-0.5">
+              {/* Wholesale unit price line with fixed height slot */}
+              <div className="h-[14px] flex items-center">
+                {wholesaleDiscount > 0 ? (
+                  <span className="text-[9px] font-semibold text-success num truncate">
+                    {formatPrice(unitPrice)}/{t('qtyBreaks.unit')} · −{wholesaleDiscount}%
+                  </span>
+                ) : (
+                  <span className="text-[8.5px] font-medium text-text-muted truncate">
+                    {formatPrice(price)}/{t('qtyBreaks.unit')}
+                  </span>
+                )}
+              </div>
+
+              {/* Free delivery indicator connected to sum & 1500 UAH threshold - RESERVED CONSTANT HEIGHT (NO JITTER!) */}
+              <div className="h-[18px] flex items-center mt-0.5">
                 {sum >= 1500 ? (
-                  <span className="inline-flex items-center gap-1 text-[9px] font-extrabold text-success bg-success-subtle px-1.5 py-0.5 rounded border border-success/30">
+                  <span className="inline-flex items-center gap-1 text-[8.5px] font-extrabold text-success bg-success-subtle px-1.5 py-0.5 rounded border border-success/30">
                     <Truck className="size-2.5 text-success shrink-0" strokeWidth={2.5} />
                     + 🚚 0 ₴
                   </span>
@@ -103,7 +111,7 @@ export function ProductBuyBox({
               </div>
             </div>
 
-            {/* Sparkline chart - Position is now strictly stable! */}
+            {/* Sparkline chart - Position is now strictly tight against Sum with NO gap! */}
             {tiers.length > 0 && <WholesaleChart breaks={breaks} qty={qty} unitPrice={unitPrice} />}
 
             {/* Compact Red Nova Poshta 0 UAH badge triggered at 1500 UAH */}

@@ -380,38 +380,6 @@ export default async function ProductPage({
                 <ExpressDelivery productId={product.id} />
               </div>
 
-              <div className="border border-border rounded-xl p-3 bg-surface-white">
-                <div className="flex items-start gap-2">
-                  <div className="size-7 rounded-full bg-accent-subtle text-accent flex items-center justify-center shrink-0 mt-0.5">
-                    <RotateCcw className="size-3.5" strokeWidth={2} />
-                  </div>
-                  <div>
-                    <p className="text-[13px] font-bold text-text-primary">
-                      {t('trust.returnTitle')}
-                    </p>
-                    <p className="text-[11px] text-text-muted mt-0.5">
-                      {t('trust.returnDesc')}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="border border-border rounded-xl p-3 bg-surface-white">
-                <div className="flex items-start gap-2">
-                  <div className="size-7 rounded-full bg-accent-subtle text-accent flex items-center justify-center shrink-0 mt-0.5">
-                    <ShieldCheck className="size-3.5" strokeWidth={2} />
-                  </div>
-                  <div>
-                    <p className="text-[13px] font-bold text-text-primary">
-                      {t('trust.warrantyTitle')}
-                    </p>
-                    <p className="text-[11px] text-text-muted mt-0.5">
-                      {t('trust.warrantyDesc')}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
               <div className="border border-border rounded-xl p-3 bg-accent-subtle">
                 <div className="flex items-start gap-2">
                   <div className="size-7 rounded-full bg-surface-white text-accent flex items-center justify-center shrink-0 mt-0.5">
