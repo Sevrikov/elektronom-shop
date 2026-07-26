@@ -15,7 +15,7 @@ import { resolveWholesaleTiers } from '@/queries/wholesale'
 import { prisma } from '@/lib/prisma'
 import { formatPrice, getDiscountPercent, getSiteUrl } from '@/lib/utils'
 import type { Locale } from '@/types'
-import { translateAttributeKey, translateAttributeValue } from '@/lib/translit-translator'
+import { translateAttributeKey, translateAttributeValue, sortAttributeEntries } from '@/lib/translit-translator'
 
 import { ProductGallery } from '@/components/product/product-gallery'
 import { ProductAttributes } from '@/components/product/product-attributes'
@@ -179,9 +179,11 @@ export default async function ProductPage({
     categoryId: product.category?.id ?? null,
     attributes: product.attributes,
   })
-  // Remove qty_breaks from displayed attributes
+  // Remove qty_breaks from displayed attributes and sort by priority
   const displayAttrs = Object.fromEntries(
-    Object.entries(attrs).filter(([k]) => k !== 'qty_breaks')
+    sortAttributeEntries(
+      Object.entries(attrs).filter(([k]) => k !== 'qty_breaks')
+    )
   )
 
   const t = await getTranslations({ locale, namespace: 'pdp' })

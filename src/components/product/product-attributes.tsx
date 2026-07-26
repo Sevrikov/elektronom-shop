@@ -30,9 +30,13 @@ function formatValue(key: string, value: unknown, locale?: string): string {
 }
 
 export function ProductAttributes({ attributes, locale }: ProductAttributesProps) {
-  // Фильтруем только простые атрибуты (не служебные)
+  // Фильтруем только технические характеристики (исключаем рекламные переваги и непустые значения)
   const entries = Object.entries(attributes).filter(
-    ([, value]) => value !== null && value !== undefined && value !== ''
+    ([key, value]) =>
+      !key.toLowerCase().includes('perevaha') &&
+      value !== null &&
+      value !== undefined &&
+      value !== ''
   )
 
   if (entries.length === 0) return null
