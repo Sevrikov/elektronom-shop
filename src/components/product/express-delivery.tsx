@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from 'react'
 import { useTranslations, useLocale } from 'next-intl'
-import { Store, ChevronDown, Check, Truck, ShieldCheck, FileCheck, RotateCcw } from 'lucide-react'
+import { ChevronDown, Check, Truck, ShieldCheck, FileCheck, RotateCcw } from 'lucide-react'
 import { createExpressOrder } from '@/actions/express-order'
 
 type Method = 'nova_poshta' | 'ukrposhta' | 'rozetka' | 'pickup'
@@ -45,8 +45,8 @@ const carriers: CarrierItem[] = [
   {
     method: 'pickup',
     mark: 'store',
-    labelRu: 'Самовывоз',
-    labelUk: 'Самовивіз',
+    labelRu: 'Самовывоз из магазина',
+    labelUk: 'Самовивіз з магазину',
     timeRu: 'бесплатно',
     timeUk: 'безкоштовно',
     free: true,
@@ -56,7 +56,7 @@ const carriers: CarrierItem[] = [
 function Mark({ mark }: { mark: 'np' | 'up' | 'rozetka' | 'store' }) {
   if (mark === 'np') {
     return (
-      <div className="shrink-0 w-14 h-8 rounded-lg overflow-hidden border-[2.5px] border-[#da291c] bg-white flex items-center justify-center p-1 shadow-2xs">
+      <div className="shrink-0 w-16 h-9 rounded-lg overflow-hidden border-[2px] border-[#da291c] bg-white flex items-center justify-center p-1 shadow-2xs">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/logo/nova_poshta.jpg"
@@ -69,7 +69,7 @@ function Mark({ mark }: { mark: 'np' | 'up' | 'rozetka' | 'store' }) {
 
   if (mark === 'up') {
     return (
-      <div className="shrink-0 w-14 h-8 rounded-lg overflow-hidden border-[2.5px] border-[#ffc200] bg-white flex items-center justify-center p-1 shadow-2xs">
+      <div className="shrink-0 w-16 h-9 rounded-lg overflow-hidden border-[2px] border-[#ffc200] bg-white flex items-center justify-center p-1 shadow-2xs">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/logo/ukrposhta.webp"
@@ -82,7 +82,7 @@ function Mark({ mark }: { mark: 'np' | 'up' | 'rozetka' | 'store' }) {
 
   if (mark === 'rozetka') {
     return (
-      <div className="shrink-0 w-14 h-8 rounded-lg overflow-hidden border-[2.5px] border-[#00a046] bg-white flex items-center justify-center p-1 shadow-2xs">
+      <div className="shrink-0 w-16 h-9 rounded-lg overflow-hidden border-[2px] border-[#00a046] bg-white flex items-center justify-center p-1 shadow-2xs">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/logo/rozetka.png"
@@ -94,8 +94,13 @@ function Mark({ mark }: { mark: 'np' | 'up' | 'rozetka' | 'store' }) {
   }
 
   return (
-    <div className="shrink-0 w-14 h-8 rounded-lg bg-white text-text-primary flex items-center justify-center border-[2.5px] border-accent/40 shadow-2xs">
-      <Store className="size-4 text-accent" strokeWidth={2.2} />
+    <div className="shrink-0 w-16 h-9 rounded-lg overflow-hidden border-[2px] border-accent/40 bg-white flex items-center justify-center p-1 shadow-2xs">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/logo/electronom-mark.svg"
+        alt="Electronom Store Pickup"
+        className="w-full h-full object-contain"
+      />
     </div>
   )
 }

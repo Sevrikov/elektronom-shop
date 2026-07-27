@@ -18,6 +18,7 @@ import type { Locale } from '@/types'
 import { translateAttributeKey, translateAttributeValue, sortAttributeEntries } from '@/lib/translit-translator'
 
 import { ProductGallery } from '@/components/product/product-gallery'
+import { TechnicalDocsViewer } from '@/components/product/technical-docs-viewer'
 import { ProductAttributes } from '@/components/product/product-attributes'
 import { ProductSchema } from '@/components/product/product-schema'
 import { SameSeriesProducts } from '@/components/product/same-series-products'
@@ -225,9 +226,10 @@ export default async function ProductPage({
         <div className="bg-surface-white border border-border rounded-2xl p-5 shadow-sm">
           <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,460px)_minmax(0,1fr)_300px] gap-5">
 
-            {/* ── Col 1: Gallery ── */}
-            <div>
+            {/* ── Col 1: Gallery & Technical Documentation ── */}
+            <div className="flex flex-col">
               <ProductGallery images={product.images} productName={name} locale={locale} />
+              <TechnicalDocsViewer productSku={product.sku} productName={name} />
             </div>
 
             {/* ── Col 2: Product Info ── */}
