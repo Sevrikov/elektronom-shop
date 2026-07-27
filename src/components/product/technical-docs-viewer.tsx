@@ -5,11 +5,11 @@ import { useLocale } from 'next-intl'
 import { FileText, Ruler, Zap, X, Download, ExternalLink } from 'lucide-react'
 
 interface TechnicalDocsViewerProps {
-  productSku?: string
+  productSku?: string | null
   productName: string
-  pdfUrl?: string
-  dimensionsUrl?: string
-  schematicsUrl?: string
+  pdfUrl?: string | null
+  dimensionsUrl?: string | null
+  schematicsUrl?: string | null
 }
 
 export function TechnicalDocsViewer({

@@ -200,6 +200,11 @@ model Product {
   reviews      Review[]
   orderItems   OrderItem[]
 
+  // ─── Technical Documentation & Schematics ───
+  pdfUrl                String?
+  dimensionsUrl         String?
+  schematicsUrl         String?
+
   // ─── Google Shopping / Merchant Center ───
   gtin                  String?
   mpn                   String?

@@ -229,7 +229,13 @@ export default async function ProductPage({
             {/* ── Col 1: Gallery & Technical Documentation ── */}
             <div className="flex flex-col">
               <ProductGallery images={product.images} productName={name} locale={locale} />
-              <TechnicalDocsViewer productSku={product.sku} productName={name} />
+              <TechnicalDocsViewer
+                productSku={product.sku}
+                productName={name}
+                pdfUrl={product.pdfUrl}
+                dimensionsUrl={product.dimensionsUrl}
+                schematicsUrl={product.schematicsUrl}
+              />
             </div>
 
             {/* ── Col 2: Product Info ── */}

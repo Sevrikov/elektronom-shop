@@ -84,6 +84,9 @@ export async function getProductBySlug(slug: string, locale: string) {
       salePrice: true,
       saleStartsAt: true,
       saleEndsAt: true,
+      pdfUrl: true,
+      dimensionsUrl: true,
+      schematicsUrl: true,
       translations: {
         where: { locale },
         select: {
