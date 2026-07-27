@@ -265,7 +265,7 @@ export function TechnicalDocsViewer({
       )}
 
       {/* Modal 2: Official ASKO Dimensions Drawing */}
-      {activeModal === 'dimensions' && (
+      {activeModal === 'dimensions' && effectiveDimensions && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 animate-in fade-in duration-200"
           onClick={() => setActiveModal(null)}
@@ -308,7 +308,7 @@ export function TechnicalDocsViewer({
       )}
 
       {/* Modal 3: Official ASKO Electrical Schematics */}
-      {activeModal === 'schematics' && (
+      {activeModal === 'schematics' && effectiveSchematics && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 animate-in fade-in duration-200"
           onClick={() => setActiveModal(null)}
