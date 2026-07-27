@@ -226,7 +226,7 @@ export function ExpressDelivery({ productId }: { productId: string }) {
               <span className="text-[12.5px] font-black text-success">
                 {isRu ? 'Бесплатная доставка' : 'Безкоштовна доставка'}
               </span>
-              <span className="text-[13px] font-black text-success num bg-white/70 px-1.5 py-0.5 rounded border border-success/20">
+              <span className="text-[13px] font-black text-success num bg-white px-2.5 py-1 rounded-md border border-success/40 shadow-2xs whitespace-nowrap shrink-0">
                 1 500 ₴
               </span>
             </div>
