@@ -94,10 +94,10 @@ function Mark({ mark }: { mark: 'np' | 'up' | 'rozetka' | 'store' }) {
   }
 
   return (
-    <div className="shrink-0 w-16 h-9 rounded-lg overflow-hidden border-[2px] border-accent/40 bg-white flex items-center justify-center p-1 shadow-2xs">
+    <div className="shrink-0 w-16 h-9 rounded-lg overflow-hidden border-[2px] border-accent/40 bg-white flex items-center justify-center p-0.5 shadow-2xs">
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src="/logo/electronom-mark.svg"
+        src="/logo/electronom-light-transparent.png"
         alt="Electronom Store Pickup"
         className="w-full h-full object-contain"
       />
