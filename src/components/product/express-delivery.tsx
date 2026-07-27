@@ -56,12 +56,12 @@ const carriers: CarrierItem[] = [
 function Mark({ mark }: { mark: 'np' | 'up' | 'rozetka' | 'store' }) {
   if (mark === 'np') {
     return (
-      <div className="shrink-0 w-12 h-6.5 rounded-md overflow-hidden border border-border shadow-2xs bg-white flex items-center justify-center">
+      <div className="shrink-0 w-14 h-8 rounded-lg overflow-hidden border-[2.5px] border-[#da291c] bg-white flex items-center justify-center p-1 shadow-2xs">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/logo/nova_poshta.jpg"
           alt="Нова Пошта"
-          className="w-full h-full object-cover"
+          className="w-full h-full object-contain"
         />
       </div>
     )
@@ -69,7 +69,7 @@ function Mark({ mark }: { mark: 'np' | 'up' | 'rozetka' | 'store' }) {
 
   if (mark === 'up') {
     return (
-      <div className="shrink-0 w-12 h-6.5 rounded-md overflow-hidden border border-[#e0ab00] bg-[#ffc200] flex items-center justify-center p-0.5 shadow-2xs">
+      <div className="shrink-0 w-14 h-8 rounded-lg overflow-hidden border-[2.5px] border-[#ffc200] bg-white flex items-center justify-center p-1 shadow-2xs">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/logo/ukrposhta.webp"
@@ -82,20 +82,20 @@ function Mark({ mark }: { mark: 'np' | 'up' | 'rozetka' | 'store' }) {
 
   if (mark === 'rozetka') {
     return (
-      <div className="shrink-0 w-12 h-6.5 rounded-md overflow-hidden border border-[#008238] bg-[#00a046] flex items-center justify-center p-1 shadow-2xs">
+      <div className="shrink-0 w-14 h-8 rounded-lg overflow-hidden border-[2.5px] border-[#00a046] bg-white flex items-center justify-center p-1 shadow-2xs">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/logo/rozetka.png"
           alt="Rozetka"
-          className="w-full h-full object-contain brightness-0 invert"
+          className="w-full h-full object-contain"
         />
       </div>
     )
   }
 
   return (
-    <div className="shrink-0 w-12 h-6.5 rounded-md bg-surface-alt text-text-primary flex items-center justify-center border border-border">
-      <Store className="size-3.5 text-accent" strokeWidth={2.2} />
+    <div className="shrink-0 w-14 h-8 rounded-lg bg-white text-text-primary flex items-center justify-center border-[2.5px] border-accent/40 shadow-2xs">
+      <Store className="size-4 text-accent" strokeWidth={2.2} />
     </div>
   )
 }

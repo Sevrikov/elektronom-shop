@@ -5,8 +5,7 @@ import { discountForQty, normalizeTiers, type WholesaleTier } from '@/lib/wholes
 
 /**
  * Interactive wholesale sparkline chart with ruler scale, active quantity tracking,
- * +🚚 0₴ free shipping indicator, and a right-side red discount badge.
- * Compact width W=125 for ultra-dense 1-row buy box layout.
+ * peak discount label (e.g. -25% / -15%), +🚚 0₴ free shipping indicator, and right-side discount badge.
  */
 export function WholesaleChart({
   breaks,
@@ -29,12 +28,12 @@ export function WholesaleChart({
   const maxQ = lastTier.min
   const maxDiscount = lastTier.discount
 
-  const W = 120
+  const W = 118
   const H = 54
-  const padLeft = 10
-  const padRight = 6
-  const padTop = 15
-  const padBottom = 15
+  const padLeft = 8
+  const padRight = 8
+  const padTop = 16
+  const padBottom = 14
 
   const innerW = W - padLeft - padRight
   const innerH = H - padTop - padBottom
@@ -62,7 +61,7 @@ export function WholesaleChart({
   const hasActiveDiscount = curDiscount > 0
 
   return (
-    <div className="flex items-center gap-1.5 shrink-0 select-none">
+    <div className="flex items-center gap-1 shrink-0 select-none">
       <svg
         viewBox={`0 0 ${W} ${H}`}
         width={W}
@@ -79,8 +78,13 @@ export function WholesaleChart({
         </defs>
 
         {/* Top Y-axis Label: Знижка % / Скидка % */}
-        <text x={padLeft - 2} y={8} fontSize="8" fontWeight="700" fill="var(--color-text-muted)" textAnchor="start">
+        <text x={padLeft} y={9} fontSize="7.5" fontWeight="700" fill="var(--color-text-muted)" textAnchor="start">
           {yAxisLabel}
+        </text>
+
+        {/* Peak Max Discount Label on Peak of Curve (e.g. -25% or -15%) */}
+        <text x={xOf(maxQ)} y={yOf(maxDiscount) - 3} fontSize="8.5" fontWeight="900" fill="#ef4444" textAnchor="end">
+          -{maxDiscount}%
         </text>
 
         {/* Gradient fill area under line */}
@@ -128,7 +132,7 @@ export function WholesaleChart({
         <circle cx={curX} cy={curY} r="3" fill={hasFreeDelivery ? '#16a34a' : '#ef4444'} stroke="#ffffff" strokeWidth="1.25" />
       </svg>
 
-      {/* Red Discount Plashka to the Right of the Chart: Active discount or Max Brand Discount (e.g. -25% for АСКО, -15% for Intertool) */}
+      {/* Red Discount Plashka to the Right of the Chart */}
       <div
         className={`flex flex-col items-center justify-center px-2 py-0.5 rounded-lg shrink-0 shadow-2xs border transition-all ${
           hasActiveDiscount
@@ -139,7 +143,7 @@ export function WholesaleChart({
         <span className="text-[8.5px] font-extrabold uppercase tracking-tight leading-none text-text-muted">
           {isRu ? 'Скидка' : 'Знижка'}
         </span>
-        <span className={`text-[15px] font-black num leading-tight mt-0.5 ${hasActiveDiscount ? 'text-red-500' : 'text-text-primary'}`}>
+        <span className="text-[13px] font-black num leading-tight text-red-500">
           {hasActiveDiscount ? `−${curDiscount}%` : `до −${maxDiscount}%`}
         </span>
       </div>
