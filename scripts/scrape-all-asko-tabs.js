@@ -102,16 +102,24 @@ async function run() {
           else if (title.includes('габарит') || title.includes('розмір')) dimTabId = tabId;
         }
 
-        // Extract image strictly from tab-pane matching the title-verified tabId
+        function getPaneHtml(html, tabId) {
+          const re = new RegExp(`<div[^>]*data-tab="${tabId}"[^>]*>([\\s\\S]*?)<\\/div>`, 'i');
+          const match = html.match(re);
+          return match ? match[1] : '';
+        }
+
+        // Extract image strictly from inside the title-verified tab pane HTML only
         let schemRel = null;
         if (schemTabId) {
-          const m = detailHtml.match(new RegExp(`<div[^>]+data-tab="${schemTabId}"[^>]*>[\\s\\S]*?<img[^>]+src="([^"]+\\.(?:jpeg|jpg|png))"`, 'i'));
+          const paneHtml = getPaneHtml(detailHtml, schemTabId);
+          const m = paneHtml.match(/<img[^>]+src="([^"]+\.(?:jpeg|jpg|png|webp))"/i);
           if (m) schemRel = m[1];
         }
 
         let dimRel = null;
         if (dimTabId) {
-          const m = detailHtml.match(new RegExp(`<div[^>]+data-tab="${dimTabId}"[^>]*>[\\s\\S]*?<img[^>]+src="([^"]+\\.(?:jpeg|jpg|png))"`, 'i'));
+          const paneHtml = getPaneHtml(detailHtml, dimTabId);
+          const m = paneHtml.match(/<img[^>]+src="([^"]+\.(?:jpeg|jpg|png|webp))"/i);
           if (m) dimRel = m[1];
         }
 
