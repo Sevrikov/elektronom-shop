@@ -86,15 +86,34 @@ async function run() {
         if (processedSkus.has(sku)) continue;
         processedSkus.add(sku);
 
-        // Extract Schematics tab image (data-tab="4" or tab-wiring-diagrams)
-        const schemTabMatch = detailHtml.match(/class="[^"]*tab-wiring-diagrams[^"]*"[\s\S]*?<img[^>]+src="([^"]+)"/i) ||
-                              detailHtml.match(/data-tab="4"[\s\S]*?<img[^>]+src="([^"]+)"/i);
-        const schemRel = schemTabMatch ? schemTabMatch[1] : null;
+        // Build map of data-tab ID to exact title text from <a data-tab="N">Title</a>
+        const tabTitleMap = {};
+        const tabHeaderMatches = Array.from(detailHtml.matchAll(/<a[^>]+data-tab="(\d+)"[^>]*>([\s\S]*?)<\/a>/gi));
+        tabHeaderMatches.forEach(m => {
+          tabTitleMap[m[1]] = m[2].replace(/<[^>]+>/g, '').trim().toLowerCase();
+        });
 
-        // Extract Dimensions tab image (data-tab="5")
-        const dimTabMatch = detailHtml.match(/data-tab="5"[\s\S]*?<img[^>]+src="([^"]+)"/i) ||
-                            detailHtml.match(/data-tab="3"[\s\S]*?<img[^>]+src="([^"]+)"/i);
-        const dimRel = dimTabMatch ? dimTabMatch[1] : null;
+        // Find tab IDs strictly by matching title keywords
+        let schemTabId = null;
+        let dimTabId = null;
+
+        for (const [tabId, title] of Object.entries(tabTitleMap)) {
+          if (title.includes('схем')) schemTabId = tabId;
+          else if (title.includes('габарит') || title.includes('розмір')) dimTabId = tabId;
+        }
+
+        // Extract image strictly from tab-pane matching the title-verified tabId
+        let schemRel = null;
+        if (schemTabId) {
+          const m = detailHtml.match(new RegExp(`<div[^>]+data-tab="${schemTabId}"[^>]*>[\\s\\S]*?<img[^>]+src="([^"]+\\.(?:jpeg|jpg|png))"`, 'i'));
+          if (m) schemRel = m[1];
+        }
+
+        let dimRel = null;
+        if (dimTabId) {
+          const m = detailHtml.match(new RegExp(`<div[^>]+data-tab="${dimTabId}"[^>]*>[\\s\\S]*?<img[^>]+src="([^"]+\\.(?:jpeg|jpg|png))"`, 'i'));
+          if (m) dimRel = m[1];
+        }
 
         // Extract PDF documents (passport + catalog page) with spaces & Cyrillic support
         const pdfMatches = Array.from(detailHtml.matchAll(/href="(\/upload\/[^"]+\.pdf)"/gi), m => m[1]);
@@ -170,9 +189,9 @@ async function run() {
           await prisma.product.update({
             where: { id: dbProduct.id },
             data: {
-              ...(localSchem ? { schematicsUrl: localSchem } : {}),
-              ...(localDim ? { dimensionsUrl: localDim } : {}),
-              ...(localPdf1 ? { pdfUrl: localPdf1 } : {}),
+              schematicsUrl: localSchem || null,
+              dimensionsUrl: localDim || null,
+              pdfUrl: localPdf1 || null,
             }
           });
           console.log(`      ✅ Привязано в БД Neon к товару: ${dbProduct.sku}`);
