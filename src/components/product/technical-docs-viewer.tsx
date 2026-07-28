@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useLocale } from 'next-intl'
-import { FileText, Ruler, Zap, X, Download, ExternalLink, ZoomIn, ZoomOut, RotateCw, Hand, RefreshCw, AlertCircle, Eye } from 'lucide-react'
+import { FileText, Ruler, Zap, X, Download, ExternalLink, ZoomIn, ZoomOut, RotateCw, Hand, RefreshCw, AlertCircle, Move } from 'lucide-react'
 
 interface TechnicalDocsViewerProps {
   productSku?: string | null
@@ -26,10 +26,10 @@ export function TechnicalDocsViewer({
 
   const [activeModal, setActiveModal] = useState<'pdf' | 'catalogPdf' | 'dimensions' | 'schematics' | null>(null)
   
-  // PDF Mode: 'native' (loads Chrome/Edge PDF viewer with Hand Tool) vs 'google' (Google Docs Embed fallback)
-  const [pdfMode, setPdfMode] = useState<'native' | 'google'>('native')
+  // Hand Mode for PDF: when true, a transparent overlay captures mouse drag events to move the PDF freely
+  const [isHandMode, setIsHandMode] = useState(true)
 
-  // Image Viewer Interactive State (Zoom / Rotation / Error / Pan)
+  // Interactive State (Zoom / Rotation / Error / Pan)
   const [zoomScale, setZoomScale] = useState(1)
   const [rotation, setRotation] = useState(0)
   const [imgError, setImgError] = useState(false)
@@ -43,14 +43,15 @@ export function TechnicalDocsViewer({
     setZoomScale(1)
     setRotation(0)
     setPanPos({ x: 0, y: 0 })
+    setIsHandMode(true)
     setImgError(false)
     setActiveModal(type)
   }
 
-  const handleZoomIn = () => setZoomScale(prev => Math.min(prev + 0.4, 3.5))
+  const handleZoomIn = () => setZoomScale(prev => Math.min(prev + 0.3, 3.5))
   const handleZoomOut = () => {
     setZoomScale(prev => {
-      const next = Math.max(prev - 0.4, 0.5)
+      const next = Math.max(prev - 0.3, 0.5)
       if (next <= 1) setPanPos({ x: 0, y: 0 })
       return next
     })
@@ -62,9 +63,10 @@ export function TechnicalDocsViewer({
   }
   const handleRotate = () => setRotation(prev => (prev + 90) % 360)
 
-  // Dragging mouse & touch handlers for image drawings
+  // Mouse & Touch drag handlers for PDF & Image Viewers
   const handleMouseDown = (e: React.MouseEvent) => {
-    if (zoomScale <= 1) return
+    // Enable dragging in hand mode or when zoomed in
+    if (!isHandMode && zoomScale <= 1) return
     setIsDragging(true)
     setDragStart({ x: e.clientX - panPos.x, y: e.clientY - panPos.y })
   }
@@ -77,7 +79,7 @@ export function TechnicalDocsViewer({
   const handleMouseUp = () => setIsDragging(false)
 
   const handleTouchStart = (e: React.TouchEvent) => {
-    if (zoomScale <= 1 || e.touches.length !== 1) return
+    if (e.touches.length !== 1) return
     const touch = e.touches[0]!
     setIsDragging(true)
     setDragStart({ x: touch.clientX - panPos.x, y: touch.clientY - panPos.y })
@@ -185,18 +187,18 @@ export function TechnicalDocsViewer({
         )}
       </div>
 
-      {/* Modal 1: PDF Passport Viewer (Supports Native Chrome/Edge Hand Tool & Google Embed) */}
+      {/* Modal 1: Interactive PDF Passport Viewer with Real Hand Drag Overlay */}
       {activeModal === 'pdf' && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-2 sm:p-5 animate-in fade-in duration-200"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-2 sm:p-4 animate-in fade-in duration-200 select-none"
           onClick={() => setActiveModal(null)}
         >
           <div
-            className="relative w-full max-w-5xl h-[90vh] bg-surface-white rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-border"
+            className="relative w-full max-w-5xl h-[92vh] bg-surface-white rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-border"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Header with explicit mode toggle & download buttons */}
-            <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-surface-alt flex-wrap gap-2">
+            {/* Header with full Zoom, Hand Drag, Rotate & Download Toolbar */}
+            <div className="flex items-center justify-between px-4 py-2.5 border-b border-border bg-surface-alt flex-wrap gap-2">
               <div className="flex items-center gap-2">
                 <div className="size-8 rounded-lg bg-accent text-white flex items-center justify-center shrink-0">
                   <FileText className="size-4" strokeWidth={2} />
@@ -209,82 +211,151 @@ export function TechnicalDocsViewer({
                 </div>
               </div>
 
-              {/* PDF Toolbar Action Buttons */}
-              <div className="flex items-center gap-2">
-                {/* Viewer mode toggle: Native PDF (with built-in Hand tool) vs Google Docs */}
+              {/* Toolbar Controls */}
+              <div className="flex items-center gap-1.5 flex-wrap">
+                {/* Hand Drag Toggle Button */}
                 <button
                   type="button"
-                  onClick={() => setPdfMode(prev => prev === 'native' ? 'google' : 'native')}
-                  title={pdfMode === 'native' ? (isRu ? 'Переключить на Google Viewer' : 'Переключити на Google Viewer') : (isRu ? 'Включить Нативный просмотрщик (Рука 🖐️)' : 'Увімкнути Нативний переглядач (Рука 🖐️)')}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-white hover:bg-surface-raised border border-border text-text-primary text-[12px] font-bold transition-colors cursor-pointer"
+                  onClick={() => setIsHandMode(prev => !prev)}
+                  title={isRu ? 'Включить / Выключить режим перетаскивания рукой' : 'Увімкнути / Вимкнути режим перетягування рукою'}
+                  className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-[12px] font-bold transition-all cursor-pointer ${
+                    isHandMode
+                      ? 'bg-accent text-white border-accent shadow-2xs'
+                      : 'bg-surface-white text-text-primary border-border hover:bg-surface-raised'
+                  }`}
                 >
-                  <Hand className="size-3.5 text-accent" />
-                  <span>{pdfMode === 'native' ? (isRu ? 'Режим: Рука 🖐️ (Нативный)' : 'Режим: Рука 🖐️ (Нативний)') : 'Режим: Google Viewer'}</span>
+                  <Hand className="size-3.5" />
+                  <span>{isRu ? 'Рука 🖐️' : 'Рука 🖐️'}</span>
                 </button>
+
+                {/* Zoom In/Out & Rotate Controls */}
+                <div className="flex items-center gap-1 bg-surface-white px-1 py-0.5 rounded-lg border border-border">
+                  <button
+                    type="button"
+                    onClick={handleZoomIn}
+                    title={isRu ? 'Увеличить' : 'Збільшити'}
+                    className="p-1 rounded hover:bg-surface-raised text-text-primary cursor-pointer"
+                  >
+                    <ZoomIn className="size-3.5" />
+                  </button>
+                  <span className="text-[10.5px] font-mono font-bold text-text-muted px-1">
+                    {Math.round(zoomScale * 100)}%
+                  </span>
+                  <button
+                    type="button"
+                    onClick={handleZoomOut}
+                    title={isRu ? 'Уменьшить' : 'Зменшити'}
+                    className="p-1 rounded hover:bg-surface-raised text-text-primary cursor-pointer"
+                  >
+                    <ZoomOut className="size-3.5" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleRotate}
+                    title={isRu ? 'Повернуть' : 'Повернути'}
+                    className="p-1 rounded hover:bg-surface-raised text-text-primary cursor-pointer"
+                  >
+                    <RotateCw className="size-3.5" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleResetZoom}
+                    title={isRu ? 'Сброс' : 'Скинути'}
+                    className="p-1 rounded hover:bg-surface-raised text-text-primary cursor-pointer"
+                  >
+                    <RefreshCw className="size-3" />
+                  </button>
+                </div>
 
                 <a
                   href={effectivePdf!}
                   download
-                  className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-accent text-white text-[12px] font-bold hover:bg-accent-hover transition-colors shadow-2xs"
+                  className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-surface-white hover:bg-surface-raised border border-border text-text-primary text-[12px] font-bold transition-colors"
                 >
-                  <Download className="size-3.5" />
-                  <span>{isRu ? 'Скачать PDF' : 'Завантажити PDF'}</span>
+                  <Download className="size-3.5 text-accent" />
+                  <span className="hidden sm:inline">{isRu ? 'Скачать' : 'Завантажити'}</span>
                 </a>
                 <a
                   href={effectivePdf!}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-surface-white hover:bg-surface-raised border border-border text-text-primary text-[12px] font-bold transition-colors"
+                  className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-surface-white hover:bg-surface-raised border border-border text-text-primary text-[12px] font-bold transition-colors"
                 >
                   <ExternalLink className="size-3.5" />
-                  <span>{isRu ? 'В отдельном окне' : 'В окремому вікні'}</span>
+                  <span className="hidden sm:inline">{isRu ? 'В отдельном окне' : 'В окремому вікні'}</span>
                 </a>
                 <button
                   onClick={() => setActiveModal(null)}
-                  className="size-8 rounded-lg flex items-center justify-center bg-surface-white hover:bg-surface-raised border border-border text-text-muted hover:text-text-primary transition-colors cursor-pointer"
+                  className="size-7 rounded-lg flex items-center justify-center bg-surface-white hover:bg-surface-raised border border-border text-text-muted hover:text-text-primary transition-colors cursor-pointer ml-1"
                 >
                   <X className="size-4" strokeWidth={2.5} />
                 </button>
               </div>
             </div>
 
-            {/* Universal PDF Viewer Frame */}
-            <div className="flex-1 w-full h-full bg-slate-900 overflow-hidden relative flex flex-col">
-              {pdfMode === 'native' ? (
-                <object
-                  data={`${effectivePdf!}#toolbar=1&navpanes=1&pagemode=thumbs`}
-                  type="application/pdf"
-                  className="w-full h-full border-none bg-slate-900"
-                >
-                  <iframe
-                    src={`https://docs.google.com/gview?url=${encodeURIComponent(effectivePdf!)}&embedded=true`}
-                    className="w-full h-full border-none"
-                    title={isRu ? 'Паспорт изделия' : 'Паспорт виробу'}
-                  />
-                </object>
-              ) : (
+            {/* Interactive Drag & Pan Viewport Container */}
+            <div
+              onMouseDown={handleMouseDown}
+              onMouseMove={handleMouseMove}
+              onMouseUp={handleMouseUp}
+              onMouseLeave={handleMouseUp}
+              onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={handleTouchEnd}
+              className={`flex-1 w-full h-full bg-slate-900 overflow-hidden relative ${
+                isHandMode
+                  ? isDragging
+                    ? 'cursor-grabbing'
+                    : 'cursor-grab'
+                  : 'cursor-default'
+              }`}
+            >
+              {/* Transparent Drag Overlay: Captures mouse drag clicks when Hand Mode is ON */}
+              {isHandMode && (
+                <div
+                  className="absolute inset-0 z-20"
+                  style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
+                />
+              )}
+
+              {/* Scalable & Movable Canvas Frame */}
+              <div
+                className="w-full h-full transition-transform duration-75 ease-out"
+                style={{
+                  transform: `translate(${panPos.x}px, ${panPos.y}px) scale(${zoomScale}) rotate(${rotation}deg)`,
+                  transformOrigin: 'center center',
+                }}
+              >
                 <iframe
                   src={`https://docs.google.com/gview?url=${encodeURIComponent(effectivePdf!)}&embedded=true`}
-                  className="w-full h-full border-none"
+                  className="w-full h-full border-none pointer-events-none select-none"
                   title={isRu ? 'Паспорт изделия' : 'Паспорт виробу'}
                 />
+              </div>
+
+              {/* Floating Hand Drag Active Badge */}
+              {isHandMode && (
+                <div className="absolute bottom-3 right-3 z-30 bg-black/80 backdrop-blur-md px-3 py-1.5 rounded-xl border border-white/20 text-[11px] font-semibold text-white flex items-center gap-1.5 pointer-events-none shadow-lg">
+                  <Hand className="size-3.5 text-accent animate-pulse" />
+                  <span>{isRu ? 'Зажмите и тяните мышкой для перемещения' : 'Затисніть та тягніть мишкою для переміщення'}</span>
+                </div>
               )}
             </div>
           </div>
         </div>
       )}
 
-      {/* Modal 1.5: Secondary Catalog PDF Viewer */}
+      {/* Modal 1.5: Secondary Catalog PDF Viewer with Real Hand Drag */}
       {activeModal === 'catalogPdf' && effectiveCatalogPdf && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-2 sm:p-5 animate-in fade-in duration-200"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-2 sm:p-4 animate-in fade-in duration-200 select-none"
           onClick={() => setActiveModal(null)}
         >
           <div
-            className="relative w-full max-w-5xl h-[90vh] bg-surface-white rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-border"
+            className="relative w-full max-w-5xl h-[92vh] bg-surface-white rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-border"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-surface-alt flex-wrap gap-2">
+            <div className="flex items-center justify-between px-4 py-2.5 border-b border-border bg-surface-alt flex-wrap gap-2">
               <div className="flex items-center gap-2">
                 <div className="size-8 rounded-lg bg-accent text-white flex items-center justify-center shrink-0">
                   <FileText className="size-4" strokeWidth={2} />
@@ -297,52 +368,76 @@ export function TechnicalDocsViewer({
                 </div>
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5 flex-wrap">
                 <button
                   type="button"
-                  onClick={() => setPdfMode(prev => prev === 'native' ? 'google' : 'native')}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-white hover:bg-surface-raised border border-border text-text-primary text-[12px] font-bold transition-colors cursor-pointer"
+                  onClick={() => setIsHandMode(prev => !prev)}
+                  className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-[12px] font-bold transition-all cursor-pointer ${
+                    isHandMode
+                      ? 'bg-accent text-white border-accent shadow-2xs'
+                      : 'bg-surface-white text-text-primary border-border hover:bg-surface-raised'
+                  }`}
                 >
-                  <Hand className="size-3.5 text-accent" />
-                  <span>{pdfMode === 'native' ? (isRu ? 'Режим: Рука 🖐️ (Нативный)' : 'Режим: Рука 🖐️ (Нативний)') : 'Режим: Google Viewer'}</span>
+                  <Hand className="size-3.5" />
+                  <span>{isRu ? 'Рука 🖐️' : 'Рука 🖐️'}</span>
                 </button>
 
-                <a
-                  href={effectiveCatalogPdf}
-                  download
-                  className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-accent text-white text-[12px] font-bold hover:bg-accent-hover transition-colors shadow-2xs"
-                >
-                  <Download className="size-3.5" />
-                  <span>{isRu ? 'Скачать PDF' : 'Завантажити PDF'}</span>
+                <div className="flex items-center gap-1 bg-surface-white px-1 py-0.5 rounded-lg border border-border">
+                  <button type="button" onClick={handleZoomIn} className="p-1 hover:bg-surface-raised text-text-primary cursor-pointer"><ZoomIn className="size-3.5" /></button>
+                  <span className="text-[10.5px] font-mono font-bold text-text-muted px-1">{Math.round(zoomScale * 100)}%</span>
+                  <button type="button" onClick={handleZoomOut} className="p-1 hover:bg-surface-raised text-text-primary cursor-pointer"><ZoomOut className="size-3.5" /></button>
+                  <button type="button" onClick={handleRotate} className="p-1 hover:bg-surface-raised text-text-primary cursor-pointer"><RotateCw className="size-3.5" /></button>
+                  <button type="button" onClick={handleResetZoom} className="p-1 hover:bg-surface-raised text-text-primary cursor-pointer"><RefreshCw className="size-3" /></button>
+                </div>
+
+                <a href={effectiveCatalogPdf} download className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-surface-white hover:bg-surface-raised border border-border text-text-primary text-[12px] font-bold transition-colors">
+                  <Download className="size-3.5 text-accent" />
+                  <span className="hidden sm:inline">{isRu ? 'Скачать' : 'Завантажити'}</span>
                 </a>
-                <button
-                  onClick={() => setActiveModal(null)}
-                  className="size-8 rounded-lg flex items-center justify-center bg-surface-white hover:bg-surface-raised border border-border text-text-muted hover:text-text-primary transition-colors cursor-pointer"
-                >
+                <button onClick={() => setActiveModal(null)} className="size-7 rounded-lg flex items-center justify-center bg-surface-white hover:bg-surface-raised border border-border text-text-muted hover:text-text-primary transition-colors cursor-pointer ml-1">
                   <X className="size-4" strokeWidth={2.5} />
                 </button>
               </div>
             </div>
 
-            <div className="flex-1 w-full h-full bg-slate-900 overflow-hidden relative flex flex-col">
-              {pdfMode === 'native' ? (
-                <object
-                  data={`${effectiveCatalogPdf}#toolbar=1&navpanes=1`}
-                  type="application/pdf"
-                  className="w-full h-full border-none bg-slate-900"
-                >
-                  <iframe
-                    src={`https://docs.google.com/gview?url=${encodeURIComponent(effectiveCatalogPdf)}&embedded=true`}
-                    className="w-full h-full border-none"
-                    title={isRu ? 'Страница каталога' : 'Сторінка каталогу'}
-                  />
-                </object>
-              ) : (
+            <div
+              onMouseDown={handleMouseDown}
+              onMouseMove={handleMouseMove}
+              onMouseUp={handleMouseUp}
+              onMouseLeave={handleMouseUp}
+              onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={handleTouchEnd}
+              className={`flex-1 w-full h-full bg-slate-900 overflow-hidden relative ${
+                isHandMode ? (isDragging ? 'cursor-grabbing' : 'cursor-grab') : 'cursor-default'
+              }`}
+            >
+              {isHandMode && (
+                <div
+                  className="absolute inset-0 z-20"
+                  style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
+                />
+              )}
+
+              <div
+                className="w-full h-full transition-transform duration-75 ease-out"
+                style={{
+                  transform: `translate(${panPos.x}px, ${panPos.y}px) scale(${zoomScale}) rotate(${rotation}deg)`,
+                  transformOrigin: 'center center',
+                }}
+              >
                 <iframe
                   src={`https://docs.google.com/gview?url=${encodeURIComponent(effectiveCatalogPdf)}&embedded=true`}
-                  className="w-full h-full border-none"
+                  className="w-full h-full border-none pointer-events-none select-none"
                   title={isRu ? 'Страница каталога' : 'Сторінка каталогу'}
                 />
+              </div>
+
+              {isHandMode && (
+                <div className="absolute bottom-3 right-3 z-30 bg-black/80 backdrop-blur-md px-3 py-1.5 rounded-xl border border-white/20 text-[11px] font-semibold text-white flex items-center gap-1.5 pointer-events-none shadow-lg">
+                  <Hand className="size-3.5 text-accent animate-pulse" />
+                  <span>{isRu ? 'Зажмите и тяните мышкой для перемещения' : 'Затисніть та тягніть мишкою для переміщення'}</span>
+                </div>
               )}
             </div>
           </div>
