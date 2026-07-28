@@ -137,11 +137,11 @@ export function TechnicalDocsViewer({
     }
   }
 
-  // Document URLs — ONLY show buttons for files that actually exist in DB!
+  // Document URLs — drawings provided by manufacturer (single image or separate images)
+  const effectiveDimensions = dimensionsUrl || schematicsUrl || null
+  const effectiveSchematics = schematicsUrl || dimensionsUrl || null
   const effectivePdf = pdfUrl || null
-  const effectiveCatalogPdf = catalogPdfUrl || null
-  const effectiveDimensions = dimensionsUrl || null
-  const effectiveSchematics = schematicsUrl || null
+  const effectiveCatalogPdf = (catalogPdfUrl && catalogPdfUrl !== pdfUrl) ? catalogPdfUrl : null
 
   const hasAnyDoc = Boolean(effectivePdf || effectiveCatalogPdf || effectiveDimensions || effectiveSchematics)
 
