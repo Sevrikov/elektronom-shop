@@ -85,6 +85,7 @@ export async function getProductBySlug(slug: string, locale: string) {
       saleStartsAt: true,
       saleEndsAt: true,
       pdfUrl: true,
+      catalogPdfUrl: true,
       dimensionsUrl: true,
       schematicsUrl: true,
       translations: {
