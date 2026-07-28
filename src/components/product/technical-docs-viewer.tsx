@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useLocale } from 'next-intl'
-import { FileText, Ruler, Zap, X, Download, ExternalLink, ZoomIn, ZoomOut, RotateCw, Hand, RefreshCw, AlertCircle, ScrollText } from 'lucide-react'
+import { FileText, Ruler, Zap, X, Download, ExternalLink, ZoomIn, ZoomOut, RotateCw, Hand, RefreshCw, AlertCircle, ScrollText, ChevronLeft, ChevronRight, Monitor, Globe } from 'lucide-react'
 
 interface TechnicalDocsViewerProps {
   productSku?: string | null
@@ -27,7 +27,13 @@ export function TechnicalDocsViewer({
   const [activeModal, setActiveModal] = useState<'pdf' | 'catalogPdf' | 'dimensions' | 'schematics' | null>(null)
   
   // Hand Mode for PDF & drawings
-  const [isHandMode, setIsHandMode] = useState(true)
+  const [isHandMode, setIsHandMode] = useState(false)
+
+  // Viewer Engine for PDFs ('native' | 'gview')
+  const [viewerEngine, setViewerEngine] = useState<'native' | 'gview'>('native')
+
+  // PDF Pagination State
+  const [pdfPage, setPdfPage] = useState(1)
 
   // Interactive State (Zoom / Rotation / Error / Pan)
   const [zoomScale, setZoomScale] = useState(1)
@@ -43,9 +49,12 @@ export function TechnicalDocsViewer({
     setZoomScale(1)
     setRotation(0)
     setPanPos({ x: 0, y: 0 })
-    setIsHandMode(true)
+    // For images/drawings default to Hand Mode. For PDFs default to scroll/native mode so scrollbars & pages work!
+    setIsHandMode(type === 'dimensions' || type === 'schematics')
     setIsDragging(false)
     setImgError(false)
+    setPdfPage(1)
+    setViewerEngine('native')
     setActiveModal(type)
   }
 
@@ -128,15 +137,99 @@ export function TechnicalDocsViewer({
     }
   }
 
-  // Strict Document URLs — NO cross-fallbacks so content matches title 100%!
+  // Strict Document Filtering — NO cross-fallbacks & fix "в габаритах висит скрин схемы"!
   const effectivePdf = pdfUrl || null
   const effectiveCatalogPdf = catalogPdfUrl || null
-  const effectiveDimensions = dimensionsUrl || null
   const effectiveSchematics = schematicsUrl || null
+
+  // If dimensionsUrl is identical to schematicsUrl, or if dimensionsUrl contains "schema",
+  // treat dimensionsUrl as null so "Габариты" doesn't show an electrical schematic!
+  const effectiveDimensions = (dimensionsUrl && dimensionsUrl !== schematicsUrl && !dimensionsUrl.toLowerCase().includes('schema'))
+    ? dimensionsUrl
+    : null
 
   const hasAnyDoc = Boolean(effectivePdf || effectiveCatalogPdf || effectiveDimensions || effectiveSchematics)
 
   if (!hasAnyDoc) return null
+
+  const renderPdfViewer = (targetUrl: string, titleText: string) => {
+    const pdfSrc = viewerEngine === 'gview'
+      ? `https://docs.google.com/gview?url=${encodeURIComponent(targetUrl)}&embedded=true#page=${pdfPage}`
+      : `${targetUrl}#page=${pdfPage}&toolbar=1&navpanes=1`
+
+    return (
+      <div className="flex-1 w-full h-full bg-slate-900 overflow-hidden relative flex flex-col">
+        <div
+          onMouseDown={handleMouseDown}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+          onWheel={handleWheel}
+          className={`flex-1 w-full h-full relative ${
+            isHandMode ? (isDragging ? 'cursor-grabbing' : 'cursor-grab') : 'cursor-default'
+          }`}
+        >
+          {isHandMode && (
+            <div
+              className="absolute inset-0 z-20"
+              style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
+            />
+          )}
+
+          <div
+            className="w-full h-full transition-transform duration-75 ease-out"
+            style={{
+              transform: `translate(${panPos.x}px, ${panPos.y}px) scale(${zoomScale}) rotate(${rotation}deg)`,
+              transformOrigin: 'center center',
+            }}
+          >
+            {viewerEngine === 'native' ? (
+              <object
+                data={pdfSrc}
+                type="application/pdf"
+                className={`w-full h-full border-none select-none ${isHandMode ? 'pointer-events-none' : 'pointer-events-auto'}`}
+              >
+                <iframe
+                  src={pdfSrc}
+                  className={`w-full h-full border-none select-none ${isHandMode ? 'pointer-events-none' : 'pointer-events-auto'}`}
+                  title={titleText}
+                />
+              </object>
+            ) : (
+              <iframe
+                src={pdfSrc}
+                className={`w-full h-full border-none select-none ${isHandMode ? 'pointer-events-none' : 'pointer-events-auto'}`}
+                title={titleText}
+              />
+            )}
+          </div>
+
+          {isHandMode && (
+            <div className="absolute bottom-12 right-3 z-30 bg-black/80 backdrop-blur-md px-3 py-1.5 rounded-xl border border-white/20 text-[11px] font-semibold text-white flex items-center gap-1.5 pointer-events-none shadow-lg">
+              <Hand className="size-3.5 text-accent animate-pulse" />
+              <span>{isRu ? 'Зажмите мышку для перетаскивания или крутите колесико' : 'Затисніть мишку для перетягування або крутіть коліщатко'}</span>
+            </div>
+          )}
+        </div>
+
+        {/* Fallback Banner at bottom if embedded viewer fails */}
+        <div className="shrink-0 bg-slate-800 text-slate-200 px-4 py-1.5 border-t border-slate-700 flex items-center justify-between text-xs flex-wrap gap-2 z-20">
+          <span className="text-[11px] text-slate-400">
+            {isRu ? 'Если документ не загрузился или браузер блокирует встроенный просмотр:' : 'Якщо документ не завантажився або браузер блокує вбудований перегляд:'}
+          </span>
+          <a
+            href={targetUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-2.5 py-1 rounded-lg bg-accent text-white font-bold text-[11px] hover:bg-accent-hover transition-colors flex items-center gap-1"
+          >
+            <ExternalLink className="size-3.5" />
+            <span>{isRu ? 'Открыть PDF напрямую в новой вкладке' : 'Відкрити PDF напряму в новій вкладці'}</span>
+          </a>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="flex flex-col gap-2 mt-3 pt-3 border-t border-border">
@@ -145,7 +238,7 @@ export function TechnicalDocsViewer({
       </span>
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-        {/* Button 1: Dimensions Drawing (Only shown when dimensionsUrl actually exists!) */}
+        {/* Button 1: Dimensions Drawing (Only shown when a REAL separate dimensions drawing exists!) */}
         {effectiveDimensions && (
           <button
             type="button"
@@ -223,7 +316,7 @@ export function TechnicalDocsViewer({
       </div>
 
       {/* Modal 1: PDF Passport Viewer */}
-      {activeModal === 'pdf' && (
+      {activeModal === 'pdf' && effectivePdf && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-2 sm:p-4 animate-in fade-in duration-200 select-none"
           onClick={() => setActiveModal(null)}
@@ -232,7 +325,8 @@ export function TechnicalDocsViewer({
             className="relative w-full max-w-5xl h-[92vh] bg-surface-white rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-border"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between px-4 py-2.5 border-b border-border bg-surface-alt flex-wrap gap-2">
+            {/* STICKY HEADER — NEVER VANISHES */}
+            <div className="sticky top-0 z-30 shrink-0 bg-surface-white px-4 py-2.5 border-b border-border shadow-2xs flex items-center justify-between flex-wrap gap-2">
               <div className="flex items-center gap-2">
                 <div className="size-8 rounded-lg bg-accent text-white flex items-center justify-center shrink-0">
                   <FileText className="size-4" strokeWidth={2} />
@@ -246,6 +340,55 @@ export function TechnicalDocsViewer({
               </div>
 
               <div className="flex items-center gap-1.5 flex-wrap">
+                {/* Page Navigation Controls */}
+                <div className="flex items-center gap-1 bg-surface-alt px-1.5 py-0.5 rounded-lg border border-border">
+                  <button
+                    type="button"
+                    onClick={() => setPdfPage(p => Math.max(1, p - 1))}
+                    disabled={pdfPage <= 1}
+                    className="p-1 hover:bg-surface-raised text-text-primary disabled:opacity-30 cursor-pointer"
+                    title={isRu ? 'Предыдущая страница' : 'Попередня сторінка'}
+                  >
+                    <ChevronLeft className="size-4" />
+                  </button>
+                  <span className="text-[11px] font-mono font-bold text-text-primary px-1">
+                    {isRu ? `Стр. ${pdfPage}` : `Стор. ${pdfPage}`}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setPdfPage(p => p + 1)}
+                    className="p-1 hover:bg-surface-raised text-text-primary cursor-pointer"
+                    title={isRu ? 'Следующая страница' : 'Наступна сторінка'}
+                  >
+                    <ChevronRight className="size-4" />
+                  </button>
+                </div>
+
+                {/* Viewer Engine Switcher */}
+                <div className="flex items-center gap-1 bg-surface-alt p-0.5 rounded-lg border border-border">
+                  <button
+                    type="button"
+                    onClick={() => setViewerEngine('native')}
+                    className={`flex items-center gap-1 px-2 py-0.5 rounded-md text-[10.5px] font-bold transition-all cursor-pointer ${
+                      viewerEngine === 'native' ? 'bg-accent text-white shadow-2xs' : 'text-text-muted hover:text-text-primary'
+                    }`}
+                  >
+                    <Monitor className="size-3" />
+                    <span>PDF</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setViewerEngine('gview')}
+                    className={`flex items-center gap-1 px-2 py-0.5 rounded-md text-[10.5px] font-bold transition-all cursor-pointer ${
+                      viewerEngine === 'gview' ? 'bg-accent text-white shadow-2xs' : 'text-text-muted hover:text-text-primary'
+                    }`}
+                  >
+                    <Globe className="size-3" />
+                    <span>Google</span>
+                  </button>
+                </div>
+
+                {/* Interaction Modes */}
                 <button
                   type="button"
                   onClick={() => setIsHandMode(true)}
@@ -268,19 +411,12 @@ export function TechnicalDocsViewer({
                   <span>{isRu ? 'Прокрутка 📜' : 'Прокрутка 📜'}</span>
                 </button>
 
-                <div className="flex items-center gap-1 bg-surface-white px-1 py-0.5 rounded-lg border border-border">
-                  <button type="button" onClick={handleZoomIn} className="p-1 hover:bg-surface-raised text-text-primary cursor-pointer"><ZoomIn className="size-3.5" /></button>
-                  <span className="text-[10.5px] font-mono font-bold text-text-muted px-1">{Math.round(zoomScale * 100)}%</span>
-                  <button type="button" onClick={handleZoomOut} className="p-1 hover:bg-surface-raised text-text-primary cursor-pointer"><ZoomOut className="size-3.5" /></button>
-                  <button type="button" onClick={handleRotate} className="p-1 hover:bg-surface-raised text-text-primary cursor-pointer"><RotateCw className="size-3.5" /></button>
-                  <button type="button" onClick={handleResetZoom} className="p-1 hover:bg-surface-raised text-text-primary cursor-pointer"><RefreshCw className="size-3" /></button>
-                </div>
-
-                <a href={effectivePdf!} download className="flex items-center gap-1 px-2 py-1 rounded-lg bg-surface-white hover:bg-surface-raised border border-border text-text-primary text-[11px] font-bold transition-colors">
+                {/* Download & External Window */}
+                <a href={effectivePdf} download className="flex items-center gap-1 px-2 py-1 rounded-lg bg-surface-white hover:bg-surface-raised border border-border text-text-primary text-[11px] font-bold transition-colors">
                   <Download className="size-3.5 text-accent" />
                   <span className="hidden sm:inline">{isRu ? 'Скачать' : 'Завантажити'}</span>
                 </a>
-                <a href={effectivePdf!} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 px-2 py-1 rounded-lg bg-surface-white hover:bg-surface-raised border border-border text-text-primary text-[11px] font-bold transition-colors">
+                <a href={effectivePdf} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 px-2 py-1 rounded-lg bg-surface-white hover:bg-surface-raised border border-border text-text-primary text-[11px] font-bold transition-colors">
                   <ExternalLink className="size-3.5" />
                   <span className="hidden sm:inline">{isRu ? 'В отдельном окне' : 'В окремому вікні'}</span>
                 </a>
@@ -290,44 +426,7 @@ export function TechnicalDocsViewer({
               </div>
             </div>
 
-            <div
-              onMouseDown={handleMouseDown}
-              onTouchStart={handleTouchStart}
-              onTouchMove={handleTouchMove}
-              onTouchEnd={handleTouchEnd}
-              onWheel={handleWheel}
-              className={`flex-1 w-full h-full bg-slate-900 overflow-hidden relative ${
-                isHandMode ? (isDragging ? 'cursor-grabbing' : 'cursor-grab') : 'cursor-default'
-              }`}
-            >
-              {isHandMode && (
-                <div
-                  className="absolute inset-0 z-20"
-                  style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
-                />
-              )}
-
-              <div
-                className="w-full h-full transition-transform duration-75 ease-out"
-                style={{
-                  transform: `translate(${panPos.x}px, ${panPos.y}px) scale(${zoomScale}) rotate(${rotation}deg)`,
-                  transformOrigin: 'center center',
-                }}
-              >
-                <iframe
-                  src={`https://docs.google.com/gview?url=${encodeURIComponent(effectivePdf!)}&embedded=true`}
-                  className={`w-full h-full border-none select-none ${isHandMode ? 'pointer-events-none' : 'pointer-events-auto'}`}
-                  title={isRu ? 'Паспорт изделия' : 'Паспорт виробу'}
-                />
-              </div>
-
-              {isHandMode && (
-                <div className="absolute bottom-3 right-3 z-30 bg-black/80 backdrop-blur-md px-3 py-1.5 rounded-xl border border-white/20 text-[11px] font-semibold text-white flex items-center gap-1.5 pointer-events-none shadow-lg">
-                  <Hand className="size-3.5 text-accent animate-pulse" />
-                  <span>{isRu ? 'Зажмите мышку для перетаскивания или крутите колесико' : 'Затисніть мишку для перетягування або крутіть коліщатко'}</span>
-                </div>
-              )}
-            </div>
+            {renderPdfViewer(effectivePdf, isRu ? 'Паспорт изделия' : 'Паспорт виробу')}
           </div>
         </div>
       )}
@@ -342,7 +441,8 @@ export function TechnicalDocsViewer({
             className="relative w-full max-w-5xl h-[92vh] bg-surface-white rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-border"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between px-4 py-2.5 border-b border-border bg-surface-alt flex-wrap gap-2">
+            {/* STICKY HEADER */}
+            <div className="sticky top-0 z-30 shrink-0 bg-surface-white px-4 py-2.5 border-b border-border shadow-2xs flex items-center justify-between flex-wrap gap-2">
               <div className="flex items-center gap-2">
                 <div className="size-8 rounded-lg bg-accent text-white flex items-center justify-center shrink-0">
                   <FileText className="size-4" strokeWidth={2} />
@@ -356,6 +456,52 @@ export function TechnicalDocsViewer({
               </div>
 
               <div className="flex items-center gap-1.5 flex-wrap">
+                {/* Page Controls */}
+                <div className="flex items-center gap-1 bg-surface-alt px-1.5 py-0.5 rounded-lg border border-border">
+                  <button
+                    type="button"
+                    onClick={() => setPdfPage(p => Math.max(1, p - 1))}
+                    disabled={pdfPage <= 1}
+                    className="p-1 hover:bg-surface-raised text-text-primary disabled:opacity-30 cursor-pointer"
+                  >
+                    <ChevronLeft className="size-4" />
+                  </button>
+                  <span className="text-[11px] font-mono font-bold text-text-primary px-1">
+                    {isRu ? `Стр. ${pdfPage}` : `Стор. ${pdfPage}`}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setPdfPage(p => p + 1)}
+                    className="p-1 hover:bg-surface-raised text-text-primary cursor-pointer"
+                  >
+                    <ChevronRight className="size-4" />
+                  </button>
+                </div>
+
+                {/* Engine Switcher */}
+                <div className="flex items-center gap-1 bg-surface-alt p-0.5 rounded-lg border border-border">
+                  <button
+                    type="button"
+                    onClick={() => setViewerEngine('native')}
+                    className={`flex items-center gap-1 px-2 py-0.5 rounded-md text-[10.5px] font-bold transition-all cursor-pointer ${
+                      viewerEngine === 'native' ? 'bg-accent text-white shadow-2xs' : 'text-text-muted hover:text-text-primary'
+                    }`}
+                  >
+                    <Monitor className="size-3" />
+                    <span>PDF</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setViewerEngine('gview')}
+                    className={`flex items-center gap-1 px-2 py-0.5 rounded-md text-[10.5px] font-bold transition-all cursor-pointer ${
+                      viewerEngine === 'gview' ? 'bg-accent text-white shadow-2xs' : 'text-text-muted hover:text-text-primary'
+                    }`}
+                  >
+                    <Globe className="size-3" />
+                    <span>Google</span>
+                  </button>
+                </div>
+
                 <button type="button" onClick={() => setIsHandMode(true)} className={`flex items-center gap-1 px-2 py-1 rounded-lg border text-[11px] font-bold transition-all cursor-pointer ${isHandMode ? 'bg-accent text-white border-accent shadow-2xs' : 'bg-surface-white text-text-primary border-border hover:bg-surface-raised'}`}>
                   <Hand className="size-3.5" />
                   <span>{isRu ? 'Рука 🖐️' : 'Рука 🖐️'}</span>
@@ -364,14 +510,6 @@ export function TechnicalDocsViewer({
                   <ScrollText className="size-3.5" />
                   <span>{isRu ? 'Прокрутка 📜' : 'Прокрутка 📜'}</span>
                 </button>
-
-                <div className="flex items-center gap-1 bg-surface-white px-1 py-0.5 rounded-lg border border-border">
-                  <button type="button" onClick={handleZoomIn} className="p-1 hover:bg-surface-raised text-text-primary cursor-pointer"><ZoomIn className="size-3.5" /></button>
-                  <span className="text-[10.5px] font-mono font-bold text-text-muted px-1">{Math.round(zoomScale * 100)}%</span>
-                  <button type="button" onClick={handleZoomOut} className="p-1 hover:bg-surface-raised text-text-primary cursor-pointer"><ZoomOut className="size-3.5" /></button>
-                  <button type="button" onClick={handleRotate} className="p-1 hover:bg-surface-raised text-text-primary cursor-pointer"><RotateCw className="size-3.5" /></button>
-                  <button type="button" onClick={handleResetZoom} className="p-1 hover:bg-surface-raised text-text-primary cursor-pointer"><RefreshCw className="size-3" /></button>
-                </div>
 
                 <a href={effectiveCatalogPdf} download className="flex items-center gap-1 px-2 py-1 rounded-lg bg-surface-white hover:bg-surface-raised border border-border text-text-primary text-[11px] font-bold transition-colors">
                   <Download className="size-3.5 text-accent" />
@@ -383,37 +521,7 @@ export function TechnicalDocsViewer({
               </div>
             </div>
 
-            <div
-              onMouseDown={handleMouseDown}
-              onTouchStart={handleTouchStart}
-              onTouchMove={handleTouchMove}
-              onTouchEnd={handleTouchEnd}
-              onWheel={handleWheel}
-              className={`flex-1 w-full h-full bg-slate-900 overflow-hidden relative ${
-                isHandMode ? (isDragging ? 'cursor-grabbing' : 'cursor-grab') : 'cursor-default'
-              }`}
-            >
-              {isHandMode && (
-                <div
-                  className="absolute inset-0 z-20"
-                  style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
-                />
-              )}
-
-              <div
-                className="w-full h-full transition-transform duration-75 ease-out"
-                style={{
-                  transform: `translate(${panPos.x}px, ${panPos.y}px) scale(${zoomScale}) rotate(${rotation}deg)`,
-                  transformOrigin: 'center center',
-                }}
-              >
-                <iframe
-                  src={`https://docs.google.com/gview?url=${encodeURIComponent(effectiveCatalogPdf)}&embedded=true`}
-                  className={`w-full h-full border-none select-none ${isHandMode ? 'pointer-events-none' : 'pointer-events-auto'}`}
-                  title={isRu ? 'Страница каталога' : 'Сторінка каталогу'}
-                />
-              </div>
-            </div>
+            {renderPdfViewer(effectiveCatalogPdf, isRu ? 'Страница каталога' : 'Сторінка каталогу')}
           </div>
         </div>
       )}
@@ -470,7 +578,7 @@ export function TechnicalDocsViewer({
                   </p>
                   <a href={effectiveDimensions} target="_blank" rel="noopener noreferrer" className="mt-1 px-4 py-2 rounded-xl bg-accent text-white font-bold text-xs shadow-sm hover:bg-accent-hover transition-colors flex items-center gap-1.5">
                     <ExternalLink className="size-3.5" />
-                    <span>{isRu ? 'Открыть прямой файл' : 'Відкрити прямий файл'}</span>
+                    <span>{isRu ? 'Открыть прямой файл' : 'Відкрити прямой файл'}</span>
                   </a>
                 </div>
               ) : (
