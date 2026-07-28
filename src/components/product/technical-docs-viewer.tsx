@@ -137,9 +137,9 @@ export function TechnicalDocsViewer({
     }
   }
 
-  // Document URLs — ensure all technical drawings are accessible under both Dimensions & Schematics!
-  const effectivePdf = pdfUrl || null
-  const effectiveCatalogPdf = catalogPdfUrl || null
+  // Document URLs — ALWAYS guarantee all 4 document buttons (Габариты, Эл. схемы, ПДФ Паспорт, Страница каталога)
+  const effectivePdf = pdfUrl || catalogPdfUrl || null
+  const effectiveCatalogPdf = catalogPdfUrl || pdfUrl || null
   const effectiveDimensions = dimensionsUrl || schematicsUrl || null
   const effectiveSchematics = schematicsUrl || dimensionsUrl || null
 
