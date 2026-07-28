@@ -233,6 +233,7 @@ export default async function ProductPage({
                 productSku={product.sku}
                 productName={name}
                 pdfUrl={product.pdfUrl}
+                catalogPdfUrl={product.catalogPdfUrl}
                 dimensionsUrl={product.dimensionsUrl}
                 schematicsUrl={product.schematicsUrl}
               />

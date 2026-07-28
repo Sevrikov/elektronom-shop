@@ -200,6 +200,7 @@ async function run() {
               schematicsUrl: localSchem || null,
               dimensionsUrl: localDim || null,
               pdfUrl: localPdf1 || null,
+              catalogPdfUrl: localPdf2 || null,
             }
           });
           console.log(`      ✅ Привязано в БД Neon к товару: ${dbProduct.sku}`);

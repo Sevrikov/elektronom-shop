@@ -202,6 +202,7 @@ model Product {
 
   // ─── Technical Documentation & Schematics ───
   pdfUrl                String?
+  catalogPdfUrl         String?
   dimensionsUrl         String?
   schematicsUrl         String?
 
