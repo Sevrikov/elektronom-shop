@@ -64,7 +64,7 @@ export function TechnicalDocsViewer({
   }
   const handleRotate = () => setRotation(prev => (prev + 90) % 360)
 
-  // Robust Global Mouse & Touch Drag Listeners
+  // Mouse Drag Handler
   const handleMouseDown = (e: React.MouseEvent) => {
     if (!isHandMode && zoomScale <= 1) return
     e.preventDefault()
@@ -87,7 +87,7 @@ export function TechnicalDocsViewer({
 
   const handleTouchEnd = () => setIsDragging(false)
 
-  // Global window listeners for drag movement so cursor never slips or drops
+  // Global window listeners for smooth drag panning
   useEffect(() => {
     if (!isDragging) return
 
@@ -110,7 +110,7 @@ export function TechnicalDocsViewer({
     }
   }, [isDragging, dragStart])
 
-  // Mouse Wheel Handler: Allows mouse wheel scrolling up/down or Ctrl+wheel zoom
+  // Mouse Wheel Handler
   const handleWheel = (e: React.WheelEvent) => {
     if (!isHandMode) return
     if (e.ctrlKey) {
@@ -128,12 +128,10 @@ export function TechnicalDocsViewer({
     }
   }
 
-  // Effective Document URLs
+  // Strict Document URLs — NO cross-fallbacks so content matches title 100%!
   const effectivePdf = pdfUrl || null
   const effectiveCatalogPdf = catalogPdfUrl || null
-  // Show Dimensions (Ruler 📏) if dimensionsUrl exists OR if schematicsUrl exists
-  const effectiveDimensions = dimensionsUrl || schematicsUrl || null
-  // Show Schematics (Zap ⚡) whenever schematicsUrl exists!
+  const effectiveDimensions = dimensionsUrl || null
   const effectiveSchematics = schematicsUrl || null
 
   const hasAnyDoc = Boolean(effectivePdf || effectiveCatalogPdf || effectiveDimensions || effectiveSchematics)
@@ -147,7 +145,7 @@ export function TechnicalDocsViewer({
       </span>
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-        {/* Button 1: Dimensions (Ruler icon 📏) */}
+        {/* Button 1: Dimensions Drawing (Only shown when dimensionsUrl actually exists!) */}
         {effectiveDimensions && (
           <button
             type="button"
@@ -161,12 +159,12 @@ export function TechnicalDocsViewer({
               {isRu ? 'Габариты' : 'Габарити'}
             </span>
             <span className="text-[9.5px] text-text-muted">
-              {isRu ? 'Чертеж завода' : 'Креслення заводу'}
+              {isRu ? 'Чертеж размеров' : 'Креслення розмірів'}
             </span>
           </button>
         )}
 
-        {/* Button 2: Wiring Schematics (Zap icon ⚡) */}
+        {/* Button 2: Wiring Schematics Drawing (Only shown when schematicsUrl exists!) */}
         {effectiveSchematics && (
           <button
             type="button"
@@ -180,12 +178,12 @@ export function TechnicalDocsViewer({
               {isRu ? 'Эл. схемы' : 'Ел. схеми'}
             </span>
             <span className="text-[9.5px] text-text-muted">
-              {isRu ? 'Схема завода' : 'Схема заводу'}
+              {isRu ? 'Схема подключения' : 'Схема підключення'}
             </span>
           </button>
         )}
 
-        {/* Button 3: PDF Passport / Instruction */}
+        {/* Button 3: PDF Passport & Operating Manual */}
         {effectivePdf && (
           <button
             type="button"
@@ -215,16 +213,16 @@ export function TechnicalDocsViewer({
               <FileText className="size-4 text-accent" strokeWidth={2} />
             </div>
             <span className="text-[11px] font-bold text-text-primary group-hover:text-accent leading-tight">
-              {isRu ? 'Каталог (PDF)' : 'Каталог (PDF)'}
+              {isRu ? 'Страница каталога' : 'Сторінка каталогу'}
             </span>
             <span className="text-[9.5px] text-text-muted">
-              {isRu ? 'Страница каталога' : 'Сторінка каталогу'}
+              {isRu ? 'Каталог (PDF)' : 'Каталог (PDF)'}
             </span>
           </button>
         )}
       </div>
 
-      {/* Modal 1: PDF Passport Viewer with Dual-Mode & Bulletproof Drag */}
+      {/* Modal 1: PDF Passport Viewer */}
       {activeModal === 'pdf' && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-2 sm:p-4 animate-in fade-in duration-200 select-none"
@@ -234,7 +232,6 @@ export function TechnicalDocsViewer({
             className="relative w-full max-w-5xl h-[92vh] bg-surface-white rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-border"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Header Toolbar */}
             <div className="flex items-center justify-between px-4 py-2.5 border-b border-border bg-surface-alt flex-wrap gap-2">
               <div className="flex items-center gap-2">
                 <div className="size-8 rounded-lg bg-accent text-white flex items-center justify-center shrink-0">
@@ -242,23 +239,18 @@ export function TechnicalDocsViewer({
                 </div>
                 <div>
                   <h3 className="text-[13px] font-bold text-text-primary leading-tight line-clamp-1">
-                    {isRu ? 'Официальный паспорт изделия АСКО-УКРЕМ' : 'Офіційний паспорт виробу АСКО-УКРЕМ'}
+                    {isRu ? 'Официальный паспорт изделия и инструкция АСКО-УКРЕМ' : 'Офіційний паспорт виробу та інструкція АСКО-УКРЕМ'}
                   </h3>
                   <p className="text-[11px] text-text-muted">{productSku ? `${productSku} · ` : ''}{productName}</p>
                 </div>
               </div>
 
-              {/* Controls */}
               <div className="flex items-center gap-1.5 flex-wrap">
-                {/* Hand Mode vs Scroll Mode */}
                 <button
                   type="button"
                   onClick={() => setIsHandMode(true)}
-                  title={isRu ? 'Режим Рука: зажмите мышку для перетаскивания и крутите колесико' : 'Режим Рука: затисніть мишку для перетягування та крутіть коліщатко'}
                   className={`flex items-center gap-1 px-2 py-1 rounded-lg border text-[11px] font-bold transition-all cursor-pointer ${
-                    isHandMode
-                      ? 'bg-accent text-white border-accent shadow-2xs'
-                      : 'bg-surface-white text-text-primary border-border hover:bg-surface-raised'
+                    isHandMode ? 'bg-accent text-white border-accent shadow-2xs' : 'bg-surface-white text-text-primary border-border hover:bg-surface-raised'
                   }`}
                 >
                   <Hand className="size-3.5" />
@@ -267,58 +259,37 @@ export function TechnicalDocsViewer({
 
                 <button
                   type="button"
-                  onClick={() => {
-                    setIsHandMode(false)
-                    setPanPos({ x: 0, y: 0 })
-                    setZoomScale(1)
-                  }}
-                  title={isRu ? 'Обычный режим: прокрутка стандартными полосами' : 'Звичайний режим: прокрутка стандартними смугами'}
+                  onClick={() => { setIsHandMode(false); setPanPos({ x: 0, y: 0 }); setZoomScale(1); }}
                   className={`flex items-center gap-1 px-2 py-1 rounded-lg border text-[11px] font-bold transition-all cursor-pointer ${
-                    !isHandMode
-                      ? 'bg-accent text-white border-accent shadow-2xs'
-                      : 'bg-surface-white text-text-primary border-border hover:bg-surface-raised'
+                    !isHandMode ? 'bg-accent text-white border-accent shadow-2xs' : 'bg-surface-white text-text-primary border-border hover:bg-surface-raised'
                   }`}
                 >
                   <ScrollText className="size-3.5" />
                   <span>{isRu ? 'Прокрутка 📜' : 'Прокрутка 📜'}</span>
                 </button>
 
-                {/* Zoom Controls */}
                 <div className="flex items-center gap-1 bg-surface-white px-1 py-0.5 rounded-lg border border-border">
-                  <button type="button" onClick={handleZoomIn} title={isRu ? 'Увеличить' : 'Збільшити'} className="p-1 hover:bg-surface-raised text-text-primary cursor-pointer"><ZoomIn className="size-3.5" /></button>
+                  <button type="button" onClick={handleZoomIn} className="p-1 hover:bg-surface-raised text-text-primary cursor-pointer"><ZoomIn className="size-3.5" /></button>
                   <span className="text-[10.5px] font-mono font-bold text-text-muted px-1">{Math.round(zoomScale * 100)}%</span>
-                  <button type="button" onClick={handleZoomOut} title={isRu ? 'Уменьшить' : 'Зменшити'} className="p-1 hover:bg-surface-raised text-text-primary cursor-pointer"><ZoomOut className="size-3.5" /></button>
-                  <button type="button" onClick={handleRotate} title={isRu ? 'Повернуть' : 'Повернути'} className="p-1 hover:bg-surface-raised text-text-primary cursor-pointer"><RotateCw className="size-3.5" /></button>
-                  <button type="button" onClick={handleResetZoom} title={isRu ? 'Сброс' : 'Скинути'} className="p-1 hover:bg-surface-raised text-text-primary cursor-pointer"><RefreshCw className="size-3" /></button>
+                  <button type="button" onClick={handleZoomOut} className="p-1 hover:bg-surface-raised text-text-primary cursor-pointer"><ZoomOut className="size-3.5" /></button>
+                  <button type="button" onClick={handleRotate} className="p-1 hover:bg-surface-raised text-text-primary cursor-pointer"><RotateCw className="size-3.5" /></button>
+                  <button type="button" onClick={handleResetZoom} className="p-1 hover:bg-surface-raised text-text-primary cursor-pointer"><RefreshCw className="size-3" /></button>
                 </div>
 
-                <a
-                  href={effectivePdf!}
-                  download
-                  className="flex items-center gap-1 px-2 py-1 rounded-lg bg-surface-white hover:bg-surface-raised border border-border text-text-primary text-[11px] font-bold transition-colors"
-                >
+                <a href={effectivePdf!} download className="flex items-center gap-1 px-2 py-1 rounded-lg bg-surface-white hover:bg-surface-raised border border-border text-text-primary text-[11px] font-bold transition-colors">
                   <Download className="size-3.5 text-accent" />
                   <span className="hidden sm:inline">{isRu ? 'Скачать' : 'Завантажити'}</span>
                 </a>
-                <a
-                  href={effectivePdf!}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-1 px-2 py-1 rounded-lg bg-surface-white hover:bg-surface-raised border border-border text-text-primary text-[11px] font-bold transition-colors"
-                >
+                <a href={effectivePdf!} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 px-2 py-1 rounded-lg bg-surface-white hover:bg-surface-raised border border-border text-text-primary text-[11px] font-bold transition-colors">
                   <ExternalLink className="size-3.5" />
                   <span className="hidden sm:inline">{isRu ? 'В отдельном окне' : 'В окремому вікні'}</span>
                 </a>
-                <button
-                  onClick={() => setActiveModal(null)}
-                  className="size-7 rounded-lg flex items-center justify-center bg-surface-white hover:bg-surface-raised border border-border text-text-muted hover:text-text-primary transition-colors cursor-pointer ml-1"
-                >
+                <button onClick={() => setActiveModal(null)} className="size-7 rounded-lg flex items-center justify-center bg-surface-white hover:bg-surface-raised border border-border text-text-muted hover:text-text-primary transition-colors cursor-pointer ml-1">
                   <X className="size-4" strokeWidth={2.5} />
                 </button>
               </div>
             </div>
 
-            {/* Interactive Viewport Container */}
             <div
               onMouseDown={handleMouseDown}
               onTouchStart={handleTouchStart}
@@ -326,14 +297,9 @@ export function TechnicalDocsViewer({
               onTouchEnd={handleTouchEnd}
               onWheel={handleWheel}
               className={`flex-1 w-full h-full bg-slate-900 overflow-hidden relative ${
-                isHandMode
-                  ? isDragging
-                    ? 'cursor-grabbing'
-                    : 'cursor-grab'
-                  : 'cursor-default'
+                isHandMode ? (isDragging ? 'cursor-grabbing' : 'cursor-grab') : 'cursor-default'
               }`}
             >
-              {/* UNTRANSFORMED Overlay covers 100% of viewport when Hand Mode is ON */}
               {isHandMode && (
                 <div
                   className="absolute inset-0 z-20"
@@ -341,7 +307,6 @@ export function TechnicalDocsViewer({
                 />
               )}
 
-              {/* Movable PDF Frame */}
               <div
                 className="w-full h-full transition-transform duration-75 ease-out"
                 style={{
@@ -356,7 +321,6 @@ export function TechnicalDocsViewer({
                 />
               </div>
 
-              {/* Instruction Badge */}
               {isHandMode && (
                 <div className="absolute bottom-3 right-3 z-30 bg-black/80 backdrop-blur-md px-3 py-1.5 rounded-xl border border-white/20 text-[11px] font-semibold text-white flex items-center gap-1.5 pointer-events-none shadow-lg">
                   <Hand className="size-3.5 text-accent animate-pulse" />
@@ -392,23 +356,11 @@ export function TechnicalDocsViewer({
               </div>
 
               <div className="flex items-center gap-1.5 flex-wrap">
-                <button
-                  type="button"
-                  onClick={() => setIsHandMode(true)}
-                  className={`flex items-center gap-1 px-2 py-1 rounded-lg border text-[11px] font-bold transition-all cursor-pointer ${
-                    isHandMode ? 'bg-accent text-white border-accent shadow-2xs' : 'bg-surface-white text-text-primary border-border hover:bg-surface-raised'
-                  }`}
-                >
+                <button type="button" onClick={() => setIsHandMode(true)} className={`flex items-center gap-1 px-2 py-1 rounded-lg border text-[11px] font-bold transition-all cursor-pointer ${isHandMode ? 'bg-accent text-white border-accent shadow-2xs' : 'bg-surface-white text-text-primary border-border hover:bg-surface-raised'}`}>
                   <Hand className="size-3.5" />
                   <span>{isRu ? 'Рука 🖐️' : 'Рука 🖐️'}</span>
                 </button>
-                <button
-                  type="button"
-                  onClick={() => { setIsHandMode(false); setPanPos({ x: 0, y: 0 }); setZoomScale(1); }}
-                  className={`flex items-center gap-1 px-2 py-1 rounded-lg border text-[11px] font-bold transition-all cursor-pointer ${
-                    !isHandMode ? 'bg-accent text-white border-accent shadow-2xs' : 'bg-surface-white text-text-primary border-border hover:bg-surface-raised'
-                  }`}
-                >
+                <button type="button" onClick={() => { setIsHandMode(false); setPanPos({ x: 0, y: 0 }); setZoomScale(1); }} className={`flex items-center gap-1 px-2 py-1 rounded-lg border text-[11px] font-bold transition-all cursor-pointer ${!isHandMode ? 'bg-accent text-white border-accent shadow-2xs' : 'bg-surface-white text-text-primary border-border hover:bg-surface-raised'}`}>
                   <ScrollText className="size-3.5" />
                   <span>{isRu ? 'Прокрутка 📜' : 'Прокрутка 📜'}</span>
                 </button>
@@ -476,7 +428,6 @@ export function TechnicalDocsViewer({
             className="relative w-full max-w-4xl bg-surface-white rounded-2xl p-5 shadow-2xl flex flex-col border border-border"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Header */}
             <div className="flex items-center justify-between pb-3 border-b border-border mb-4 flex-wrap gap-2">
               <div className="flex items-center gap-2">
                 <div className="size-8 rounded-lg bg-accent/15 text-accent flex items-center justify-center">
@@ -490,19 +441,17 @@ export function TechnicalDocsViewer({
                 </div>
               </div>
 
-              {/* Zoom Toolbar */}
               <div className="flex items-center gap-1.5 bg-surface-alt p-1 rounded-xl border border-border">
-                <button type="button" onClick={handleZoomIn} title={isRu ? 'Увеличить' : 'Збільшити'} className="p-1.5 rounded-lg hover:bg-surface-white text-text-primary transition-colors cursor-pointer"><ZoomIn className="size-4" /></button>
+                <button type="button" onClick={handleZoomIn} className="p-1.5 rounded-lg hover:bg-surface-white text-text-primary cursor-pointer"><ZoomIn className="size-4" /></button>
                 <span className="text-[11px] font-mono font-bold text-text-muted px-1">{Math.round(zoomScale * 100)}%</span>
-                <button type="button" onClick={handleZoomOut} title={isRu ? 'Уменьшить' : 'Зменшити'} className="p-1.5 rounded-lg hover:bg-surface-white text-text-primary transition-colors cursor-pointer"><ZoomOut className="size-4" /></button>
-                <button type="button" onClick={handleRotate} title={isRu ? 'Повернуть' : 'Повернути'} className="p-1.5 rounded-lg hover:bg-surface-white text-text-primary transition-colors cursor-pointer"><RotateCw className="size-4" /></button>
-                <button type="button" onClick={handleResetZoom} title={isRu ? 'Сброс' : 'Скинути'} className="p-1.5 rounded-lg hover:bg-surface-white text-text-primary transition-colors cursor-pointer"><RefreshCw className="size-3.5" /></button>
+                <button type="button" onClick={handleZoomOut} className="p-1.5 rounded-lg hover:bg-surface-white text-text-primary cursor-pointer"><ZoomOut className="size-4" /></button>
+                <button type="button" onClick={handleRotate} className="p-1.5 rounded-lg hover:bg-surface-white text-text-primary cursor-pointer"><RotateCw className="size-4" /></button>
+                <button type="button" onClick={handleResetZoom} className="p-1.5 rounded-lg hover:bg-surface-white text-text-primary cursor-pointer"><RefreshCw className="size-3.5" /></button>
                 <div className="w-[1px] h-4 bg-border my-auto mx-0.5" />
-                <button onClick={() => setActiveModal(null)} className="p-1.5 rounded-lg hover:bg-surface-white text-text-muted hover:text-text-primary transition-colors cursor-pointer"><X className="size-4" strokeWidth={2.5} /></button>
+                <button onClick={() => setActiveModal(null)} className="p-1.5 rounded-lg hover:bg-surface-white text-text-muted hover:text-text-primary cursor-pointer"><X className="size-4" strokeWidth={2.5} /></button>
               </div>
             </div>
 
-            {/* Container */}
             <div
               onMouseDown={handleMouseDown}
               onTouchStart={handleTouchStart}
@@ -577,13 +526,13 @@ export function TechnicalDocsViewer({
               </div>
 
               <div className="flex items-center gap-1.5 bg-surface-alt p-1 rounded-xl border border-border">
-                <button type="button" onClick={handleZoomIn} title={isRu ? 'Увеличить' : 'Збільшити'} className="p-1.5 rounded-lg hover:bg-surface-white text-text-primary transition-colors cursor-pointer"><ZoomIn className="size-4" /></button>
+                <button type="button" onClick={handleZoomIn} className="p-1.5 rounded-lg hover:bg-surface-white text-text-primary cursor-pointer"><ZoomIn className="size-4" /></button>
                 <span className="text-[11px] font-mono font-bold text-text-muted px-1">{Math.round(zoomScale * 100)}%</span>
-                <button type="button" onClick={handleZoomOut} title={isRu ? 'Уменьшить' : 'Зменшити'} className="p-1.5 rounded-lg hover:bg-surface-white text-text-primary transition-colors cursor-pointer"><ZoomOut className="size-4" /></button>
-                <button type="button" onClick={handleRotate} title={isRu ? 'Повернуть' : 'Повернути'} className="p-1.5 rounded-lg hover:bg-surface-white text-text-primary transition-colors cursor-pointer"><RotateCw className="size-4" /></button>
-                <button type="button" onClick={handleResetZoom} title={isRu ? 'Сброс' : 'Скинути'} className="p-1.5 rounded-lg hover:bg-surface-white text-text-primary transition-colors cursor-pointer"><RefreshCw className="size-3.5" /></button>
+                <button type="button" onClick={handleZoomOut} className="p-1.5 rounded-lg hover:bg-surface-white text-text-primary cursor-pointer"><ZoomOut className="size-4" /></button>
+                <button type="button" onClick={handleRotate} className="p-1.5 rounded-lg hover:bg-surface-white text-text-primary cursor-pointer"><RotateCw className="size-4" /></button>
+                <button type="button" onClick={handleResetZoom} className="p-1.5 rounded-lg hover:bg-surface-white text-text-primary cursor-pointer"><RefreshCw className="size-3.5" /></button>
                 <div className="w-[1px] h-4 bg-border my-auto mx-0.5" />
-                <button onClick={() => setActiveModal(null)} className="p-1.5 rounded-lg hover:bg-surface-white text-text-muted hover:text-text-primary transition-colors cursor-pointer"><X className="size-4" strokeWidth={2.5} /></button>
+                <button onClick={() => setActiveModal(null)} className="p-1.5 rounded-lg hover:bg-surface-white text-text-muted hover:text-text-primary cursor-pointer"><X className="size-4" strokeWidth={2.5} /></button>
               </div>
             </div>
 
@@ -605,7 +554,7 @@ export function TechnicalDocsViewer({
                   </p>
                   <a href={effectiveSchematics} target="_blank" rel="noopener noreferrer" className="mt-1 px-4 py-2 rounded-xl bg-accent text-white font-bold text-xs shadow-sm hover:bg-accent-hover transition-colors flex items-center gap-1.5">
                     <ExternalLink className="size-3.5" />
-                    <span>{isRu ? 'Открыть прямой файл' : 'Відкрити прямий файл'}</span>
+                    <span>{isRu ? 'Открыть прямой файл' : 'Відкрити прямой файл'}</span>
                   </a>
                 </div>
               ) : (
