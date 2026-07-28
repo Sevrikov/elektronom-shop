@@ -77,8 +77,8 @@ export function ProductBuyBox({
               </button>
             </div>
 
-            {/* Live Sum & Free Delivery progress - Dynamic tight width (NO excess white gap) */}
-            <div className="flex flex-col leading-tight shrink-0">
+            {/* Live Sum & Free Delivery progress - Fixed width prevents chart jitter */}
+            <div className="flex flex-col leading-tight shrink-0 w-[125px]">
               <span className="text-[10px] font-medium uppercase tracking-wide text-text-muted">{t('buyBox.sum')}</span>
               <span className="text-[15px] xl:text-[16px] font-extrabold num leading-none text-text-primary truncate max-w-[125px]">{formatPrice(sum)}</span>
 

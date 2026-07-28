@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useLocale } from 'next-intl'
-import { FileText, Ruler, Zap, X, Download, ExternalLink, ZoomIn, ZoomOut, RotateCw, Hand, RefreshCw, AlertCircle } from 'lucide-react'
+import { FileText, Ruler, Zap, X, Download, ExternalLink, ZoomIn, ZoomOut, RotateCw, Hand, RefreshCw, AlertCircle, Eye } from 'lucide-react'
 
 interface TechnicalDocsViewerProps {
   productSku?: string | null
@@ -26,6 +26,9 @@ export function TechnicalDocsViewer({
 
   const [activeModal, setActiveModal] = useState<'pdf' | 'catalogPdf' | 'dimensions' | 'schematics' | null>(null)
   
+  // PDF Mode: 'native' (loads Chrome/Edge PDF viewer with Hand Tool) vs 'google' (Google Docs Embed fallback)
+  const [pdfMode, setPdfMode] = useState<'native' | 'google'>('native')
+
   // Image Viewer Interactive State (Zoom / Rotation / Error / Pan)
   const [zoomScale, setZoomScale] = useState(1)
   const [rotation, setRotation] = useState(0)
@@ -59,7 +62,7 @@ export function TechnicalDocsViewer({
   }
   const handleRotate = () => setRotation(prev => (prev + 90) % 360)
 
-  // Dragging mouse & touch handlers
+  // Dragging mouse & touch handlers for image drawings
   const handleMouseDown = (e: React.MouseEvent) => {
     if (zoomScale <= 1) return
     setIsDragging(true)
@@ -182,17 +185,17 @@ export function TechnicalDocsViewer({
         )}
       </div>
 
-      {/* Modal 1: Native HTML5 PDF Viewer */}
+      {/* Modal 1: PDF Passport Viewer (Supports Native Chrome/Edge Hand Tool & Google Embed) */}
       {activeModal === 'pdf' && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-2 sm:p-5 animate-in fade-in duration-200"
           onClick={() => setActiveModal(null)}
         >
           <div
-            className="relative w-full max-w-5xl h-[88vh] bg-surface-white rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-border"
+            className="relative w-full max-w-5xl h-[90vh] bg-surface-white rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-border"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Header with explicit controls */}
+            {/* Header with explicit mode toggle & download buttons */}
             <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-surface-alt flex-wrap gap-2">
               <div className="flex items-center gap-2">
                 <div className="size-8 rounded-lg bg-accent text-white flex items-center justify-center shrink-0">
@@ -208,6 +211,17 @@ export function TechnicalDocsViewer({
 
               {/* PDF Toolbar Action Buttons */}
               <div className="flex items-center gap-2">
+                {/* Viewer mode toggle: Native PDF (with built-in Hand tool) vs Google Docs */}
+                <button
+                  type="button"
+                  onClick={() => setPdfMode(prev => prev === 'native' ? 'google' : 'native')}
+                  title={pdfMode === 'native' ? (isRu ? 'Переключить на Google Viewer' : 'Переключити на Google Viewer') : (isRu ? 'Включить Нативный просмотрщик (Рука 🖐️)' : 'Увімкнути Нативний переглядач (Рука 🖐️)')}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-white hover:bg-surface-raised border border-border text-text-primary text-[12px] font-bold transition-colors cursor-pointer"
+                >
+                  <Hand className="size-3.5 text-accent" />
+                  <span>{pdfMode === 'native' ? (isRu ? 'Режим: Рука 🖐️ (Нативный)' : 'Режим: Рука 🖐️ (Нативний)') : 'Режим: Google Viewer'}</span>
+                </button>
+
                 <a
                   href={effectivePdf!}
                   download
@@ -236,11 +250,25 @@ export function TechnicalDocsViewer({
 
             {/* Universal PDF Viewer Frame */}
             <div className="flex-1 w-full h-full bg-slate-900 overflow-hidden relative flex flex-col">
-              <iframe
-                src={`https://docs.google.com/gview?url=${encodeURIComponent(effectivePdf!)}&embedded=true`}
-                className="w-full h-full border-none"
-                title={isRu ? 'Паспорт изделия' : 'Паспорт виробу'}
-              />
+              {pdfMode === 'native' ? (
+                <object
+                  data={`${effectivePdf!}#toolbar=1&navpanes=1&pagemode=thumbs`}
+                  type="application/pdf"
+                  className="w-full h-full border-none bg-slate-900"
+                >
+                  <iframe
+                    src={`https://docs.google.com/gview?url=${encodeURIComponent(effectivePdf!)}&embedded=true`}
+                    className="w-full h-full border-none"
+                    title={isRu ? 'Паспорт изделия' : 'Паспорт виробу'}
+                  />
+                </object>
+              ) : (
+                <iframe
+                  src={`https://docs.google.com/gview?url=${encodeURIComponent(effectivePdf!)}&embedded=true`}
+                  className="w-full h-full border-none"
+                  title={isRu ? 'Паспорт изделия' : 'Паспорт виробу'}
+                />
+              )}
             </div>
           </div>
         </div>
@@ -253,7 +281,7 @@ export function TechnicalDocsViewer({
           onClick={() => setActiveModal(null)}
         >
           <div
-            className="relative w-full max-w-5xl h-[88vh] bg-surface-white rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-border"
+            className="relative w-full max-w-5xl h-[90vh] bg-surface-white rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-border"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-surface-alt flex-wrap gap-2">
@@ -270,6 +298,15 @@ export function TechnicalDocsViewer({
               </div>
 
               <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setPdfMode(prev => prev === 'native' ? 'google' : 'native')}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-white hover:bg-surface-raised border border-border text-text-primary text-[12px] font-bold transition-colors cursor-pointer"
+                >
+                  <Hand className="size-3.5 text-accent" />
+                  <span>{pdfMode === 'native' ? (isRu ? 'Режим: Рука 🖐️ (Нативный)' : 'Режим: Рука 🖐️ (Нативний)') : 'Режим: Google Viewer'}</span>
+                </button>
+
                 <a
                   href={effectiveCatalogPdf}
                   download
@@ -288,11 +325,25 @@ export function TechnicalDocsViewer({
             </div>
 
             <div className="flex-1 w-full h-full bg-slate-900 overflow-hidden relative flex flex-col">
-              <iframe
-                src={`https://docs.google.com/gview?url=${encodeURIComponent(effectiveCatalogPdf!)}&embedded=true`}
-                className="w-full h-full border-none"
-                title={isRu ? 'Страница каталога' : 'Сторінка каталогу'}
-              />
+              {pdfMode === 'native' ? (
+                <object
+                  data={`${effectiveCatalogPdf}#toolbar=1&navpanes=1`}
+                  type="application/pdf"
+                  className="w-full h-full border-none bg-slate-900"
+                >
+                  <iframe
+                    src={`https://docs.google.com/gview?url=${encodeURIComponent(effectiveCatalogPdf)}&embedded=true`}
+                    className="w-full h-full border-none"
+                    title={isRu ? 'Страница каталога' : 'Сторінка каталогу'}
+                  />
+                </object>
+              ) : (
+                <iframe
+                  src={`https://docs.google.com/gview?url=${encodeURIComponent(effectiveCatalogPdf)}&embedded=true`}
+                  className="w-full h-full border-none"
+                  title={isRu ? 'Страница каталога' : 'Сторінка каталогу'}
+                />
+              )}
             </div>
           </div>
         </div>
