@@ -137,16 +137,11 @@ export function TechnicalDocsViewer({
     }
   }
 
-  // Strict Document Filtering — NO cross-fallbacks & fix "в габаритах висит скрин схемы"!
+  // Document URLs — ensure all technical drawings are accessible under both Dimensions & Schematics!
   const effectivePdf = pdfUrl || null
   const effectiveCatalogPdf = catalogPdfUrl || null
-  const effectiveSchematics = schematicsUrl || null
-
-  // If dimensionsUrl is identical to schematicsUrl, or if dimensionsUrl contains "schema",
-  // treat dimensionsUrl as null so "Габариты" doesn't show an electrical schematic!
-  const effectiveDimensions = (dimensionsUrl && dimensionsUrl !== schematicsUrl && !dimensionsUrl.toLowerCase().includes('schema'))
-    ? dimensionsUrl
-    : null
+  const effectiveDimensions = dimensionsUrl || schematicsUrl || null
+  const effectiveSchematics = schematicsUrl || dimensionsUrl || null
 
   const hasAnyDoc = Boolean(effectivePdf || effectiveCatalogPdf || effectiveDimensions || effectiveSchematics)
 
@@ -237,41 +232,41 @@ export function TechnicalDocsViewer({
         {isRu ? 'Техническая документация и чертежи' : 'Технічна документація та креслення'}
       </span>
 
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-        {/* Button 1: Dimensions Drawing (Only shown when a REAL separate dimensions drawing exists!) */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+        {/* Button 1: Dimensions Drawing */}
         {effectiveDimensions && (
           <button
             type="button"
             onClick={() => handleOpenModal('dimensions')}
-            className="flex flex-col items-center justify-center p-2 rounded-xl border border-border bg-surface-alt hover:bg-surface-white hover:border-accent hover:shadow-2xs transition-all text-center group cursor-pointer"
+            className="flex flex-col items-center justify-center p-3 rounded-2xl border border-border bg-surface-alt hover:bg-surface-white hover:border-accent hover:shadow-xs transition-all text-center group cursor-pointer min-h-[96px]"
           >
-            <div className="size-7 rounded-lg bg-accent/10 text-accent flex items-center justify-center mb-1 group-hover:scale-110 transition-transform">
+            <div className="size-8 rounded-xl bg-accent/10 text-accent flex items-center justify-center mb-1 group-hover:scale-110 transition-transform">
               <Ruler className="size-4 text-accent" strokeWidth={2} />
             </div>
-            <span className="text-[11px] font-bold text-text-primary group-hover:text-accent leading-tight">
+            <span className="text-[12px] font-bold text-text-primary group-hover:text-accent leading-tight whitespace-nowrap">
               {isRu ? 'Габариты' : 'Габарити'}
             </span>
-            <span className="text-[9.5px] text-text-muted">
+            <span className="text-[10px] text-text-muted leading-tight whitespace-nowrap mt-0.5">
               {isRu ? 'Чертеж размеров' : 'Креслення розмірів'}
             </span>
           </button>
         )}
 
-        {/* Button 2: Wiring Schematics Drawing (Only shown when schematicsUrl exists!) */}
+        {/* Button 2: Wiring Schematics Drawing */}
         {effectiveSchematics && (
           <button
             type="button"
             onClick={() => handleOpenModal('schematics')}
-            className="flex flex-col items-center justify-center p-2 rounded-xl border border-border bg-surface-alt hover:bg-surface-white hover:border-accent hover:shadow-2xs transition-all text-center group cursor-pointer"
+            className="flex flex-col items-center justify-center p-3 rounded-2xl border border-border bg-surface-alt hover:bg-surface-white hover:border-accent hover:shadow-xs transition-all text-center group cursor-pointer min-h-[96px]"
           >
-            <div className="size-7 rounded-lg bg-accent/10 text-accent flex items-center justify-center mb-1 group-hover:scale-110 transition-transform">
+            <div className="size-8 rounded-xl bg-accent/10 text-accent flex items-center justify-center mb-1 group-hover:scale-110 transition-transform">
               <Zap className="size-4 text-accent" strokeWidth={2} />
             </div>
-            <span className="text-[11px] font-bold text-text-primary group-hover:text-accent leading-tight">
+            <span className="text-[12px] font-bold text-text-primary group-hover:text-accent leading-tight whitespace-nowrap">
               {isRu ? 'Эл. схемы' : 'Ел. схеми'}
             </span>
-            <span className="text-[9.5px] text-text-muted">
-              {isRu ? 'Схема подключения' : 'Схема підключення'}
+            <span className="text-[10px] text-text-muted leading-tight whitespace-nowrap mt-0.5">
+              {isRu ? 'Схема контактов' : 'Схема контактів'}
             </span>
           </button>
         )}
@@ -281,15 +276,15 @@ export function TechnicalDocsViewer({
           <button
             type="button"
             onClick={() => handleOpenModal('pdf')}
-            className="flex flex-col items-center justify-center p-2 rounded-xl border border-accent/40 bg-accent-subtle/50 hover:bg-accent-subtle hover:border-accent hover:shadow-2xs transition-all text-center group cursor-pointer"
+            className="flex flex-col items-center justify-center p-3 rounded-2xl border border-accent/40 bg-accent-subtle/50 hover:bg-accent-subtle hover:border-accent hover:shadow-xs transition-all text-center group cursor-pointer min-h-[96px]"
           >
-            <div className="size-7 rounded-lg bg-accent text-white flex items-center justify-center mb-1 group-hover:scale-110 transition-transform shadow-2xs">
+            <div className="size-8 rounded-xl bg-accent text-white flex items-center justify-center mb-1 group-hover:scale-110 transition-transform shadow-2xs">
               <FileText className="size-4 text-white" strokeWidth={2} />
             </div>
-            <span className="text-[11px] font-bold text-accent group-hover:text-accent-hover leading-tight">
+            <span className="text-[12px] font-bold text-accent group-hover:text-accent-hover leading-tight whitespace-nowrap">
               {isRu ? 'ПДФ Паспорт' : 'ПДФ Паспорт'}
             </span>
-            <span className="text-[9.5px] text-text-muted">
+            <span className="text-[10px] text-text-muted leading-tight whitespace-nowrap mt-0.5">
               {isRu ? 'Инструкция завода' : 'Інструкція заводу'}
             </span>
           </button>
@@ -300,16 +295,16 @@ export function TechnicalDocsViewer({
           <button
             type="button"
             onClick={() => handleOpenModal('catalogPdf')}
-            className="flex flex-col items-center justify-center p-2 rounded-xl border border-border bg-surface-alt hover:bg-surface-white hover:border-accent hover:shadow-2xs transition-all text-center group cursor-pointer"
+            className="flex flex-col items-center justify-center p-3 rounded-2xl border border-border bg-surface-alt hover:bg-surface-white hover:border-accent hover:shadow-xs transition-all text-center group cursor-pointer min-h-[96px]"
           >
-            <div className="size-7 rounded-lg bg-accent/10 text-accent flex items-center justify-center mb-1 group-hover:scale-110 transition-transform">
+            <div className="size-8 rounded-xl bg-accent/10 text-accent flex items-center justify-center mb-1 group-hover:scale-110 transition-transform">
               <FileText className="size-4 text-accent" strokeWidth={2} />
             </div>
-            <span className="text-[11px] font-bold text-text-primary group-hover:text-accent leading-tight">
+            <span className="text-[12px] font-bold text-text-primary group-hover:text-accent leading-tight whitespace-nowrap">
               {isRu ? 'Страница каталога' : 'Сторінка каталогу'}
             </span>
-            <span className="text-[9.5px] text-text-muted">
-              {isRu ? 'Каталог (PDF)' : 'Каталог (PDF)'}
+            <span className="text-[10px] text-text-muted leading-tight whitespace-nowrap mt-0.5">
+              {isRu ? 'Каталог PDF' : 'Каталог PDF'}
             </span>
           </button>
         )}
