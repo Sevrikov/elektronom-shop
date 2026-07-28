@@ -127,7 +127,7 @@ export function CatalogMegaMenuClient({ categories, isOpen, onClose }: Props) {
                   {activeCategory.name}
                 </Link>
                 {activeCategory.children.length > 0 ? (
-                  <div className="grid grid-cols-2 gap-x-8 gap-y-1">
+                  <div className="grid grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-2.5">
                     {activeCategory.children.map((child) => (
                       <Link
                         key={child.slug}
@@ -136,7 +136,7 @@ export function CatalogMegaMenuClient({ categories, isOpen, onClose }: Props) {
                         className="flex items-center gap-1.5 py-1.5 text-[13px] text-text-primary hover:text-accent transition-colors group"
                       >
                         <ChevronRight className="size-3 shrink-0 text-border-strong group-hover:text-accent transition-colors" strokeWidth={2} />
-                        {child.name}
+                        <span className="line-clamp-2">{child.name}</span>
                       </Link>
                     ))}
                   </div>
