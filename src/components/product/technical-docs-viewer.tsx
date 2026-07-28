@@ -26,25 +26,67 @@ export function TechnicalDocsViewer({
 
   const [activeModal, setActiveModal] = useState<'pdf' | 'catalogPdf' | 'dimensions' | 'schematics' | null>(null)
   
-  // Image Viewer Interactive State (Zoom / Rotation / Error)
+  // Image Viewer Interactive State (Zoom / Rotation / Error / Pan)
   const [zoomScale, setZoomScale] = useState(1)
   const [rotation, setRotation] = useState(0)
   const [imgError, setImgError] = useState(false)
+  
+  // Drag Panning State
+  const [panPos, setPanPos] = useState({ x: 0, y: 0 })
+  const [isDragging, setIsDragging] = useState(false)
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 })
 
   const handleOpenModal = (type: 'pdf' | 'catalogPdf' | 'dimensions' | 'schematics') => {
     setZoomScale(1)
     setRotation(0)
+    setPanPos({ x: 0, y: 0 })
     setImgError(false)
     setActiveModal(type)
   }
 
-  const handleZoomIn = () => setZoomScale(prev => Math.min(prev + 0.3, 3))
-  const handleZoomOut = () => setZoomScale(prev => Math.max(prev - 0.3, 0.5))
+  const handleZoomIn = () => setZoomScale(prev => Math.min(prev + 0.4, 3.5))
+  const handleZoomOut = () => {
+    setZoomScale(prev => {
+      const next = Math.max(prev - 0.4, 0.5)
+      if (next <= 1) setPanPos({ x: 0, y: 0 })
+      return next
+    })
+  }
   const handleResetZoom = () => {
     setZoomScale(1)
     setRotation(0)
+    setPanPos({ x: 0, y: 0 })
   }
   const handleRotate = () => setRotation(prev => (prev + 90) % 360)
+
+  // Dragging mouse & touch handlers
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (zoomScale <= 1) return
+    setIsDragging(true)
+    setDragStart({ x: e.clientX - panPos.x, y: e.clientY - panPos.y })
+  }
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging) return
+    setPanPos({ x: e.clientX - dragStart.x, y: e.clientY - dragStart.y })
+  }
+
+  const handleMouseUp = () => setIsDragging(false)
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (zoomScale <= 1 || e.touches.length !== 1) return
+    const touch = e.touches[0]!
+    setIsDragging(true)
+    setDragStart({ x: touch.clientX - panPos.x, y: touch.clientY - panPos.y })
+  }
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!isDragging || e.touches.length !== 1) return
+    const touch = e.touches[0]!
+    setPanPos({ x: touch.clientX - dragStart.x, y: touch.clientY - dragStart.y })
+  }
+
+  const handleTouchEnd = () => setIsDragging(false)
 
   // Use ONLY provided URLs strictly from database/manufacturer
   const effectivePdf = pdfUrl || null
@@ -259,7 +301,7 @@ export function TechnicalDocsViewer({
       {/* Modal 2: Official ASKO Dimensions Drawing with Interactive Zoom & Pan */}
       {activeModal === 'dimensions' && effectiveDimensions && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 animate-in fade-in duration-200"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 animate-in fade-in duration-200 select-none"
           onClick={() => setActiveModal(null)}
         >
           <div
@@ -328,7 +370,22 @@ export function TechnicalDocsViewer({
             </div>
 
             {/* Official ASKO Dimensions Image / Fallback Container */}
-            <div className="flex flex-col items-center justify-center p-4 bg-slate-900/5 rounded-xl border border-border overflow-auto min-h-[320px] max-h-[70vh] relative cursor-grab active:cursor-grabbing">
+            <div
+              onMouseDown={handleMouseDown}
+              onMouseMove={handleMouseMove}
+              onMouseUp={handleMouseUp}
+              onMouseLeave={handleMouseUp}
+              onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={handleTouchEnd}
+              className={`flex flex-col items-center justify-center p-4 bg-slate-900/5 rounded-xl border border-border overflow-hidden min-h-[320px] max-h-[70vh] relative ${
+                zoomScale > 1
+                  ? isDragging
+                    ? 'cursor-grabbing'
+                    : 'cursor-grab'
+                  : 'cursor-default'
+              }`}
+            >
               {imgError ? (
                 <div className="flex flex-col items-center justify-center gap-3 p-8 text-center">
                   <AlertCircle className="size-10 text-amber-500" strokeWidth={1.5} />
@@ -349,9 +406,10 @@ export function TechnicalDocsViewer({
                 </div>
               ) : (
                 <div
-                  className="transition-transform duration-150 ease-out flex items-center justify-center"
+                  className="flex items-center justify-center select-none"
                   style={{
-                    transform: `scale(${zoomScale}) rotate(${rotation}deg)`,
+                    transform: `translate(${panPos.x}px, ${panPos.y}px) scale(${zoomScale}) rotate(${rotation}deg)`,
+                    transition: isDragging ? 'none' : 'transform 0.15s ease-out',
                   }}
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -359,7 +417,8 @@ export function TechnicalDocsViewer({
                     src={effectiveDimensions}
                     alt="Установочные и габаритные размеры АСКО"
                     onError={() => setImgError(true)}
-                    className="max-w-full max-h-[65vh] object-contain rounded-lg shadow-sm"
+                    draggable={false}
+                    className="max-w-full max-h-[65vh] object-contain rounded-lg shadow-sm pointer-events-none select-none"
                   />
                 </div>
               )}
@@ -368,7 +427,7 @@ export function TechnicalDocsViewer({
               {!imgError && (
                 <div className="absolute bottom-3 right-3 bg-surface-white/90 backdrop-blur-md px-2.5 py-1 rounded-lg border border-border shadow-xs text-[10px] font-semibold text-text-muted flex items-center gap-1 select-none pointer-events-none">
                   <Hand className="size-3 text-accent" />
-                  <span>{isRu ? 'Используйте колесико для зума / мышкой для перемещения' : 'Використовуйте коліщатко для зуму'}</span>
+                  <span>{isRu ? 'Зажмите мышку для перемещения' : 'Затисніть мишку для переміщення'}</span>
                 </div>
               )}
             </div>
@@ -379,7 +438,7 @@ export function TechnicalDocsViewer({
       {/* Modal 3: Official ASKO Electrical Schematics with Interactive Zoom & Pan */}
       {activeModal === 'schematics' && effectiveSchematics && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 animate-in fade-in duration-200"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 animate-in fade-in duration-200 select-none"
           onClick={() => setActiveModal(null)}
         >
           <div
@@ -448,7 +507,22 @@ export function TechnicalDocsViewer({
             </div>
 
             {/* Official ASKO Schematics Image / Fallback Container */}
-            <div className="flex flex-col items-center justify-center p-4 bg-slate-900/5 rounded-xl border border-border overflow-auto min-h-[320px] max-h-[70vh] relative cursor-grab active:cursor-grabbing">
+            <div
+              onMouseDown={handleMouseDown}
+              onMouseMove={handleMouseMove}
+              onMouseUp={handleMouseUp}
+              onMouseLeave={handleMouseUp}
+              onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={handleTouchEnd}
+              className={`flex flex-col items-center justify-center p-4 bg-slate-900/5 rounded-xl border border-border overflow-hidden min-h-[320px] max-h-[70vh] relative ${
+                zoomScale > 1
+                  ? isDragging
+                    ? 'cursor-grabbing'
+                    : 'cursor-grab'
+                  : 'cursor-default'
+              }`}
+            >
               {imgError ? (
                 <div className="flex flex-col items-center justify-center gap-3 p-8 text-center">
                   <AlertCircle className="size-10 text-amber-500" strokeWidth={1.5} />
@@ -469,9 +543,10 @@ export function TechnicalDocsViewer({
                 </div>
               ) : (
                 <div
-                  className="transition-transform duration-150 ease-out flex items-center justify-center"
+                  className="flex items-center justify-center select-none"
                   style={{
-                    transform: `scale(${zoomScale}) rotate(${rotation}deg)`,
+                    transform: `translate(${panPos.x}px, ${panPos.y}px) scale(${zoomScale}) rotate(${rotation}deg)`,
+                    transition: isDragging ? 'none' : 'transform 0.15s ease-out',
                   }}
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -479,7 +554,8 @@ export function TechnicalDocsViewer({
                     src={effectiveSchematics}
                     alt="Электрические схемы подключения АСКО"
                     onError={() => setImgError(true)}
-                    className="max-w-full max-h-[65vh] object-contain rounded-lg shadow-sm"
+                    draggable={false}
+                    className="max-w-full max-h-[65vh] object-contain rounded-lg shadow-sm pointer-events-none select-none"
                   />
                 </div>
               )}
@@ -488,7 +564,7 @@ export function TechnicalDocsViewer({
               {!imgError && (
                 <div className="absolute bottom-3 right-3 bg-surface-white/90 backdrop-blur-md px-2.5 py-1 rounded-lg border border-border shadow-xs text-[10px] font-semibold text-text-muted flex items-center gap-1 select-none pointer-events-none">
                   <Hand className="size-3 text-accent" />
-                  <span>{isRu ? 'Используйте колесико для зума / мышкой для перемещения' : 'Використовуйте коліщатко для зуму'}</span>
+                  <span>{isRu ? 'Зажмите мышку для перемещения' : 'Затисніть мишку для переміщення'}</span>
                 </div>
               )}
             </div>

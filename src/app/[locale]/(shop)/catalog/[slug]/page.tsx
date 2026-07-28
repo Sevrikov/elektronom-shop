@@ -419,7 +419,7 @@ export default async function CategoryPage({
         {/* Main layout: sidebar + grid */}
         <div className="flex gap-6 items-start mt-4">
           {/* Desktop sidebar */}
-          <aside className="hidden lg:flex flex-col gap-4 w-[280px] shrink-0 sticky top-[72px] self-start">
+          <aside className="hidden lg:flex flex-col gap-4 w-[280px] shrink-0 sticky top-[180px] self-start">
             {/* Attribute filters (Deferred under Suspense) */}
             <Suspense fallback={<FiltersSkeleton />}>
               <DeferredFiltersSection
@@ -476,7 +476,7 @@ export default async function CategoryPage({
           </div>
 
           {/* Desktop Right sidebar (Quick Info + Description + Articles) */}
-          <aside className="catalog-answer-sidebar w-[300px] shrink-0 sticky top-[72px] self-start flex flex-col gap-6 max-h-[calc(100vh-100px)] overflow-y-auto pr-1 sidebar-scroll">
+          <aside className="catalog-answer-sidebar w-[300px] shrink-0 sticky top-[180px] self-start flex flex-col gap-6 max-h-[calc(100vh-200px)] overflow-y-auto pr-1 sidebar-scroll">
             <AnswerBlock
               categorySlug={slug}
               locale={locale}
