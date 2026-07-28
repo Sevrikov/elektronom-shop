@@ -137,11 +137,11 @@ export function TechnicalDocsViewer({
     }
   }
 
-  // Document URLs — ALWAYS guarantee all 4 document buttons (Габариты, Эл. схемы, ПДФ Паспорт, Страница каталога)
-  const effectivePdf = pdfUrl || catalogPdfUrl || null
-  const effectiveCatalogPdf = catalogPdfUrl || pdfUrl || null
-  const effectiveDimensions = dimensionsUrl || schematicsUrl || null
-  const effectiveSchematics = schematicsUrl || dimensionsUrl || null
+  // Document URLs — ONLY show buttons for files that actually exist in DB!
+  const effectivePdf = pdfUrl || null
+  const effectiveCatalogPdf = catalogPdfUrl || null
+  const effectiveDimensions = dimensionsUrl || null
+  const effectiveSchematics = schematicsUrl || null
 
   const hasAnyDoc = Boolean(effectivePdf || effectiveCatalogPdf || effectiveDimensions || effectiveSchematics)
 
@@ -232,13 +232,13 @@ export function TechnicalDocsViewer({
         {isRu ? 'Техническая документация и чертежи' : 'Технічна документація та креслення'}
       </span>
 
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+      <div className="flex flex-wrap sm:flex-nowrap gap-2.5">
         {/* Button 1: Dimensions Drawing */}
         {effectiveDimensions && (
           <button
             type="button"
             onClick={() => handleOpenModal('dimensions')}
-            className="flex flex-col items-center justify-center p-3 rounded-2xl border border-border bg-surface-alt hover:bg-surface-white hover:border-accent hover:shadow-xs transition-all text-center group cursor-pointer min-h-[96px]"
+            className="flex-1 min-w-[130px] flex flex-col items-center justify-center p-3 rounded-2xl border border-border bg-surface-alt hover:bg-surface-white hover:border-accent hover:shadow-xs transition-all text-center group cursor-pointer min-h-[96px]"
           >
             <div className="size-8 rounded-xl bg-accent/10 text-accent flex items-center justify-center mb-1 group-hover:scale-110 transition-transform">
               <Ruler className="size-4 text-accent" strokeWidth={2} />
@@ -257,7 +257,7 @@ export function TechnicalDocsViewer({
           <button
             type="button"
             onClick={() => handleOpenModal('schematics')}
-            className="flex flex-col items-center justify-center p-3 rounded-2xl border border-border bg-surface-alt hover:bg-surface-white hover:border-accent hover:shadow-xs transition-all text-center group cursor-pointer min-h-[96px]"
+            className="flex-1 min-w-[130px] flex flex-col items-center justify-center p-3 rounded-2xl border border-border bg-surface-alt hover:bg-surface-white hover:border-accent hover:shadow-xs transition-all text-center group cursor-pointer min-h-[96px]"
           >
             <div className="size-8 rounded-xl bg-accent/10 text-accent flex items-center justify-center mb-1 group-hover:scale-110 transition-transform">
               <Zap className="size-4 text-accent" strokeWidth={2} />
@@ -276,7 +276,7 @@ export function TechnicalDocsViewer({
           <button
             type="button"
             onClick={() => handleOpenModal('pdf')}
-            className="flex flex-col items-center justify-center p-3 rounded-2xl border border-accent/40 bg-accent-subtle/50 hover:bg-accent-subtle hover:border-accent hover:shadow-xs transition-all text-center group cursor-pointer min-h-[96px]"
+            className="flex-1 min-w-[130px] flex flex-col items-center justify-center p-3 rounded-2xl border border-accent/40 bg-accent-subtle/50 hover:bg-accent-subtle hover:border-accent hover:shadow-xs transition-all text-center group cursor-pointer min-h-[96px]"
           >
             <div className="size-8 rounded-xl bg-accent text-white flex items-center justify-center mb-1 group-hover:scale-110 transition-transform shadow-2xs">
               <FileText className="size-4 text-white" strokeWidth={2} />
@@ -295,7 +295,7 @@ export function TechnicalDocsViewer({
           <button
             type="button"
             onClick={() => handleOpenModal('catalogPdf')}
-            className="flex flex-col items-center justify-center p-3 rounded-2xl border border-border bg-surface-alt hover:bg-surface-white hover:border-accent hover:shadow-xs transition-all text-center group cursor-pointer min-h-[96px]"
+            className="flex-1 min-w-[130px] flex flex-col items-center justify-center p-3 rounded-2xl border border-border bg-surface-alt hover:bg-surface-white hover:border-accent hover:shadow-xs transition-all text-center group cursor-pointer min-h-[96px]"
           >
             <div className="size-8 rounded-xl bg-accent/10 text-accent flex items-center justify-center mb-1 group-hover:scale-110 transition-transform">
               <FileText className="size-4 text-accent" strokeWidth={2} />
