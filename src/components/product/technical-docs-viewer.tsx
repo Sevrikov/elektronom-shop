@@ -171,30 +171,13 @@ export function TechnicalDocsViewer({
               </div>
             </div>
 
-            {/* Native Object / Embed PDF Viewer */}
-            <div className="flex-1 w-full h-full bg-slate-900 overflow-hidden relative">
-              <object
-                data={`${effectivePdf}#toolbar=1&navpanes=1&scrollbar=1`}
-                type="application/pdf"
+            {/* Universal PDF Viewer Frame */}
+            <div className="flex-1 w-full h-full bg-slate-900 overflow-hidden relative flex flex-col">
+              <iframe
+                src={`https://docs.google.com/gview?url=${encodeURIComponent(effectivePdf!)}&embedded=true`}
                 className="w-full h-full border-none"
-              >
-                <div className="flex flex-col items-center justify-center h-full gap-4 text-white p-6 text-center">
-                  <FileText className="size-12 text-accent" strokeWidth={1.5} />
-                  <p className="text-sm font-semibold">
-                    {isRu
-                      ? 'Просмотрщик PDF готов. Если ваш браузер блокирует встроенное отображение:'
-                      : 'Переглядач PDF готовий. Якщо ваш браузер блокує вбудований перегляд:'}
-                  </p>
-                  <a
-                    href={effectivePdf!}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="px-4 py-2 rounded-xl bg-accent text-white font-bold text-sm shadow-md hover:bg-accent-hover transition-colors"
-                  >
-                    {isRu ? 'Открыть PDF файл' : 'Відкрити PDF файл'}
-                  </a>
-                </div>
-              </object>
+                title={isRu ? 'Паспорт изделия' : 'Паспорт виробу'}
+              />
             </div>
           </div>
         </div>
@@ -241,24 +224,12 @@ export function TechnicalDocsViewer({
               </div>
             </div>
 
-            <div className="flex-1 w-full h-full bg-slate-900 overflow-hidden relative">
-              <object
-                data={`${effectiveCatalogPdf}#toolbar=1&navpanes=1&scrollbar=1`}
-                type="application/pdf"
+            <div className="flex-1 w-full h-full bg-slate-900 overflow-hidden relative flex flex-col">
+              <iframe
+                src={`https://docs.google.com/gview?url=${encodeURIComponent(effectiveCatalogPdf!)}&embedded=true`}
                 className="w-full h-full border-none"
-              >
-                <div className="flex flex-col items-center justify-center h-full gap-4 text-white p-6 text-center">
-                  <FileText className="size-12 text-accent" strokeWidth={1.5} />
-                  <a
-                    href={effectiveCatalogPdf}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="px-4 py-2 rounded-xl bg-accent text-white font-bold text-sm shadow-md hover:bg-accent-hover transition-colors"
-                  >
-                    {isRu ? 'Открыть PDF файл' : 'Відкрити PDF файл'}
-                  </a>
-                </div>
-              </object>
+                title={isRu ? 'Страница каталога' : 'Сторінка каталогу'}
+              />
             </div>
           </div>
         </div>
