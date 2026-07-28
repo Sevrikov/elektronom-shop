@@ -116,7 +116,7 @@ export default function CategorySidebar({ categories = [] }: Props) {
       {/* Flyout Mega Menu */}
       {activeSlug && activeCategory && (
         <div
-          className="absolute left-[280px] top-0 bg-surface-white border border-border shadow-2xl rounded-r-2xl flex overflow-hidden w-[1080px] max-w-[calc(100vw-320px)] z-50 max-h-[calc(100vh-var(--header-height,140px)-20px)]"
+          className="absolute left-[280px] top-0 bg-surface-white border border-border shadow-2xl rounded-r-2xl flex overflow-hidden w-[calc(100vw-310px)] max-w-[1550px] z-50 max-h-[calc(100vh-var(--header-height,140px)-20px)]"
         >
           {/* Col 2: Subcategories */}
           <div className="flex-1 min-w-0 overflow-y-auto px-7 py-6">
@@ -138,7 +138,7 @@ export default function CategorySidebar({ categories = [] }: Props) {
             </div>
 
             {activeCategory.children.length > 0 ? (
-              <div className="grid grid-cols-3 xl:grid-cols-4 gap-x-7 gap-y-6 items-start">
+              <div className="grid grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-x-5 gap-y-6 items-start">
                 {activeCategory.children
                   .filter((child) => child.count > 0)
                   .sort((a, b) => b.count - a.count)
