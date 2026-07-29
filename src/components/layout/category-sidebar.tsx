@@ -119,8 +119,8 @@ export default function CategorySidebar({ categories = [] }: Props) {
           className="absolute left-[280px] top-0 bg-surface-white border border-border shadow-2xl rounded-r-2xl flex overflow-hidden w-[calc(100vw-310px)] max-w-[1550px] z-50 max-h-[calc(100vh-var(--header-height,140px)-20px)]"
         >
           {/* Col 2: Subcategories */}
-          <div className="flex-1 min-w-0 overflow-y-auto px-7 py-6">
-            <div className="flex items-center justify-between border-b border-border pb-3 mb-5">
+          <div className="flex-1 min-w-0 overflow-y-auto px-6 py-4.5">
+            <div className="flex items-center justify-between border-b border-border pb-2.5 mb-4">
               <Link
                 href={lp(`/catalog/${activeCategory.slug}`)}
                 className="text-base font-bold text-text-primary hover:text-accent transition-colors flex items-center gap-2"
@@ -138,7 +138,7 @@ export default function CategorySidebar({ categories = [] }: Props) {
             </div>
 
             {activeCategory.children.length > 0 ? (
-              <div className="grid grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-x-5 gap-y-6 items-start">
+              <div className="columns-2 sm:columns-3 md:columns-4 lg:columns-5 xl:columns-6 2xl:columns-7 gap-x-4 space-y-4">
                 {activeCategory.children
                   .filter((child) => child.count > 0)
                   .sort((a, b) => b.count - a.count)
@@ -147,27 +147,27 @@ export default function CategorySidebar({ categories = [] }: Props) {
                       ? child.children.filter((gc) => gc.count > 0).sort((a, b) => b.count - a.count)
                       : []
                     return (
-                      <div key={child.slug} className="flex flex-col gap-1.5 break-inside-avoid">
+                      <div key={child.slug} className="break-inside-avoid flex flex-col gap-1 mb-4">
                         <Link
                           href={lp(`/catalog/${child.slug}`)}
-                          className="flex items-center gap-1 text-[13px] font-bold text-text-primary hover:text-accent transition-colors group/sub leading-tight"
+                          className="flex items-start gap-1 text-[12px] font-bold text-text-primary hover:text-accent transition-colors group/sub leading-tight"
                         >
-                          <ChevronRight className="size-3 shrink-0 text-accent opacity-70 group-hover/sub:opacity-100 group-hover/sub:translate-x-0.5 transition-all" strokeWidth={2.5} />
-                          <span className="line-clamp-2">{child.name}</span>
+                          <ChevronRight className="size-3 shrink-0 text-accent opacity-70 group-hover/sub:opacity-100 group-hover/sub:translate-x-0.5 transition-all mt-0.5" strokeWidth={2.5} />
+                          <span className="whitespace-normal break-words">{child.name}</span>
                           <span className="num text-[10px] text-text-muted font-normal ml-0.5 shrink-0">
                             ({child.count})
                           </span>
                         </Link>
                         {grandChildren.length > 0 && (
-                          <div className="flex flex-col gap-1 pl-3.5 mt-0.5 border-l-2 border-slate-100 dark:border-slate-800">
+                          <div className="flex flex-col gap-0.5 pl-3 mt-0.5 border-l-2 border-slate-100 dark:border-slate-800">
                             {grandChildren.map((gc) => (
                               <Link
                                 key={gc.slug}
                                 href={lp(`/catalog/${gc.slug}`)}
-                                className="text-[11px] text-text-muted hover:text-accent transition-colors flex items-start gap-1 group/gc py-0.5"
+                                className="text-[11px] text-text-muted hover:text-accent transition-colors flex items-start gap-1 group/gc py-0.5 leading-snug"
                               >
-                                <span className="text-slate-300 dark:text-slate-700 select-none shrink-0">└</span>
-                                <span className="line-clamp-1">{gc.name}</span>
+                                <span className="text-slate-300 dark:text-slate-700 select-none shrink-0 mt-0.5">└</span>
+                                <span className="whitespace-normal break-words">{gc.name}</span>
                                 <span className="num text-[9px] text-slate-400 dark:text-slate-500 font-normal ml-0.5 shrink-0">
                                   ({gc.count})
                                 </span>
@@ -185,7 +185,7 @@ export default function CategorySidebar({ categories = [] }: Props) {
           </div>
 
           {/* Col 3: Popular & Promo combined */}
-          <div className="w-[280px] shrink-0 border-l border-border bg-surface-alt flex flex-col">
+          <div className="w-[230px] shrink-0 border-l border-border bg-surface-alt flex flex-col">
             {popular.length > 0 && (
               <div className="px-5 py-5 border-b border-border">
                 <p className="text-[11px] font-semibold text-text-muted uppercase tracking-wider mb-3">{tMenu('popular')}</p>
