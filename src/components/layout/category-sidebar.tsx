@@ -116,7 +116,7 @@ export default function CategorySidebar({ categories = [] }: Props) {
       {/* Flyout Mega Menu */}
       {activeSlug && activeCategory && (
         <div
-          className="absolute left-[280px] top-0 bg-surface-white border border-border shadow-2xl rounded-r-2xl flex overflow-hidden w-[calc(100vw-310px)] max-w-[1550px] z-50 max-h-[calc(100vh-var(--header-height,140px)-20px)]"
+          className="absolute left-[280px] top-0 bg-surface-white border border-border shadow-2xl rounded-r-2xl flex overflow-hidden w-[calc(100vw-330px)] max-w-[1450px] z-50 max-h-[calc(100vh-var(--header-height,140px)-20px)]"
         >
           {/* Col 2: Subcategories */}
           <div className="flex-1 min-w-0 overflow-y-auto px-6 py-4.5">
@@ -138,7 +138,7 @@ export default function CategorySidebar({ categories = [] }: Props) {
             </div>
 
             {activeCategory.children.length > 0 ? (
-              <div className="columns-2 sm:columns-3 md:columns-4 lg:columns-5 xl:columns-6 2xl:columns-7 gap-x-4 space-y-4">
+              <div className="columns-2 sm:columns-3 lg:columns-4 xl:columns-5 gap-x-5 space-y-4">
                 {activeCategory.children
                   .filter((child) => child.count > 0)
                   .sort((a, b) => b.count - a.count)
@@ -185,7 +185,7 @@ export default function CategorySidebar({ categories = [] }: Props) {
           </div>
 
           {/* Col 3: Popular & Promo combined */}
-          <div className="w-[230px] shrink-0 border-l border-border bg-surface-alt flex flex-col">
+          <div className="w-[240px] shrink-0 border-l border-border bg-surface-alt flex flex-col overflow-y-auto pr-1">
             {popular.length > 0 && (
               <div className="px-5 py-5 border-b border-border">
                 <p className="text-[11px] font-semibold text-text-muted uppercase tracking-wider mb-3">{tMenu('popular')}</p>
