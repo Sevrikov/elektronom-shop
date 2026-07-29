@@ -18,6 +18,7 @@ import { useWishlistStore } from '@/store/wishlist-store'
 import { StarfieldBanner } from '@/components/layout/starfield-banner'
 import { Truck, Percent, MessageCircle, Package } from 'lucide-react'
 import type { CategoryTreeNode } from '@/queries/categories'
+import { CircuitBreakerToggle } from './circuit-breaker-toggle'
 
 interface Props {
   categories: CategoryTreeNode[]
@@ -260,6 +261,7 @@ export default function Header({ workload = 0 }: Props) {
 
             {/* Right icons */}
             <div className="flex items-center gap-2">
+              <CircuitBreakerToggle locale={locale} />
               <Link
                 href={lp('/wishlist')}
                 className="relative size-10 rounded-md inline-flex items-center justify-center cursor-pointer transition-colors hover:bg-[var(--color-surface-alt)]"

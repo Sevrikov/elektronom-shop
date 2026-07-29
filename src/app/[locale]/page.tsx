@@ -1,6 +1,6 @@
 import { Suspense } from 'react'
 import HybridDrawer from '@/components/home/hero-section'
-import ValueProps from '@/components/home/value-props'
+import HeroRightSidebar from '@/components/home/hero-right-sidebar'
 import CategoriesSection from '@/components/home/categories-section'
 import MainCategories from '@/components/home/main-categories'
 import TrustSection from '@/components/home/trust-section'
@@ -88,8 +88,12 @@ export default async function HomePage({
       <div className="flex gap-6">
         <CategorySidebar categories={categories} />
         <div className="flex-1 min-w-0 flex flex-col gap-6">
-          <HybridDrawer locale={loc} />
-          <ValueProps />
+          <div className="flex flex-col lg:flex-row gap-6">
+            <div className="flex-1 min-w-0">
+              <HybridDrawer locale={loc} />
+            </div>
+            <HeroRightSidebar locale={loc} />
+          </div>
           <MainCategories locale={loc} />
           <CategoriesSection />
           <Suspense fallback={<LoadingSkeleton />}>
