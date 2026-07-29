@@ -419,7 +419,7 @@ export default async function CategoryPage({
         {/* Main layout: sidebar + grid */}
         <div className="flex gap-6 items-start mt-4">
           {/* Desktop sidebar */}
-          <aside className="hidden lg:flex flex-col gap-4 w-[280px] shrink-0 sticky top-[180px] self-start">
+          <aside className="hidden lg:flex flex-col gap-4 w-[280px] shrink-0 sticky top-[100px] self-start max-h-[calc(100vh-120px)] overflow-y-auto sidebar-scroll pr-1">
             {/* Attribute filters (Deferred under Suspense) */}
             <Suspense fallback={<FiltersSkeleton />}>
               <DeferredFiltersSection

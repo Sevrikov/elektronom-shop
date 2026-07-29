@@ -69,7 +69,7 @@ export default async function CatalogPage({
         {/* Main 2-column layout */}
         <div className="flex gap-6 items-start pb-10">
           {/* ───── SIDEBAR 280 ───── */}
-          <aside className="hidden lg:block w-[280px] shrink-0 sticky top-[140px] self-start">
+          <aside className="hidden lg:block w-[280px] shrink-0 sticky top-[100px] self-start max-h-[calc(100vh-120px)] overflow-y-auto sidebar-scroll pr-1">
             <CatalogSidebar categories={activeCategories} locale={locale} />
           </aside>
 
