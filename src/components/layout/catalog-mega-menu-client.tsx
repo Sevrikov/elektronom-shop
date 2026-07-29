@@ -7,6 +7,7 @@ import { useLocale, useTranslations } from 'next-intl'
 import { ChevronRight, ArrowLeft, X } from 'lucide-react'
 import type { CategoryTreeNode } from '@/queries/categories'
 import type { Locale } from '@/types'
+import CategoryIcon from '@/components/ui/category-icon'
 import { getPopularForSlug, getPromoForSlug } from '@/config/catalog-mega-menu'
 
 interface Props {
@@ -95,10 +96,7 @@ export function CatalogMegaMenuClient({ categories, isOpen, onClose }: Props) {
                   activeSlug === cat.slug ? 'bg-surface-alt text-accent' : 'text-text-primary',
                 ].join(' ')}
               >
-                {cat.image && (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={cat.image} alt="" className="size-5 object-contain shrink-0" aria-hidden="true" />
-                )}
+                <CategoryIcon slug={cat.slug} className="size-5 shrink-0" />
                 <span className="flex-1 truncate">{cat.name}</span>
                 <ChevronRight className={['size-3.5 shrink-0 transition-opacity', activeSlug === cat.slug ? 'opacity-100 text-accent' : 'opacity-30'].join(' ')} strokeWidth={2} />
               </button>
@@ -119,13 +117,16 @@ export function CatalogMegaMenuClient({ categories, isOpen, onClose }: Props) {
           <div className="flex-1 min-w-0 overflow-y-auto px-6 py-4">
             {activeCategory && (
               <>
-                <Link
-                  href={lp(`/catalog/${activeCategory.slug}`)}
-                  onClick={onClose}
-                  className="inline-block text-base font-bold text-text-primary mb-3 hover:text-accent transition-colors"
-                >
-                  {activeCategory.name}
-                </Link>
+                <div className="flex items-center gap-2.5 mb-4">
+                  <CategoryIcon slug={activeCategory.slug} className="size-6 shrink-0" />
+                  <Link
+                    href={lp(`/catalog/${activeCategory.slug}`)}
+                    onClick={onClose}
+                    className="text-base font-bold text-text-primary hover:text-accent transition-colors"
+                  >
+                    {activeCategory.name}
+                  </Link>
+                </div>
                 {activeCategory.children.length > 0 ? (
                   <div className="grid grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-2.5">
                     {activeCategory.children.map((child) => (
@@ -133,9 +134,9 @@ export function CatalogMegaMenuClient({ categories, isOpen, onClose }: Props) {
                         key={child.slug}
                         href={lp(`/catalog/${child.slug}`)}
                         onClick={onClose}
-                        className="flex items-center gap-1.5 py-1.5 text-[13px] text-text-primary hover:text-accent transition-colors group"
+                        className="flex items-center gap-2 py-1.5 text-[13px] text-text-primary hover:text-accent transition-colors group"
                       >
-                        <ChevronRight className="size-3 shrink-0 text-border-strong group-hover:text-accent transition-colors" strokeWidth={2} />
+                        <CategoryIcon slug={child.slug} className="size-4 shrink-0" />
                         <span className="line-clamp-2">{child.name}</span>
                       </Link>
                     ))}

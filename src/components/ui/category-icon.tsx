@@ -17,8 +17,8 @@ export default function CategoryIcon({ slug, className = 'size-5' }: IconProps) 
   const accentGreen = 'fill-[#10B981] stroke-[#10B981]'
   const strokeGreen = 'stroke-[#10B981]'
 
-  // 1. Електрика / Электротовары / Автоматичні вимикачі (Circuit Breakers & Electrical)
-  if (s.includes('electr') || s.includes('elektr') || s.includes('avtomat') || s.includes('vymykach') || s.includes('zap')) {
+  // 1. Автоматичні вимикачі / zap (Circuit Breakers)
+  if (s.includes('avtomat') || s.includes('vymykach') || s.includes('zap')) {
     return (
       <svg viewBox="0 0 24 24" className={className} fill="none" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
         <rect x="4" y="3" width="16" height="18" rx="2" className={baseGray} />
@@ -28,7 +28,111 @@ export default function CategoryIcon({ slug, className = 'size-5' }: IconProps) 
     )
   }
 
-  // 2. Інструменти (Tools & Equipment)
+  // 2. Дифавтомати та УЗО (RCD / Residual Current Devices)
+  if (s.includes('dif') || s.includes('uzo') || s.includes('rcd')) {
+    return (
+      <svg viewBox="0 0 24 24" className={className} fill="none" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="4" y="3" width="16" height="18" rx="2" className={baseGray} />
+        <path d="M9 12h6M12 9v6" className={detailBlue} />
+        <circle cx="17" cy="6" r="1" className={accentGreen} />
+      </svg>
+    )
+  }
+
+  // 3. Реле та тумблери (Relays & Toggles)
+  if (s.includes('rele') || s.includes('tumbler') || s.includes('toggle')) {
+    return (
+      <svg viewBox="0 0 24 24" className={className} fill="none" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="4" y="4" width="16" height="16" rx="2" className={baseGray} />
+        <path d="M8 9h8M8 15h5" className={detailBlue} />
+        <path d="M15 15l2-2" className={strokeGreen} />
+        <circle cx="16" cy="9" r="1" className={accentGreen} />
+      </svg>
+    )
+  }
+
+  // 4. Контактори та пускателі (Contactors & Power Starters)
+  if (s.includes('kontakt') || s.includes('puskat') || s.includes('power')) {
+    return (
+      <svg viewBox="0 0 24 24" className={className} fill="none" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="5" y="3" width="14" height="18" rx="2" className={baseGray} />
+        <circle cx="12" cy="8" r="2.5" className={detailBlue} />
+        <circle cx="12" cy="16" r="2.5" className={detailBlue} />
+        <circle cx="12" cy="8" r="1" className={accentGreen} />
+      </svg>
+    )
+  }
+
+  // 5. Розетки та вимикачі (Sockets & Wall Switches)
+  if (s.includes('rozetk') || s.includes('vymykach') || s.includes('plug') || s.includes('switch')) {
+    return (
+      <svg viewBox="0 0 24 24" className={className} fill="none" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="3" y="3" width="18" height="18" rx="4" className={baseGray} />
+        <circle cx="12" cy="12" r="4.5" className={detailBlue} />
+        <circle cx="10" cy="12" r="1" className="fill-[#1550FC] dark:fill-[#51A2FF]" />
+        <circle cx="14" cy="12" r="1" className="fill-[#1550FC] dark:fill-[#51A2FF]" />
+        <path d="M12 5.5v1.5M12 17v1.5" className={strokeGreen} />
+      </svg>
+    )
+  }
+
+  // 6. Клеммники та шини (Terminal Blocks & Busbars)
+  if (s.includes('klemm') || s.includes('shyn') || s.includes('shin')) {
+    return (
+      <svg viewBox="0 0 24 24" className={className} fill="none" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="3" y="6" width="18" height="12" rx="2" className={baseGray} />
+        <path d="M7 9v6M12 9v6M17 9v6" className={detailBlue} />
+        <circle cx="12" cy="6" r="1" className={accentGreen} />
+      </svg>
+    )
+  }
+
+  // 7. Рамки та накладки (Frames & Wall Plates)
+  if (s.includes('ramk') || s.includes('nakladk') || s.includes('frame')) {
+    return (
+      <svg viewBox="0 0 24 24" className={className} fill="none" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="3" y="3" width="18" height="18" rx="3" className={baseGray} />
+        <rect x="7" y="7" width="10" height="10" rx="1.5" className={detailBlue} />
+        <circle cx="12" cy="12" r="1" className={accentGreen} />
+      </svg>
+    )
+  }
+
+  // 8. Счетчики электроэнергии (Energy Meters)
+  if (s.includes('schetch') || s.includes('lychiln') || s.includes('meter')) {
+    return (
+      <svg viewBox="0 0 24 24" className={className} fill="none" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="4" y="3" width="16" height="18" rx="2" className={baseGray} />
+        <rect x="7" y="6" width="10" height="5" rx="1" className={detailBlue} />
+        <path d="M8 15h4M8 18h2" className={detailBlue} />
+        <circle cx="15" cy="16" r="1" className={accentGreen} />
+      </svg>
+    )
+  }
+
+  // 9. Трансформаторы тока (Current Transformers)
+  if (s.includes('transform') || s.includes('toka')) {
+    return (
+      <svg viewBox="0 0 24 24" className={className} fill="none" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="9" cy="12" r="5.5" className={baseGray} />
+        <circle cx="15" cy="12" r="5.5" className={detailBlue} />
+        <circle cx="12" cy="12" r="1" className={accentGreen} />
+      </svg>
+    )
+  }
+
+  // 10. Загальна Електрика / Электротовары (Electrical Infrastructure)
+  if (s.includes('electr') || s.includes('elektr')) {
+    return (
+      <svg viewBox="0 0 24 24" className={className} fill="none" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="4" y="3" width="16" height="18" rx="2" className={baseGray} />
+        <path d="M12 7l-2 4.5h4l-2 4.5" className={detailBlue} />
+        <circle cx="12" cy="5" r="1" className={accentGreen} />
+      </svg>
+    )
+  }
+
+  // 11. Інструменти (Tools & Equipment)
   if (s.includes('instrument') || s.includes('wrench') || s.includes('drill')) {
     return (
       <svg viewBox="0 0 24 24" className={className} fill="none" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
@@ -39,7 +143,7 @@ export default function CategoryIcon({ slug, className = 'size-5' }: IconProps) 
     )
   }
 
-  // 3. Відеонаглядення / CCTV / TVT Digital
+  // 12. Відеонаглядення / CCTV / TVT Digital
   if (s.includes('video') || s.includes('cctv') || s.includes('tvt')) {
     return (
       <svg viewBox="0 0 24 24" className={className} fill="none" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
@@ -51,7 +155,7 @@ export default function CategoryIcon({ slug, className = 'size-5' }: IconProps) 
     )
   }
 
-  // 4. Охорона, Пожежна сигналізація, Ajax, Контроль доступу, Домофони (Security, Alarm & Access Control)
+  // 13. Охорона, Пожежна сигналізація, Ajax, Контроль доступу, Домофони (Security & Alarm)
   if (s.includes('ohran') || s.includes('okhoron') || s.includes('pozhezh') || s.includes('ajax') || s.includes('domofon') || s.includes('sygnaliz') || s.includes('syhnaliz') || s.includes('kontrol') || s.includes('access') || s.includes('shield')) {
     return (
       <svg viewBox="0 0 24 24" className={className} fill="none" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
@@ -62,7 +166,7 @@ export default function CategoryIcon({ slug, className = 'size-5' }: IconProps) 
     )
   }
 
-  // 5. Кабель та провід (Cables & Wires)
+  // 14. Кабель та провід (Cables & Wires)
   if (s.includes('kabel') || s.includes('provid') || s.includes('provod') || s.includes('cable') || s.includes('drot')) {
     return (
       <svg viewBox="0 0 24 24" className={className} fill="none" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
@@ -75,7 +179,7 @@ export default function CategoryIcon({ slug, className = 'size-5' }: IconProps) 
     )
   }
 
-  // 6. Освітлення LED (LED Bulb & Lighting)
+  // 15. Освітлення LED (LED Bulb & Lighting)
   if (s.includes('osvitl') || s.includes('osveshch') || s.includes('led') || s.includes('lampa') || s.includes('lightbulb')) {
     return (
       <svg viewBox="0 0 24 24" className={className} fill="none" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
@@ -87,7 +191,18 @@ export default function CategoryIcon({ slug, className = 'size-5' }: IconProps) 
     )
   }
 
-  // 7. Абразиви та кріпеж (Fasteners & Abrasives)
+  // 16. Щити та щитове обладнання / server (Cabinet panels & Enclosures)
+  if (s.includes('shchit') || s.includes('shchyty') || s.includes('server')) {
+    return (
+      <svg viewBox="0 0 24 24" className={className} fill="none" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="4" y="3" width="16" height="18" rx="2" className={baseGray} />
+        <path d="M8 7h8M8 12h8M8 17h5" className={detailBlue} />
+        <circle cx="16" cy="17" r="1" className={accentGreen} />
+      </svg>
+    )
+  }
+
+  // 17. Абразиви та кріпеж (Fasteners & Abrasives)
   if (s.includes('abraziv') || s.includes('krepezh') || s.includes('krepysh') || s.includes('metiz')) {
     return (
       <svg viewBox="0 0 24 24" className={className} fill="none" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
@@ -98,7 +213,7 @@ export default function CategoryIcon({ slug, className = 'size-5' }: IconProps) 
     )
   }
 
-  // 8. Зварювальне обладнання (Welding Equipment)
+  // 18. Зварювальне обладнання (Welding Equipment)
   if (s.includes('svar') || s.includes('zvar') || s.includes('weld')) {
     return (
       <svg viewBox="0 0 24 24" className={className} fill="none" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
@@ -109,70 +224,13 @@ export default function CategoryIcon({ slug, className = 'size-5' }: IconProps) 
     )
   }
 
-  // 9. Спецодяг та захист (Workwear & Safety Protection)
+  // 19. Спецодяг та захист (Workwear & Safety Protection)
   if (s.includes('spec') || s.includes('spets') || s.includes('odezhd') || s.includes('odyah')) {
     return (
       <svg viewBox="0 0 24 24" className={className} fill="none" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
         <path d="M6 4l6 3 6-3v14l-6 3-6-3V4z" className={baseGray} />
         <path d="M12 7v14" className={detailBlue} />
         <circle cx="12" cy="11" r="1.5" className={accentGreen} />
-      </svg>
-    )
-  }
-
-  // 10. Клеммники та шины (Terminal Blocks & Busbars)
-  if (s.includes('klemm') || s.includes('shyna')) {
-    return (
-      <svg viewBox="0 0 24 24" className={className} fill="none" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-        <rect x="3" y="6" width="18" height="12" rx="2" className={baseGray} />
-        <path d="M7 9v6M12 9v6M17 9v6" className={detailBlue} />
-        <circle cx="12" cy="6" r="1" className={accentGreen} />
-      </svg>
-    )
-  }
-
-  // 11. Счетчики электроэнергии (Energy Meters)
-  if (s.includes('schetchik') || s.includes('lychilnyk') || s.includes('meter')) {
-    return (
-      <svg viewBox="0 0 24 24" className={className} fill="none" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-        <rect x="4" y="3" width="16" height="18" rx="2" className={baseGray} />
-        <rect x="7" y="6" width="10" height="5" rx="1" className={detailBlue} />
-        <path d="M8 15h4M8 18h2" className={detailBlue} />
-        <circle cx="15" cy="16" r="1" className={accentGreen} />
-      </svg>
-    )
-  }
-
-  // 12. Трансформаторы тока (Transformers)
-  if (s.includes('transform') || s.includes('toka')) {
-    return (
-      <svg viewBox="0 0 24 24" className={className} fill="none" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-        <circle cx="9" cy="12" r="5.5" className={baseGray} />
-        <circle cx="15" cy="12" r="5.5" className={detailBlue} />
-        <circle cx="12" cy="12" r="1" className={accentGreen} />
-      </svg>
-    )
-  }
-
-  // 13. Реле и тумблеры (Relays & Switches)
-  if (s.includes('rele') || s.includes('tumbler')) {
-    return (
-      <svg viewBox="0 0 24 24" className={className} fill="none" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-        <rect x="4" y="4" width="16" height="16" rx="2" className={baseGray} />
-        <path d="M8 9h8M8 15h5" className={detailBlue} />
-        <path d="M15 15l2-2" className={strokeGreen} />
-        <circle cx="16" cy="9" r="1" className={accentGreen} />
-      </svg>
-    )
-  }
-
-  // 14. Абразивы и крепеж (Fasteners & Abrasives)
-  if (s.includes('abraziv') || s.includes('krepezh') || s.includes('krepysh')) {
-    return (
-      <svg viewBox="0 0 24 24" className={className} fill="none" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M12 7v13M9 20h6" className={baseGray} />
-        <path d="M6 4h12l1.5 3H4.5L6 4z" className={detailBlue} />
-        <circle cx="12" cy="11" r="1" className={accentGreen} />
       </svg>
     )
   }
@@ -186,4 +244,3 @@ export default function CategoryIcon({ slug, className = 'size-5' }: IconProps) 
     </svg>
   )
 }
-
