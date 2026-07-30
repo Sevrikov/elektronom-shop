@@ -607,13 +607,47 @@ export async function enrichQuickLinks(
   cacheTag("products");
   cacheTag(`category-${categorySlug}-quick-links`);
 
-  if (!quickLinks || quickLinks.length === 0) return [];
+  let linksToEnrich = quickLinks;
+  if (!linksToEnrich || linksToEnrich.length === 0) {
+    const category = await prisma.category.findUnique({
+      where: { slug: categorySlug, isActive: true },
+      select: {
+        children: {
+          where: { isActive: true },
+          select: {
+            slug: true,
+            image: true,
+            translations: {
+              select: { name: true, locale: true },
+            },
+          },
+          take: 9,
+          orderBy: { sortOrder: "asc" },
+        },
+      },
+    });
+
+    if (category && category.children.length > 0) {
+      linksToEnrich = category.children.map((child) => {
+        const ukName = child.translations.find((t) => t.locale === "uk")?.name ?? child.slug;
+        const ruName = child.translations.find((t) => t.locale === "ru")?.name ?? child.slug;
+        return {
+          label: { uk: ukName, ru: ruName },
+          href: `/catalog/${child.slug}`,
+          imageUrl: child.image,
+        };
+      });
+    }
+  }
+
+  if (!linksToEnrich || linksToEnrich.length === 0) return [];
 
   const categoryIds = await getCategorySubtreeIds(categorySlug);
-  if (categoryIds.length === 0) return quickLinks;
+  if (categoryIds.length === 0) return linksToEnrich;
 
   const enriched = await Promise.all(
-    quickLinks.map(async (link) => {
+    linksToEnrich.map(async (link) => {
+      if (link.imageUrl) return link;
       if (!link.filter) return link;
 
       const { key, value } = link.filter;
@@ -672,7 +706,6 @@ export async function enrichQuickLinks(
       });
 
       const imageUrl = product?.images[0]?.processedUrl || product?.images[0]?.url || null;
-      if (!imageUrl) return null;
 
       return {
         ...link,
@@ -681,5 +714,5 @@ export async function enrichQuickLinks(
     })
   );
 
-  return enriched.filter((link): link is QuickLink & { imageUrl?: string | null } => link !== null);
+  return enriched;
 }
