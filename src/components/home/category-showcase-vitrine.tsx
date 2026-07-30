@@ -181,7 +181,7 @@ export default function CategoryShowcaseVitrine({ locale, hubs }: CategoryShowca
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-              {displayProducts.slice(0, 4).map((product) => (
+              {displayProducts.slice(0, 12).map((product) => (
                 <ProductCard key={product.id} product={product} locale={locale} isCompact={false} />
               ))}
             </div>

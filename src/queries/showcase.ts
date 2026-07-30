@@ -167,7 +167,7 @@ export async function getShowcaseHubs(locale: Locale): Promise<ShowcaseCategoryH
           productsBySubcategory[sub.slug] = [
             ...hubProducts.slice(offset),
             ...hubProducts.slice(0, offset),
-          ].slice(0, 4)
+          ].slice(0, 12)
         }
       })
 
@@ -176,7 +176,7 @@ export async function getShowcaseHubs(locale: Locale): Promise<ShowcaseCategoryH
         title: cfg.title,
         badge: cfg.badge,
         subcategories,
-        products: hubProducts.slice(0, 4),
+        products: hubProducts.slice(0, 12),
         productsBySubcategory,
       }
     })

@@ -1,12 +1,10 @@
 import { Suspense } from 'react'
 import HybridDrawer from '@/components/home/hero-section'
 import HeroRightSidebar from '@/components/home/hero-right-sidebar'
-import CategoriesSection from '@/components/home/categories-section'
-import MainCategories from '@/components/home/main-categories'
 import TrustSection from '@/components/home/trust-section'
 import PrefooterCta from '@/components/home/prefooter-cta'
 import CategorySidebar from '@/components/layout/category-sidebar'
-import { getFeaturedProducts, getNewArrivals } from '@/queries/products'
+import { getNewArrivals } from '@/queries/products'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import ProductCard from '@/components/product/product-card'
 import Link from 'next/link'
@@ -23,18 +21,13 @@ async function ProductCarouselServer({
   title,
   viewAllText,
   viewAllHref,
-  mode,
 }: {
   locale: Locale
   title: string
   viewAllText: string
   viewAllHref: string
-  mode: 'featured' | 'new'
 }) {
-  const products =
-    mode === 'featured'
-      ? await getFeaturedProducts(locale, 8)
-      : await getNewArrivals(locale, 8)
+  const products = await getNewArrivals(locale, 8)
 
   if (products.length === 0) return null
 
@@ -98,23 +91,12 @@ export default async function HomePage({
             <HeroRightSidebar locale={loc} />
           </div>
           <CategoryShowcaseVitrine locale={loc} hubs={showcaseHubs} />
-          <CategoriesSection />
-          <Suspense fallback={<LoadingSkeleton />}>
-            <ProductCarouselServer
-              locale={loc}
-              title={t('topSales.title')}
-              viewAllText={t('topSales.viewAll')}
-              viewAllHref="/catalog?sort=popular"
-              mode="featured"
-            />
-          </Suspense>
           <Suspense fallback={<LoadingSkeleton />}>
             <ProductCarouselServer
               locale={loc}
               title={t('newArrivals.title')}
               viewAllText={t('newArrivals.viewAll')}
               viewAllHref="/catalog?sort=new"
-              mode="new"
             />
           </Suspense>
           <TrustSection />
