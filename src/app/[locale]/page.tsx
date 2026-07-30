@@ -12,7 +12,9 @@ import ProductCard from '@/components/product/product-card'
 import Link from 'next/link'
 import { ChevronRight } from 'lucide-react'
 import type { Locale } from '@/types'
+import { getShowcaseHubs } from '@/queries/showcase'
 import { getCategoryTree } from '@/queries/categories'
+import CategoryShowcaseVitrine from '@/components/home/category-showcase-vitrine'
 
 // ─── Server Component — реальная карусель из БД ──────────────────────────────
 
@@ -82,6 +84,7 @@ export default async function HomePage({
   const loc = locale as Locale
   const t = await getTranslations({ locale: loc, namespace: 'home' })
   const categories = await getCategoryTree(loc)
+  const showcaseHubs = await getShowcaseHubs(loc)
 
   return (
     <div className="mx-auto max-w-[1600px] px-4 lg:px-6 py-6">
@@ -94,7 +97,7 @@ export default async function HomePage({
             </div>
             <HeroRightSidebar locale={loc} />
           </div>
-          <MainCategories locale={loc} />
+          <CategoryShowcaseVitrine locale={loc} hubs={showcaseHubs} />
           <CategoriesSection />
           <Suspense fallback={<LoadingSkeleton />}>
             <ProductCarouselServer
