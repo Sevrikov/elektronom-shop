@@ -382,22 +382,13 @@ export default async function CategoryPage({
       </div>
 
       <div className="max-w-[1600px] mx-auto px-4 pb-10">
-        {/* H1 + count */}
-        <div className="flex items-baseline gap-3 mt-2 mb-3">
-          <h1 className="text-2xl font-bold text-text-primary">{displayTitle}</h1>
-          <span className="text-sm text-text-muted">
-            {t('foundCount', { count: total })}
-          </span>
-        </div>
-
-        {/* Quick SEO/scenario links (under H1, above products) */}
-        {quickLinks.length > 0 && (
-          <CategoryQuickLinks
-            links={quickLinks}
-            locale={locale as Locale}
-            activeFilters={activeFilters}
-          />
-        )}
+        {/* Mobile filter button + sort toolbar with H1 Title */}
+        <CatalogToolbar
+          title={displayTitle}
+          total={total}
+          currentSort={activeFilters.sort}
+          activeFiltersCount={activeFiltersCount}
+        />
 
         {/* Active filter chips (Deferred under Suspense) */}
         <Suspense fallback={null}>
@@ -408,13 +399,6 @@ export default async function CategoryPage({
             locale={locale}
           />
         </Suspense>
-
-        {/* Mobile filter button + sort toolbar */}
-        <CatalogToolbar
-          total={total}
-          currentSort={activeFilters.sort}
-          activeFiltersCount={activeFiltersCount}
-        />
 
         {/* Main layout: sidebar + grid */}
         <div className="flex gap-6 items-start mt-4">
@@ -453,6 +437,15 @@ export default async function CategoryPage({
 
             {/* Laptop/Tablet/Mobile: Answer Block + Description + Articles (shown only on screens < 1700px) */}
             <div className="catalog-answer-inline mt-10 flex flex-col gap-8">
+              {quickLinks.length > 0 && (
+                <CategoryQuickLinks
+                  links={quickLinks}
+                  locale={locale as Locale}
+                  activeFilters={activeFilters}
+                  layout="horizontal"
+                />
+              )}
+
               <AnswerBlock
                 categorySlug={slug}
                 locale={locale}
@@ -475,8 +468,18 @@ export default async function CategoryPage({
             </div>
           </div>
 
-          {/* Desktop Right sidebar (Quick Info + Description + Articles) */}
-          <aside className="catalog-answer-sidebar w-[300px] shrink-0 sticky top-[180px] self-start flex flex-col gap-6 max-h-[calc(100vh-200px)] overflow-y-auto pr-1 sidebar-scroll">
+          {/* Desktop Right sidebar (Quick Links + Info + Description + Articles) */}
+          <aside className="catalog-answer-sidebar w-[300px] shrink-0 sticky top-[100px] self-start flex flex-col gap-5 max-h-[calc(100vh-120px)] overflow-y-auto pr-1 sidebar-scroll">
+            {/* Quick Filter Preset Buttons in 3 columns per row */}
+            {quickLinks.length > 0 && (
+              <CategoryQuickLinks
+                links={quickLinks}
+                locale={locale as Locale}
+                activeFilters={activeFilters}
+                layout="sidebar"
+              />
+            )}
+
             <AnswerBlock
               categorySlug={slug}
               locale={locale}

@@ -10,6 +10,7 @@ import { CATALOG_PAGE_SIZE_OPTIONS, DEFAULT_PAGE_SIZE } from '@/lib/catalog-filt
 type SortValue = 'popular' | 'price-asc' | 'price-desc' | 'new' | 'rating'
 
 interface CatalogToolbarProps {
+  title?: string
   total: number
   currentSort?: SortValue | undefined
   activeFiltersCount: number
@@ -23,6 +24,7 @@ const SORTS: { value: SortValue; labelKey: string }[] = [
 ]
 
 export default function CatalogToolbar({
+  title,
   total,
   currentSort = 'popular',
   activeFiltersCount,
@@ -85,11 +87,23 @@ export default function CatalogToolbar({
   return (
     <div
       className={[
-        'flex flex-col sm:flex-row sm:items-center gap-3 mt-3 py-2.5 px-3 rounded-lg bg-surface-white border border-border',
+        'flex flex-col sm:flex-row sm:items-center gap-3 mt-3 py-2.5 px-3.5 rounded-xl bg-surface-white border border-border shadow-xs',
         'transition-opacity',
         isPending ? 'opacity-60' : '',
       ].join(' ')}
     >
+      {/* Category Title + Product count merged onto the toolbar bar */}
+      {title && (
+        <div className="flex items-baseline gap-2.5 shrink-0 pr-3 sm:border-r border-border/80">
+          <h1 className="text-base sm:text-lg font-extrabold text-text-primary tracking-tight">
+            {title}
+          </h1>
+          <span className="text-xs text-text-muted font-medium whitespace-nowrap">
+            {t('foundCount', { count: total })}
+          </span>
+        </div>
+      )}
+
       {/* Mobile: filter button + sort switcher in one row */}
       <div className="flex sm:hidden items-center justify-between w-full gap-2">
         <button
@@ -134,33 +148,27 @@ export default function CatalogToolbar({
         )}
       </button>
 
-      {/* Found count + Page size selector */}
-      <div className="text-sm text-text-muted flex items-center justify-between sm:justify-start w-full sm:w-auto gap-2 border-t sm:border-0 pt-2 sm:pt-0 border-border select-none">
-        <div className="flex items-center gap-1.5">
-          <span>{t('foundCount', { count: total })}</span>
-          <span className="hidden sm:inline text-border-strong font-normal">/</span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <span className="text-xs text-text-muted">{locale === 'uk' ? 'На сторінку:' : 'На страницу:'}</span>
-          <span className="inline-flex items-center gap-1 font-bold text-xs">
-            {CATALOG_PAGE_SIZE_OPTIONS.map((sz, idx) => (
-              <span key={sz} className="inline-flex items-center gap-1">
-                <button
-                  onClick={() => setLimit(sz)}
-                  className={[
-                    'cursor-pointer transition-colors',
-                    limit === sz
-                      ? 'text-accent font-extrabold underline decoration-2 underline-offset-4'
-                      : 'text-text-muted hover:text-accent font-medium'
-                  ].join(' ')}
-                >
-                  {sz}
-                </button>
-                {idx < 2 && <span className="text-border-strong font-normal select-none">|</span>}
-              </span>
-            ))}
-          </span>
-        </div>
+      {/* Page size selector */}
+      <div className="text-xs text-text-muted flex items-center justify-between sm:justify-start w-full sm:w-auto gap-2 border-t sm:border-0 pt-2 sm:pt-0 border-border select-none">
+        <span className="text-xs text-text-muted">{locale === 'uk' ? 'На сторінку:' : 'На страницу:'}</span>
+        <span className="inline-flex items-center gap-1.5 font-bold text-xs">
+          {CATALOG_PAGE_SIZE_OPTIONS.map((sz, idx) => (
+            <span key={sz} className="inline-flex items-center gap-1.5">
+              <button
+                onClick={() => setLimit(sz)}
+                className={[
+                  'cursor-pointer transition-colors px-1 py-0.5 rounded',
+                  limit === sz
+                    ? 'text-accent font-black underline decoration-2 underline-offset-4 bg-accent/10'
+                    : 'text-text-muted hover:text-accent font-medium'
+                ].join(' ')}
+              >
+                {sz}
+              </button>
+              {idx < 2 && <span className="text-border-strong/60 font-normal select-none">|</span>}
+            </span>
+          ))}
+        </span>
       </div>
 
       <div className="hidden sm:block flex-1" />
