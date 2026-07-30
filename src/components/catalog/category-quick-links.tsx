@@ -22,14 +22,14 @@ function getQuickLinkIcon(key: string, value: string, label: string) {
   // 1P Breaker
   if (normVal === '1p' || normLabel.includes('1p') || normLabel.includes('1-полюс') || normLabel.includes('1п')) {
     return (
-      <svg className="size-full text-accent transition-transform duration-300 group-hover:scale-105" viewBox="0 0 32 32" fill="none">
-        <rect x="10" y="3" width="12" height="26" rx="2" fill="currentColor" fillOpacity="0.08" stroke="currentColor" strokeWidth="1.5" />
-        <circle cx="16" cy="6.5" r="1.5" fill="currentColor" />
-        <circle cx="16" cy="25.5" r="1.5" fill="currentColor" />
-        <rect x="8" y="13" width="16" height="6" rx="1" stroke="currentColor" strokeWidth="1" strokeDasharray="2 2" className="opacity-40" />
-        <rect x="13" y="10" width="6" height="8" rx="1" fill="currentColor" fillOpacity="0.2" stroke="currentColor" strokeWidth="1" />
-        <path d="M16 11V15" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
-        <text x="16" y="22" textAnchor="middle" fontSize="6.5" fontWeight="900" fill="currentColor">1P</text>
+      <svg className="w-full h-full max-h-[64px] text-accent transition-transform duration-300 group-hover:scale-105" viewBox="0 0 32 32" fill="none">
+        <rect x="9" y="2" width="14" height="28" rx="3" fill="currentColor" fillOpacity="0.08" stroke="currentColor" strokeWidth="1.5" />
+        <circle cx="16" cy="6" r="1.5" fill="currentColor" />
+        <circle cx="16" cy="26" r="1.5" fill="currentColor" />
+        <rect x="7" y="13" width="18" height="6" rx="1" stroke="currentColor" strokeWidth="1" strokeDasharray="2 2" className="opacity-40" />
+        <rect x="13" y="9" width="6" height="9" rx="1" fill="currentColor" fillOpacity="0.2" stroke="currentColor" strokeWidth="1.2" />
+        <path d="M16 10V15" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+        <text x="16" y="22.5" textAnchor="middle" fontSize="7" fontWeight="900" fill="currentColor">1P</text>
       </svg>
     )
   }
@@ -37,16 +37,16 @@ function getQuickLinkIcon(key: string, value: string, label: string) {
   // 2P Breaker
   if (normVal === '2p' || normLabel.includes('2p') || normLabel.includes('2-полюс') || normLabel.includes('2п')) {
     return (
-      <svg className="size-full text-accent transition-transform duration-300 group-hover:scale-105" viewBox="0 0 32 32" fill="none">
-        <rect x="5" y="3" width="22" height="26" rx="2" fill="currentColor" fillOpacity="0.08" stroke="currentColor" strokeWidth="1.5" />
-        <line x1="16" y1="3" x2="16" y2="29" stroke="currentColor" strokeWidth="1" strokeDasharray="2 2" className="opacity-40" />
-        <circle cx="10.5" cy="6.5" r="1.3" fill="currentColor" />
-        <circle cx="21.5" cy="6.5" r="1.3" fill="currentColor" />
-        <circle cx="10.5" cy="25.5" r="1.3" fill="currentColor" />
-        <circle cx="21.5" cy="25.5" r="1.3" fill="currentColor" />
-        <rect x="8" y="11" width="16" height="6" rx="1" fill="currentColor" fillOpacity="0.25" stroke="currentColor" strokeWidth="1" />
-        <line x1="10" y1="14" x2="22" y2="14" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
-        <text x="16" y="22.5" textAnchor="middle" fontSize="6.5" fontWeight="900" fill="currentColor">2P</text>
+      <svg className="w-full h-full max-h-[64px] text-accent transition-transform duration-300 group-hover:scale-105" viewBox="0 0 32 32" fill="none">
+        <rect x="4" y="2" width="24" height="28" rx="3" fill="currentColor" fillOpacity="0.08" stroke="currentColor" strokeWidth="1.5" />
+        <line x1="16" y1="2" x2="16" y2="30" stroke="currentColor" strokeWidth="1" strokeDasharray="2 2" className="opacity-40" />
+        <circle cx="10" cy="6" r="1.3" fill="currentColor" />
+        <circle cx="22" cy="6" r="1.3" fill="currentColor" />
+        <circle cx="10" cy="26" r="1.3" fill="currentColor" />
+        <circle cx="22" cy="26" r="1.3" fill="currentColor" />
+        <rect x="7" y="10" width="18" height="7" rx="1" fill="currentColor" fillOpacity="0.25" stroke="currentColor" strokeWidth="1.2" />
+        <line x1="9" y1="13.5" x2="23" y2="13.5" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" />
+        <text x="16" y="23" textAnchor="middle" fontSize="7" fontWeight="900" fill="currentColor">2P</text>
       </svg>
     )
   }
@@ -54,19 +54,19 @@ function getQuickLinkIcon(key: string, value: string, label: string) {
   // 3P Breaker
   if (normVal === '3p' || normLabel.includes('3p') || normLabel.includes('3-полюс') || normLabel.includes('3п')) {
     return (
-      <svg className="size-full text-accent transition-transform duration-300 group-hover:scale-105" viewBox="0 0 36 32" fill="none">
-        <rect x="3" y="3" width="30" height="26" rx="2" fill="currentColor" fillOpacity="0.08" stroke="currentColor" strokeWidth="1.5" />
-        <line x1="13" y1="3" x2="13" y2="29" stroke="currentColor" strokeWidth="1" strokeDasharray="2 2" className="opacity-30" />
-        <line x1="23" y1="3" x2="23" y2="29" stroke="currentColor" strokeWidth="1" strokeDasharray="2 2" className="opacity-30" />
-        <circle cx="8" cy="6.5" r="1.2" fill="currentColor" />
-        <circle cx="18" cy="6.5" r="1.2" fill="currentColor" />
-        <circle cx="28" cy="6.5" r="1.2" fill="currentColor" />
-        <circle cx="8" cy="25.5" r="1.2" fill="currentColor" />
-        <circle cx="18" cy="25.5" r="1.2" fill="currentColor" />
-        <circle cx="28" cy="25.5" r="1.2" fill="currentColor" />
-        <rect x="6" y="11" width="24" height="6" rx="1" fill="currentColor" fillOpacity="0.25" stroke="currentColor" strokeWidth="1" />
-        <line x1="8" y1="14" x2="28" y2="14" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
-        <text x="18" y="22.5" textAnchor="middle" fontSize="6.5" fontWeight="900" fill="currentColor">3P</text>
+      <svg className="w-full h-full max-h-[64px] text-accent transition-transform duration-300 group-hover:scale-105" viewBox="0 0 36 32" fill="none">
+        <rect x="2" y="2" width="32" height="28" rx="3" fill="currentColor" fillOpacity="0.08" stroke="currentColor" strokeWidth="1.5" />
+        <line x1="12" y1="2" x2="12" y2="30" stroke="currentColor" strokeWidth="1" strokeDasharray="2 2" className="opacity-30" />
+        <line x1="24" y1="2" x2="24" y2="30" stroke="currentColor" strokeWidth="1" strokeDasharray="2 2" className="opacity-30" />
+        <circle cx="7" cy="6" r="1.3" fill="currentColor" />
+        <circle cx="18" cy="6" r="1.3" fill="currentColor" />
+        <circle cx="29" cy="6" r="1.3" fill="currentColor" />
+        <circle cx="7" cy="26" r="1.3" fill="currentColor" />
+        <circle cx="18" cy="26" r="1.3" fill="currentColor" />
+        <circle cx="29" cy="26" r="1.3" fill="currentColor" />
+        <rect x="5" y="10" width="26" height="7" rx="1" fill="currentColor" fillOpacity="0.25" stroke="currentColor" strokeWidth="1.2" />
+        <line x1="7" y1="13.5" x2="29" y2="13.5" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" />
+        <text x="18" y="23" textAnchor="middle" fontSize="7" fontWeight="900" fill="currentColor">3P</text>
       </svg>
     )
   }
@@ -75,10 +75,10 @@ function getQuickLinkIcon(key: string, value: string, label: string) {
   if (normKey === 'curve' || normLabel.includes('хар-ка') || (normVal.length === 1 && ['b', 'c', 'd'].includes(normVal))) {
     const letter = normVal.toUpperCase().replace('ХАР-КА', '').trim() || label.slice(-1).toUpperCase()
     return (
-      <svg className="size-full text-accent transition-transform duration-300 group-hover:scale-105" viewBox="0 0 32 32" fill="none">
-        <rect x="4" y="4" width="24" height="24" rx="5" fill="currentColor" fillOpacity="0.08" stroke="currentColor" strokeWidth="1.5" />
-        <path d="M7 21C11 21 12 11 16 11C20 11 21 21 25 21" stroke="currentColor" strokeWidth="1.5" strokeDasharray="2 2" className="opacity-40" />
-        <text x="16" y="20.5" textAnchor="middle" fontSize="12" fontWeight="900" fill="currentColor">
+      <svg className="w-full h-full max-h-[64px] text-accent transition-transform duration-300 group-hover:scale-105" viewBox="0 0 32 32" fill="none">
+        <rect x="3" y="3" width="26" height="26" rx="6" fill="currentColor" fillOpacity="0.08" stroke="currentColor" strokeWidth="1.8" />
+        <path d="M6 22C10 22 11 11 16 11C21 11 22 22 26 22" stroke="currentColor" strokeWidth="1.5" strokeDasharray="2 2" className="opacity-40" />
+        <text x="16" y="21" textAnchor="middle" fontSize="13" fontWeight="900" fill="currentColor">
           {letter}
         </text>
       </svg>
@@ -89,10 +89,10 @@ function getQuickLinkIcon(key: string, value: string, label: string) {
   if (normKey === 'rated_current' || normLabel.includes('а') || normLabel.includes('ток') || normLabel.includes('струм')) {
     const valText = normVal.toUpperCase().endsWith('A') ? normVal.toUpperCase() : `${normVal.toUpperCase()}A`
     return (
-      <svg className="size-full text-accent transition-transform duration-300 group-hover:scale-105" viewBox="0 0 32 32" fill="none">
-        <rect x="4" y="5" width="24" height="22" rx="4" fill="currentColor" fillOpacity="0.08" stroke="currentColor" strokeWidth="1.5" />
-        <line x1="8" y1="10" x2="24" y2="10" stroke="currentColor" strokeWidth="1" strokeDasharray="1.5 1.5" className="opacity-40" />
-        <text x="16" y="21" textAnchor="middle" fontSize="10" fontWeight="900" fill="currentColor" letterSpacing="-0.5">
+      <svg className="w-full h-full max-h-[64px] text-accent transition-transform duration-300 group-hover:scale-105" viewBox="0 0 32 32" fill="none">
+        <rect x="3" y="4" width="26" height="24" rx="5" fill="currentColor" fillOpacity="0.08" stroke="currentColor" strokeWidth="1.8" />
+        <line x1="7" y1="9" x2="25" y2="9" stroke="currentColor" strokeWidth="1.2" strokeDasharray="2 2" className="opacity-40" />
+        <text x="16" y="21.5" textAnchor="middle" fontSize="11" fontWeight="900" fill="currentColor" letterSpacing="-0.5">
           {valText}
         </text>
       </svg>
@@ -102,12 +102,11 @@ function getQuickLinkIcon(key: string, value: string, label: string) {
   // Sockets
   if (normLabel.includes('розетк') || normVal === 'розетка') {
     return (
-      <svg className="size-6 text-accent transition-transform duration-300 group-hover:scale-110" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
-        <circle cx="12" cy="12" r="10" strokeWidth={1.5} />
-        <circle cx="8" cy="12" r="1.5" fill="currentColor" />
-        <circle cx="16" cy="12" r="1.5" fill="currentColor" />
-        <path d="M12 2v2M12 20v2" strokeLinecap="round" />
-        <rect x="3" y="3" width="18" height="18" rx="2" strokeWidth={1} strokeDasharray="2 2" className="opacity-30" />
+      <svg className="w-full h-full max-h-[64px] text-accent transition-transform duration-300 group-hover:scale-105" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
+        <circle cx="12" cy="12" r="10" strokeWidth={1.5} fill="currentColor" fillOpacity="0.08" />
+        <circle cx="8" cy="12" r="1.8" fill="currentColor" />
+        <circle cx="16" cy="12" r="1.8" fill="currentColor" />
+        <path d="M12 2v3M12 19v3" strokeLinecap="round" strokeWidth={1.8} />
       </svg>
     )
   }
@@ -115,11 +114,10 @@ function getQuickLinkIcon(key: string, value: string, label: string) {
   // Switches
   if (normLabel.includes('вимикач') || normVal === 'вимикач' || normVal === 'выключатель') {
     return (
-      <svg className="size-6 text-accent transition-transform duration-300 group-hover:scale-110" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
-        <rect x="4" y="4" width="16" height="16" rx="3" />
-        <rect x="8" y="7" width="8" height="10" rx="1" />
-        <line x1="8" y1="12" x2="16" y2="12" strokeDasharray="1 1" />
-        <circle cx="12" cy="15" r="1" fill="currentColor" />
+      <svg className="w-full h-full max-h-[64px] text-accent transition-transform duration-300 group-hover:scale-105" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
+        <rect x="4" y="3" width="16" height="18" rx="4" fill="currentColor" fillOpacity="0.08" strokeWidth={1.5} />
+        <rect x="8" y="6" width="8" height="12" rx="2" fill="currentColor" fillOpacity="0.2" strokeWidth={1.2} />
+        <circle cx="12" cy="15" r="1.2" fill="currentColor" />
       </svg>
     )
   }
@@ -127,12 +125,11 @@ function getQuickLinkIcon(key: string, value: string, label: string) {
   // Cables & Wires
   if (normKey.includes('cable') || normLabel.includes('ввг') || normLabel.includes('пвс') || normKey === 'section' || normLabel.includes('мм²')) {
     return (
-      <svg className="size-6 text-accent transition-transform duration-300 group-hover:scale-110" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
-        <circle cx="12" cy="12" r="9" />
-        <circle cx="12" cy="12" r="7" strokeDasharray="2 2" className="opacity-30" />
-        <circle cx="9" cy="10" r="2.2" fill="currentColor" />
-        <circle cx="15" cy="10" r="2.2" fill="currentColor" />
-        <circle cx="12" cy="15" r="2.2" fill="currentColor" />
+      <svg className="w-full h-full max-h-[64px] text-accent transition-transform duration-300 group-hover:scale-105" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
+        <circle cx="12" cy="12" r="9.5" fill="currentColor" fillOpacity="0.08" strokeWidth={1.5} />
+        <circle cx="9" cy="9.5" r="2.5" fill="currentColor" />
+        <circle cx="15" cy="9.5" r="2.5" fill="currentColor" />
+        <circle cx="12" cy="15" r="2.5" fill="currentColor" />
       </svg>
     )
   }
@@ -140,9 +137,9 @@ function getQuickLinkIcon(key: string, value: string, label: string) {
   // Brands
   if (normKey === 'brand') {
     return (
-      <svg className="size-full text-accent transition-transform duration-300 group-hover:scale-105" viewBox="0 0 32 32" fill="none">
-        <rect x="4" y="4" width="24" height="24" rx="4" stroke="currentColor" strokeWidth="1.5" fill="currentColor" fillOpacity="0.08" />
-        <text x="50%" y="58%" dominantBaseline="middle" textAnchor="middle" fontSize="9" fontWeight="900" fill="currentColor">
+      <svg className="w-full h-full max-h-[64px] text-accent transition-transform duration-300 group-hover:scale-105" viewBox="0 0 32 32" fill="none">
+        <rect x="3" y="4" width="26" height="24" rx="5" stroke="currentColor" strokeWidth="1.8" fill="currentColor" fillOpacity="0.08" />
+        <text x="50%" y="58%" dominantBaseline="middle" textAnchor="middle" fontSize="10" fontWeight="900" fill="currentColor">
           {label.slice(0, 3).toUpperCase()}
         </text>
       </svg>
@@ -151,9 +148,9 @@ function getQuickLinkIcon(key: string, value: string, label: string) {
 
   // Fallback: A clean electrical node icon
   return (
-    <svg className="size-6 text-accent transition-transform duration-300 group-hover:scale-110" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
-      <circle cx="12" cy="12" r="3" fill="currentColor" />
-      <path d="M12 2v7M12 15v7M2 12h7M15 12h7" strokeLinecap="round" />
+    <svg className="w-full h-full max-h-[64px] text-accent transition-transform duration-300 group-hover:scale-105" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
+      <circle cx="12" cy="12" r="4" fill="currentColor" fillOpacity="0.2" strokeWidth={1.5} />
+      <path d="M12 2v6M12 16v6M2 12h6M16 12h6" strokeLinecap="round" strokeWidth={1.8} />
     </svg>
   )
 }
@@ -210,36 +207,35 @@ function QuickLinkItem({
     return (
       <Link
         href={href as never}
-        className={`group flex flex-col items-center justify-between p-1.5 min-h-[82px] w-full rounded-xl border text-center transition-all duration-200 overflow-hidden ${
+        className={`group flex flex-col justify-between p-1.5 min-h-[96px] h-[106px] w-full rounded-xl border text-center transition-all duration-200 overflow-hidden ${
           isActive
             ? 'border-accent bg-accent/15 text-accent font-bold ring-2 ring-accent/30 shadow-xs scale-[1.02]'
             : 'border-border bg-surface-white hover:border-accent/60 hover:bg-surface-raised hover:shadow-xs'
         }`}
       >
-        <div
-          className={`size-8 rounded-lg flex items-center justify-center p-0.5 shrink-0 group-hover:scale-105 transition-transform overflow-hidden ${
-            isActive ? 'bg-accent/20 border border-accent/40' : 'bg-surface-raised border border-border/40'
-          }`}
-        >
+        <div className="flex-1 w-full flex items-center justify-center p-1 group-hover:scale-105 transition-transform overflow-hidden min-h-[64px]">
           {link.imageUrl && !imageError ? (
             <img
               src={link.imageUrl}
               alt={label}
               onError={() => setImageError(true)}
-              className="size-full object-contain"
+              className="size-full object-contain max-h-[64px]"
             />
           ) : (
             getQuickLinkIcon(link.filter?.key ?? '', link.filter?.value ?? '', label)
           )}
         </div>
-        <span
-          className={`text-[9.5px] leading-[1.15] tracking-tight text-center w-full break-words hyphens-auto mt-1 max-w-full px-0.5 transition-colors ${
-            isActive ? 'text-accent font-extrabold' : 'text-text-primary font-medium group-hover:text-accent'
+
+        <div
+          className={`w-full py-1 px-0.5 rounded-lg text-[9.5px] leading-tight font-semibold text-center transition-colors truncate ${
+            isActive
+              ? 'bg-accent text-white font-bold shadow-xs'
+              : 'bg-surface-raised/90 text-text-primary group-hover:bg-accent/10 group-hover:text-accent'
           }`}
-          style={{ wordBreak: 'break-word', overflowWrap: 'anywhere' }}
+          title={label}
         >
           {label}
-        </span>
+        </div>
       </Link>
     )
   }
