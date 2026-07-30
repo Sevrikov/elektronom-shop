@@ -6,7 +6,6 @@ import { usePathname } from 'next/navigation'
 import { buildCatalogHref } from '@/lib/catalog-filter-url'
 import type { ActiveFilters, Locale } from '@/types'
 import type { QuickLink } from '@/lib/catalog-filter-config'
-import { TransparentImage } from '@/components/shared/transparent-image'
 
 interface CategoryQuickLinksProps {
   links: QuickLink[]
@@ -19,6 +18,86 @@ function getQuickLinkIcon(key: string, value: string, label: string) {
   const normKey = key.toLowerCase()
   const normVal = value.toLowerCase()
   const normLabel = label.toLowerCase()
+
+  // 1P Breaker
+  if (normVal === '1p' || normLabel.includes('1p') || normLabel.includes('1-полюс') || normLabel.includes('1п')) {
+    return (
+      <svg className="size-full text-accent transition-transform duration-300 group-hover:scale-105" viewBox="0 0 32 32" fill="none">
+        <rect x="10" y="3" width="12" height="26" rx="2" fill="currentColor" fillOpacity="0.08" stroke="currentColor" strokeWidth="1.5" />
+        <circle cx="16" cy="6.5" r="1.5" fill="currentColor" />
+        <circle cx="16" cy="25.5" r="1.5" fill="currentColor" />
+        <rect x="8" y="13" width="16" height="6" rx="1" stroke="currentColor" strokeWidth="1" strokeDasharray="2 2" className="opacity-40" />
+        <rect x="13" y="10" width="6" height="8" rx="1" fill="currentColor" fillOpacity="0.2" stroke="currentColor" strokeWidth="1" />
+        <path d="M16 11V15" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+        <text x="16" y="22" textAnchor="middle" fontSize="6.5" fontWeight="900" fill="currentColor">1P</text>
+      </svg>
+    )
+  }
+
+  // 2P Breaker
+  if (normVal === '2p' || normLabel.includes('2p') || normLabel.includes('2-полюс') || normLabel.includes('2п')) {
+    return (
+      <svg className="size-full text-accent transition-transform duration-300 group-hover:scale-105" viewBox="0 0 32 32" fill="none">
+        <rect x="5" y="3" width="22" height="26" rx="2" fill="currentColor" fillOpacity="0.08" stroke="currentColor" strokeWidth="1.5" />
+        <line x1="16" y1="3" x2="16" y2="29" stroke="currentColor" strokeWidth="1" strokeDasharray="2 2" className="opacity-40" />
+        <circle cx="10.5" cy="6.5" r="1.3" fill="currentColor" />
+        <circle cx="21.5" cy="6.5" r="1.3" fill="currentColor" />
+        <circle cx="10.5" cy="25.5" r="1.3" fill="currentColor" />
+        <circle cx="21.5" cy="25.5" r="1.3" fill="currentColor" />
+        <rect x="8" y="11" width="16" height="6" rx="1" fill="currentColor" fillOpacity="0.25" stroke="currentColor" strokeWidth="1" />
+        <line x1="10" y1="14" x2="22" y2="14" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+        <text x="16" y="22.5" textAnchor="middle" fontSize="6.5" fontWeight="900" fill="currentColor">2P</text>
+      </svg>
+    )
+  }
+
+  // 3P Breaker
+  if (normVal === '3p' || normLabel.includes('3p') || normLabel.includes('3-полюс') || normLabel.includes('3п')) {
+    return (
+      <svg className="size-full text-accent transition-transform duration-300 group-hover:scale-105" viewBox="0 0 36 32" fill="none">
+        <rect x="3" y="3" width="30" height="26" rx="2" fill="currentColor" fillOpacity="0.08" stroke="currentColor" strokeWidth="1.5" />
+        <line x1="13" y1="3" x2="13" y2="29" stroke="currentColor" strokeWidth="1" strokeDasharray="2 2" className="opacity-30" />
+        <line x1="23" y1="3" x2="23" y2="29" stroke="currentColor" strokeWidth="1" strokeDasharray="2 2" className="opacity-30" />
+        <circle cx="8" cy="6.5" r="1.2" fill="currentColor" />
+        <circle cx="18" cy="6.5" r="1.2" fill="currentColor" />
+        <circle cx="28" cy="6.5" r="1.2" fill="currentColor" />
+        <circle cx="8" cy="25.5" r="1.2" fill="currentColor" />
+        <circle cx="18" cy="25.5" r="1.2" fill="currentColor" />
+        <circle cx="28" cy="25.5" r="1.2" fill="currentColor" />
+        <rect x="6" y="11" width="24" height="6" rx="1" fill="currentColor" fillOpacity="0.25" stroke="currentColor" strokeWidth="1" />
+        <line x1="8" y1="14" x2="28" y2="14" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+        <text x="18" y="22.5" textAnchor="middle" fontSize="6.5" fontWeight="900" fill="currentColor">3P</text>
+      </svg>
+    )
+  }
+
+  // Tripping Characteristic Curves (B, C, D)
+  if (normKey === 'curve' || normLabel.includes('хар-ка') || (normVal.length === 1 && ['b', 'c', 'd'].includes(normVal))) {
+    const letter = normVal.toUpperCase().replace('ХАР-КА', '').trim() || label.slice(-1).toUpperCase()
+    return (
+      <svg className="size-full text-accent transition-transform duration-300 group-hover:scale-105" viewBox="0 0 32 32" fill="none">
+        <rect x="4" y="4" width="24" height="24" rx="5" fill="currentColor" fillOpacity="0.08" stroke="currentColor" strokeWidth="1.5" />
+        <path d="M7 21C11 21 12 11 16 11C20 11 21 21 25 21" stroke="currentColor" strokeWidth="1.5" strokeDasharray="2 2" className="opacity-40" />
+        <text x="16" y="20.5" textAnchor="middle" fontSize="12" fontWeight="900" fill="currentColor">
+          {letter}
+        </text>
+      </svg>
+    )
+  }
+
+  // Amperage / Current rating (16A, 25A, 40A, C16, C25...)
+  if (normKey === 'rated_current' || normLabel.includes('а') || normLabel.includes('ток') || normLabel.includes('струм')) {
+    const valText = normVal.toUpperCase().endsWith('A') ? normVal.toUpperCase() : `${normVal.toUpperCase()}A`
+    return (
+      <svg className="size-full text-accent transition-transform duration-300 group-hover:scale-105" viewBox="0 0 32 32" fill="none">
+        <rect x="4" y="5" width="24" height="22" rx="4" fill="currentColor" fillOpacity="0.08" stroke="currentColor" strokeWidth="1.5" />
+        <line x1="8" y1="10" x2="24" y2="10" stroke="currentColor" strokeWidth="1" strokeDasharray="1.5 1.5" className="opacity-40" />
+        <text x="16" y="21" textAnchor="middle" fontSize="10" fontWeight="900" fill="currentColor" letterSpacing="-0.5">
+          {valText}
+        </text>
+      </svg>
+    )
+  }
 
   // Sockets
   if (normLabel.includes('розетк') || normVal === 'розетка') {
@@ -45,60 +124,6 @@ function getQuickLinkIcon(key: string, value: string, label: string) {
     )
   }
 
-  // 1P Breaker
-  if (normVal === '1p' || normLabel.includes('1p') || normLabel.includes('1-полюс')) {
-    return (
-      <svg className="size-6 text-accent transition-transform duration-300 group-hover:scale-110" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
-        <path d="M12 3v6M12 15v6" strokeLinecap="round" />
-        <path d="M12 9l3 4" strokeLinecap="round" strokeWidth={2} />
-        <circle cx="12" cy="9" r="1.2" fill="currentColor" />
-        <circle cx="12" cy="15" r="1.2" fill="currentColor" />
-        <rect x="6" y="5" width="12" height="14" rx="1" strokeWidth={1} strokeDasharray="2 2" className="opacity-30" />
-      </svg>
-    )
-  }
-
-  // 2P Breaker
-  if (normVal === '2p' || normLabel.includes('2p') || normLabel.includes('2-полюс')) {
-    return (
-      <svg className="size-6 text-accent transition-transform duration-300 group-hover:scale-110" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
-        <path d="M8 3v6M8 15v6M16 3v6M16 15v6" strokeLinecap="round" />
-        <path d="M8 9l3 4M16 9l3 4" strokeLinecap="round" strokeWidth={2} />
-        <line x1="11" y1="11" x2="19" y2="11" strokeDasharray="2 2" />
-        <circle cx="8" cy="9" r="1.2" fill="currentColor" />
-        <circle cx="8" cy="15" r="1.2" fill="currentColor" />
-        <circle cx="16" cy="9" r="1.2" fill="currentColor" />
-        <circle cx="16" cy="15" r="1.2" fill="currentColor" />
-      </svg>
-    )
-  }
-
-  // 3P Breaker
-  if (normVal === '3p' || normLabel.includes('3p') || normLabel.includes('3-полюс')) {
-    return (
-      <svg className="size-6 text-accent transition-transform duration-300 group-hover:scale-110" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
-        <path d="M6 3v6M6 15v6M12 3v6M12 15v6M18 3v6M18 15v6" strokeLinecap="round" />
-        <path d="M6 9l2.5 3.5M12 9l2.5 3.5M18 9l2.5 3.5" strokeLinecap="round" strokeWidth={2} />
-        <line x1="8.5" y1="11" x2="20.5" y2="11" strokeDasharray="2 2" />
-        <circle cx="6" cy="9" r="1" fill="currentColor" />
-        <circle cx="12" cy="9" r="1" fill="currentColor" />
-        <circle cx="18" cy="9" r="1" fill="currentColor" />
-      </svg>
-    )
-  }
-
-  // Amperage / Current rating (C16, C25, B16, etc.)
-  if (normVal.startsWith('c') || normVal.startsWith('b') || normLabel.includes('16a') || normLabel.includes('25a')) {
-    return (
-      <svg className="size-6 text-accent transition-transform duration-300 group-hover:scale-110" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
-        <rect x="4" y="4" width="16" height="16" rx="3" />
-        <text x="50%" y="58%" dominantBaseline="middle" textAnchor="middle" fontSize="9" fontWeight="800" fill="currentColor">
-          {label.toUpperCase()}
-        </text>
-      </svg>
-    )
-  }
-
   // Cables & Wires
   if (normKey.includes('cable') || normLabel.includes('ввг') || normLabel.includes('пвс') || normKey === 'section' || normLabel.includes('мм²')) {
     return (
@@ -108,6 +133,18 @@ function getQuickLinkIcon(key: string, value: string, label: string) {
         <circle cx="9" cy="10" r="2.2" fill="currentColor" />
         <circle cx="15" cy="10" r="2.2" fill="currentColor" />
         <circle cx="12" cy="15" r="2.2" fill="currentColor" />
+      </svg>
+    )
+  }
+
+  // Brands
+  if (normKey === 'brand') {
+    return (
+      <svg className="size-full text-accent transition-transform duration-300 group-hover:scale-105" viewBox="0 0 32 32" fill="none">
+        <rect x="4" y="4" width="24" height="24" rx="4" stroke="currentColor" strokeWidth="1.5" fill="currentColor" fillOpacity="0.08" />
+        <text x="50%" y="58%" dominantBaseline="middle" textAnchor="middle" fontSize="9" fontWeight="900" fill="currentColor">
+          {label.slice(0, 3).toUpperCase()}
+        </text>
       </svg>
     )
   }
@@ -136,19 +173,26 @@ function QuickLinkItem({
   const [imageError, setImageError] = useState(false)
 
   let href: string
+  let isActive = false
 
   if (link.href) {
     href = link.href
   } else if (link.filter) {
     const { key, value } = link.filter
-    const currentValues = (activeFilters[key] as string[] | undefined) ?? []
-    const isActive = currentValues.includes(value)
+    const currentRaw = activeFilters[key]
+    const currentValues = Array.isArray(currentRaw)
+      ? currentRaw
+      : currentRaw !== undefined && currentRaw !== null
+      ? [String(currentRaw)]
+      : []
+
+    isActive = currentValues.includes(value)
+
     const nextValues = isActive
       ? currentValues.filter((v) => v !== value)
       : [...currentValues, value]
-    const nextFilters: ActiveFilters = {
-      ...activeFilters,
-    }
+
+    const nextFilters: ActiveFilters = { ...activeFilters }
     if (nextValues.length > 0) {
       nextFilters[key] = nextValues
     } else {
@@ -161,24 +205,22 @@ function QuickLinkItem({
   }
 
   const label = link.label[locale]
-  const isActive =
-    link.filter
-      ? ((activeFilters[link.filter.key] as string[] | undefined) ?? []).includes(
-          link.filter.value
-        )
-      : false
 
   if (layout === 'sidebar') {
     return (
       <Link
         href={href as never}
-        className={`group flex flex-col items-center justify-center p-2 rounded-xl border text-center transition-all duration-200 ${
+        className={`group flex flex-col items-center justify-between p-1.5 min-h-[82px] w-full rounded-xl border text-center transition-all duration-200 overflow-hidden ${
           isActive
-            ? 'border-accent bg-accent/10 ring-2 ring-accent/20 shadow-xs'
-            : 'border-border bg-surface-white hover:border-accent/50 hover:bg-surface-raised hover:shadow-xs'
+            ? 'border-accent bg-accent/15 text-accent font-bold ring-2 ring-accent/30 shadow-xs scale-[1.02]'
+            : 'border-border bg-surface-white hover:border-accent/60 hover:bg-surface-raised hover:shadow-xs'
         }`}
       >
-        <div className="size-10 rounded-lg flex items-center justify-center p-1 bg-surface-raised border border-border/50 shrink-0 group-hover:scale-105 transition-transform">
+        <div
+          className={`size-8 rounded-lg flex items-center justify-center p-0.5 shrink-0 group-hover:scale-105 transition-transform overflow-hidden ${
+            isActive ? 'bg-accent/20 border border-accent/40' : 'bg-surface-raised border border-border/40'
+          }`}
+        >
           {link.imageUrl && !imageError ? (
             <img
               src={link.imageUrl}
@@ -191,9 +233,10 @@ function QuickLinkItem({
           )}
         </div>
         <span
-          className={`text-[11px] font-semibold mt-1.5 leading-tight line-clamp-2 transition-colors ${
-            isActive ? 'text-accent font-bold' : 'text-text-primary group-hover:text-accent'
+          className={`text-[9.5px] leading-[1.15] tracking-tight text-center w-full break-words hyphens-auto mt-1 max-w-full px-0.5 transition-colors ${
+            isActive ? 'text-accent font-extrabold' : 'text-text-primary font-medium group-hover:text-accent'
           }`}
+          style={{ wordBreak: 'break-word', overflowWrap: 'anywhere' }}
         >
           {label}
         </span>
@@ -210,7 +253,7 @@ function QuickLinkItem({
         className={[
           'size-16 md:size-20 rounded-2xl flex items-center justify-center p-2 transition-all duration-300 border overflow-hidden bg-white',
           isActive
-            ? 'bg-[var(--color-accent-subtle)] border-accent shadow-sm'
+            ? 'bg-[var(--color-accent-subtle)] border-accent shadow-sm ring-2 ring-accent/30'
             : 'bg-surface-white border-border hover:border-accent/60 hover:shadow-md hover:scale-[1.02]',
         ].join(' ')}
       >
@@ -229,7 +272,7 @@ function QuickLinkItem({
       <span
         className={[
           'text-[11px] md:text-xs font-semibold text-center mt-2 leading-tight break-words line-clamp-2 max-w-[90px] transition-colors',
-          isActive ? 'text-accent' : 'text-text-primary group-hover:text-accent',
+          isActive ? 'text-accent font-extrabold' : 'text-text-primary group-hover:text-accent',
         ].join(' ')}
       >
         {label}
@@ -248,11 +291,11 @@ export default function CategoryQuickLinks({
 
   if (layout === 'sidebar') {
     return (
-      <div className="bg-surface-white border border-border rounded-2xl p-3 shadow-xs">
-        <h3 className="text-xs font-bold uppercase tracking-wider text-text-muted mb-2 px-1">
+      <div className="bg-surface-white border border-border rounded-2xl p-2.5 shadow-xs">
+        <h3 className="text-[11px] font-bold uppercase tracking-wider text-text-muted mb-2 px-1">
           {locale === 'uk' ? 'Швидкі фільтри:' : 'Быстрые фильтры:'}
         </h3>
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-3 gap-1.5">
           {links.map((link, i) => (
             <QuickLinkItem
               key={i}
