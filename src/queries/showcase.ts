@@ -1,6 +1,7 @@
 // src/queries/showcase.ts
 import { prisma } from '@/lib/prisma'
 import { productCardSelect, mapProductDecimals } from './products'
+import { getCategorySubtreeIds } from './categories'
 import type { ShowcaseCategoryHub } from '@/components/home/category-showcase-vitrine'
 import type { Locale } from '@/types'
 
@@ -144,7 +145,7 @@ export async function getShowcaseHubs(locale: Locale): Promise<ShowcaseCategoryH
           },
         },
         orderBy: { sortOrder: 'asc' },
-        take: 24,
+        take: 36,
       })
 
       const hubProducts = allSubCategoryProductsRaw.length > 0
@@ -154,22 +155,60 @@ export async function getShowcaseHubs(locale: Locale): Promise<ShowcaseCategoryH
       // Map products specifically per subcategory slug
       const productsBySubcategory: Record<string, typeof fallbackProducts> = {}
 
-      subcategories.forEach((sub, idx) => {
-        const matching = hubProducts.filter(
-          (p) => p.category.slug === sub.slug || p.slug.includes(sub.slug.replace(/-/g, ''))
-        )
+      await Promise.all(
+        subcategories.map(async (sub) => {
+          // 1. Fetch exact subtree category IDs for this subcategory
+          const subTreeIds = await getCategorySubtreeIds(sub.slug)
 
-        if (matching.length > 0) {
-          productsBySubcategory[sub.slug] = matching
-        } else {
-          // If no specific product matched in seed, shift array window so subcategory selection distinctly changes products!
-          const offset = (idx * 2) % Math.max(1, hubProducts.length)
-          productsBySubcategory[sub.slug] = [
-            ...hubProducts.slice(offset),
-            ...hubProducts.slice(0, offset),
-          ].slice(0, 12)
-        }
-      })
+          let subProductsRaw: typeof allSubCategoryProductsRaw = []
+          if (subTreeIds.length > 0) {
+            subProductsRaw = await prisma.product.findMany({
+              where: {
+                isActive: true,
+                categoryId: { in: subTreeIds },
+              },
+              select: {
+                ...productCardSelect,
+                translations: {
+                  where: { locale },
+                  select: { locale: true, name: true },
+                  take: 1,
+                },
+              },
+              orderBy: { sortOrder: 'asc' },
+              take: 12,
+            })
+          }
+
+          if (subProductsRaw.length > 0) {
+            productsBySubcategory[sub.slug] = subProductsRaw.map(mapProductDecimals)
+          } else {
+            // 2. Fallback: Filter hubProducts by strict category slug/title relevance (preventing PZV from appearing under circuit breakers)
+            const isAvtomat = sub.slug.includes('avtomat') && !sub.slug.includes('pzv') && !sub.slug.includes('dyferent')
+            const isPzv = sub.slug.includes('pzv') || sub.slug.includes('dyferent')
+
+            const matched = hubProducts.filter((p) => {
+              const catSlug = (p.category.slug || '').toLowerCase()
+              const nameLower = (p.translations[0]?.name ?? p.slug).toLowerCase()
+
+              if (isAvtomat) {
+                if (catSlug.includes('pzv') || catSlug.includes('dyferent') || nameLower.includes('пзв') || nameLower.includes('узо')) {
+                  return false
+                }
+                return catSlug.includes('avtomat') || nameLower.includes('автомат') || nameLower.includes('выключатель')
+              }
+
+              if (isPzv) {
+                return catSlug.includes('pzv') || catSlug.includes('dyferent') || nameLower.includes('пзв') || nameLower.includes('узо') || nameLower.includes('диф')
+              }
+
+              return catSlug.includes(sub.slug) || sub.slug.includes(catSlug)
+            })
+
+            productsBySubcategory[sub.slug] = matched.length > 0 ? matched.slice(0, 12) : hubProducts.slice(0, 12)
+          }
+        })
+      )
 
       return {
         slug: cfg.slug,
@@ -184,3 +223,4 @@ export async function getShowcaseHubs(locale: Locale): Promise<ShowcaseCategoryH
 
   return hubs
 }
+
