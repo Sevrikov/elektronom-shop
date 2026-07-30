@@ -243,10 +243,7 @@ export function CatalogMegaMenuClient({ categories, isOpen, onClose }: Props) {
                 }}
                 className="w-full flex items-center gap-3 px-4 py-3 text-left border-b border-border last:border-0"
               >
-                {cat.image && (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={cat.image} alt="" className="size-5 object-contain shrink-0" aria-hidden="true" />
-                )}
+                <CategoryIcon slug={cat.slug} className="size-5 shrink-0" />
                 <span className="flex-1 text-sm font-medium text-text-primary truncate">{cat.name}</span>
                 {cat.children.length > 0
                   ? <ChevronRight className="size-4 text-text-muted shrink-0" strokeWidth={1.5} />
@@ -274,6 +271,7 @@ export function CatalogMegaMenuClient({ categories, isOpen, onClose }: Props) {
               onClick={onClose}
               className="flex items-center gap-2 px-4 py-3 border-b border-border font-semibold text-sm text-accent"
             >
+              <CategoryIcon slug={mobileLevelCategory.slug} className="size-5 shrink-0" />
               {t('allIn')} {mobileLevelCategory.name}
               <ChevronRight className="size-4" strokeWidth={2} />
             </Link>
@@ -285,8 +283,8 @@ export function CatalogMegaMenuClient({ categories, isOpen, onClose }: Props) {
                 onClick={onClose}
                 className="flex items-center gap-2 px-4 py-3 text-sm text-text-primary border-b border-border last:border-0 hover:bg-surface-alt transition-colors"
               >
-                <ChevronRight className="size-3.5 text-text-muted shrink-0" strokeWidth={2} />
-                {child.name}
+                <CategoryIcon slug={child.slug} className="size-4 shrink-0" />
+                <span className="flex-1 truncate">{child.name}</span>
               </Link>
             ))}
 
