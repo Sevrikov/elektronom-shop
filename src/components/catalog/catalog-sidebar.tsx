@@ -39,7 +39,7 @@ function CategoryNode({ node, depth, locale, expanded, onToggle }: CategoryNodeP
   const paddingLeft = 16 + depth * 16
   const fontSize = depth === 0 ? 'text-[13px] font-semibold' : depth === 1 ? 'text-[12px] font-medium' : 'text-[11px]'
   const textColor = depth === 0 ? 'text-[#1A1F2B]' : 'text-[#6A7280]'
-  const height = depth === 0 ? 'h-9' : 'h-8'
+  const height = depth === 0 ? 'h-10' : 'h-8'
 
   return (
     <div>
@@ -55,7 +55,7 @@ function CategoryNode({ node, depth, locale, expanded, onToggle }: CategoryNodeP
         }}
       >
         {depth === 0 ? (
-          <CategoryIcon slug={node.slug} className="size-4 shrink-0 transition-transform group-hover:scale-105" />
+          <CategoryIcon slug={node.slug} className="size-6 shrink-0 transition-transform group-hover:scale-105" />
         ) : (
           <span className="text-[#C9D1DC] font-light select-none text-[10px] mr-0.5">└─</span>
         )}

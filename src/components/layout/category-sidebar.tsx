@@ -66,7 +66,7 @@ export default function CategorySidebar({ categories = [] }: Props) {
                   <Link
                     href={lp(`/catalog/${cat.slug}`)}
                     className={[
-                      'flex items-center gap-3 px-4 py-[7px] text-[13px] transition-all duration-150 group rounded-md mx-1',
+                      'flex items-center gap-3 px-3.5 py-2 text-[13px] transition-all duration-150 group rounded-md mx-1',
                       isActive
                         ? 'bg-surface-alt text-accent dark:bg-blue-300 dark:text-[#0a2a6b]'
                         : 'text-text-primary dark:text-blue-400 hover:bg-slate-50 dark:hover:bg-blue-300'
@@ -74,7 +74,7 @@ export default function CategorySidebar({ categories = [] }: Props) {
                   >
                     <CategoryIcon
                       slug={cat.slug}
-                      className="size-4 shrink-0 transition-transform duration-150 group-hover:scale-110"
+                      className="size-6 shrink-0 transition-transform duration-150 group-hover:scale-110"
                     />
                     <span
                       className={[

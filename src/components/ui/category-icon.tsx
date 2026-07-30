@@ -9,7 +9,7 @@ interface IconProps {
   className?: string
 }
 
-export default function CategoryIcon({ slug, className = 'size-5' }: IconProps) {
+export default function CategoryIcon({ slug, className = 'size-6' }: IconProps) {
   const s = slug.toLowerCase()
 
   const baseGray = 'stroke-[#90A1B9] dark:stroke-slate-400'
