@@ -274,7 +274,7 @@ export default function GuidedWizardModal() {
               <img 
                 src="/images/ai-mascot-peeking.png" 
                 alt="AI Electrician Mascot" 
-                className="h-28 sm:h-36 w-auto object-contain drop-shadow-[0_8px_10px_rgba(0,0,0,0.35)]"
+                className="h-28 sm:h-36 w-auto object-contain mix-blend-multiply contrast-105 drop-shadow-[0_8px_10px_rgba(0,0,0,0.35)]"
                 style={{
                   clipPath: 'inset(0 0 26% 0)', // Programmatically crops the bottom 26% (baked white/grey wall plate)
                 }}
