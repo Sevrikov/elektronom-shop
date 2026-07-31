@@ -268,13 +268,18 @@ export default function GuidedWizardModal() {
         {/* ── AI Search Bar with 3D Mascot Peeking ── */}
         <div className="relative px-5 py-3 bg-gradient-to-r from-accent/5 via-accent/10 to-surface-raised border-b border-border/80 shrink-0">
           
-          {/* 3D Mascot Character - Isolated Cutout Peeking over Search Bar Edge with Depth Shadow */}
-          <div className="absolute -top-16 sm:-top-20 right-6 sm:right-10 pointer-events-none hidden sm:block z-30 transition-transform hover:scale-105">
-            <img 
-              src="/images/ai-mascot-peeking.png" 
-              alt="AI Electrician Mascot" 
-              className="h-28 sm:h-36 w-auto object-contain drop-shadow-[0_12px_12px_rgba(0,0,0,0.35)]"
-            />
+          {/* 3D Mascot Character - Programmatically Cropped & Positioned Directly on Top Border Edge */}
+          <div className="absolute -top-[76px] sm:-top-[98px] right-6 sm:right-10 pointer-events-none hidden sm:block z-30 transition-transform hover:scale-105">
+            <div className="relative overflow-hidden flex items-start justify-center">
+              <img 
+                src="/images/ai-mascot-peeking.png" 
+                alt="AI Electrician Mascot" 
+                className="h-28 sm:h-36 w-auto object-contain drop-shadow-[0_8px_10px_rgba(0,0,0,0.35)]"
+                style={{
+                  clipPath: 'inset(0 0 26% 0)', // Programmatically crops the bottom 26% (baked white/grey wall plate)
+                }}
+              />
+            </div>
           </div>
 
           <div className="relative z-10 max-w-2xl">
