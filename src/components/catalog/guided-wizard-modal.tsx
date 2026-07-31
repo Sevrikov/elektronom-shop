@@ -19,7 +19,9 @@ import {
   Sparkles,
   Search,
   Loader2,
-  ArrowRight
+  ArrowRight,
+  Printer,
+  FileCheck
 } from 'lucide-react'
 import { useUIStore } from '@/store/ui-store'
 import { useCartUIStore } from '@/store/cart-store'
@@ -95,7 +97,7 @@ export default function GuidedWizardModal() {
     if (!aiResult) return
     setRating(aiResult.suggestedRating)
     setPhase(aiResult.suggestedPhase)
-    setStep(2) // Advance to Step 2
+    setStep(2)
   }
 
   // Calculation multipliers for Assembly Spec
@@ -186,6 +188,52 @@ export default function GuidedWizardModal() {
     }
   }
 
+  // Printable Stickers Generator Handler
+  const handlePrintStickers = () => {
+    const printWin = window.open('', '_blank', 'width=800,height=600')
+    if (!printWin) return
+
+    const htmlContent = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>Маркировочная полоса для щита - Electronom</title>
+          <style>
+            body { font-family: Arial, sans-serif; padding: 20px; background: #fff; color: #000; }
+            h2 { margin-bottom: 5px; }
+            p { font-size: 12px; color: #666; margin-top: 0; }
+            .strip-container { display: flex; flex-wrap: wrap; gap: 4px; border: 2px solid #000; padding: 6px; margin-top: 20px; border-radius: 4px; }
+            .sticker-item { border: 1px dashed #333; padding: 8px 12px; min-width: 70px; text-align: center; font-size: 11px; font-weight: bold; border-radius: 3px; background: #f9f9f9; }
+            .sticker-icon { font-size: 16px; display: block; margin-bottom: 2px; }
+            .danger { background: #ffebee; border-color: #f44336; color: #c62828; }
+            .zubr { background: #e3f2fd; border-color: #2196f3; color: #1565c0; }
+            @media print {
+              button { display: none; }
+            }
+          </style>
+        </head>
+        <body>
+          <h2>⚡ Маркировочная полоса для электрощита</h2>
+          <p>Распечатайте на самоклеящейся бумаге и наклейте под DIN-рейку автоматов</p>
+          <button onclick="window.print()" style="padding: 10px 20px; background: #ff6b00; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">🖨️ Печать маркировки</button>
+          
+          <div class="strip-container">
+            <div class="sticker-item danger"><span class="sticker-icon">⚡</span>ВВОД ${phase === '1phase' ? '220V' : '380V'}<br>${rating}A</div>
+            <div class="sticker-item zubr"><span class="sticker-icon">🛡️</span>ZUBR 380V<br>Защита</div>
+            <div class="sticker-item"><span class="sticker-icon">💧</span>УЗО 30mA<br>Главное</div>
+            <div class="sticker-item"><span class="sticker-icon">🍳</span>Кухня<br>Розетки</div>
+            <div class="sticker-item"><span class="sticker-icon">🔌</span>Спальня<br>Розетки</div>
+            <div class="sticker-item"><span class="sticker-icon">🚿</span>Ванная 10mA<br>Дифавтомат</div>
+            <div class="sticker-item"><span class="sticker-icon">💡</span>Свет<br>Комнаты</div>
+            <div class="sticker-item"><span class="sticker-icon">❄️</span>Кондиционер<br>16A</div>
+          </div>
+        </body>
+      </html>
+    `
+    printWin.document.write(htmlContent)
+    printWin.document.close()
+  }
+
   return (
     <div className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-5 overflow-y-auto animate-in fade-in duration-200">
       <div 
@@ -219,12 +267,13 @@ export default function GuidedWizardModal() {
 
         {/* ── AI Search Bar with 3D Mascot Peeking ── */}
         <div className="relative px-5 py-3 bg-gradient-to-r from-accent/5 via-accent/10 to-surface-raised border-b border-border/80 shrink-0">
-          {/* 3D Mascot Character Peeking over Search Bar */}
-          <div className="absolute -top-11 right-8 pointer-events-none hidden sm:block z-20">
+          
+          {/* 3D Mascot Character - Isolated Cutout Peeking over Search Bar Edge with Depth Shadow */}
+          <div className="absolute -top-16 sm:-top-20 right-6 sm:right-10 pointer-events-none hidden sm:block z-30 transition-transform hover:scale-105">
             <img 
               src="/images/ai-mascot-peeking.png" 
               alt="AI Electrician Mascot" 
-              className="h-16 w-auto object-contain drop-shadow-md transition-transform hover:scale-105"
+              className="h-28 sm:h-36 w-auto object-contain drop-shadow-[0_12px_12px_rgba(0,0,0,0.35)]"
             />
           </div>
 
@@ -335,6 +384,29 @@ export default function GuidedWizardModal() {
 
         {/* ── Step Content Area (Scrollable) ── */}
         <div className="p-5 overflow-y-auto flex-1 space-y-6">
+
+          {/* ════════════ LIVE SELECTION PICTOGRAMS & COMPONENTS STRIP ════════════ */}
+          {step < 3 && (
+            <div className="p-3.5 rounded-xl bg-accent/5 border border-accent/20 space-y-2 animate-in fade-in duration-200">
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-bold text-accent uppercase tracking-wider flex items-center gap-1.5">
+                  <FileCheck className="size-4" />
+                  {isUk ? 'Жива специфікація комплекту (Оновлюється на льоту):' : 'Живая спецификация комплекта (Обновляется на лету):'}
+                </span>
+                <span className="text-xs font-black text-accent font-mono">{totalSum.toLocaleString()} ₴</span>
+              </div>
+
+              <div className="flex items-center gap-2 overflow-x-auto pb-1 text-xs no-scrollbar">
+                {assemblyItems.flatMap((cat) => cat.skus).map((sku, i) => (
+                  <div key={i} className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-surface-white border border-border shrink-0 shadow-2xs hover:border-accent/40 transition-all">
+                    <span className="size-2 rounded-full bg-accent animate-pulse" />
+                    <span className="font-semibold text-text-primary text-[11px]">{sku.name}</span>
+                    <span className="text-[10px] font-bold text-accent bg-accent/10 px-1 py-0.2 rounded font-mono">{sku.qty}x</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* ════════════ STEP 1: CONTEXT & SCENARIO ════════════ */}
           {step === 1 && (
@@ -610,6 +682,30 @@ export default function GuidedWizardModal() {
                   <span className="text-xs text-text-muted block">Ориентировочная сумма:</span>
                   <span className="text-xl font-black text-accent">{totalSum.toLocaleString()} ₴</span>
                 </div>
+              </div>
+
+              {/* Printable DIN Sticker Banner */}
+              <div className="p-3.5 rounded-xl bg-surface-raised border border-border flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2.5">
+                  <Printer className="size-5 text-accent shrink-0" />
+                  <div>
+                    <p className="text-xs font-bold text-text-primary">
+                      {isUk ? 'Маркувальна полоса для наклейки на щит' : 'Маркировочная полоса для наклейки на щит'}
+                    </p>
+                    <p className="text-[11px] text-text-muted">
+                      {isUk ? 'Сформовані стікери з піктограмами під DIN-рейку' : 'Сформированные стикеры с пиктограммами под DIN-рейку'}
+                    </p>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={handlePrintStickers}
+                  className="px-3 py-1.5 rounded-lg border border-accent text-accent hover:bg-accent/10 text-xs font-bold transition-colors flex items-center gap-1.5 shrink-0"
+                >
+                  <Printer className="size-3.5" />
+                  {isUk ? 'Друк наклейок' : 'Печать наклеек'}
+                </button>
               </div>
 
               {/* Assembly Blueprint Table */}
