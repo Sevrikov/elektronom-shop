@@ -14,9 +14,12 @@ import {
   HelpCircle, 
   ShoppingCart, 
   RefreshCw, 
-  FileText,
   Sliders,
-  Check
+  Check,
+  Sparkles,
+  Search,
+  Loader2,
+  ArrowRight
 } from 'lucide-react'
 import { useUIStore } from '@/store/ui-store'
 import { useCartUIStore } from '@/store/cart-store'
@@ -42,7 +45,58 @@ export default function GuidedWizardModal() {
   const [activeTooltip, setActiveTooltip] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
+  // AI RAG Search state
+  const [aiQuery, setAiQuery] = useState('')
+  const [isSearchingAi, setIsSearchingAi] = useState(false)
+  const [aiResult, setAiResult] = useState<{
+    answer: string
+    standard: string
+    region: string
+    suggestedRating: number
+    suggestedPhase: '1phase' | '3phase'
+    mandatoryComponents: string[]
+  } | null>(null)
+
   if (!isOpen) return null
+
+  const runRagSearchQuery = async (queryText: string) => {
+    if (!queryText.trim()) return
+    setIsSearchingAi(true)
+    try {
+      const res = await fetch('/api/wizard/rag-search', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query: queryText, step }),
+      })
+      const data = await res.json()
+      if (data.success) {
+        setAiResult({
+          answer: data.answer,
+          standard: data.standard,
+          region: data.region,
+          suggestedRating: data.suggestedRating || 25,
+          suggestedPhase: (data.suggestedPhase === '3phase' ? '3phase' : '1phase'),
+          mandatoryComponents: data.mandatoryComponents || [],
+        })
+      }
+    } catch {
+      // ignore
+    } finally {
+      setIsSearchingAi(false)
+    }
+  }
+
+  const handleRagSearch = (e: React.FormEvent) => {
+    e.preventDefault()
+    void runRagSearchQuery(aiQuery)
+  }
+
+  const applyAiConfig = () => {
+    if (!aiResult) return
+    setRating(aiResult.suggestedRating)
+    setPhase(aiResult.suggestedPhase)
+    setStep(2) // Advance to Step 2
+  }
 
   // Calculation multipliers for Assembly Spec
   const basePriceMultiplier = segment === 'premium' ? 1.6 : segment === 'optimum' ? 1.0 : 0.65
@@ -117,7 +171,6 @@ export default function GuidedWizardModal() {
   const handleAddToCart = async () => {
     setIsSubmitting(true)
     try {
-      // Mock dummy SKU IDs for fast batch addition demo
       const mockItems = [
         { productId: 'clp1001avtomat', quantity: 1 },
         { productId: 'clp1002zubr', quantity: 1 }
@@ -140,7 +193,7 @@ export default function GuidedWizardModal() {
         onClick={(e) => e.stopPropagation()}
       >
         {/* ── Top Header ── */}
-        <div className="px-5 py-4 border-b border-border flex items-center justify-between bg-surface-raised/40 shrink-0">
+        <div className="px-5 py-3.5 border-b border-border flex items-center justify-between bg-surface-raised/40 shrink-0">
           <div className="flex items-center gap-3">
             <div className="size-9 rounded-xl bg-accent/10 border border-accent/30 flex items-center justify-center text-accent">
               <Zap className="size-5" />
@@ -162,6 +215,114 @@ export default function GuidedWizardModal() {
           >
             <X className="size-4" />
           </button>
+        </div>
+
+        {/* ── AI Search Bar with 3D Mascot Peeking ── */}
+        <div className="relative px-5 py-3 bg-gradient-to-r from-accent/5 via-accent/10 to-surface-raised border-b border-border/80 shrink-0">
+          {/* 3D Mascot Character Peeking over Search Bar */}
+          <div className="absolute -top-11 right-8 pointer-events-none hidden sm:block z-20">
+            <img 
+              src="/images/ai-mascot-peeking.png" 
+              alt="AI Electrician Mascot" 
+              className="h-16 w-auto object-contain drop-shadow-md transition-transform hover:scale-105"
+            />
+          </div>
+
+          <div className="relative z-10 max-w-2xl">
+            <div className="flex items-center gap-2 mb-1">
+              <Sparkles className="size-4 text-accent animate-pulse" />
+              <span className="text-xs font-bold text-text-primary">
+                {isUk ? 'ИИ-Помощник подбора (RAG База знаний ПУЭ / NEC / GB):' : 'ИИ-Помощник подбора (RAG База знаний ПУЭ / NEC / GB):'}
+              </span>
+            </div>
+
+            <form onSubmit={handleRagSearch} className="flex items-center gap-2">
+              <div className="relative flex-1">
+                <input
+                  type="text"
+                  value={aiQuery}
+                  onChange={(e) => setAiQuery(e.target.value)}
+                  placeholder={isUk ? 'Например: деревянный дом с защитой от молний и узо...' : 'Например: деревянный дом с защитой от молний и узо...'}
+                  className="w-full pl-9 pr-4 py-2 rounded-xl border border-accent/30 bg-surface-white text-xs font-medium text-text-primary focus:outline-none focus:ring-2 focus:ring-accent/40 shadow-xs"
+                />
+                <Search className="size-4 text-accent absolute left-3 top-1/2 -translate-y-1/2" />
+              </div>
+
+              <button
+                type="submit"
+                disabled={isSearchingAi || !aiQuery.trim()}
+                className="px-4 py-2 rounded-xl bg-accent text-white hover:bg-accent-strong text-xs font-bold transition-all shadow-xs flex items-center gap-1.5 shrink-0 disabled:opacity-50"
+              >
+                {isSearchingAi ? <Loader2 className="size-3.5 animate-spin" /> : <Sparkles className="size-3.5" />}
+                {isUk ? 'Найти ИИ' : 'Найти ИИ'}
+              </button>
+            </form>
+
+            {/* Quick Prompt Chips */}
+            <div className="flex items-center gap-1.5 mt-2 flex-wrap text-[10px]">
+              <span className="text-text-muted font-bold">{isUk ? 'Быстрый поиск:' : 'Быстрый поиск:'}</span>
+              {[
+                { label: '🌲 Деревянный дом (AFCI)', query: 'деревянный дом afci защита' },
+                { label: '💧 Ванная комната (10mA)', query: 'ванная 10mA дифавтомат' },
+                { label: '🔋 Котел 12ч (LiFePO4)', query: 'дбж котел автономия 12 часов' },
+                { label: '⚡ 3 Фазы 380V (ZUBR)', query: '3 фазы перенапряжение zubr' },
+              ].map((chip, idx) => (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => {
+                    setAiQuery(chip.query)
+                    void runRagSearchQuery(chip.query)
+                  }}
+                  className="px-2 py-0.5 rounded-md border border-accent/20 bg-surface-white hover:bg-accent/10 text-accent font-semibold transition-colors"
+                >
+                  {chip.label}
+                </button>
+              ))}
+            </div>
+
+            {/* AI Result Banner */}
+            {aiResult && (
+              <div className="mt-3 p-3 rounded-xl bg-surface-white border border-accent/30 shadow-md animate-in fade-in zoom-in-95 duration-200">
+                <div className="flex items-start justify-between gap-2 mb-1">
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded bg-accent text-white">
+                      {aiResult.region} [{aiResult.standard}]
+                    </span>
+                    <span className="text-xs font-bold text-text-primary">
+                      Рекомендация экспертного ИИ:
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setAiResult(null)}
+                    className="text-text-muted hover:text-text-primary text-[10px]"
+                  >
+                    ✕
+                  </button>
+                </div>
+                <p className="text-xs text-text-primary leading-relaxed font-medium">
+                  {aiResult.answer}
+                </p>
+
+                <div className="mt-2 pt-2 border-t border-border/60 flex items-center justify-between">
+                  <div className="flex items-center gap-1 text-[11px] text-text-muted">
+                    <CheckCircle2 className="size-3.5 text-success" />
+                    <span>Обязательно: {aiResult.mandatoryComponents.join(', ')}</span>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={applyAiConfig}
+                    className="px-3 py-1 rounded-lg bg-success text-white hover:bg-success/90 text-xs font-bold transition-all shadow-xs flex items-center gap-1"
+                  >
+                    <span>Применить в расчет</span>
+                    <ArrowRight className="size-3.5" />
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* ── Progress Bar ── */}

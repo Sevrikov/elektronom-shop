@@ -1,0 +1,77 @@
+{
+  "version": "1.0",
+  "updated_at": "2026-07-31",
+  "standards": [
+    {
+      "code": "PUE_7_DBN",
+      "region": "UA / EU (IEC 60364)",
+      "title": "Правила устройства электроустановок (ПУЭ 7) / ДБН В.2.5-23:2010",
+      "rules": [
+        {
+          "id": "pue_wooden_house",
+          "keywords": ["деревянный дом", "дерево", "каркасник", "горючие материалы"],
+          "recommendation": "Обязательная двухступенчатая дифзащита (Вводное противопожарное УЗО 300mA тип S) + линейные УЗО 30mA тип A. Прокладка в металлорукаве или стальных трубах.",
+          "suggested_rating": 32,
+          "suggested_phase": "1phase",
+          "mandatory_components": ["Селективное УЗО 300mA S", "Реле напряжения ZUBR 40A", "Автоматы кривая B"]
+        },
+        {
+          "id": "pue_bathroom_pool",
+          "keywords": ["ванная", "сауна", "бассейн", "мокрая зона", "душ"],
+          "recommendation": "Линии мокрых зон должны быть защищены высокочувствительными УЗО или дифавтоматами 10mA (тип A).",
+          "suggested_rating": 25,
+          "suggested_phase": "1phase",
+          "mandatory_components": ["Дифавтомат 16A 10mA Type A", "УЗО 16A 10mA"]
+        },
+        {
+          "id": "pue_overvoltage_zubr",
+          "keywords": ["скачки напряжения", "обрыв нуля", "перенапряжение", "защита бытовой техники"],
+          "recommendation": "Установка цифрового реле напряжения (ZUBR / DigiTOP) с задержкой повторного включения (300 сек для холодильников и кондиционеров).",
+          "suggested_rating": 40,
+          "mandatory_components": ["Реле напряжения ZUBR D2-40", "Вольтметр-амперметр"]
+        }
+      ]
+    },
+    {
+      "code": "NEC_US",
+      "region": "USA (NEC / NFPA 70)",
+      "title": "National Electrical Code (NEC NFPA 70 Standard)",
+      "rules": [
+        {
+          "id": "nec_afci_arc_fault",
+          "keywords": ["искра", "дуговой пробой", "дуга", "afci", "пожаробезопасность", "спальня"],
+          "recommendation": "Защита AFCI (Arc Fault Circuit Interrupter) от микродугового пробоя и искрения в проводке. Обязательна для жилых комнат.",
+          "suggested_rating": 20,
+          "mandatory_components": ["Модуль защиты от дугового пробоя AFCI", "УЗО GFCI 5mA"]
+        },
+        {
+          "id": "nec_gfci_wet",
+          "keywords": ["gfci", "утечка тока сша", "розетки санузел"],
+          "recommendation": "Установка быстродействующих GFCI (Class A 4-6mA) для розеток возле раковин, улицы и гаражей.",
+          "suggested_rating": 20,
+          "mandatory_components": ["GFCI размыкатель утечки 5mA"]
+        }
+      ]
+    },
+    {
+      "code": "GB_CHINA",
+      "region": "China / Asia (GB 50054 / GB 50096)",
+      "title": "Национальный стандарт КНР по энергонезависимости и солярным системам",
+      "rules": [
+        {
+          "id": "gb_hybrid_inverter_lifepo4",
+          "keywords": ["дбж", "инвертор", "аккумулятор", "блэкаут", "lifepo4", "автономия"],
+          "recommendation": "Гибридный инвертор чистая синусоида с переключением <10мс + LiFePO4 аккумулятор с BMS балансировкой на 6000+ циклов. Установка двухполюсного DC-автомата.",
+          "suggested_rating": 40,
+          "mandatory_components": ["Гибридный инвертор 3кВт-5кВт", "LiFePO4 51.2V 100Ah", "DC автомат 63A 2P", "АВР (Автоматический ввод резерва)"]
+        },
+        {
+          "id": "gb_solar_spd_protection",
+          "keywords": ["солнечные панели", "солярка", "грозозащита", "опн", "spd"],
+          "recommendation": "Устройство защиты от импульсных перенапряжений (ОПН/SPD) класс II DC 1000V + плавкие предохранители 1000V DC.",
+          "mandatory_components": ["ОПН / SPD DC 1000V Class II", "Держатель предохранителей gPV"]
+        }
+      ]
+    }
+  ]
+}
