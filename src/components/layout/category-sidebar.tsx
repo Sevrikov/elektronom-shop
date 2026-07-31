@@ -2,13 +2,14 @@
 
 import Link from 'next/link'
 import { useLocale, useTranslations } from 'next-intl'
-import { ChevronRight } from 'lucide-react'
+import { ChevronRight, Compass } from 'lucide-react'
 import type { Locale } from '@/types'
 import type { CategoryTreeNode } from '@/queries/categories'
 import { getPopularForSlug, getPromoForSlug } from '@/config/catalog-mega-menu'
 import { useState } from 'react'
 import CategoryIcon from '@/components/ui/category-icon'
 import CategoryBlueprint from '@/components/layout/category-blueprint'
+import { useUIStore } from '@/store/ui-store'
 
 interface Props {
   categories?: CategoryTreeNode[]
@@ -19,6 +20,7 @@ export default function CategorySidebar({ categories = [] }: Props) {
   const tMenu = useTranslations('megaMenu')
   const t = useTranslations('sidebar')
   const lp = (path: string) => `/${locale}${path}` as never
+  const openGuidedWizard = useUIStore((s) => s.openGuidedWizard)
 
   const [activeSlug, setActiveSlug] = useState<string | null>(null)
 
@@ -46,11 +48,33 @@ export default function CategorySidebar({ categories = [] }: Props) {
       <div
         className="rounded-lg overflow-hidden border border-border bg-surface-white"
       >
-        {/* Title */}
-        <div className="px-4 py-3 border-b border-border">
+        {/* Title & Guided CTA */}
+        <div className="px-4 py-2.5 border-b border-border flex items-center justify-between">
           <h3 className="text-[11px] font-bold tracking-widest text-text-muted dark:text-blue-400/80">
             {t('title')}
           </h3>
+        </div>
+
+        {/* Guided Wizard CTA Button in Sidebar */}
+        <div className="p-2 border-b border-border bg-accent/5">
+          <button
+            type="button"
+            onClick={openGuidedWizard}
+            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg bg-surface-white hover:bg-accent/10 border border-accent/30 text-accent transition-all group text-left shadow-xs"
+          >
+            <div className="size-7 rounded-md bg-accent text-white flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+              <Compass className="size-4" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <span className="text-[9px] font-extrabold uppercase tracking-wider block leading-none text-accent mb-0.5">
+                Guided Configurator
+              </span>
+              <span className="text-xs font-bold text-text-primary group-hover:text-accent truncate block leading-tight">
+                {locale === 'uk' ? 'Підбір у 3 кроки' : 'Подбор в 3 шага'}
+              </span>
+            </div>
+            <ChevronRight className="size-3.5 text-accent" />
+          </button>
         </div>
 
         {/* Category list */}

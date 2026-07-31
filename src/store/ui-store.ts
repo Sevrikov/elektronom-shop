@@ -8,6 +8,7 @@ interface UIStore {
   isMobileMenuOpen: boolean
   isSearchOpen: boolean
   isMobileFiltersOpen: boolean
+  isGuidedWizardOpen: boolean
   openMobileMenu: () => void
   closeMobileMenu: () => void
   toggleMobileMenu: () => void
@@ -16,12 +17,15 @@ interface UIStore {
   toggleSearch: () => void
   openMobileFilters: () => void
   closeMobileFilters: () => void
+  openGuidedWizard: () => void
+  closeGuidedWizard: () => void
 }
 
 export const useUIStore = create<UIStore>((set) => ({
   isMobileMenuOpen: false,
   isSearchOpen: false,
   isMobileFiltersOpen: false,
+  isGuidedWizardOpen: false,
   openMobileMenu: () => set({ isMobileMenuOpen: true }),
   closeMobileMenu: () => set({ isMobileMenuOpen: false }),
   toggleMobileMenu: () => set((s) => ({ isMobileMenuOpen: !s.isMobileMenuOpen })),
@@ -30,4 +34,6 @@ export const useUIStore = create<UIStore>((set) => ({
   toggleSearch: () => set((s) => ({ isSearchOpen: !s.isSearchOpen })),
   openMobileFilters: () => set({ isMobileFiltersOpen: true }),
   closeMobileFilters: () => set({ isMobileFiltersOpen: false }),
+  openGuidedWizard: () => set({ isGuidedWizardOpen: true }),
+  closeGuidedWizard: () => set({ isGuidedWizardOpen: false }),
 }))

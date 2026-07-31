@@ -3,10 +3,12 @@
 import { useTranslations } from 'next-intl'
 import { Compass, FileText, Package, PercentCircle, Landmark, Truck } from 'lucide-react'
 import Link from 'next/link'
+import { useUIStore } from '@/store/ui-store'
 
 export default function HeroRightSidebar({ locale }: { locale: string }) {
   const tDrawer = useTranslations('home.drawer')
   const tProps = useTranslations('home.valueProps')
+  const openGuidedWizard = useUIStore((s) => s.openGuidedWizard)
 
   const valuePropsList = [
     { icon: Package, title: tProps('stock'), sub: tProps('stockSub'), color: 'var(--color-accent)' },
@@ -18,7 +20,10 @@ export default function HeroRightSidebar({ locale }: { locale: string }) {
   return (
     <aside className="w-full lg:w-[300px] xl:w-[320px] shrink-0 flex flex-col gap-3">
       {/* CTA Card 1: Guided */}
-      <div className="flex items-start gap-3 p-3.5 rounded-lg transition-all hover:shadow-md bg-surface-white border border-border group cursor-pointer">
+      <div 
+        onClick={openGuidedWizard}
+        className="flex items-start gap-3 p-3.5 rounded-lg transition-all hover:shadow-md bg-surface-white border border-border group cursor-pointer active:scale-[0.99]"
+      >
         <div className="size-9 rounded-md flex items-center justify-center shrink-0 bg-accent-subtle group-hover:scale-105 transition-transform">
           <Compass className="size-[18px] text-accent" strokeWidth={1.5} />
         </div>
