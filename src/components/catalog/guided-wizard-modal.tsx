@@ -241,14 +241,14 @@ export default function GuidedWizardModal() {
         onClick={(e) => e.stopPropagation()}
       >
         {/* 3D Mascot Character - POPPING OUT ABOVE MODAL TOP BORDER FOR 3D EFFECT */}
-        <div className="absolute -top-20 sm:-top-24 right-8 sm:right-12 pointer-events-none hidden sm:block z-50 transition-transform hover:scale-105">
+        <div className="absolute -top-[70px] sm:-top-[88px] right-8 sm:right-12 pointer-events-none hidden sm:block z-50 transition-transform hover:scale-105">
           <div className="relative overflow-visible flex items-start justify-center">
             <img 
               src="/images/ai-mascot-peeking.png" 
               alt="AI Electrician Mascot" 
-              className="h-28 sm:h-36 w-auto object-contain mix-blend-multiply contrast-105 drop-shadow-[0_10px_14px_rgba(0,0,0,0.4)]"
+              className="h-32 sm:h-40 w-auto object-contain drop-shadow-[0_10px_14px_rgba(0,0,0,0.4)]"
               style={{
-                clipPath: 'inset(0 0 25% 0)', // Programmatically crops the bottom 25% (baked wall plate)
+                clipPath: 'inset(0 0 18% 0)', // Crops lower wall plate while preserving full helmet top and glowing wire
               }}
             />
           </div>
