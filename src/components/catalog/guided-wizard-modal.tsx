@@ -237,11 +237,25 @@ export default function GuidedWizardModal() {
   return (
     <div className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-5 overflow-y-auto animate-in fade-in duration-200">
       <div 
-        className="relative w-full max-w-4xl bg-surface-white border border-border rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh] my-auto"
+        className="relative w-full max-w-4xl bg-surface-white border border-border rounded-2xl shadow-2xl overflow-visible flex flex-col max-h-[92vh] my-auto"
         onClick={(e) => e.stopPropagation()}
       >
+        {/* 3D Mascot Character - POPPING OUT ABOVE MODAL TOP BORDER FOR 3D EFFECT */}
+        <div className="absolute -top-20 sm:-top-24 right-8 sm:right-12 pointer-events-none hidden sm:block z-50 transition-transform hover:scale-105">
+          <div className="relative overflow-visible flex items-start justify-center">
+            <img 
+              src="/images/ai-mascot-peeking.png" 
+              alt="AI Electrician Mascot" 
+              className="h-28 sm:h-36 w-auto object-contain mix-blend-multiply contrast-105 drop-shadow-[0_10px_14px_rgba(0,0,0,0.4)]"
+              style={{
+                clipPath: 'inset(0 0 25% 0)', // Programmatically crops the bottom 25% (baked wall plate)
+              }}
+            />
+          </div>
+        </div>
+
         {/* ── Top Header ── */}
-        <div className="px-5 py-3.5 border-b border-border flex items-center justify-between bg-surface-raised/40 shrink-0">
+        <div className="px-5 py-3.5 border-b border-border flex items-center justify-between bg-surface-raised/40 shrink-0 rounded-t-2xl">
           <div className="flex items-center gap-3">
             <div className="size-9 rounded-xl bg-accent/10 border border-accent/30 flex items-center justify-center text-accent">
               <Zap className="size-5" />
@@ -259,29 +273,14 @@ export default function GuidedWizardModal() {
           <button
             type="button"
             onClick={close}
-            className="size-8 rounded-lg border border-border flex items-center justify-center hover:bg-surface-raised transition-colors text-text-muted hover:text-text-primary"
+            className="size-8 rounded-lg border border-border flex items-center justify-center hover:bg-surface-raised transition-colors text-text-muted hover:text-text-primary z-10"
           >
             <X className="size-4" />
           </button>
         </div>
 
-        {/* ── AI Search Bar with 3D Mascot Peeking ── */}
+        {/* ── AI Search Bar ── */}
         <div className="relative px-5 py-3 bg-gradient-to-r from-accent/5 via-accent/10 to-surface-raised border-b border-border/80 shrink-0">
-          
-          {/* 3D Mascot Character - Programmatically Cropped & Positioned Directly on Top Border Edge */}
-          <div className="absolute -top-[76px] sm:-top-[98px] right-6 sm:right-10 pointer-events-none hidden sm:block z-30 transition-transform hover:scale-105">
-            <div className="relative overflow-hidden flex items-start justify-center">
-              <img 
-                src="/images/ai-mascot-peeking.png" 
-                alt="AI Electrician Mascot" 
-                className="h-28 sm:h-36 w-auto object-contain mix-blend-multiply contrast-105 drop-shadow-[0_8px_10px_rgba(0,0,0,0.35)]"
-                style={{
-                  clipPath: 'inset(0 0 26% 0)', // Programmatically crops the bottom 26% (baked white/grey wall plate)
-                }}
-              />
-            </div>
-          </div>
-
           <div className="relative z-10 max-w-2xl">
             <div className="flex items-center gap-2 mb-1">
               <Sparkles className="size-4 text-accent animate-pulse" />
