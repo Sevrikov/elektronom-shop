@@ -235,9 +235,9 @@ export default function GuidedWizardModal() {
   }
 
   return (
-    <div className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-5 overflow-y-auto animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-xs flex items-start justify-center p-3 sm:p-5 pt-20 sm:pt-28 pb-10 overflow-y-auto animate-in fade-in duration-200">
       <div 
-        className="relative w-full max-w-4xl bg-surface-white border border-border rounded-2xl shadow-2xl overflow-visible flex flex-col max-h-[92vh] my-auto"
+        className="relative w-full max-w-4xl bg-surface-white border border-border rounded-2xl shadow-2xl overflow-visible flex flex-col max-h-[85vh] my-0"
         onClick={(e) => e.stopPropagation()}
       >
         {/* 3D Mascot Character - POPPING OUT ABOVE MODAL TOP BORDER FOR 3D EFFECT */}
@@ -246,7 +246,7 @@ export default function GuidedWizardModal() {
             <img 
               src="/images/ai-mascot-peeking.png" 
               alt="AI Electrician Mascot" 
-              className="h-32 sm:h-40 w-auto object-contain drop-shadow-[0_10px_14px_rgba(0,0,0,0.4)]"
+              className="h-32 sm:h-40 w-auto object-contain drop-shadow-[0_12px_18px_rgba(0,0,0,0.5)]"
               style={{
                 clipPath: 'inset(0 0 18% 0)', // Crops lower wall plate while preserving full helmet top and glowing wire
               }}
