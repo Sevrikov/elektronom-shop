@@ -240,7 +240,7 @@ export default function GuidedWizardModal() {
         className="relative w-full max-w-4xl bg-surface-white border border-border rounded-2xl shadow-2xl overflow-visible flex flex-col max-h-[85vh] my-0"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* 3D Mascot Character - LYING POSE PERFECTLY ALIGNED IDEAL POSITION WITH SOFT GRADIENT FADE */}
+        {/* 3D Mascot Character - PURE ROBOT CUTOUT RESTING DIRECTLY ON MODAL TOP BORDER */}
         <div className="absolute -top-[80px] sm:-top-[104px] right-6 sm:right-10 pointer-events-none hidden sm:block z-50 transition-transform hover:scale-105">
           <img 
             src="/images/ai-mascot-peeking.png" 
