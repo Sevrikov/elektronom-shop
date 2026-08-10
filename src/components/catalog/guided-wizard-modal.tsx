@@ -243,7 +243,7 @@ export default function GuidedWizardModal() {
         {/* 3D Mascot Character - PURE ROBOT CUTOUT RESTING DIRECTLY ON MODAL TOP BORDER */}
         <div className="absolute -top-[80px] sm:-top-[104px] right-6 sm:right-10 pointer-events-none hidden sm:block z-50 transition-transform hover:scale-105">
           <img 
-            src="/images/ai-mascot-peeking.png" 
+            src="/images/ai-mascot-peeking.png?v=3" 
             alt="AI Electrician Mascot" 
             className="h-32 sm:h-40 w-auto object-contain drop-shadow-[0_12px_20px_rgba(0,0,0,0.4)]"
           />
