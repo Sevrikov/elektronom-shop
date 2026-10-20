@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import { useLocale } from 'next-intl'
 import { 
   X, 
@@ -235,24 +236,29 @@ export default function GuidedWizardModal() {
   }
 
   return (
-    <div className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-xs flex items-start justify-center p-3 sm:p-5 pt-20 sm:pt-28 pb-10 overflow-y-auto animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-xs flex items-start justify-center p-3 sm:p-5 pt-20 sm:pt-36 md:pt-40 pb-10 overflow-y-auto animate-in fade-in duration-200">
       <div 
-        className="relative w-full max-w-4xl bg-surface-white border border-border rounded-2xl shadow-2xl overflow-visible flex flex-col max-h-[85vh] my-0"
+        className="relative w-full max-w-4xl bg-surface-white border border-border rounded-2xl shadow-2xl overflow-visible flex flex-col max-h-[calc(100dvh-7.5rem)] sm:max-h-[calc(100dvh-11.5rem)] md:max-h-[calc(100dvh-12.5rem)] my-0"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* 3D Mascot Character - PURE ROBOT CUTOUT RESTING DIRECTLY ON MODAL TOP BORDER */}
-        <div className="absolute -top-[80px] sm:-top-[104px] right-6 sm:right-10 pointer-events-none hidden sm:block z-50 transition-transform hover:scale-105">
-          <img 
-            src="/images/ai-mascot-peeking.png?v=3" 
-            alt="AI Electrician Mascot" 
-            className="h-32 sm:h-40 w-auto object-contain drop-shadow-[0_12px_20px_rgba(0,0,0,0.4)]"
+        {/* The feet/elbow baseline is 87% down this cutout; the cable hangs below the modal edge. */}
+        <div aria-hidden="true" className="absolute top-0 right-14 pointer-events-none select-none hidden sm:block z-20 w-44 md:w-48 -translate-y-[87%]">
+          <div className="absolute top-[87%] left-[7%] h-1 w-[32%] -translate-y-1/2 rounded-full bg-black/15 blur-[2px]" />
+          <div className="absolute top-[87%] right-[12%] h-1 w-[11%] -translate-y-1/2 rounded-full bg-black/15 blur-[2px]" />
+          <Image
+            src="/images/ai-mascot-cutout-v2.png"
+            alt=""
+            width={1359}
+            height={1158}
+            sizes="(min-width: 768px) 192px, 176px"
+            className="relative block h-auto w-full"
           />
         </div>
 
         {/* ── Top Header ── */}
         <div className="px-5 py-3.5 border-b border-border flex items-center justify-between bg-surface-raised/40 shrink-0 rounded-t-2xl">
-          <div className="flex items-center gap-3">
-            <div className="size-9 rounded-xl bg-accent/10 border border-accent/30 flex items-center justify-center text-accent">
+          <div className="flex min-w-0 items-center gap-3 sm:pr-32">
+            <div className="size-9 shrink-0 rounded-xl bg-accent/10 border border-accent/30 flex items-center justify-center text-accent">
               <Zap className="size-5" />
             </div>
             <div>
@@ -268,7 +274,8 @@ export default function GuidedWizardModal() {
           <button
             type="button"
             onClick={close}
-            className="size-8 rounded-lg border border-border flex items-center justify-center hover:bg-surface-raised transition-colors text-text-muted hover:text-text-primary z-10"
+            aria-label={isUk ? 'Закрити майстер підбору' : 'Закрыть мастер подбора'}
+            className="size-8 shrink-0 rounded-lg border border-border flex items-center justify-center hover:bg-surface-raised transition-colors text-text-muted hover:text-text-primary z-10"
           >
             <X className="size-4" />
           </button>
