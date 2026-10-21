@@ -246,7 +246,7 @@ export default function GuidedWizardModal() {
           <div className="absolute top-[87%] left-[7%] h-1 w-[32%] -translate-y-1/2 rounded-full bg-black/15 blur-[2px]" />
           <div className="absolute top-[87%] right-[12%] h-1 w-[11%] -translate-y-1/2 rounded-full bg-black/15 blur-[2px]" />
           <Image
-            src="/images/ai-mascot-cutout-v2.png"
+            src="/images/ai-mascot-cutout-v3.png"
             alt=""
             width={1359}
             height={1158}
