@@ -242,16 +242,16 @@ export default function GuidedWizardModal() {
         onClick={(e) => e.stopPropagation()}
       >
         {/* The feet/elbow baseline is 87% down this cutout; the cable hangs below the modal edge. */}
-        <div aria-hidden="true" className="absolute top-0 right-14 pointer-events-none select-none hidden sm:block z-20 w-44 md:w-48 -translate-y-[87%]">
+        <div aria-hidden="true" className="absolute top-0 right-7 pointer-events-none select-none hidden sm:block z-20 w-44 md:w-48 -translate-y-[87%]">
           <div className="absolute top-[87%] left-[7%] h-1 w-[32%] -translate-y-1/2 rounded-full bg-black/15 blur-[2px]" />
           <div className="absolute top-[87%] right-[12%] h-1 w-[11%] -translate-y-1/2 rounded-full bg-black/15 blur-[2px]" />
           <Image
-            src="/images/ai-mascot-cutout-v3.png"
+            src="/images/ai-mascot-elektro-v4.png"
             alt=""
             width={1359}
             height={1158}
             sizes="(min-width: 768px) 192px, 176px"
-            className="relative block h-auto w-full"
+            className="relative block h-auto w-full origin-[84%_87%] motion-safe:animate-wizard-mascot"
           />
         </div>
 

@@ -84,6 +84,12 @@
   --animate-day-night: dayNight 12s ease-in-out infinite alternate;
   --animate-pan-bg: panBg 30s linear infinite;
   --animate-marquee: marquee 30s linear infinite;
+  --animate-wizard-mascot: wizard-mascot 5s ease-in-out infinite;
+
+  @keyframes wizard-mascot {
+    0%, 100% { transform: rotate(0deg); }
+    50% { transform: rotate(0.6deg); }
+  }
 
   @keyframes marquee {
     0% { transform: translateX(0); }
