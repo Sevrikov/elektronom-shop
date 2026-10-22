@@ -2,6 +2,8 @@ import type { NextConfig } from 'next'
 import createNextIntlPlugin from 'next-intl/plugin'
 
 const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts')
+const temporaryPhotoBase = process.env.NEXT_PUBLIC_PRODUCT_PHOTO_BASE_URL
+const temporaryPhotoHost = temporaryPhotoBase ? new URL(temporaryPhotoBase).hostname : null
 
 const nextConfig: NextConfig = {
   // ✅ React Compiler — стабилен в Next.js 16
@@ -22,6 +24,11 @@ const nextConfig: NextConfig = {
         hostname: 'images.prom.ua',
         pathname: '/**',
       },
+      ...(temporaryPhotoHost ? [{
+        protocol: 'https' as const,
+        hostname: temporaryPhotoHost,
+        pathname: '/images/**',
+      }] : []),
       {
         protocol: 'https',
         hostname: 'placehold.co',

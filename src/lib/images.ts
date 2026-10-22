@@ -1,13 +1,6 @@
-/**
- * Standardizes image URLs, prepending CDN domains if necessary.
- */
+/** Returns the stored image URL without changing its storage account. */
 export function getImageUrl(urlOrPath: string): string {
-  if (!urlOrPath) return ''
-  const activeCloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || 'bzzecoeb'
-  if (urlOrPath.includes('res.cloudinary.com/')) {
-    return urlOrPath.replace(/res\.cloudinary\.com\/[^\/]+\//, `res.cloudinary.com/${activeCloudName}/`)
-  }
-  return urlOrPath
+  return urlOrPath || ''
 }
 
 /**
@@ -26,17 +19,37 @@ export function getTransformedImageUrl(
     removeBg?: boolean
   }
 ): string {
-  const isProcessed = typeof image !== 'string' && !!image?.processedUrl
-  let url = typeof image === 'string' ? image : (image?.processedUrl || image?.url)
+  const originalUrl = typeof image === 'string' ? image : image?.url
+  const processedUrl = typeof image === 'string' ? null : image?.processedUrl
+  const temporaryPhotoBase = process.env.NEXT_PUBLIC_PRODUCT_PHOTO_BASE_URL
+  const cloudinarySource = processedUrl?.includes('res.cloudinary.com/')
+    ? processedUrl
+    : originalUrl?.includes('res.cloudinary.com/') ? originalUrl : null
+
+  // The temporary local photo server keeps the same WebP filenames as Cloudinary.
+  if (temporaryPhotoBase && cloudinarySource) {
+    try {
+      const filename = decodeURIComponent(new URL(cloudinarySource).pathname.split('/').pop() || '')
+      if (filename.toLowerCase().endsWith('.webp')) {
+        return `${temporaryPhotoBase.replace(/\/$/, '')}/images/${encodeURIComponent(filename)}`
+      }
+    } catch {
+      // Keep the normal source if a stored URL is malformed.
+    }
+  }
+
+  // Keep external originals visible while the processed Cloudinary storage is unavailable.
+  // Set the public flag to "false" after a working image CDN has been configured.
+  const preferExternalOriginal = process.env.NEXT_PUBLIC_PREFER_ORIGINAL_IMAGES !== 'false'
+    && !!originalUrl
+    && /^https?:\/\//.test(originalUrl)
+    && !originalUrl.includes('res.cloudinary.com/')
+    && !!processedUrl?.includes('res.cloudinary.com/')
+  const url = preferExternalOriginal ? originalUrl : (processedUrl || originalUrl)
+  const isProcessed = !!processedUrl && url === processedUrl
   const provider = typeof image === 'string' ? null : image?.provider
 
   if (!url) return ''
-
-  // Fix legacy Cloudinary cloud_name (dpfye2xce -> bzzecoeb)
-  const activeCloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || 'bzzecoeb'
-  if (url.includes('res.cloudinary.com/')) {
-    url = url.replace(/res\.cloudinary\.com\/[^\/]+\//, `res.cloudinary.com/${activeCloudName}/`)
-  }
 
   // Check if it's Cloudinary, either via provider or URL domain
   const isCloudinary = provider === 'CLOUDINARY' || url.includes('res.cloudinary.com')
